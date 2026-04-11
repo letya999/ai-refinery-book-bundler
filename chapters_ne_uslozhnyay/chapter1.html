@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1. Введение и смысл метода</title>
+<style>
+:root{--bg:#081423;--bg2:#112544;--panel:#0f1f38;--line:#395f9d;--txt:#eef5ff;--muted:#adc2e1;--acc:#72d8ff;--acc2:#87efc9;--warn:#ffd18a}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 15% -20%,#2b5c9f 0,#152847 42%,#081423 76%);color:var(--txt);font:16px/1.6 "Trebuchet MS","Segoe UI Variable",Tahoma,sans-serif}
+.wrap{max-width:1160px;margin:0 auto;padding:26px 16px 56px}
+.hero{padding:22px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,rgba(114,216,255,.14),rgba(135,239,201,.1));box-shadow:0 16px 34px rgba(0,0,0,.32)}
+.kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{margin:8px 0 10px;font-size:clamp(30px,5vw,52px);line-height:1.03}
+.lead{margin:0;max-width:900px;color:#dce9ff}
+.stats{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.stat{padding:12px;border:1px solid #3f66a6;border-radius:11px;background:rgba(10,19,36,.76)}
+.stat b{display:block;font-size:30px;line-height:1;color:#fff}
+.stat span{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sec{margin-top:20px;padding:16px;border:1px solid #345790;border-radius:14px;background:rgba(10,18,34,.82)}
+.sec h2{margin:0 0 10px;font-size:27px}
+.canvas-wrap{border:1px solid #3b619f;border-radius:12px;background:#0c1830;padding:10px}
+#flow{display:block;width:100%;height:auto;border-radius:8px;background:#f1f5fb}
+.caption{margin-top:8px;color:#c2d5f4;font-size:13px}
+.grid{margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.card{padding:12px;border:1px solid #3b629f;border-radius:11px;background:linear-gradient(165deg,#12223f,#1b3159)}
+.card b{display:block;margin-bottom:6px;color:#ffe0b0;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.card p{margin:0;color:#d8e7ff}
+.list{margin:8px 0 0 18px}
+.list li{margin:4px 0;color:#d8e7ff}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero">
+    <div class="kicker">Ознакомительный фрагмент • Глава 1</div>
+    <h1>Коротко: зачем нужен P3.express</h1>
+    <p class="lead">Корень проблем проектов: рваный ритм управления. Метод дает базовый каркас: принципы решений, цикл действий, обязательное закрытие с уроками.</p>
+    <div class="stats">
+      <div class="stat"><b>33</b><span>шага метода</span></div>
+      <div class="stat"><b>7</b><span>этапов цикла</span></div>
+      <div class="stat"><b>6</b><span>nup-принципов</span></div>
+      <div class="stat"><b>1</b><span>цель: предсказуемость</span></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Суть перехода</h2>
+    <div class="canvas-wrap">
+      <canvas id="flow" width="1080" height="370" aria-label="Переход от хаоса к управляемому циклу"></canvas>
+      <div class="caption">Схема читается слева направо: хаос → управленческий цикл → устойчивый результат.</div>
+    </div>
+
+    <div class="grid">
+      <article class="card"><b>1. Диагностика</b><p>Фиксируем, где плавают сроки, роли, риски и коммуникации.</p></article>
+      <article class="card"><b>2. Ритм</b><p>Внедряем недельный и ежедневный контур без бюрократической перегрузки.</p></article>
+      <article class="card"><b>3. Закрепление</b><p>Закрываем цикл ретро и обновлением шаблонов/чек-листов.</p></article>
+    </div>
+
+    <ul class="list">
+      <li>Нет общей картины: команда уходит в пожарный режим.</li>
+      <li>Нет закрытия цикла: одинаковые ошибки повторяются.</li>
+      <li>Нет принципов: решения становятся реактивными.</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+const cv=document.getElementById('flow');
+const ctx=cv.getContext('2d');
+const BASE_W=1080;
+const BASE_H=370;
+
+function rr(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+function wrap(text,x,y,maxW,lineH,color,font){
+  ctx.fillStyle=color;ctx.font=font;
+  const words=text.split(' ');let line='';let row=0;
+  for(let i=0;i<words.length;i++){
+    const test=line+words[i]+' ';
+    if(ctx.measureText(test).width>maxW && i>0){
+      ctx.fillText(line,x,y+row*lineH);line=words[i]+' ';row++;
+    } else line=test;
+  }
+  if(line) ctx.fillText(line,x,y+row*lineH);
+}
+
+function drawBox(x,y,w,h,title,rows,fill,stroke,titleColor,rowColor){
+  ctx.fillStyle=fill;ctx.strokeStyle=stroke;ctx.lineWidth=2;rr(x,y,w,h,16);ctx.fill();ctx.stroke();
+  wrap(title,x+16,y+40,w-32,30,titleColor,'700 30px "Trebuchet MS"');
+  rows.forEach((r,i)=>wrap('• '+r,x+16,y+88+i*34,w-30,26,rowColor,'19px "Trebuchet MS"'));
+}
+
+function arrow(x1,y1,x2,y2){
+  ctx.strokeStyle='#5fc9ef';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1),L=14;
+  ctx.fillStyle='#5fc9ef';ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-L*Math.cos(a-0.4),y2-L*Math.sin(a-0.4));
+  ctx.lineTo(x2-L*Math.cos(a+0.4),y2-L*Math.sin(a+0.4));
+  ctx.closePath();ctx.fill();
+}
+
+function draw(){
+  ctx.clearRect(0,0,BASE_W,BASE_H);
+  drawBox(20,26,322,318,'Хаос',[
+    'случайные решения',
+    'реакция вместо плана',
+    'позднее обнаружение рисков'
+  ],'#31274a','#69578f','#f4ecff','#ddcff7');
+
+  drawBox(378,26,318,318,'P3.express',[
+    'принципы NUP',
+    'ритм цикла',
+    'закрытие и уроки'
+  ],'#17334c','#4d81a5','#eaf6ff','#c8e1f6');
+
+  drawBox(732,26,328,318,'Управление',[
+    'прозрачный прогресс',
+    'меньше переделок',
+    'предсказуемый результат'
+  ],'#1b3850','#598bb2','#eef8ff','#d1e6fa');
+
+  arrow(350,184,372,184);
+  arrow(704,184,726,184);
+}
+
+function setupCanvas(){
+  const dpr=Math.max(1,Math.min(window.devicePixelRatio||1,2));
+  const cssW=cv.clientWidth||BASE_W;
+  const cssH=Math.round(cssW*(BASE_H/BASE_W));
+  cv.style.height=cssH+'px';
+  cv.width=Math.round(cssW*dpr);
+  cv.height=Math.round(cssH*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  // Draw in stable logical coordinates to keep text crisp and proportions identical.
+  ctx.scale(cssW/BASE_W,cssH/BASE_H);
+  draw();
+}
+
+setupCanvas();
+window.addEventListener('resize',setupCanvas);
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# temp screenshots and diagnostics
+*.png
+_cmp_crop.png
+# local helper generators
+tmp_gen_*.py
+# python cache
+__pycache__/
