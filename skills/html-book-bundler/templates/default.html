@@ -18,11 +18,13 @@ html,body{height:100%;background:radial-gradient(circle at 85% -20%,#2e5e9d 0,#1
 .brand h1{font-size:16px;line-height:1.2;margin-bottom:6px}
 .brand p{font-size:12px;color:var(--muted)}
 .search-box{padding:10px;border-bottom:1px solid #223258}
-.search-box input{width:100%;padding:8px;background:#0c1831;border:1px solid #3f66a6;color:#fff;border-radius:6px}
+.search-box input{width:100%;padding:8px;background:#0c1831;border:1px solid #3f66a6;color:#fff;border-radius:6px;outline:none}
+.search-box input:focus{border-color:var(--acc);box-shadow:0 0 5px rgba(114,216,255,0.3)}
 .list{padding:10px;display:grid;gap:8px;overflow:auto}
-.ch{all:unset;cursor:pointer;padding:10px 12px;border-radius:10px;border:1px solid #3f66a6;background:rgba(17,31,57,.72);font-size:13px;line-height:1.35;color:#dce9ff}
-.ch:hover{border-color:var(--acc)}
+.ch{all:unset;cursor:pointer;padding:10px 12px;border-radius:10px;border:1px solid #3f66a6;background:rgba(17,31,57,.72);font-size:13px;line-height:1.35;color:#dce9ff;transition:0.2s}
+.ch:hover, .ch.focused{border-color:var(--acc);background:rgba(25,45,82,0.8)}
 .ch.on{background:linear-gradient(135deg,rgba(114,216,255,.2),rgba(135,239,201,.14));border-color:var(--acc)}
+.ch .match{font-size:10px;color:var(--acc2);margin-top:4px;display:block}
 .foot{margin-top:auto;padding:10px;border-top:1px solid #223258;color:var(--muted);font-size:12px}
 .main{display:flex;flex-direction:column;min-width:0;background:rgba(8,20,35,0.4)}
 .top{height:48px;flex-shrink:0;border-bottom:1px solid #2c4d80;background:rgba(13,25,49,0.8);display:flex;align-items:center;gap:10px;padding:0 10px;backdrop-filter:blur(8px)}
@@ -45,14 +47,6 @@ html,body{height:100%;background:radial-gradient(circle at 85% -20%,#2e5e9d 0,#1
 @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
 
-/* Print CSS */
-@media print {
-  .side, .top, .prog, .stars { display: none !important; }
-  .app { display: block; height: auto; overflow: visible; background: #fff; color: #000; }
-  .frame { height: auto; overflow: visible; }
-  .frame iframe { height: 100vh; background: #fff; }
-}
-
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important}
 }
@@ -64,7 +58,6 @@ html,body{height:100%;background:radial-gradient(circle at 85% -20%,#2e5e9d 0,#1
 }
 </style>
 <script>
-// Modules: Annotations & Analytics
 const BookModules = {
   logEvent: (action, chapterIndex) => {
     try {
@@ -79,33 +72,40 @@ const BookModules = {
     } catch(e) {}
   }
 };
+
+if (window.BOOK_DEV_MODE) {
+  const source = new EventSource('/events');
+  source.onmessage = (e) => {
+    if (e.data === 'reload') window.location.reload();
+  };
+}
 </script>
 </head>
 <body>
 <div class="stars"></div>
-<div class="app">
-  <aside class="side" id="side">
+<div class="app" role="application">
+  <aside class="side" id="side" role="navigation">
     <div class="brand">
       <h1>Интерактивная книга</h1>
       <p>Ознакомительный фрагмент</p>
     </div>
     <div class="search-box">
-      <input type="text" id="search" placeholder="Поиск по книге...">
+      <input type="text" id="search" placeholder="Поиск по книге..." aria-label="Поиск по содержимому" autocomplete="off">
     </div>
-    <div class="list" id="list"></div>
-    <div class="foot">Навигация: главы, кнопки, клавиши ← →</div>
+    <div class="list" id="list" role="listbox"></div>
+    <div class="foot">Навигация: главы, кнопки, клавиши ← → ↑ ↓ ↵</div>
   </aside>
 
-  <section class="main">
+  <main class="main" role="main">
     <div class="top">
-      <button class="mob" id="menu">☰</button>
-      <button id="prev">← Назад</button>
-      <button id="next">Вперед →</button>
-      <div class="tt" id="tt"></div>
+      <button class="mob" id="menu" aria-label="Меню">☰</button>
+      <button id="prev" aria-label="Предыдущая глава">← Назад</button>
+      <button id="next" aria-label="Следующая глава">Вперед →</button>
+      <div class="tt" id="tt" aria-live="polite"></div>
     </div>
-    <div class="prog"><i id="bar"></i></div>
-    <div class="frame"><iframe id="fr"></iframe></div>
-  </section>
+    <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="bar"></i></div>
+    <div class="frame"><iframe id="fr" title="Содержимое главы"></iframe></div>
+  </main>
 </div>
 
 <script>
@@ -113,6 +113,7 @@ const B64 = {{B64_CHAPTERS}};
 const T = {{TITLES}};
 const IDX = {{SEARCH_INDEX}};
 let cur = 0;
+let focusedIdx = -1;
 let curBlobUrl = null;
 
 const fr = document.getElementById('fr');
@@ -135,20 +136,52 @@ menu.onclick = (e) => {
 
 function buildList(filter = '') {
   list.innerHTML = '';
+  focusedIdx = -1;
   T.forEach((t, i) => {
-    if (filter && !t.toLowerCase().includes(filter) && !(IDX[i] && IDX[i].includes(filter))) return;
+    const contentMatch = filter && IDX[i] && IDX[i].includes(filter);
+    const titleMatch = filter && t.toLowerCase().includes(filter);
+    if (filter && !titleMatch && !contentMatch) return;
+    
     const b = document.createElement('button');
     b.className = 'ch';
     b.dataset.i = i;
-    b.innerHTML = '<b>Глава ' + (i + 1) + '</b><br>' + t;
-    b.onclick = () => go(i, true);
+    b.role = 'option';
+    b.setAttribute('aria-selected', i === cur);
+    b.innerHTML = '<b>Глава ' + (i + 1) + '</b><br>' + t + (contentMatch && !titleMatch ? '<span class="match">Совпадение в тексте</span>' : '');
+    b.onclick = () => go(i, null, true);
     if (i === cur) b.classList.add('on');
     list.appendChild(b);
   });
 }
 
+function updateFocus() {
+  const items = list.querySelectorAll('.ch');
+  items.forEach((item, idx) => {
+    item.classList.toggle('focused', idx === focusedIdx);
+    if (idx === focusedIdx) item.scrollIntoView({ block: 'nearest' });
+  });
+}
+
+let searchTimeout;
 searchInput.addEventListener('input', (e) => {
-  buildList(e.target.value.toLowerCase());
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => buildList(e.target.value.toLowerCase()), 150);
+});
+
+searchInput.addEventListener('keydown', (e) => {
+  const items = list.querySelectorAll('.ch');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    focusedIdx = Math.min(focusedIdx + 1, items.length - 1);
+    updateFocus();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    focusedIdx = Math.max(focusedIdx - 1, 0);
+    updateFocus();
+  } else if (e.key === 'Enter' && focusedIdx !== -1) {
+    e.preventDefault();
+    items[focusedIdx].click();
+  }
 });
 
 function go(i, anchor = null, close = false) {
@@ -156,39 +189,32 @@ function go(i, anchor = null, close = false) {
   cur = i;
 
   const switchLogic = () => {
-    const bin = atob(B64[i]);
-    const bytes = new Uint8Array(bin.length);
-    for (let j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
-
-    const blob = new Blob([bytes], { type: 'text/html;charset=utf-8' });
-    if (curBlobUrl) URL.revokeObjectURL(curBlobUrl);
-    curBlobUrl = URL.createObjectURL(blob);
-    
-    // Listen for iframe load to scroll to anchor
-    fr.onload = () => {
-      if (anchor) {
-        const el = fr.contentWindow.document.getElementById(anchor);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-        // If it's a phase button in Ch2, try to click it
-        const btn = fr.contentWindow.document.querySelector(`button[onclick*="${anchor}"]`) || 
-                    fr.contentWindow.document.querySelector(`button:has-text("${anchor}")`);
-        if (btn) btn.click();
-      }
-      fr.onload = null;
-    };
-
-    fr.src = curBlobUrl;
+    try {
+        const bin = atob(B64[i]);
+        const bytes = new Uint8Array(bin.length);
+        for (let j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
+        const blob = new Blob([bytes], { type: 'text/html;charset=utf-8' });
+        if (curBlobUrl) URL.revokeObjectURL(curBlobUrl);
+        curBlobUrl = URL.createObjectURL(blob);
+        fr.onload = () => {
+          if (anchor) {
+            const el = fr.contentWindow.document.getElementById(anchor);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }
+          fr.contentWindow.focus();
+        };
+        fr.src = curBlobUrl;
+    } catch(e) {
+        console.error('Ошибка загрузки главы:', e);
+        fr.srcdoc = '<div style="color:white;padding:20px">Ошибка загрузки содержимого.</div>';
+    }
 
     tt.innerHTML = '<b>Глава ' + (i + 1) + '</b>&ensp;' + T[i];
-    bar.style.width = ((i + 1) / B64.length * 100) + '%';
-
-    document.querySelectorAll('.ch').forEach(el => {
-      el.classList.toggle('on', Number(el.dataset.i) === i);
-    });
-
+    const progress = ((i + 1) / B64.length * 100);
+    bar.style.width = progress + '%';
+    document.querySelector('.prog').setAttribute('aria-valuenow', Math.round(progress));
+    document.querySelectorAll('.ch').forEach(el => el.classList.toggle('on', Number(el.dataset.i) === i));
     BookModules.saveBookmark(i);
-    BookModules.logEvent('read_chapter', i);
-
     if (close) side.classList.remove('open');
   };
 
@@ -199,11 +225,8 @@ function go(i, anchor = null, close = false) {
   }
 }
 
-// Global helper for links inside iframes using postMessage for cross-origin support
 window.addEventListener('message', e => {
-  if (e.data && e.data.action === 'bookGo') {
-    go(e.data.chapterIdx, e.data.anchorId, true);
-  }
+  if (e.data && e.data.action === 'bookGo') go(e.data.chapterIdx, e.data.anchorId, true);
 });
 
 document.getElementById('prev').onclick = () => go(cur - 1);
@@ -212,12 +235,10 @@ document.getElementById('next').onclick = () => go(cur + 1);
 window.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') go(cur - 1);
   if (e.key === 'ArrowRight') go(cur + 1);
-});
-document.addEventListener('click', (e) => {
-  if (!window.matchMedia('(max-width: 900px)').matches) return;
-  if (!side.classList.contains('open')) return;
-  if (e.target.closest('#side') || e.target.closest('#menu')) return;
-  side.classList.remove('open');
+  if (e.key === '/' && document.activeElement !== searchInput) {
+    e.preventDefault();
+    searchInput.focus();
+  }
 });
 
 buildList();

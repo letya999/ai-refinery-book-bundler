@@ -1,72 +1,56 @@
 ---
 name: html-book-bundler
-description: Engineering self-contained, interactive HTML books with sandboxed chapter isolation, automated integrity linting, and actionable data governance.
+description: Engineering self-contained, interactive HTML books with recursive asset bundling, manifest-driven navigation, and real-time development sync.
 ---
 
 # HTML Book Bundler
 
-Expert skill for transforming linear manuscripts into professional-grade, interactive single-file HTML applications. Focuses on isolative architecture, automated quality assurance, and cognitive-load-reducing visual patterns.
+Expert skill for transforming linear manuscripts into professional-grade, interactive single-file HTML applications.
 
 ## 1. Core Architecture (The Three-Tier Model)
 
 ### A. The Shell (Application Layer)
-- **Responsibility:** Navigation, State Persistence, UI/UX Chrome.
-- **State Management:** MUST use `localStorage` to persist `currentChapterIndex` and analytical state.
-- **Progress Tracking:** Mandatory visual progress indicator.
+- **Responsibility:** Navigation, State Persistence (localStorage), UI/UX.
+- **Search:** Full-text search across all chapters with debounced indexing.
+- **Dev Mode:** Automatic Live Reload when used with `dev_server.cjs`.
 
 ### B. The Sandbox (Chapter Layer)
-- **Isolation:** Each chapter MUST be rendered via a Blob URL inside an `<iframe>`.
-- **Scope Safety:** Zero CSS/JS leakage. 
-- **Memory Management:** MUST call `URL.revokeObjectURL()` on navigation.
+- **Isolation:** Each chapter rendered via Blob URL in a sandboxed `<iframe>`.
+- **Navigation Bridge:** Automated `postMessage` injection for cross-chapter links.
+- **Asset Handling:** Recursive bundling of `<img>`, `<link>`, `<script>`, and `url()` assets.
 
 ### C. The Asset Payload (Data Layer)
-- **Zero-Dependency:** All assets MUST be bundled. External URLs are a Hard Fail.
-- **Base64 Packaging:** Chapters stored as encoded strings.
+- **Zero-Dependency:** 100% of local resources (images, CSS, JS) are converted to Base64/DataURIs.
 
 ## 2. Automated Quality Assurance (Linter)
 
-Every build MUST be validated using the `lint_book.py` utility.
+Mandatory validation via `lint_book.py`.
 
-### Critical Checks (Errors):
-- **External Links:** Any `http(s)` URL in `src` or `href` (except explicitly allowed Shell links).
-- **Charset:** Missing `<meta charset="utf-8">` in any chapter.
-- **Data Integrity:** Checkboxes/Checklists missing unique `id` attributes (breaks persistence).
-- **Encoding:** Base64 corruption or decoding failures.
+### Critical Checks:
+- **Zero-External:** Fails if any `http(s)` links are found in chapters (must be bundled).
+- **Sandbox Safety:** Prevents unauthorized `window.parent` access.
+- **Data Integrity:** Ensures unique IDs for all interactive elements (checkboxes).
 
-### Performance & UX Checks (Warnings):
-- **Asset Size:** Chapters > 1MB or total file > 15MB.
-- **Memory:** Missing `revokeObjectURL` call.
-- **A11y:** Images missing `alt` text or missing `prefers-reduced-motion` support.
-- **UX:** Missing `localStorage` persistence logic.
+## 3. Workflows
 
-## 3. Engineering Quality Gate (Mandatory)
-
-Before delivery, the engineer MUST run:
+### Scenario: Development
 ```bash
-python skills/html-book-bundler/scripts/lint_book.py --file ./output.html
+# Starts server with Live Reload
+node skills/html-book-bundler/scripts/dev_server.cjs --input ./chapters
 ```
-**A result with any [X] ERRORS is rejected.**
 
-## 4. Workflows
-
-### Scenario: Bundling & Linting
+### Scenario: Production Build
 ```bash
+# Bundle and Audit
 node skills/html-book-bundler/scripts/bundle.cjs --input ./chapters --output my-book.html
 python skills/html-book-bundler/scripts/lint_book.py --file ./my-book.html
 ```
 
-### Scenario: Asset Optimization
-*Before bundling, ensure images are resized and compressed. Use `extract_pdf_visuals.py` at high DPI only for critical diagrams.*
+## 4. Visual Strategy
+- **Backgrounds:** Animated `Twinkle Stars`, `Blur Backdrops`.
+- **Interactivity:** `Persistent Checklists`, `Progress Tracking`, `Navigation Manifests`.
 
-## 5. Visual & Analytical Strategy
-- **Backgrounds:** `Twinkle Stars`, `Structured Grid`, `Ambient Pulse`.
-- **Content:** `Translator Pattern`, `Persistent Checklists`, `Decision Engines`.
-- **Viz Bank:** `Ishikawa`, `Mini-Gantt`, `Radar Charts`, `Logic Trees`.
-
-## 6. Relevant References
-- `references/interactive-visual-patterns.md`
-- `references/visual-bank.md`
-- `references/data-and-decision-visuals.md`
-- `references/advanced-system-features.md`
-- `references/pdf-visual-workflow.md`
+## 5. References
 - `references/single-file-architecture.md`
+- `references/interactive-visual-patterns.md`
+- `references/pdf-visual-workflow.md`
