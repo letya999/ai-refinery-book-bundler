@@ -93,7 +93,7 @@ const BookModules = {
       <input type="text" id="search" placeholder="Поиск по книге...">
     </div>
     <div class="list" id="list"></div>
-    <div class="foot">Навигация: главы, кнопки, клавиши ← →<br><button id="printBtn" style="all:unset;color:var(--acc);cursor:pointer;margin-top:5px;font-weight:bold;">🖨 Печать главы</button></div>
+    <div class="foot">Навигация: главы, кнопки, клавиши ← →</div>
   </aside>
 
   <section class="main">
@@ -187,12 +187,6 @@ function go(i, close = false) {
 
 document.getElementById('prev').onclick = () => go(cur - 1);
 document.getElementById('next').onclick = () => go(cur + 1);
-document.getElementById('printBtn').onclick = () => {
-    if(fr.contentWindow) {
-        fr.contentWindow.print();
-        BookModules.logEvent('print_chapter', cur);
-    }
-};
 
 window.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') go(cur - 1);
