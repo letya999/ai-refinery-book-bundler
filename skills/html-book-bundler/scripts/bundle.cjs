@@ -25,12 +25,49 @@ const base64Chapters = [];
 const searchIndex = [];
 
 files.forEach(file => {
-  const content = fs.readFileSync(path.join(inputDir, file), 'utf8');
+  let content = fs.readFileSync(path.join(inputDir, file), 'utf8');
   const titleMatch = content.match(/<title>(.*?)<\/title>/i);
   titles.push(titleMatch ? titleMatch[1] : file);
   
+  // Inject navigation bridge script
+  const bridgeScript = `
+<script>
+document.addEventListener('click', e => {
+  const a = e.target.closest('a');
+  if (a && a.getAttribute('href')) {
+    const href = a.getAttribute('href');
+    if (href.startsWith('http') || href.startsWith('mailto:')) return;
+    
+    e.preventDefault();
+    // Logic: find chapter index by filename or keyword in href
+    let targetIdx = -1;
+    let anchor = null;
+    
+    const parts = href.split('#');
+    const pathPart = parts[0].toLowerCase();
+    anchor = parts[1] || null;
+    
+    if (pathPart.includes('chapter')) {
+       const m = pathPart.match(/chapter(\\d+)/);
+       if (m) targetIdx = parseInt(m[1]) - 1;
+    } else if (!pathPart) {
+       // Just anchor in current chapter
+       const el = document.getElementById(anchor);
+       if (el) el.scrollIntoView({behavior:'smooth'});
+       return;
+    }
+    
+    if (targetIdx !== -1 && window.parent) {
+      window.parent.postMessage({ action: 'bookGo', chapterIdx: targetIdx, anchorId: anchor }, '*');
+    }
+  }
+});
+</script>
+  `;
+  content = content.replace('</body>', bridgeScript + '</body>');
+
   // Simple search indexing: strip HTML tags and normalize spaces
-  const textContent = content.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+  const textContent = content.replace(/<[^>]*>?/gm, ' ').replace(/\\s+/g, ' ').trim().toLowerCase();
   searchIndex.push(textContent);
 
   base64Chapters.push(Buffer.from(content).toString('base64'));

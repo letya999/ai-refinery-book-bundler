@@ -151,7 +151,7 @@ searchInput.addEventListener('input', (e) => {
   buildList(e.target.value.toLowerCase());
 });
 
-function go(i, close = false) {
+function go(i, anchor = null, close = false) {
   if (i < 0 || i >= B64.length) return;
   cur = i;
 
@@ -163,6 +163,20 @@ function go(i, close = false) {
     const blob = new Blob([bytes], { type: 'text/html;charset=utf-8' });
     if (curBlobUrl) URL.revokeObjectURL(curBlobUrl);
     curBlobUrl = URL.createObjectURL(blob);
+    
+    // Listen for iframe load to scroll to anchor
+    fr.onload = () => {
+      if (anchor) {
+        const el = fr.contentWindow.document.getElementById(anchor);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        // If it's a phase button in Ch2, try to click it
+        const btn = fr.contentWindow.document.querySelector(`button[onclick*="${anchor}"]`) || 
+                    fr.contentWindow.document.querySelector(`button:has-text("${anchor}")`);
+        if (btn) btn.click();
+      }
+      fr.onload = null;
+    };
+
     fr.src = curBlobUrl;
 
     tt.innerHTML = '<b>Глава ' + (i + 1) + '</b>&ensp;' + T[i];
@@ -184,6 +198,13 @@ function go(i, close = false) {
     switchLogic();
   }
 }
+
+// Global helper for links inside iframes using postMessage for cross-origin support
+window.addEventListener('message', e => {
+  if (e.data && e.data.action === 'bookGo') {
+    go(e.data.chapterIdx, e.data.anchorId, true);
+  }
+});
 
 document.getElementById('prev').onclick = () => go(cur - 1);
 document.getElementById('next').onclick = () => go(cur + 1);
