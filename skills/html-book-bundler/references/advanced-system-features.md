@@ -85,15 +85,42 @@ function searchBook(query) {
 }
 ```
 
-## 4. Personalization: The Annotation Engine
+## 5. Cross-Chapter Navigation (Iframe Bridge)
 
-Users should be able to highlight text and save notes. Since the book is a local file, `localStorage` is the only persistent database.
+When each chapter is isolated in an `iframe` with a `Blob URL`, standard relative links (e.g., `<a href="chapter2.html">`) fail because the `Blob` origin is considered `null` or `cross-origin` from the main book file. Direct access to `window.parent` is often blocked by browser security policies.
 
-**The Solution (Selection API + XPath/CSS Selectors):**
-1. Listen for the `selectionchange` or `mouseup` event inside the chapter `iframe`.
-2. Capture the `window.getSelection().getRangeAt(0)`.
-3. Serialize the Range into a robust path (e.g., "3rd paragraph, 15th character to 42nd character").
-4. Save to `localStorage.setItem('annotations', JSON.stringify(data))`.
-5. On chapter load, deserialize the paths and wrap the text nodes in `<mark>` tags.
+**The Solution (The Bridge Pattern):**
+1. **The Shell Listener:** The main book file (Shell) listens for a specific `message` event.
+2. **The Chapter Bridge:** The bundler automatically injects a small script into every chapter that intercepts all link clicks and sends a `postMessage` to the parent instead of following the link.
 
-*Note: This is technically complex but transforms a static read-only file into a personalized workspace.*
+```javascript
+// Inside the Shell (templates/default.html)
+window.addEventListener('message', e => {
+  if (e.data && e.data.action === 'bookGo') {
+    // chapterIdx is target chapter, anchorId is optional element ID
+    navigateToChapter(e.data.chapterIdx, e.data.anchorId);
+  }
+});
+
+// Inside every Chapter (Injected by scripts/bundle.cjs)
+document.addEventListener('click', e => {
+  const a = e.target.closest('a');
+  if (a && a.getAttribute('href')) {
+    const href = a.getAttribute('href');
+    if (href.startsWith('http')) return; // Allow external links
+
+    e.preventDefault();
+    const parts = href.split('#');
+    const chapterIdx = parseChapterIndex(parts[0]);
+    const anchorId = parts[1] || null;
+
+    window.parent.postMessage({ 
+      action: 'bookGo', 
+      chapterIdx, 
+      anchorId 
+    }, '*');
+  }
+});
+```
+
+**Key Benefit:** This creates a seamless "Single Page App" feel where users can jump between chapters and specific anchors (e.g., a specific project phase in P3.express) even though the content is technically isolated and encoded.
