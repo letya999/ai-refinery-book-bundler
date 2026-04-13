@@ -27,6 +27,7 @@ Options:
   --lang   <code>     UI language: ru | en  (default: ru)
   --dev               Inject live-reload script (for use with dev_server.cjs)
   --optimize          Run optimize_assets.py on input dir before bundling
+  --skip-insights     Disable auto-generated pullquotes (use when you insert <blockquote class="insight"> manually)
   --help              Show this help
 
 Examples:
@@ -66,8 +67,9 @@ if (!fs.existsSync(inputDirAbs)) {
 const bookId    = path.basename(outputFileAbs, '.html');
 const bookTitle = getArg('--title', bookId.replace(/[-_]/g, ' '));
 const langCode  = getArg('--lang', 'ru');
-const devMode   = args.includes('--dev');
-const optimize  = args.includes('--optimize');
+const devMode      = args.includes('--dev');
+const optimize     = args.includes('--optimize');
+const skipInsights = args.includes('--skip-insights');
 
 const templateFile = path.resolve(
   args.includes('--template')
@@ -205,7 +207,7 @@ files.forEach((file, idx) => {
   chapterTexts.push(content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
 
   // Prepare chapter HTML string (srcdoc-ready)
-  chapters.push(prepareChapter(content, idx, title, files.length, globalCSS, bookTitle));
+  chapters.push(prepareChapter(content, idx, title, files.length, globalCSS, bookTitle, skipInsights));
 });
 
 // Warn about large image payloads

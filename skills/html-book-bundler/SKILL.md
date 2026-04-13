@@ -51,7 +51,30 @@ CSS variables (dark + light), layout (`.wrap`, `.hero`, `.sec`), stats grid, car
 
 ## Usage
 
-### 1. Assemble a book from HTML chapters
+### 1. (Recommended) Add AI-generated pullquotes before bundling
+
+The bundler's built-in `autoInjectInsights` uses a simple heuristic. For better results, **have Claude read each chapter file and manually insert `<blockquote class="insight">` elements** at the most impactful moments:
+
+```
+For each chapter in ./chapters/:
+  1. Read the chapter HTML
+  2. Identify 1-2 sentences (40-160 chars) that best capture the chapter's key insight
+  3. Insert after the 4th or 8th </p> tag:
+     <blockquote class="insight"><p>The sentence here.</p></blockquote>
+```
+
+Then bundle with `--skip-insights` to disable the heuristic fallback:
+
+```bash
+node skills/html-book-bundler/scripts/bundle.cjs \
+  --input ./chapters \
+  --output my-book.html \
+  --title "Book Name" \
+  --lang ru \
+  --skip-insights
+```
+
+### 2. Assemble a book from HTML chapters (quick, heuristic insights)
 ```bash
 node skills/html-book-bundler/scripts/bundle.cjs \
   --input ./chapters \

@@ -72,28 +72,38 @@ function startServer(p) {
     });
 
     s.on('listening', () => {
-        console.log(`\n🚀 Dev Server started on http://localhost:${p}`);
-        console.log(`💡 Tip: Use --port <number> to change port.`);
-        console.log(`Watching ${inputDir} for changes...`);
-        
-        if (fs.existsSync(inputDir)) {
-            let timeout;
-            const WATCH_EXT = ['.html', '.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'];
-            fs.watch(inputDir, { recursive: true }, (eventType, filename) => {
-                if (filename) {
-                    const ext = path.extname(filename).toLowerCase();
-                    if (WATCH_EXT.includes(ext)) {
-                        clearTimeout(timeout);
-                        timeout = setTimeout(() => {
-                            console.log(`Change detected in ${filename}.`);
-                            rebuild();
-                        }, 150);
-                    }
+        console.log(`Dev Server started on http://localhost:${p}`);
+        console.log(`Watching: chapters=${inputDir}, templates, lang`);
+
+        const WATCH_EXT = ['.html', '.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'];
+        let timeout;
+
+        function watchDir(dir, label) {
+            if (!fs.existsSync(dir)) return;
+            fs.watch(dir, { recursive: true }, (eventType, filename) => {
+                if (!filename) return;
+                const ext = path.extname(filename).toLowerCase();
+                if (WATCH_EXT.includes(ext)) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        console.log(`Change detected in ${label}/${filename}.`);
+                        rebuild();
+                    }, 150);
                 }
             });
-        } else {
-            console.error(`Input directory not found: ${inputDir}.`);
         }
+
+        if (!fs.existsSync(inputDir)) {
+            console.error(`Input directory not found: ${inputDir}.`);
+        } else {
+            watchDir(inputDir, 'chapters');
+        }
+
+        // Also watch templates and lang so changes there trigger rebuild
+        const skillRoot = path.join(__dirname, '..');
+        watchDir(path.join(skillRoot, 'templates'), 'templates');
+        watchDir(path.join(skillRoot, 'lang'), 'lang');
+
         rebuild();
     });
 }

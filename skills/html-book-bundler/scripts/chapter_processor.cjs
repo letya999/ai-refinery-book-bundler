@@ -86,7 +86,7 @@ function styleFirstPara(html) {
  * @param {string} globalCSS     - CSS to inject as shared theme base
  * @param {string} bookTitle     - book title for the kicker line (optional)
  */
-function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookTitle = '') {
+function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookTitle = '', skipInsights = false) {
   let content = html;
 
   const hasOwnStyles = /<style[\s\S]*?<\/style>/i.test(content);
@@ -137,7 +137,7 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
 
   // Universal enrichment passes
   bodyContent = autoCollapseLongParas(bodyContent);
-  bodyContent = autoInjectInsights(bodyContent);
+  if (!skipInsights) bodyContent = autoInjectInsights(bodyContent);
   bodyContent = styleFirstPara(bodyContent);
 
   // Ensure .wrap container exists
