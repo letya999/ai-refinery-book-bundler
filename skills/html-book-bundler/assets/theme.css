@@ -358,11 +358,15 @@ blockquote.insight p {
   font-size: 1.05rem;
   font-style: italic;
   line-height: 1.65;
-  color: var(--fg);
+  color: var(--txt);
 }
 
 .lead-para {
   font-size: 1.08rem;
   line-height: 1.8;
   opacity: .95;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }

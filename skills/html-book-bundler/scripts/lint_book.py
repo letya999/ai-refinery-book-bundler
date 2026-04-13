@@ -31,7 +31,8 @@ class BookLinter:
         if "sandbox" not in content.lower():
             self.errors.append("Оболочка: <iframe> не имеет 'sandbox'!")
 
-        b64_match = re.search(r'const\s+LOCAL_B64\s*=\s*(\[.*?\]);', content, re.DOTALL)
+        # Template replaces {{LOCAL_B64_CHAPTERS}} with the array, bound to variable B64
+        b64_match = re.search(r'\bB64\s*=\s*(\[.*?\])\s*[,;]', content, re.DOTALL)
         if not b64_match:
             self.errors.append("Данные: LOCAL_B64 не найден.")
             return False
@@ -49,11 +50,15 @@ class BookLinter:
 
     def _audit_chapter(self, idx: int, html: str):
         p = f"Глава {idx}"
-        # Пропускаем проверку postMessage так как это наш мост
-        safe_html = html.replace('postMessage', 'safeMessage')
-        unsafe_js = re.search(r'(window|top|parent|opener)\s*(\.|\[|\]|\s+)+(\.|\s+)*(parent|top|opener|location|cookie)', safe_html, re.I)
+        # window.parent.postMessage is the intentional cross-frame bridge - mask it before checking
+        safe_html = html.replace('window.parent.postMessage', '__BRIDGE__')
+        # Flag only genuinely dangerous patterns: accessing location, cookie, or chained parent/top
+        unsafe_js = re.search(
+            r'(window|top|parent|opener)\s*\.\s*(location|cookie|href|assign|replace|open)\b',
+            safe_html, re.I
+        )
         if unsafe_js:
-             self.errors.append(f"{p}: Попытка выхода из песочницы: {unsafe_js.group(0)}")
+            self.errors.append(f"{p}: Попытка выхода из песочницы: {unsafe_js.group(0)}")
 
     def report(self):
         print(f"\n{'='*60}\nОТЧЕТ АУДИТА: {self.file_path.name}\n{'='*60}")

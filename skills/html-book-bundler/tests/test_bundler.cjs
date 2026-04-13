@@ -29,10 +29,18 @@ if (!out.includes('Test 1') || !out.includes('Test 2')) {
     process.exit(1);
 }
 
-if (!out.includes('window.parent') && out.includes('let cur = 0;')) {
+// All template placeholders must be replaced
+const noUnreplacedPlaceholders = !out.includes('{{');
+// Shell must contain the B64 array variable (LOCAL_B64_CHAPTERS was replaced to populate B64)
+const hasB64Var = /\bB64\s*=\s*\[/.test(out);
+// Titles should appear in the sidebar JSON
+const hasTitles = out.includes('Test 1') && out.includes('Test 2');
+// CSP must be present
+const hasCSP = out.includes('Content-Security-Policy');
+if (noUnreplacedPlaceholders && hasB64Var && hasTitles && hasCSP) {
     console.log('PASS: Basic structural checks passed.');
 } else {
-    console.error('FAIL: Structural anomalies detected.');
+    console.error(`FAIL: noPlaceholders=${noUnreplacedPlaceholders} hasB64=${hasB64Var} hasTitles=${hasTitles} hasCSP=${hasCSP}`);
     process.exit(1);
 }
 

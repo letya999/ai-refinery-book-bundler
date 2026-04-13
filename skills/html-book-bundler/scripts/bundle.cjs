@@ -10,6 +10,11 @@ const templateFile = path.resolve(
     ? args[args.indexOf('--template') + 1]
     : path.join(__dirname, '../templates/default.html')
 );
+const bookId = path.basename(outputFile, '.html');
+// --title "Book Title" overrides the kicker; falls back to output filename
+const bookTitle = args.includes('--title')
+  ? args[args.indexOf('--title') + 1]
+  : bookId.replace(/[-_]/g, ' ');
 
 // Prefer local theme.css from the chapters directory
 const localTheme = path.join(inputDir, 'theme.css');
@@ -50,20 +55,19 @@ files.forEach((file, idx) => {
 
   const title = content.match(/<title>(.*?)<\/title>/i)?.[1] || file;
   globalTitles.push(title);
-  globalSearch.push(content.replace(/<[^>]*>?/gm, ' ').toLowerCase());
+  // Trim search index to 800 chars per chapter — enough for keyword search, avoids megabytes
+  const plainText = content.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+  globalSearch.push(plainText.slice(0, 800));
 
   // prepareChapter handles style preservation, .wrap injection, nav script, and base64
-  b64Chapters.push(prepareChapter(content, idx, title, files.length, globalCSS));
+  b64Chapters.push(prepareChapter(content, idx, title, files.length, globalCSS, bookTitle));
 });
 
 const template = fs.readFileSync(templateFile, 'utf8')
-  .replace('{{BOOK_ID}}', path.basename(outputFile, '.html'))
+  .replace('{{BOOK_ID}}', bookId)
+  .replaceAll('{{BOOK_TITLE}}', bookTitle)
   .replace('{{GLOBAL_TITLES}}', JSON.stringify(globalTitles))
   .replace('{{GLOBAL_SEARCH_INDEX}}', JSON.stringify(globalSearch))
-  .replace('{{VOL_MAP}}', JSON.stringify(new Array(files.length).fill(1)))
-  .replace('{{VOL_FILES}}', JSON.stringify({ 1: path.basename(outputFile) }))
-  .replace('{{CURRENT_VOL}}', 1)
-  .replace('{{LOCAL_START_IDX}}', 0)
   .replace('{{LOCAL_B64_CHAPTERS}}', JSON.stringify(b64Chapters));
 
 fs.writeFileSync(outputFile, template);

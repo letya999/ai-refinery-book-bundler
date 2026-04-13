@@ -77,8 +77,9 @@ function styleFirstPara(html) {
  * @param {string} title - chapter title
  * @param {number} totalChapters - total number of chapters (for nav script)
  * @param {string} globalCSS - CSS to inject when chapter has no own styles
+ * @param {string} bookTitle - book title for the kicker line (optional)
  */
-function prepareChapter(html, index, title, totalChapters, globalCSS = '') {
+function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookTitle = '') {
   let content = html;
 
   // Whether chapter already ships its own <style> block(s)
@@ -143,10 +144,11 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '') {
       if (h1Match) clean = clean.replace(h1Match[0], '');
       if (leadMatch) clean = clean.replace(leadMatch[0], '');
 
+      const kicker = bookTitle ? `${bookTitle} • Глава ${index + 1}` : `Глава ${index + 1}`;
       bodyContent = `
 <main class="wrap">
   <section class="hero">
-    <div class="kicker">Методология P3.express • Глава ${index + 1}</div>
+    <div class="kicker">${kicker}</div>
     <h1>${h1}</h1>
     <p class="lead">${lead}</p>
   </section>
