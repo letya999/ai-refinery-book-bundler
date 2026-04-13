@@ -19,13 +19,12 @@ html,body{height:100%;background:radial-gradient(circle at 85% -20%,#2e5e9d 0,#1
 .brand p{font-size:12px;color:var(--muted)}
 .search-box{padding:10px;border-bottom:1px solid #223258}
 .search-box input{width:100%;padding:8px;background:#0c1831;border:1px solid #3f66a6;color:#fff;border-radius:6px;outline:none}
-.search-box input:focus{border-color:var(--acc);box-shadow:0 0 5px rgba(114,216,255,0.3)}
-.list{padding:10px;display:grid;gap:8px;overflow:auto}
-.ch{all:unset;cursor:pointer;padding:10px 12px;border-radius:10px;border:1px solid #3f66a6;background:rgba(17,31,57,.72);font-size:13px;line-height:1.35;color:#dce9ff;transition:0.2s;display:flex;flex-direction:column}
+.list{padding:10px;display:grid;gap:8px;overflow:auto;flex:1}
+.ch{all:unset;cursor:pointer;padding:10px 12px;border-radius:10px;border:1px solid #3f66a6;background:rgba(17,31,57,.72);font-size:13px;line-height:1.35;color:#dce9ff;transition:0.2s}
 .ch:hover, .ch.focused{border-color:var(--acc);background:rgba(25,45,82,0.8)}
 .ch.on{background:linear-gradient(135deg,rgba(114,216,255,.2),rgba(135,239,201,.14));border-color:var(--acc)}
-.ch b{color:#fff;font-weight:700;margin-bottom:2px}
-.ch .match{font-size:10px;color:var(--acc2);margin-top:4px}
+.ch b{display:block;margin-bottom:2px;color:#fff}
+.ch i{display:block;font-size:11px;color:var(--acc2);font-style:normal;margin-top:4px}
 .foot{margin-top:auto;padding:10px;border-top:1px solid #223258;color:var(--muted);font-size:12px}
 .main{display:flex;flex-direction:column;min-width:0;background:rgba(8,20,35,0.4)}
 .top{height:48px;flex-shrink:0;border-bottom:1px solid #2c4d80;background:rgba(13,25,49,0.8);display:flex;align-items:center;gap:10px;padding:0 10px;backdrop-filter:blur(8px)}
@@ -35,233 +34,91 @@ html,body{height:100%;background:radial-gradient(circle at 85% -20%,#2e5e9d 0,#1
 .tt b{color:#fff;font-weight:700}
 .prog{height:4px;background:#234071;position:relative}
 .prog>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .25s}
-.frame{flex:1;min-height:0;view-transition-name: chapter-frame}
+.frame{flex:1;min-height:0}
 .frame iframe{width:100%;height:100%;border:none;background:#0c1831;display:block}
 .mob{display:inline-block}
 
-::view-transition-old(chapter-frame) { animation: 200ms cubic-bezier(0.4, 0, 1, 1) both fade-out; }
-::view-transition-new(chapter-frame) { animation: 300ms cubic-bezier(0, 0, 0.2, 1) both fade-in; }
-@keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
-
-@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
 @media (max-width:900px){
   .app{grid-template-columns:1fr}
   .side{position:fixed;left:0;top:0;bottom:0;width:86vw;max-width:320px;transform:translateX(-100%);transition:.25s;z-index:20;box-shadow:10px 0 30px rgba(0,0,0,.4)}
   .side.open{transform:translateX(0)}
-  .app.side-hide .side{display:flex}
 }
 </style>
-<script>
-const BookModules = {
-  logEvent: (action, chapterIndex) => {
-    try {
-        let events = JSON.parse(localStorage.getItem('book_analytics') || '[]');
-        events.push({ action, chapterIndex, time: Date.now() });
-        localStorage.setItem('book_analytics', JSON.stringify(events));
-    } catch(e) {}
-  },
-  saveBookmark: (chapterIndex) => {
-    try {
-        localStorage.setItem('book_last_chapter', String(chapterIndex));
-    } catch(e) {}
-  }
-};
-
-if (window.BOOK_DEV_MODE) {
-  const source = new EventSource('/events');
-  source.onmessage = (e) => {
-    if (e.data === 'reload') window.location.reload();
-  };
-}
-</script>
 </head>
 <body>
 <div class="stars"></div>
-<div class="app" role="application">
-  <aside class="side" id="side" role="navigation">
-    <div class="brand">
-      <h1>Интерактивная книга</h1>
-      <p>Ознакомительный фрагмент</p>
-    </div>
-    <div class="search-box">
-      <input type="text" id="search" placeholder="Поиск по книге..." aria-label="Поиск по содержимому" autocomplete="off">
-    </div>
-    <div class="list" id="list" role="listbox"></div>
-    <div class="foot">Навигация: главы, кнопки, клавиши ← → ↑ ↓ ↵</div>
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand"><h1>Интерактивная книга</h1><p>Версия 2.0</p></div>
+    <div class="search-box"><input type="text" id="search" placeholder="Поиск..."></div>
+    <div class="list" id="list"></div>
+    <div class="foot">← → навигация</div>
   </aside>
-
-  <main class="main" role="main">
+  <main class="main">
     <div class="top">
-      <button class="mob" id="menu" aria-label="Меню">☰</button>
-      <button id="prev" aria-label="Предыдущая глава">← Назад</button>
-      <button id="next" aria-label="Следующая глава">Вперед →</button>
-      <div class="tt" id="tt" aria-live="polite"></div>
+      <button id="menu">☰</button>
+      <button id="prev">←</button>
+      <button id="next">→</button>
+      <div class="tt" id="tt"></div>
     </div>
-    <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="bar"></i></div>
-    <div class="frame"><iframe id="fr" title="Содержимое главы"></iframe></div>
+    <div class="prog"><i id="bar"></i></div>
+    <div class="frame"><iframe id="fr" sandbox="allow-scripts allow-same-origin"></iframe></div>
   </main>
 </div>
-
 <script>
-const B64 = {{B64_CHAPTERS}};
-const T = {{TITLES}};
-const IDX = {{SEARCH_INDEX}};
-let cur = 0;
-let focusedIdx = -1;
-let curBlobUrl = null;
+  const B64 = {{B64_CHAPTERS}};
+  const T = {{TITLES}};
+  const IDX = {{SEARCH_INDEX}};
+  let cur = 0;
 
-const fr = document.getElementById('fr');
-const tt = document.getElementById('tt');
-const bar = document.getElementById('bar');
-const list = document.getElementById('list');
-const side = document.getElementById('side');
-const menu = document.getElementById('menu');
-const searchInput = document.getElementById('search');
-const app = document.querySelector('.app');
+  const fr = document.getElementById('fr'), tt = document.getElementById('tt'), bar = document.getElementById('bar'), list = document.getElementById('list'), searchInput = document.getElementById('search');
 
-menu.onclick = (e) => {
-  e.stopPropagation();
-  if (window.matchMedia('(max-width: 900px)').matches) {
-    side.classList.toggle('open');
-  } else {
-    app.classList.toggle('side-hide');
+  function decodeB64(b) { return decodeURIComponent(escape(atob(b))); }
+
+  function go(i, anchor = null) {
+    if (i < 0 || i >= B64.length) return;
+    cur = i;
+    fr.srcdoc = decodeB64(B64[i]);
+    
+    fr.onload = () => {
+      if (anchor) {
+        const el = fr.contentWindow.document.getElementById(anchor);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+      fr.contentWindow.focus();
+    };
+
+    tt.innerHTML = `<b>Глава ${i+1}</b> ${T[i]}`;
+    bar.style.width = ((i+1)/B64.length*100) + '%';
+    renderList(searchInput.value);
   }
-};
 
-function buildList(filter = '') {
-  list.innerHTML = '';
-  focusedIdx = -1;
-  T.forEach((t, i) => {
-    const contentMatch = filter && IDX[i] && IDX[i].includes(filter);
-    const titleMatch = filter && t.toLowerCase().includes(filter);
-    if (filter && !titleMatch && !contentMatch) return;
-    
-    const b = document.createElement('button');
-    b.className = 'ch';
-    b.dataset.i = i;
-    b.role = 'option';
-    b.setAttribute('aria-selected', i === cur);
-    
-    const label = document.createElement('b');
-    label.textContent = 'Глава ' + (i + 1);
-    const title = document.createElement('span');
-    title.textContent = t;
-    
-    b.appendChild(label);
-    b.appendChild(title);
-    
-    if (contentMatch && !titleMatch) {
-       const m = document.createElement('span');
-       m.className = 'match';
-       m.textContent = 'Совпадение в тексте';
-       b.appendChild(m);
-    }
-    
-    b.onclick = () => go(i, null, true);
-    if (i === cur) b.classList.add('on');
-    list.appendChild(b);
-  });
-}
-
-function updateFocus() {
-  const items = list.querySelectorAll('.ch');
-  items.forEach((item, idx) => {
-    item.classList.toggle('focused', idx === focusedIdx);
-    if (idx === focusedIdx) item.scrollIntoView({ block: 'nearest' });
-  });
-}
-
-let searchTimeout;
-searchInput.addEventListener('input', (e) => {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => buildList(e.target.value.toLowerCase()), 150);
-});
-
-searchInput.addEventListener('keydown', (e) => {
-  const items = list.querySelectorAll('.ch');
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    focusedIdx = Math.min(focusedIdx + 1, items.length - 1);
-    updateFocus();
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    focusedIdx = Math.max(focusedIdx - 1, 0);
-    updateFocus();
-  } else if (e.key === 'Enter' && focusedIdx !== -1) {
-    e.preventDefault();
-    items[focusedIdx].click();
+  function renderList(f = '') {
+    list.innerHTML = '';
+    f = f.toLowerCase();
+    T.forEach((t, i) => {
+      if (f && !t.toLowerCase().includes(f) && !IDX[i].includes(f)) return;
+      const b = document.createElement('button');
+      b.className = 'ch' + (i === cur ? ' on' : '');
+      b.innerHTML = `<b>Глава ${i+1}</b><i>${t}</i>`;
+      b.onclick = () => go(i);
+      list.appendChild(b);
+    });
   }
-});
 
-// High-speed DataURI to Blob conversion using native fetch
-async function base64ToBlob(b64) {
-  const response = await fetch(`data:text/html;charset=utf-8;base64,${b64}`);
-  return await response.blob();
-}
+  window.addEventListener('message', e => {
+    if (e.data && e.data.action === 'bookGo') go(e.data.chapterIdx, e.data.anchorId);
+  });
 
-async function go(i, anchor = null, close = false) {
-  if (i < 0 || i >= B64.length) return;
-  cur = i;
-
-  const switchLogic = async () => {
-    try {
-        if (curBlobUrl) URL.revokeObjectURL(curBlobUrl);
-        const blob = await base64ToBlob(B64[i]);
-        curBlobUrl = URL.createObjectURL(blob);
-        fr.onload = () => {
-          if (anchor) {
-            const el = fr.contentWindow.document.getElementById(anchor);
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }
-          fr.contentWindow.focus();
-        };
-        fr.src = curBlobUrl;
-    } catch(e) {
-        console.error('Ошибка:', e);
-        fr.srcdoc = '<div style="color:white;padding:20px">Ошибка загрузки.</div>';
-    }
-
-    tt.innerHTML = '';
-    const ttB = document.createElement('b');
-    ttB.textContent = 'Глава ' + (i + 1);
-    tt.appendChild(ttB);
-    tt.appendChild(document.createTextNode('\u2002' + T[i]));
-
-    const progress = ((i + 1) / B64.length * 100);
-    bar.style.width = progress + '%';
-    document.querySelector('.prog').setAttribute('aria-valuenow', Math.round(progress));
-    document.querySelectorAll('.ch').forEach(el => el.classList.toggle('on', Number(el.dataset.i) === i));
-    BookModules.saveBookmark(i);
-    if (close) side.classList.remove('open');
+  document.getElementById('menu').onclick = () => {
+    if (window.innerWidth <= 900) document.getElementById('side').classList.toggle('open');
+    else document.querySelector('.app').classList.toggle('side-hide');
   };
+  document.getElementById('prev').onclick = () => go(cur - 1);
+  document.getElementById('next').onclick = () => go(cur + 1);
+  searchInput.oninput = (e) => renderList(e.target.value);
 
-  if (document.startViewTransition) {
-    document.startViewTransition(() => switchLogic());
-  } else {
-    await switchLogic();
-  }
-}
-
-window.addEventListener('message', e => {
-  if (e.data && e.data.action === 'bookGo') go(e.data.chapterIdx, e.data.anchorId, true);
-});
-
-document.getElementById('prev').onclick = () => go(cur - 1);
-document.getElementById('next').onclick = () => go(cur + 1);
-
-window.addEventListener('keydown', e => {
-  if (e.key === 'ArrowLeft') go(cur - 1);
-  if (e.key === 'ArrowRight') go(cur + 1);
-  if (e.key === '/' && document.activeElement !== searchInput) {
-    e.preventDefault();
-    searchInput.focus();
-  }
-});
-
-buildList();
-const saved = Number(localStorage.getItem('book_last_chapter'));
-go(Number.isFinite(saved) ? saved : 0);
+  go(0);
 </script>
 </body>
 </html>
