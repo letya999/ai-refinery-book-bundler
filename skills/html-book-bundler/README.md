@@ -33,14 +33,13 @@ python scripts/ingest.py --input book.fb2 --output ./chapters
 
 ## Supported input formats
 
-| Format | Support |
-|--------|---------|
-| HTML chapters | Native (direct input to bundler) |
-| FB2 | Full (inline formatting, images, nested sections) |
-| FB2.ZIP | Full |
-| EPUB | Full (spine order, asset rewriting, nav skip) |
-| DOCX | Full (requires `pip install python-docx`) |
-| PDF | Via external OCR — see SKILL.md |
+| Format | Support | Tool |
+|--------|---------|------|
+| HTML chapters | Native | `bundle.cjs` |
+| FB2 / FB2.ZIP | Full | `ingest.py` |
+| EPUB | Full | `ingest.py` |
+| DOCX | Full | `ingest.py` (needs `python-docx`) |
+| PDF | Full | `pdf_parser_general.py` (needs `PyMuPDF`) |
 
 ## File structure
 
@@ -50,6 +49,8 @@ html-book-bundler/
     bundle.cjs              # Main bundler CLI
     chapter_processor.cjs   # Chapter enrichment pipeline
     ingest.py               # FB2/EPUB/DOCX ingester
+    pdf_parser_general.py   # Style-aware PDF extractor
+    extract_pdf_visuals.py  # Extracts images/tables from PDF
     lint_book.py            # Security and quality linter
     audit_single_file_html.py
     dev_server.cjs          # Live-reload dev server
@@ -64,13 +65,14 @@ html-book-bundler/
   tests/
     test_bundler.cjs        # 17 integration tests
   examples/
+    scripts/                # Template scripts for complex books
     chapter1.html           # Example chapters
     chapter2.html
     chapter3.html
     example-book.html       # Pre-built example output
   SKILL.md                  # Full documentation
   INPUT_SPEC.md             # Chapter HTML specification
-  requirements.txt          # Optional Python dependencies
+  requirements.txt          # Optional Python dependencies (PyMuPDF, python-docx)
   package.json
 ```
 

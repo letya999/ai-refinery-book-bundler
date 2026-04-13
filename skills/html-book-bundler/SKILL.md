@@ -96,15 +96,27 @@ python skills/html-book-bundler/scripts/ingest.py \
 
 Then run step 1.
 
-### 3. From PDF (via OCR)
-- Use Windows OCR (PowerShell) or any OCR tool to produce JSON of `[{page, text}, ...]`
-- Write a book-specific `convert_book.py` that:
-  - Defines chapter page ranges
-  - Splits pages into chapters, cleans OCR artifacts
-  - Calls `split_long_para()` at sentence boundaries every ~600 chars
-  - Adds per-chapter stats, callouts, and visual blocks (`CHAPTER_VISUALS` dict)
-  - Writes styled `chapterN.html` files with full CSS
-- Then run step 1
+### 3. From PDF (The "Cool Book" Workflow)
+
+Standard PDF-to-text tools often fail on complex layouts (running headers, multi-column text, sidebars). **Mandatory Rule:** If a book has unique visual "quirks" or complex structures, do NOT use a generic parser. Instead, create a dedicated converter script based on existing templates.
+
+#### Phase 0: PDF Intelligence & Extraction
+1. **Analyze Structure**: Run `pdf_parser_general.py --input book.pdf` to get a style-aware JSON of blocks and font sizes.
+2. **Identify "Quirks"**: Look for repeating headers (author name, site URL), page number patterns, and specific content types (e.g., "Letters to Greg" or "Business Case").
+3. **Choose Template**:
+   - For business/technical books (stats, timelines, grids): use `examples/scripts/template_business_pdf.py`.
+   - For lifestyle/narrative books (letters, callouts, myths): use `examples/scripts/template_lifestyle_pdf.py`.
+4. **Customize**: Modify the `IGNORE_PATTERNS` (RegEx) and `CHAPTER_VISUALS` mapping in your new script.
+5. **AI Verification Loop**: After generating chapters, perform a spot-check. Ask the AI:
+   *"Compare this generated chapter1.html with pages 5-10 of the original PDF. Are there missing headers, OCR artifacts, or layout breaks?"*
+
+```bash
+# Example: Using the general parser to bootstrap
+python skills/html-book-bundler/scripts/pdf_parser_general.py \
+  --input my_book.pdf \
+  --config my_config.json \
+  --output ./chapters
+```
 
 ### 4. Dev server (live-reload)
 ```bash
@@ -238,6 +250,29 @@ Pass `--lang <code>` to `bundle.cjs`. Falls back to `ru.json` if file not found.
 - navScript must map BOTH `chapterN.html` AND `NNN.html` (padded) patterns
 - `ingest.py` outputs `chapter1.html`; some EPUB spines use zero-padded names
 
-### Avoiding shell breakage
-- **CRITICAL**: When embedding chapter HTML strings inside a `<script>` block in the shell (e.g., via `JSON.stringify`), any occurrence of `</script>` will prematurely terminate the parent script.
-- **Solution**: Always escape `</script>` as `<\/script>` in chapter strings. This is valid in JS/JSON and invisible to the HTML parser of the shell. `chapter_processor.cjs` handles this systematically.
+## Visual Enrichment Workflow (Visual-First Standard)
+
+To make books more engaging, avoid "walls of text". The bundler supports a rich set of CSS-only components via `assets/theme.css`.
+
+### 1. The Visual Bank
+Refer to `references/visual-bank.md` for ready-to-use HTML snippets for:
+- **Stats Grid** (`.stats`, `.stat`): Use for Inputs/Outputs, key metrics, or "at a glance" summaries.
+- **Comparison Translator** (`.translator`): Use for Myth vs Reality, Good vs Bad, or Before vs After.
+- **Info Cards** (`.grid`, `.card`): Use for definitions, warnings (Red Flags), or key takeaways.
+- **Timeline** (`.vis-timeline`): Use for sequential steps, project phases, or cycles.
+- **Accordions** (`.acc-item`): Use for case studies, detailed examples, or FAQ.
+
+### 2. Implementation Strategy
+When writing a `convert_book.py` script:
+1. **Define a Mapping**: Create a `CHAPTER_VISUALS` dictionary mapping chapter indices to visual configurations.
+2. **Inject Semantically**:
+   - Chapter about Risks? Use `.translator` (Risk vs Mitigation).
+   - Chapter about Planning? Use `.vis-timeline` (Steps 1-N).
+   - Chapter introduction? Use `.stats` (Required inputs).
+3. **Automatic Conversion**: Use regex to detect bullet points or numbered lists and transform them into `.card` grids or `.vis-timeline` blocks.
+
+### 3. Visual Variety Rule
+Ensure no more than 3 consecutive chapters use the same visual type. Rotate between cards, stats, and translators to maintain reader engagement.
+
+### 4. Avoiding shell breakage
+... (existing content) ...

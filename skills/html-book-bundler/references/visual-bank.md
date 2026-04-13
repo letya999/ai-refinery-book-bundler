@@ -1,84 +1,99 @@
-# Standard Visualization Bank (Zero-Dependency)
+# Visual Bank: HTML Book Bundler Components
 
-A library of copy-pasteable, interactive diagrams for methodology and project management books. All components use pure SVG, CSS, and vanilla JS.
+Use these CSS-only components in your chapter HTML files to make the book more engaging. All classes are defined in `assets/theme.css`.
 
-## 1. Cause-and-Effect (Fishbone / Ishikawa)
-Ideal for root-cause analysis in management chapters.
-
-```html
-<svg width="100%" height="300" viewBox="0 0 600 300" class="fishbone">
-  <!-- Backbone -->
-  <line x1="50" y1="150" x2="550" y2="150" stroke="var(--line)" stroke-width="4" />
-  <polygon points="550,140 580,150 550,160" fill="var(--acc)" />
-  
-  <!-- Ribs (Top) -->
-  <g class="rib" onclick="showDetail('people')">
-    <line x1="150" y1="150" x2="250" y2="50" stroke="var(--muted)" stroke-width="2" />
-    <text x="220" y="40" fill="var(--text)" font-size="12">People</text>
-  </g>
-  <!-- Ribs (Bottom) -->
-  <g class="rib" onclick="showDetail('tools')">
-    <line x1="200" y1="150" x2="300" y2="250" stroke="var(--muted)" stroke-width="2" />
-    <text x="270" y="270" fill="var(--text)" font-size="12">Tools</text>
-  </g>
-</svg>
-```
-
-## 2. Methodology Gantt Chart (Timeline)
-Visualizing project phases without heavy libraries. Uses **CSS Grid**.
+## 1. Stats and Quick Info
+Perfect for "Inputs", "Outputs", or key metrics.
 
 ```html
-<div class="mini-gantt" style="display: grid; grid-template-columns: 100px repeat(4, 1fr); gap: 5px;">
-  <div class="gantt-label">Phase 1</div>
-  <div class="gantt-bar" style="grid-column: 2 / 4; background: var(--acc); border-radius: 4px;"></div>
-  <div class="gantt-empty"></div><div class="gantt-empty"></div>
-  
-  <div class="gantt-label">Phase 2</div>
-  <div class="gantt-empty"></div>
-  <div class="gantt-bar" style="grid-column: 3 / 6; background: var(--acc2); border-radius: 4px;"></div>
+<div class="stats">
+  <div class="stat">
+    <b class="stat-num">ВХОД</b>
+    <span class="stat-label">Устав проекта</span>
+  </div>
+  <div class="stat">
+    <b class="stat-num">ВЫХОД</b>
+    <span class="stat-label">План управления</span>
+  </div>
 </div>
 ```
 
-## 3. High-Fidelity Histogram
-For showing frequency of events or risk distribution.
+## 2. Comparison (Good vs Bad / Myth vs Reality)
+Ideal for contrasting approaches or clearing misconceptions.
 
 ```html
-<svg width="100%" height="150" viewBox="0 0 200 100">
-  <!-- X/Y Axes -->
-  <line x1="20" y1="10" x2="20" y2="90" stroke="var(--muted)" />
-  <line x1="20" y1="90" x2="190" y2="90" stroke="var(--muted)" />
-  
-  <!-- Bars -->
-  <rect x="30" y="40" width="20" height="50" fill="var(--acc)" class="bar-hover" />
-  <rect x="55" y="20" width="20" height="70" fill="var(--acc2)" class="bar-hover" />
-  <rect x="80" y="60" width="20" height="30" fill="var(--acc)" class="bar-hover" />
-</svg>
+<div class="translator">
+  <div class="tr-col bad">
+    <div class="tr-head bad">КАК НЕ НАДО</div>
+    <ul>
+      <li>Писать план для галочки</li>
+      <li>Скрывать риски от спонсора</li>
+    </ul>
+  </div>
+  <div class="tr-col good">
+    <div class="tr-head good">КАК ПРАВИЛЬНО</div>
+    <ul>
+      <li>План — это инструмент общения</li>
+      <li>Риски — это повод для маневра</li>
+    </ul>
+  </div>
+</div>
 ```
 
-## 4. Flowcharts & Logic Trees
-Using SVG `<path>` with `marker-end="url(#arrowhead)"` for directed graphs.
+## 3. Info Cards
+Use for definitions, key concepts, or "Red Flags".
 
 ```html
-<svg width="100%" height="200">
-  <defs>
-    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="var(--line)" />
-    </marker>
-  </defs>
-  <rect x="10" y="70" width="80" height="40" rx="5" fill="var(--panel)" stroke="var(--acc)" />
-  <path d="M 90 90 L 140 90" stroke="var(--line)" fill="none" marker-end="url(#arrowhead)" />
-  <rect x="150" y="70" width="80" height="40" rx="5" fill="var(--panel)" stroke="var(--acc2)" />
-</svg>
+<div class="grid">
+  <div class="card">
+    <b>УСТАВ</b>
+    <p>Документ, легитимизирующий власть менеджера проекта.</p>
+  </div>
+  <div class="card">
+    <b>СОДЕРЖАНИЕ</b>
+    <p>То, что ВХОДИТ и то, что НЕ ВХОДИТ в рамки работ.</p>
+  </div>
+</div>
 ```
 
-## 5. Radar / Spider Chart
-For multi-axis maturity assessment. Uses a single `<polygon>` with calculated points.
+## 4. Accordion (Expandable Content)
+Great for detailed examples or Q&A.
 
 ```html
-<svg width="200" height="200" viewBox="0 0 200 200">
-  <!-- Background Web -->
-  <circle cx="100" cy="100" r="80" fill="none" stroke="var(--line)" stroke-dasharray="4 4" />
-  <!-- Data Polygon -->
-  <polygon points="100,20 180,100 100,180 20,100" fill="rgba(114,216,255,0.3)" stroke="var(--acc)" stroke-width="2" />
-</svg>
+<div class="acc-item">
+  <div class="acc-head">Пример из практики (нажми, чтобы развернуть)</div>
+  <div class="acc-body">
+    <p>Здесь может быть длинный текст истории или детальный кейс...</p>
+  </div>
+</div>
+<script>
+// Logic handled by default.html shell, or add simple toggle:
+document.querySelectorAll('.acc-head').forEach(h => {
+  h.onclick = () => h.parentElement.classList.toggle('open');
+});
+</script>
+```
+
+## 5. Badges
+Small inline or block labels for status/types.
+
+```html
+<span class="badge">КРИТИЧНО</span>
+<span class="badge" style="border-color:var(--acc2);color:var(--acc2)">СОВЕТ</span>
+```
+
+## 6. Timeline / Steps
+(Custom CSS added to chapter)
+
+```html
+<div class="vis-timeline">
+  <div class="tl-step">
+    <div class="tl-num">1</div>
+    <div class="tl-content"><b>Инициация</b>: Подпишите устав.</div>
+  </div>
+  <div class="tl-step">
+    <div class="tl-num">2</div>
+    <div class="tl-content"><b>Планирование</b>: Соберите требования.</div>
+  </div>
+</div>
 ```
