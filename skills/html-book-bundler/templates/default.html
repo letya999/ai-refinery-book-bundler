@@ -1,174 +1,458 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{LANG_CODE}}" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; connect-src 'none';">
 <title>{{BOOK_TITLE}}</title>
 <style>
-:root { 
-  --bg: #081423; --panel: #0f1f38; --panel2: #163056; --line: #2c4d80; --text: #eef5ff; --muted: #adc2e1; --acc: #72d8ff; --acc2: #87efc9;
+/* ── Dark theme (default) ── */
+:root {
+  --bg: #081423; --panel: #0f1f38; --panel2: #163056; --line: #395f9d;
+  --txt: #eef5ff; --muted: #adc2e1; --acc: #72d8ff; --acc2: #87efc9; --warn: #ffd18a;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { 
-  height: 100%; background: radial-gradient(circle at 85% -20%, #2e5e9d 0, #152846 36%, #081423 72%); 
-  color: var(--text); font-family: "Trebuchet MS", "Segoe UI Variable", Tahoma, sans-serif; overflow: hidden; 
+/* ── Light theme ── */
+[data-theme="light"] {
+  --bg: #f0f4f8; --panel: #e4ecf5; --panel2: #d4e2ee; --line: #b0c8e0;
+  --txt: #1a2535; --muted: #4a6580; --acc: #1a7fc4; --acc2: #158060; --warn: #b07000;
 }
-.stars {
-  position: fixed; inset: 0; pointer-events: none;
-  background: radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
-              radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
-              radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0));
-  background-size: 200px 200px; animation: twinkle 5s infinite; opacity: 0.4; z-index: 0;
-}
-@keyframes twinkle { 0%, 100% { opacity: 0.2 } 50% { opacity: 0.5 } }
 
-.app { display: grid; grid-template-columns: 320px 1fr; height: 100vh; position: relative; z-index: 1; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: "Trebuchet MS", "Segoe UI Variable", Tahoma, sans-serif;
+  overflow: hidden;
+  transition: background .3s, color .3s;
+}
+
+[data-theme="dark"] body {
+  background: radial-gradient(circle at 85% -20%, #2e5e9d 0, #152846 36%, #081423 72%);
+}
+[data-theme="light"] body {
+  background: radial-gradient(circle at 85% -20%, #c8dff0 0, #e4ecf5 36%, #f0f4f8 72%);
+}
+
+/* ── Stars (dark only) ── */
+.stars {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 160px 90px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 130px 20px, #fff, rgba(0,0,0,0));
+  background-size: 200px 200px;
+  animation: twinkle 5s infinite;
+  opacity: 0.35;
+  transition: opacity .3s;
+}
+[data-theme="light"] .stars { opacity: 0; }
+@keyframes twinkle { 0%, 100% { opacity: .2; } 50% { opacity: .45; } }
+
+/* ── Layout ── */
+.app { display: grid; grid-template-columns: 300px 1fr; height: 100vh; position: relative; z-index: 1; }
 .app.side-hide { grid-template-columns: 1fr; }
 
+/* ── Sidebar ── */
 .side {
   border-right: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(15, 31, 56, 0.95), rgba(11, 22, 45, 0.98));
-  display: flex; flex-direction: column; backdrop-filter: blur(12px);
+  background: linear-gradient(180deg, rgba(15,31,56,.95), rgba(11,22,45,.98));
+  display: flex; flex-direction: column;
   height: 100vh; overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition: background .3s;
+}
+[data-theme="light"] .side {
+  background: linear-gradient(180deg, rgba(228,236,245,.97), rgba(212,226,240,.99));
 }
 .app.side-hide .side { display: none; }
 
-.brand { padding: 24px 20px; border-bottom: 1px solid var(--line); }
-.brand h1 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-.brand p { font-size: 12px; color: var(--muted); }
+.brand { padding: 20px 18px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.brand h1 { font-size: 16px; font-weight: 800; color: var(--txt); margin-bottom: 3px; line-height: 1.3; }
+.brand p  { font-size: 11px; color: var(--muted); }
 
-.search-box { padding: 12px; border-bottom: 1px solid var(--line); }
-.search-box input { 
-  width: 100%; padding: 12px; background: #0c1831; border: 1px solid #3f66a6; 
-  color: #fff; border-radius: 10px; font-size: 14px; outline: none; transition: 0.2s;
+.search-box { padding: 10px 12px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.search-box input {
+  width: 100%; padding: 10px 12px;
+  background: rgba(12,24,49,.7); border: 1px solid var(--line);
+  color: var(--txt); border-radius: 10px; font-size: 13px; outline: none; transition: .2s;
 }
-.search-box input:focus { border-color: var(--acc); background: #12244a; }
+[data-theme="light"] .search-box input { background: rgba(255,255,255,.7); }
+.search-box input:focus { border-color: var(--acc); background: rgba(18,36,74,.8); }
+[data-theme="light"] .search-box input:focus { background: #fff; }
 
-.list { flex: 1; overflow-y: auto; padding: 10px; display: grid; gap: 8px; align-content: start; }
-.ch { 
-  all: unset; cursor: pointer; padding: 14px 16px; border-radius: 12px; 
-  border: 1px solid #3f66a6; background: rgba(17, 31, 57, .72); 
-  font-size: 14px; line-height: 1.4; color: #dce9ff; transition: 0.2s;
+/* ── Bookmarks panel ── */
+.bm-panel { flex-shrink: 0; border-bottom: 1px solid var(--line); }
+.bm-panel details summary {
+  padding: 8px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted); cursor: pointer; user-select: none; font-weight: 700;
+  list-style: none; display: flex; align-items: center; justify-content: space-between;
 }
-.ch:hover { border-color: var(--acc); background: rgba(22, 48, 86, .8); }
-.ch.on { 
-  background: linear-gradient(135deg, rgba(114, 216, 255, .2), rgba(135, 239, 201, .14)); 
-  border-color: var(--acc); color: #fff; font-weight: 700; 
+.bm-panel details summary::after { content: '▸'; font-size: 9px; }
+.bm-panel details[open] summary::after { content: '▾'; }
+.bm-panel details summary::marker { display: none; content: ''; }
+.bm-list { padding: 6px 12px 10px; display: grid; gap: 4px; }
+.bm-item {
+  all: unset; cursor: pointer; padding: 7px 10px; border-radius: 8px;
+  border: 1px solid rgba(255,209,138,.25); background: rgba(255,209,138,.05);
+  font-size: 12px; color: var(--warn); transition: .15s; display: block;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.ch b { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--acc); margin-bottom: 4px; }
+.bm-item:hover { background: rgba(255,209,138,.12); border-color: var(--warn); }
+.bm-empty { padding: 8px 10px; font-size: 11px; color: var(--muted); font-style: italic; }
 
-.main { display: flex; flex-direction: column; min-width: 0; background: rgba(8, 20, 35, 0.2); position: relative; }
-.top { 
-  height: 60px; border-bottom: 1px solid var(--line); background: rgba(13, 25, 49, 0.9); 
-  display: flex; align-items: center; gap: 12px; padding: 0 16px; backdrop-filter: blur(10px); z-index: 10;
+/* ── Chapter list ── */
+.list { flex: 1; overflow-y: auto; padding: 8px; display: grid; gap: 6px; align-content: start; }
+.ch {
+  all: unset; cursor: pointer; padding: 12px 14px; border-radius: 11px;
+  border: 1px solid var(--line); background: rgba(17,31,57,.65);
+  font-size: 13px; line-height: 1.4; color: var(--txt); transition: .18s;
+  display: block; position: relative;
 }
-.top button { 
-  all: unset; cursor: pointer; padding: 8px 14px; border: 1px solid #456fb0; 
-  border-radius: 10px; color: #d6e7ff; font-size: 13px; font-weight: 600; transition: 0.2s;
+[data-theme="light"] .ch { background: rgba(228,236,245,.7); }
+.ch:hover { border-color: var(--acc); background: rgba(22,48,86,.75); }
+[data-theme="light"] .ch:hover { background: rgba(200,220,240,.9); }
+.ch.on {
+  background: linear-gradient(135deg, rgba(114,216,255,.2), rgba(135,239,201,.14));
+  border-color: var(--acc); font-weight: 700;
 }
-.top button:hover { border-color: var(--acc); color: #fff; background: rgba(22, 48, 86, .5); }
-.tt { font-size: 14px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; font-weight: 500; }
-.tt i { font-style: normal; color: var(--muted); margin-right: 8px; }
+[data-theme="light"] .ch.on { background: linear-gradient(135deg, rgba(26,127,196,.12), rgba(21,128,96,.08)); }
+.ch b { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--acc); margin-bottom: 3px; }
+.ch .bm-star { position: absolute; top: 10px; right: 10px; font-size: 12px; color: var(--warn); }
 
-.prog { height: 4px; background: #234071; position: relative; z-index: 10; }
-.prog i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--acc), var(--acc2)); transition: width .3s; }
+/* ── Main content ── */
+.main { display: flex; flex-direction: column; min-width: 0; position: relative; }
 
+.top {
+  height: 54px; border-bottom: 1px solid var(--line);
+  background: rgba(13,25,49,.88); backdrop-filter: blur(10px);
+  display: flex; align-items: center; gap: 8px; padding: 0 12px; z-index: 10;
+  flex-shrink: 0; transition: background .3s;
+}
+[data-theme="light"] .top { background: rgba(240,244,248,.92); }
+
+.top button {
+  all: unset; cursor: pointer; padding: 6px 12px; border: 1px solid var(--line);
+  border-radius: 9px; color: var(--txt); font-size: 12px; font-weight: 600;
+  transition: .18s; white-space: nowrap; flex-shrink: 0;
+}
+.top button:hover { border-color: var(--acc); background: rgba(22,48,86,.45); }
+[data-theme="light"] .top button:hover { background: rgba(26,127,196,.1); }
+
+.tt { font-size: 13px; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; font-weight: 500; min-width: 0; }
+.tt i { font-style: normal; color: var(--muted); margin-right: 6px; }
+
+/* ── Progress bar ── */
+.prog { height: 3px; background: rgba(57,95,157,.4); position: relative; z-index: 10; flex-shrink: 0; }
+.prog i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--acc), var(--acc2)); transition: width .4s; }
+
+/* ── Reader frame ── */
 .frame { flex: 1; min-height: 0; position: relative; view-transition-name: chapter-frame; }
-iframe { width: 100%; height: 100%; border: none; background: #0c1831; display: block; }
+iframe { width: 100%; height: 100%; border: none; background: transparent; display: block; }
 
-@media (max-width: 900px) {
+/* ── Mobile ── */
+@media (max-width: 860px) {
   .app { grid-template-columns: 1fr; }
-  .side { position: fixed; inset: 0 0 0 -100%; width: 85vw; max-width: 320px; transition: 0.3s; z-index: 100; box-shadow: 20px 0 40px rgba(0,0,0,.5); }
+  .side {
+    position: fixed; left: -100%; width: min(85vw, 300px);
+    inset-block: 0; transition: left .28s ease; z-index: 100;
+    box-shadow: 20px 0 40px rgba(0,0,0,.4);
+  }
   .side.open { left: 0; }
+  .side-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4);
+    z-index: 99; backdrop-filter: blur(2px);
+  }
+  .side.open ~ .side-overlay { display: block; }
 }
 
-::view-transition-old(chapter-frame) { animation: 150ms cubic-bezier(0.4, 0, 1, 1) both fade-out; }
-::view-transition-new(chapter-frame) { animation: 250ms cubic-bezier(0, 0, 0.2, 1) both fade-in; }
-@keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+/* ── View transitions ── */
+::view-transition-old(chapter-frame) { animation: 120ms ease both fade-out; }
+::view-transition-new(chapter-frame) { animation: 220ms ease both fade-in; }
+@keyframes fade-in  { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 </style>
 </head>
 <body>
-<div class="stars"></div>
+<div class="stars" aria-hidden="true"></div>
+<div class="side-overlay" id="overlay"></div>
+
 <div class="app" id="app">
   <aside class="side" id="side">
-    <div class="brand"><h1 id="book-title">{{BOOK_TITLE}}</h1><p id="vol-info">Загрузка...</p></div>
-    <div class="search-box"><input type="text" id="search" placeholder="Поиск по книге..."></div>
+    <div class="brand">
+      <h1 id="book-title">{{BOOK_TITLE}}</h1>
+      <p id="vol-info"></p>
+    </div>
+    <div class="search-box">
+      <input type="search" id="search" autocomplete="off">
+    </div>
+    <div class="bm-panel" id="bm-panel">
+      <details id="bm-details">
+        <summary id="bm-summary"></summary>
+        <div class="bm-list" id="bm-list"></div>
+      </details>
+    </div>
     <div class="list" id="list"></div>
   </aside>
+
   <main class="main">
     <div class="top">
-      <button id="menu-btn">☰</button>
-      <button id="prev-btn">← Назад</button>
-      <button id="next-btn">Вперед →</button>
+      <button id="menu-btn" aria-label="Menu">☰</button>
+      <button id="prev-btn"></button>
+      <button id="next-btn"></button>
       <div class="tt" id="tt"></div>
+      <button id="bm-btn" title="Bookmark" style="font-size:16px"></button>
+      <button id="theme-btn" title="Toggle theme" style="font-size:16px"></button>
     </div>
     <div class="prog"><i id="bar"></i></div>
-    <div class="frame"><iframe id="fr" sandbox="allow-scripts allow-same-origin"></iframe></div>
+    <div class="frame">
+      <iframe id="fr" sandbox="allow-scripts allow-same-origin" title="Chapter content"></iframe>
+    </div>
   </main>
 </div>
 
+{{DEV_SCRIPT}}
+
 <script>
-  const BOOK_ID = "{{BOOK_ID}}", T = {{GLOBAL_TITLES}}, IDX = {{GLOBAL_SEARCH_INDEX}}, B64 = {{LOCAL_B64_CHAPTERS}};
-  let cur = 0, curBlobUrl = null;
-  const fr = document.getElementById('fr'), tt = document.getElementById('tt'), bar = document.getElementById('bar');
-  const side = document.getElementById('side'), searchInput = document.getElementById('search'), app = document.getElementById('app');
+(function() {
+  'use strict';
 
-  document.getElementById('menu-btn').onclick = (e) => {
-    e.stopPropagation();
-    if (window.innerWidth <= 900) side.classList.toggle('open'); else app.classList.toggle('side-hide');
-  };
+  // ── Data injected by bundler ──────────────────────────────────────────────
+  const BOOK_ID  = "{{BOOK_ID}}";
+  const LANG     = {{LANG_JSON}};
+  const T        = {{GLOBAL_TITLES}};
+  const CHAPTERS = {{LOCAL_CHAPTERS}};
+  const SIDX     = {{SEARCH_IDX}};
 
+  // ── DOM refs ──────────────────────────────────────────────────────────────
+  const fr       = document.getElementById('fr');
+  const tt       = document.getElementById('tt');
+  const bar      = document.getElementById('bar');
+  const side     = document.getElementById('side');
+  const overlay  = document.getElementById('overlay');
+  const searchEl = document.getElementById('search');
+  const app      = document.getElementById('app');
+  const bmBtn    = document.getElementById('bm-btn');
+  const bmList   = document.getElementById('bm-list');
+  const bmDetails = document.getElementById('bm-details');
+
+  let cur = 0;
+  let searchFilter = '';
+
+  // ── i18n helpers ─────────────────────────────────────────────────────────
+  document.getElementById('search').placeholder = LANG.search_placeholder;
+  document.getElementById('prev-btn').textContent = LANG.prev;
+  document.getElementById('next-btn').textContent = LANG.next;
+  document.getElementById('bm-summary').textContent = LANG.bookmarks_title;
+  document.getElementById('vol-info').textContent = LANG.total_chapters.replace('{n}', T.length);
+  document.documentElement.lang = LANG.code || 'ru';
+
+  // ── Theme ─────────────────────────────────────────────────────────────────
+  const themeBtn = document.getElementById('theme-btn');
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    themeBtn.textContent = t === 'dark' ? LANG.theme_to_light : LANG.theme_to_dark;
+    localStorage.setItem('theme_' + BOOK_ID, t);
+    // Propagate to iframe if loaded
+    try { fr.contentDocument.documentElement.setAttribute('data-theme', t); } catch(e) {}
+  }
+  const savedTheme = localStorage.getItem('theme_' + BOOK_ID)
+    || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  applyTheme(savedTheme);
+  themeBtn.onclick = () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+
+  // ── Bookmarks ─────────────────────────────────────────────────────────────
+  function getBookmarks() {
+    try { return JSON.parse(localStorage.getItem('bm_' + BOOK_ID) || '[]'); }
+    catch(e) { return []; }
+  }
+  function saveBookmarks(bm) {
+    localStorage.setItem('bm_' + BOOK_ID, JSON.stringify(bm));
+  }
+  function toggleBookmark() {
+    const bm = getBookmarks();
+    const idx = bm.indexOf(cur);
+    if (idx === -1) bm.push(cur); else bm.splice(idx, 1);
+    saveBookmarks(bm);
+    updateBookmarkBtn();
+    buildBookmarkList();
+    buildList(searchFilter); // refresh stars in chapter list
+  }
+  function updateBookmarkBtn() {
+    const bm = getBookmarks();
+    bmBtn.textContent = bm.includes(cur) ? LANG.bookmark_remove : LANG.bookmark_add;
+  }
+  function buildBookmarkList() {
+    const bm = getBookmarks();
+    bmList.innerHTML = '';
+    if (!bm.length) {
+      bmList.innerHTML = `<div class="bm-empty">${LANG.no_bookmarks}</div>`;
+      return;
+    }
+    bm.forEach(i => {
+      const btn = document.createElement('button');
+      btn.className = 'bm-item';
+      btn.textContent = `${LANG.chapter} ${i + 1} — ${T[i] || ''}`;
+      btn.onclick = () => { go(i); closeSidebarMobile(); };
+      bmList.appendChild(btn);
+    });
+  }
+  bmBtn.onclick = toggleBookmark;
+
+  // ── Search (inverted index) ───────────────────────────────────────────────
+  function searchChapters(query) {
+    const words = query.toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, '')
+      .split(/\s+/)
+      .filter(w => w.length > 1);
+    if (!words.length) return null; // null = show all
+
+    const wordSets = words.map(word => {
+      const hits = new Set();
+      for (const [key, indices] of Object.entries(SIDX)) {
+        if (key.startsWith(word)) indices.forEach(i => hits.add(i));
+      }
+      return hits;
+    });
+
+    // AND intersection
+    let result = wordSets[0];
+    for (let i = 1; i < wordSets.length; i++) {
+      result = new Set([...result].filter(x => wordSets[i].has(x)));
+    }
+    return result;
+  }
+
+  // ── Chapter navigation ────────────────────────────────────────────────────
   function go(i, anchor = null) {
     if (i < 0 || i >= T.length) return;
     cur = i;
-    const switchContent = () => {
-      const bin = atob(B64[i]), bytes = new Uint8Array(bin.length);
-      for (let j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
-      const blob = new Blob([bytes], { type: 'text/html;charset=utf-8' });
-      if (curBlobUrl) URL.revokeObjectURL(curBlobUrl);
-      curBlobUrl = URL.createObjectURL(blob);
-      
+
+    const doSwitch = () => {
       fr.onload = () => {
-        if (anchor) {
-          const el = fr.contentWindow.document.getElementById(anchor);
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        // Propagate theme to iframe
+        try { fr.contentDocument.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')); } catch(e) {}
+
+        // Restore scroll position
+        const savedRatio = parseFloat(localStorage.getItem('sc_' + BOOK_ID + '_' + i) || '0');
+        if (savedRatio > 0.005) {
+          try {
+            const maxY = fr.contentDocument.body.scrollHeight - fr.clientHeight;
+            if (maxY > 0) fr.contentWindow.scrollTo({ top: savedRatio * maxY, behavior: 'instant' });
+          } catch(e) {}
         }
+
+        // Navigate to anchor if specified
+        if (anchor) {
+          try {
+            const el = fr.contentDocument.getElementById(anchor);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          } catch(e) {}
+        }
+
+        // Save scroll position on scroll
+        try {
+          fr.contentWindow.addEventListener('scroll', () => {
+            try {
+              const maxY = fr.contentDocument.body.scrollHeight - fr.clientHeight;
+              if (maxY > 10) {
+                const ratio = fr.contentWindow.scrollY / maxY;
+                localStorage.setItem('sc_' + BOOK_ID + '_' + cur, ratio.toFixed(4));
+              }
+            } catch(e) {}
+          }, { passive: true });
+        } catch(e) {}
       };
-      fr.src = curBlobUrl;
-      tt.innerHTML = `<i>Глава ${i+1}</i> ${T[i]}`;
+
+      fr.srcdoc = CHAPTERS[i];
+
+      // Update UI
+      const chLabel = LANG.chapter_label.replace('{n}', i + 1);
+      tt.innerHTML = `<i>${chLabel}</i> ${T[i] || ''}`;
       bar.style.width = ((i + 1) / T.length * 100) + '%';
-      document.querySelectorAll('.ch').forEach(el => el.classList.toggle('on', Number(el.dataset.i) === i));
-      localStorage.setItem(`prog_${BOOK_ID}`, i);
+      document.querySelectorAll('.ch').forEach(el => el.classList.toggle('on', +el.dataset.i === i));
+      localStorage.setItem('prog_' + BOOK_ID, i);
+      updateBookmarkBtn();
     };
 
-    if (document.startViewTransition) document.startViewTransition(switchContent); else switchContent();
+    if (document.startViewTransition) {
+      document.startViewTransition(doSwitch);
+    } else {
+      doSwitch();
+    }
   }
 
-  function buildList(f = '') {
-    const list = document.getElementById('list'); list.innerHTML = '';
+  // ── Sidebar chapter list ──────────────────────────────────────────────────
+  function buildList(filter) {
+    searchFilter = filter || '';
+    const list = document.getElementById('list');
+    list.innerHTML = '';
+    const matchSet = filter ? searchChapters(filter.toLowerCase()) : null;
+    const bm = getBookmarks();
+
     T.forEach((t, i) => {
-      if (f && !t.toLowerCase().includes(f) && !(IDX[i] && IDX[i].includes(f))) return;
-      const b = document.createElement('button'); b.className = 'ch'; b.dataset.i = i;
-      b.innerHTML = `<b>Глава ${i+1}</b>${t}`;
-      b.onclick = () => { go(i); if (window.innerWidth <= 900) side.classList.remove('open'); };
-      if (i === cur) b.classList.add('on');
-      list.appendChild(b);
+      if (matchSet !== null && !matchSet.has(i)) return;
+      const btn = document.createElement('button');
+      btn.className = 'ch' + (i === cur ? ' on' : '');
+      btn.dataset.i = i;
+      const chLabel = LANG.chapter_label.replace('{n}', i + 1);
+      btn.innerHTML = `<b>${chLabel}</b>${t}${bm.includes(i) ? '<span class="bm-star">★</span>' : ''}`;
+      btn.onclick = () => { go(i); closeSidebarMobile(); };
+      list.appendChild(btn);
     });
+
+    if (matchSet !== null && matchSet.size === 0) {
+      list.innerHTML = `<div style="padding:16px;color:var(--muted);font-size:13px;text-align:center">—</div>`;
+    }
   }
 
-  window.addEventListener('message', e => { if (e.data.action === 'bookGo') go(e.data.chapterIdx, e.data.anchorId); });
+  // ── Mobile sidebar ────────────────────────────────────────────────────────
+  function closeSidebarMobile() {
+    if (window.innerWidth <= 860) side.classList.remove('open');
+  }
+
+  document.getElementById('menu-btn').onclick = e => {
+    e.stopPropagation();
+    if (window.innerWidth <= 860) {
+      side.classList.toggle('open');
+    } else {
+      app.classList.toggle('side-hide');
+    }
+  };
+  overlay.onclick = () => side.classList.remove('open');
+
+  // ── Keyboard navigation ───────────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.target === searchEl) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
+  });
+
+  // ── postMessage bridge (from iframe to shell) ─────────────────────────────
+  window.addEventListener('message', e => {
+    if (e.data && e.data.action === 'bookGo') go(e.data.chapterIdx, e.data.anchorId);
+  });
+
+  // ── Wire up buttons ───────────────────────────────────────────────────────
   document.getElementById('prev-btn').onclick = () => go(cur - 1);
   document.getElementById('next-btn').onclick = () => go(cur + 1);
-  searchInput.oninput = (e) => buildList(e.target.value.toLowerCase());
-  
-  document.getElementById('vol-info').textContent = `Всего ${T.length} глав`;
-  buildList();
-  go(parseInt(localStorage.getItem(`prog_${BOOK_ID}`)) || 0);
+  searchEl.oninput = e => buildList(e.target.value);
+
+  // ── Initial render ────────────────────────────────────────────────────────
+  buildBookmarkList();
+  buildList('');
+  const saved = parseInt(localStorage.getItem('prog_' + BOOK_ID) || '0', 10);
+  go(isNaN(saved) || saved >= T.length ? 0 : saved);
+
+})();
 </script>
 </body>
 </html>

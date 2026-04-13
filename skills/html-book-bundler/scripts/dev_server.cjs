@@ -29,8 +29,9 @@ const server = http.createServer((req, res) => {
         if (!fs.existsSync(outputFile)) rebuild();
         if (fs.existsSync(outputFile)) {
             let content = fs.readFileSync(outputFile, 'utf8');
-            const devInjected = '<script>window.BOOK_DEV_MODE = true;</script>';
-            content = content.replace('</head>', devInjected + '</head>');
+            // Inject live-reload: EventSource listener that reloads on rebuild signal
+            const devInjected = '<script>(function(){var es=new EventSource("/events");es.onmessage=function(){location.reload()};es.onerror=function(){es.close();setTimeout(function(){location.reload()},1500)}})();</script>';
+            content = content.replace('</body>', devInjected + '</body>');
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(content);
         } else {

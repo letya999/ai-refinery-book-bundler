@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5. A01: Назначить спонсора</title>
+</head>
+<body>
+<main class="wrap">
+
+  <section class="hero">
+    <div class="kicker">Роли в проекте • Глава 5</div>
+    <h1>A01 — Назначить спонсора</h1>
+    <p class="lead">Спонсор — это не «банкомат». Это самый высокопоставленный защитник проекта, единственный, кто может пробить внешние барьеры организации.</p>
+    <div class="stats">
+      <div class="stat"><b>×2.5</b><span>Выше шанс успеха с активным спонсором</span></div>
+      <div class="stat"><b>62%</b><span>Провалов — из-за слабого спонсора</span></div>
+      <div class="stat"><b>A01</b><span>Первый шаг запуска — без исключений</span></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Власть vs Управление: схема ролей</h2>
+    <p>Менеджер управляет процессом изнутри. Спонсор защищает проект снаружи — на уровне организации. Разница не в должности, а в полномочиях.</p>
+
+    <div class="canvas-wrap">
+      <canvas id="role-viz" width="860" height="380"></canvas>
+      <div class="caption">Кликните на роль, чтобы увидеть её обязанности в проекте.</div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Спонсор vs Менеджер: кто за что?</h2>
+    <div class="translator">
+      <div class="tr-col">
+        <div class="tr-head" style="color:var(--acc);">Спонсор</div>
+        <ul>
+          <li>Обеспечивает бюджет и ресурсы</li>
+          <li>Разрешает политические конфликты</li>
+          <li>Принимает решения выше уровня PM</li>
+          <li>Утверждает изменения масштаба</li>
+          <li>Представляет проект топ-менеджменту</li>
+        </ul>
+      </div>
+      <div class="tr-col">
+        <div class="tr-head" style="color:var(--acc2);">Менеджер проекта</div>
+        <ul>
+          <li>Ведёт ежедневный цикл P3.express</li>
+          <li>Управляет командой и задачами</li>
+          <li>Ведёт реестры рисков и проблем</li>
+          <li>Эскалирует нерешаемое к спонсору</li>
+          <li>Отчитывается перед спонсором</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Хороший vs плохой спонсор</h2>
+    <div class="grid">
+      <div class="card">
+        <b style="color:var(--acc2);">Хороший</b>
+        <h3>Присутствует</h3>
+        <p>Бывает на ключевых встречах, читает недельный отчёт, доступен для эскалаций в течение 24 часов.</p>
+      </div>
+      <div class="card">
+        <b style="color:var(--acc2);">Хороший</b>
+        <h3>Решает</h3>
+        <p>Не откладывает решения. Понимает: промедление — это тоже решение, и обычно плохое.</p>
+      </div>
+      <div class="card">
+        <b style="color:var(--acc2);">Хороший</b>
+        <h3>Защищает</h3>
+        <p>Сам звонит юристам, не просит менеджера «как-то договориться». Пробивает стены.</p>
+      </div>
+      <div class="card">
+        <b style="color:var(--bad);">Плохой</b>
+        <h3>«Занят»</h3>
+        <p>Не читает отчёты, не приходит на встречи. Проект управляет им, а не он проектом.</p>
+      </div>
+      <div class="card">
+        <b style="color:var(--bad);">Плохой</b>
+        <h3>Делегирует всё</h3>
+        <p>«Вы профессионалы, решайте сами». Теряет контекст на второй неделе. Помощник всё фильтрует.</p>
+      </div>
+      <div class="card">
+        <b style="color:var(--bad);">Плохой</b>
+        <h3>Меняет приоритеты</h3>
+        <p>Каждую неделю новая «стратегия». Команда перегружена, план неактуален, доверие убито.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Как назначить правильно</h2>
+    <div id="steps-acc"></div>
+    <blockquote>Если вы не можете ответить на вопрос «кто ваш спонсор?» за 3 секунды — у вашего проекта нет спонсора.</blockquote>
+  </section>
+
+  <section class="sec">
+    <h2>Индикатор вовлечённости спонсора</h2>
+    <div class="canvas-wrap">
+      <canvas id="engagement-viz" width="860" height="260"></canvas>
+      <div class="caption">Интерактив: оцените своего спонсора по трём параметрам — нажмите на метку.</div>
+    </div>
+  </section>
+
+</main>
+<script>
+// === Role power diagram ===
+(function() {
+  const cv = document.getElementById('role-viz');
+  const ctx = cv.getContext('2d');
+  let active = null;
+
+  const roles = [
+    { id: 'sponsor',     label: 'СПОНСОР',       x: 430, y: 75,  r: 52, color: '#72d8ff',
+      info: 'Высшая власть над проектом. Назначает менеджера, утверждает бюджет, пробивает политические барьеры. Отвечает перед советом директоров за бизнес-результат.' },
+    { id: 'pm',          label: 'PM',             x: 430, y: 205, r: 44, color: '#87efc9',
+      info: 'Операционное управление. Ведёт ежедневный цикл, управляет командой, эскалирует к спонсору только нерешаемые проблемы.' },
+    { id: 'team',        label: 'КОМАНДА',        x: 430, y: 320, r: 36, color: '#ffd18a',
+      info: 'Исполнители работ. Участвуют в планировании, ведут задачи, сигнализируют о проблемах менеджеру проекта.' },
+    { id: 'external',    label: 'ВНЕШНИЕ',        x: 160, y: 195, r: 34, color: '#adc2e1',
+      info: 'Юристы, бухгалтерия, поставщики, регуляторы. Спонсор управляет ими на организационном уровне, снимая барьеры.' },
+    { id: 'stakeholders',label: 'СТЕЙКХОЛДЕРЫ',  x: 700, y: 195, r: 34, color: '#adc2e1',
+      info: 'Все, кого затрагивает проект: клиенты, топ-менеджмент соседних отделов, конечные пользователи.' },
+  ];
+
+  const lines = [
+    { from: 0, to: 1, label: 'делегирует управление', color: '#72d8ff' },
+    { from: 1, to: 2, label: 'ставит задачи',          color: '#87efc9' },
+    { from: 0, to: 3, label: 'блокирует барьеры',      color: '#adc2e1' },
+    { from: 0, to: 4, label: 'представляет проект',    color: '#adc2e1' },
+  ];
+
+  function draw() {
+    ctx.clearRect(0, 0, 860, 380);
+    ctx.fillStyle = 'rgba(8,20,35,0.85)'; ctx.fillRect(0, 0, 860, 380);
+    ctx.strokeStyle = 'rgba(57,95,157,0.15)'; ctx.lineWidth = 1;
+    for (let x=0; x<860; x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,380); ctx.stroke(); }
+    for (let y=0; y<380; y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(860,y); ctx.stroke(); }
+
+    // Connections
+    lines.forEach(line => {
+      const f = roles[line.from], t = roles[line.to];
+      ctx.strokeStyle = line.color + '70'; ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath(); ctx.moveTo(f.x, f.y); ctx.lineTo(t.x, t.y); ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // Roles
+    roles.forEach(role => {
+      const isActive = active === role.id;
+      if (isActive) { ctx.shadowColor = role.color; ctx.shadowBlur = 18; }
+      ctx.fillStyle = isActive ? role.color + '38' : 'rgba(15,31,56,0.9)';
+      ctx.strokeStyle = isActive ? role.color : role.color + '90';
+      ctx.lineWidth = isActive ? 3 : 2;
+      ctx.beginPath(); ctx.arc(role.x, role.y, role.r, 0, Math.PI*2);
+      ctx.fill(); ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = isActive ? '#fff' : role.color;
+      const fs = role.label.length > 6 ? 10 : 12;
+      ctx.font = `bold ${fs}px sans-serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(role.label, role.x, role.y);
+    });
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+
+    // Info or hint
+    if (active) {
+      const role = roles.find(r => r.id === active);
+      ctx.fillStyle = 'rgba(12,24,48,0.96)'; ctx.strokeStyle = role.color; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.roundRect(10, 305, 840, 66, 8); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = role.color; ctx.font = 'bold 12px sans-serif';
+      ctx.fillText(role.label + ': ', 18, 325);
+      const offset = ctx.measureText(role.label + ': ').width + 18;
+      ctx.fillStyle = '#dce9ff'; ctx.font = '13px sans-serif';
+      let wx = offset, wy = 325;
+      role.info.split(' ').forEach(word => {
+        if (wx + ctx.measureText(word + ' ').width > 845) { wx = 18; wy += 18; }
+        ctx.fillText(word + ' ', wx, wy); wx += ctx.measureText(word + ' ').width;
+      });
+    } else {
+      ctx.fillStyle = '#adc2e1'; ctx.font = '13px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('Нажмите на роль, чтобы увидеть обязанности', 430, 365);
+      ctx.textAlign = 'left';
+    }
+  }
+
+  cv.style.cursor = 'pointer';
+  cv.onclick = (e) => {
+    const rect = cv.getBoundingClientRect();
+    const sx = cv.width / rect.width, sy = cv.height / rect.height;
+    const mx = (e.clientX - rect.left) * sx, my = (e.clientY - rect.top) * sy;
+    const hit = roles.find(r => Math.hypot(mx - r.x, my - r.y) < r.r);
+    active = hit ? (active === hit.id ? null : hit.id) : null;
+    draw();
+  };
+  draw();
+})();
+
+// === Steps accordion ===
+(function() {
+  const steps = [
+    { t: '1. Определите кандидата',    b: 'Спонсор — это тот, кто имеет полномочий достаточно для защиты проекта. Обычно директор или выше, заинтересованный в результате.' },
+    { t: '2. Проведите разговор',       b: 'Недостаточно «назначить» — нужно, чтобы человек понял и принял роль. Обсудите: что ожидается, сколько времени, как работает эскалация.' },
+    { t: '3. Задокументируйте',         b: 'Имя спонсора должно быть в Project Charter. Это не формальность — это якорь ответственности для всей команды и стейкхолдеров.' },
+    { t: '4. Настройте коммуникацию',  b: 'Как часто? В каком формате? Оптимально: короткий еженедельный отчёт + канал экстренной эскалации. Договоритесь заранее.' },
+    { t: '5. Согласуйте красные линии', b: 'Что эскалируется немедленно? Превышение бюджета? Срыв вехи? Потеря ключевого человека? Список должен быть у обоих участников.' },
+  ];
+  const c = document.getElementById('steps-acc');
+  steps.forEach(step => {
+    const el = document.createElement('div');
+    el.className = 'acc-item';
+    el.innerHTML = `<div class="acc-head">${step.t}</div><div class="acc-body"><p>${step.b}</p></div>`;
+    el.querySelector('.acc-head').onclick = () => el.classList.toggle('open');
+    c.appendChild(el);
+  });
+})();
+
+// === Engagement radar ===
+(function() {
+  const cv = document.getElementById('engagement-viz');
+  const ctx = cv.getContext('2d');
+  const W = 860, H = 260;
+  const cx = W / 2, cy = H / 2, R = 100;
+
+  const axes = [
+    { label: 'Присутствие',  angle: -Math.PI/2 },
+    { label: 'Решительность',angle: -Math.PI/2 + 2*Math.PI/3 },
+    { label: 'Защита',       angle: -Math.PI/2 + 4*Math.PI/3 },
+  ];
+
+  let scores = [3, 3, 3];
+  let dragging = null;
+
+  function ptOnAxis(idx, val) {
+    const a = axes[idx].angle;
+    const r = (val / 5) * R;
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Rings
+    for (let r = 1; r <= 5; r++) {
+      ctx.strokeStyle = 'rgba(57,95,157,0.3)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      axes.forEach((ax, i) => {
+        const pt = { x: cx + (r/5)*R*Math.cos(ax.angle), y: cy + (r/5)*R*Math.sin(ax.angle) };
+        i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.closePath(); ctx.stroke();
+    }
+
+    // Axis lines + labels
+    axes.forEach((ax, i) => {
+      const end = { x: cx + (R+16)*Math.cos(ax.angle), y: cy + (R+16)*Math.sin(ax.angle) };
+      ctx.strokeStyle = '#395f9d'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(end.x, end.y); ctx.stroke();
+      ctx.fillStyle = '#adc2e1'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(ax.label, cx + (R+36)*Math.cos(ax.angle), cy + (R+36)*Math.sin(ax.angle));
+    });
+
+    // Score area
+    const color = scores.reduce((s,v)=>s+v,0)/3 >= 3.5 ? '#87efc9' : scores.reduce((s,v)=>s+v,0)/3 >= 2 ? '#ffd18a' : '#ff8f8f';
+    ctx.fillStyle = color + '30'; ctx.strokeStyle = color; ctx.lineWidth = 2;
+    ctx.beginPath();
+    axes.forEach((ax, i) => {
+      const pt = ptOnAxis(i, scores[i]);
+      i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+    });
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+
+    // Handle points
+    axes.forEach((ax, i) => {
+      const pt = ptOnAxis(i, scores[i]);
+      ctx.fillStyle = dragging === i ? '#fff' : color;
+      ctx.strokeStyle = '#081423'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, 8, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#081423'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(scores[i], pt.x, pt.y);
+    });
+
+    // Score summary
+    const avg = (scores.reduce((s,v)=>s+v,0)/3).toFixed(1);
+    const status = avg >= 3.5 ? 'Сильный спонсор' : avg >= 2 ? 'Слабый спонсор' : 'Критический дефицит';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = color; ctx.font = 'bold 16px sans-serif';
+    ctx.fillText(avg + ' / 5 — ' + status, W/2, H - 10);
+    ctx.textAlign = 'left';
+  }
+
+  function getScore(axIdx, mx, my) {
+    const ax = axes[axIdx];
+    const dx = mx - cx, dy = my - cy;
+    const axLen = Math.cos(ax.angle)*dx + Math.sin(ax.angle)*dy;
+    return Math.min(5, Math.max(1, Math.round((axLen / R) * 5)));
+  }
+
+  cv.style.cursor = 'pointer';
+  cv.addEventListener('mousedown', e => {
+    const rect = cv.getBoundingClientRect();
+    const mx = (e.clientX-rect.left)*(W/rect.width), my = (e.clientY-rect.top)*(H/rect.height);
+    axes.forEach((ax, i) => {
+      const pt = ptOnAxis(i, scores[i]);
+      if (Math.hypot(mx-pt.x, my-pt.y) < 16) dragging = i;
+    });
+  });
+  cv.addEventListener('mousemove', e => {
+    if (dragging === null) return;
+    const rect = cv.getBoundingClientRect();
+    const mx = (e.clientX-rect.left)*(W/rect.width), my = (e.clientY-rect.top)*(H/rect.height);
+    scores[dragging] = getScore(dragging, mx, my);
+    draw();
+  });
+  cv.addEventListener('mouseup', () => { dragging = null; });
+  cv.addEventListener('mouseleave', () => { dragging = null; });
+
+  draw();
+})();
+</script>
+</body>
+</html>

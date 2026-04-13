@@ -1,0 +1,9 @@
+# html-book-bundler Python requirements
+# Core scripts (ingest.py, lint_book.py, audit_single_file_html.py, optimize_assets.py)
+# use stdlib only — no pip install required for FB2/EPUB support.
+
+# Optional: DOCX ingestion via ingest.py --input book.docx
+python-docx>=1.1.0
+
+# Optional: image optimization via --optimize flag / optimize_assets.py
+Pillow>=10.0.0

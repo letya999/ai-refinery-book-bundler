@@ -1,0 +1,17 @@
+{
+  "code": "en",
+  "dir": "ltr",
+  "chapter": "Chapter",
+  "loading": "Loading...",
+  "total_chapters": "{n} chapters",
+  "search_placeholder": "Search book...",
+  "prev": "← Back",
+  "next": "Next →",
+  "bookmark_add": "☆",
+  "bookmark_remove": "★",
+  "bookmarks_title": "Bookmarks",
+  "no_bookmarks": "No bookmarks yet",
+  "theme_to_light": "☀",
+  "theme_to_dark": "☾",
+  "chapter_label": "Chapter {n}"
+}

@@ -1,0 +1,20 @@
+{
+  "name": "html-book-bundler",
+  "version": "5.0.0",
+  "description": "Bundles book chapters into a single offline-first HTML reading app with sidebar, search, bookmarks, and dark/light theme.",
+  "main": "scripts/bundle.cjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build":   "node scripts/bundle.cjs",
+    "test":    "node tests/test_bundler.cjs",
+    "audit":   "python scripts/audit_single_file_html.py --file",
+    "lint":    "python scripts/lint_book.py --file",
+    "dev":     "node scripts/dev_server.cjs",
+    "ingest":  "python scripts/ingest.py",
+    "optimize": "python scripts/optimize_assets.py"
+  },
+  "keywords": ["ebook", "epub", "offline", "single-file", "html", "reader"],
+  "license": "MIT"
+}

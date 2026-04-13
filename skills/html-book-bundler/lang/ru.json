@@ -1,0 +1,17 @@
+{
+  "code": "ru",
+  "dir": "ltr",
+  "chapter": "Глава",
+  "loading": "Загрузка...",
+  "total_chapters": "Всего {n} глав",
+  "search_placeholder": "Поиск по книге...",
+  "prev": "← Назад",
+  "next": "Вперёд →",
+  "bookmark_add": "☆",
+  "bookmark_remove": "★",
+  "bookmarks_title": "Закладки",
+  "no_bookmarks": "Закладок пока нет",
+  "theme_to_light": "☀",
+  "theme_to_dark": "☾",
+  "chapter_label": "Глава {n}"
+}

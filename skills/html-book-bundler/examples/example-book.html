@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; connect-src 'none';">
+<title>Don't Overcomplicate</title>
+<style>
+/* ── Dark theme (default) ── */
+:root {
+  --bg: #081423; --panel: #0f1f38; --panel2: #163056; --line: #395f9d;
+  --txt: #eef5ff; --muted: #adc2e1; --acc: #72d8ff; --acc2: #87efc9; --warn: #ffd18a;
+}
+/* ── Light theme ── */
+[data-theme="light"] {
+  --bg: #f0f4f8; --panel: #e4ecf5; --panel2: #d4e2ee; --line: #b0c8e0;
+  --txt: #1a2535; --muted: #4a6580; --acc: #1a7fc4; --acc2: #158060; --warn: #b07000;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: "Trebuchet MS", "Segoe UI Variable", Tahoma, sans-serif;
+  overflow: hidden;
+  transition: background .3s, color .3s;
+}
+
+[data-theme="dark"] body {
+  background: radial-gradient(circle at 85% -20%, #2e5e9d 0, #152846 36%, #081423 72%);
+}
+[data-theme="light"] body {
+  background: radial-gradient(circle at 85% -20%, #c8dff0 0, #e4ecf5 36%, #f0f4f8 72%);
+}
+
+/* ── Stars (dark only) ── */
+.stars {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 160px 90px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 130px 20px, #fff, rgba(0,0,0,0));
+  background-size: 200px 200px;
+  animation: twinkle 5s infinite;
+  opacity: 0.35;
+  transition: opacity .3s;
+}
+[data-theme="light"] .stars { opacity: 0; }
+@keyframes twinkle { 0%, 100% { opacity: .2; } 50% { opacity: .45; } }
+
+/* ── Layout ── */
+.app { display: grid; grid-template-columns: 300px 1fr; height: 100vh; position: relative; z-index: 1; }
+.app.side-hide { grid-template-columns: 1fr; }
+
+/* ── Sidebar ── */
+.side {
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(15,31,56,.95), rgba(11,22,45,.98));
+  display: flex; flex-direction: column;
+  height: 100vh; overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition: background .3s;
+}
+[data-theme="light"] .side {
+  background: linear-gradient(180deg, rgba(228,236,245,.97), rgba(212,226,240,.99));
+}
+.app.side-hide .side { display: none; }
+
+.brand { padding: 20px 18px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.brand h1 { font-size: 16px; font-weight: 800; color: var(--txt); margin-bottom: 3px; line-height: 1.3; }
+.brand p  { font-size: 11px; color: var(--muted); }
+
+.search-box { padding: 10px 12px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.search-box input {
+  width: 100%; padding: 10px 12px;
+  background: rgba(12,24,49,.7); border: 1px solid var(--line);
+  color: var(--txt); border-radius: 10px; font-size: 13px; outline: none; transition: .2s;
+}
+[data-theme="light"] .search-box input { background: rgba(255,255,255,.7); }
+.search-box input:focus { border-color: var(--acc); background: rgba(18,36,74,.8); }
+[data-theme="light"] .search-box input:focus { background: #fff; }
+
+/* ── Bookmarks panel ── */
+.bm-panel { flex-shrink: 0; border-bottom: 1px solid var(--line); }
+.bm-panel details summary {
+  padding: 8px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted); cursor: pointer; user-select: none; font-weight: 700;
+  list-style: none; display: flex; align-items: center; justify-content: space-between;
+}
+.bm-panel details summary::after { content: '▸'; font-size: 9px; }
+.bm-panel details[open] summary::after { content: '▾'; }
+.bm-panel details summary::marker { display: none; content: ''; }
+.bm-list { padding: 6px 12px 10px; display: grid; gap: 4px; }
+.bm-item {
+  all: unset; cursor: pointer; padding: 7px 10px; border-radius: 8px;
+  border: 1px solid rgba(255,209,138,.25); background: rgba(255,209,138,.05);
+  font-size: 12px; color: var(--warn); transition: .15s; display: block;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bm-item:hover { background: rgba(255,209,138,.12); border-color: var(--warn); }
+.bm-empty { padding: 8px 10px; font-size: 11px; color: var(--muted); font-style: italic; }
+
+/* ── Chapter list ── */
+.list { flex: 1; overflow-y: auto; padding: 8px; display: grid; gap: 6px; align-content: start; }
+.ch {
+  all: unset; cursor: pointer; padding: 12px 14px; border-radius: 11px;
+  border: 1px solid var(--line); background: rgba(17,31,57,.65);
+  font-size: 13px; line-height: 1.4; color: var(--txt); transition: .18s;
+  display: block; position: relative;
+}
+[data-theme="light"] .ch { background: rgba(228,236,245,.7); }
+.ch:hover { border-color: var(--acc); background: rgba(22,48,86,.75); }
+[data-theme="light"] .ch:hover { background: rgba(200,220,240,.9); }
+.ch.on {
+  background: linear-gradient(135deg, rgba(114,216,255,.2), rgba(135,239,201,.14));
+  border-color: var(--acc); font-weight: 700;
+}
+[data-theme="light"] .ch.on { background: linear-gradient(135deg, rgba(26,127,196,.12), rgba(21,128,96,.08)); }
+.ch b { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--acc); margin-bottom: 3px; }
+.ch .bm-star { position: absolute; top: 10px; right: 10px; font-size: 12px; color: var(--warn); }
+
+/* ── Main content ── */
+.main { display: flex; flex-direction: column; min-width: 0; position: relative; }
+
+.top {
+  height: 54px; border-bottom: 1px solid var(--line);
+  background: rgba(13,25,49,.88); backdrop-filter: blur(10px);
+  display: flex; align-items: center; gap: 8px; padding: 0 12px; z-index: 10;
+  flex-shrink: 0; transition: background .3s;
+}
+[data-theme="light"] .top { background: rgba(240,244,248,.92); }
+
+.top button {
+  all: unset; cursor: pointer; padding: 6px 12px; border: 1px solid var(--line);
+  border-radius: 9px; color: var(--txt); font-size: 12px; font-weight: 600;
+  transition: .18s; white-space: nowrap; flex-shrink: 0;
+}
+.top button:hover { border-color: var(--acc); background: rgba(22,48,86,.45); }
+[data-theme="light"] .top button:hover { background: rgba(26,127,196,.1); }
+
+.tt { font-size: 13px; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; font-weight: 500; min-width: 0; }
+.tt i { font-style: normal; color: var(--muted); margin-right: 6px; }
+
+/* ── Progress bar ── */
+.prog { height: 3px; background: rgba(57,95,157,.4); position: relative; z-index: 10; flex-shrink: 0; }
+.prog i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--acc), var(--acc2)); transition: width .4s; }
+
+/* ── Reader frame ── */
+.frame { flex: 1; min-height: 0; position: relative; view-transition-name: chapter-frame; }
+iframe { width: 100%; height: 100%; border: none; background: transparent; display: block; }
+
+/* ── Mobile ── */
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .side {
+    position: fixed; left: -100%; width: min(85vw, 300px);
+    inset-block: 0; transition: left .28s ease; z-index: 100;
+    box-shadow: 20px 0 40px rgba(0,0,0,.4);
+  }
+  .side.open { left: 0; }
+  .side-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4);
+    z-index: 99; backdrop-filter: blur(2px);
+  }
+  .side.open ~ .side-overlay { display: block; }
+}
+
+/* ── View transitions ── */
+::view-transition-old(chapter-frame) { animation: 120ms ease both fade-out; }
+::view-transition-new(chapter-frame) { animation: 220ms ease both fade-in; }
+@keyframes fade-in  { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="stars" aria-hidden="true"></div>
+<div class="side-overlay" id="overlay"></div>
+
+<div class="app" id="app">
+  <aside class="side" id="side">
+    <div class="brand">
+      <h1 id="book-title">Don't Overcomplicate</h1>
+      <p id="vol-info"></p>
+    </div>
+    <div class="search-box">
+      <input type="search" id="search" autocomplete="off">
+    </div>
+    <div class="bm-panel" id="bm-panel">
+      <details id="bm-details">
+        <summary id="bm-summary"></summary>
+        <div class="bm-list" id="bm-list"></div>
+      </details>
+    </div>
+    <div class="list" id="list"></div>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <button id="menu-btn" aria-label="Menu">☰</button>
+      <button id="prev-btn"></button>
+      <button id="next-btn"></button>
+      <div class="tt" id="tt"></div>
+      <button id="bm-btn" title="Bookmark" style="font-size:16px"></button>
+      <button id="theme-btn" title="Toggle theme" style="font-size:16px"></button>
+    </div>
+    <div class="prog"><i id="bar"></i></div>
+    <div class="frame">
+      <iframe id="fr" sandbox="allow-scripts allow-same-origin" title="Chapter content"></iframe>
+    </div>
+  </main>
+</div>
+
+
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Data injected by bundler ──────────────────────────────────────────────
+  const BOOK_ID  = "example-book";
+  const LANG     = {"code":"en","dir":"ltr","chapter":"Chapter","loading":"Loading...","total_chapters":"{n} chapters","search_placeholder":"Search book...","prev":"← Back","next":"Next →","bookmark_add":"☆","bookmark_remove":"★","bookmarks_title":"Bookmarks","no_bookmarks":"No bookmarks yet","theme_to_light":"☀","theme_to_dark":"☾","chapter_label":"Chapter {n}"};
+  const T        = ["The Core Idea","The Decision Filter","The Feedback Loop"];
+  const CHAPTERS = ["<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<style>\n/* === SHARED THEME === */\n/*\n  HTML Book Bundler v5 — Shared Theme\n  Injected into every chapter before chapter-specific styles.\n  Chapters can override any rule via cascade.\n*/\n\n/* ── Dark theme (default) ── */\n:root {\n  --bg:    #081423;\n  --bg2:   #0c1b35;\n  --panel: #0f1f38;\n  --panel2:#163056;\n  --line:  #395f9d;\n  --txt:   #eef5ff;\n  --muted: #adc2e1;\n  --acc:   #72d8ff;\n  --acc2:  #87efc9;\n  --warn:  #ffd18a;\n  --bad:   #ff8f8f;\n  --fg:    #eef5ff; /* alias for --txt, kept for compatibility */\n}\n\n/* ── Light theme ── */\n[data-theme=\"light\"] {\n  --bg:    #f0f4f8;\n  --bg2:   #e8eef5;\n  --panel: #dce8f2;\n  --panel2:#ccdeed;\n  --line:  #b0c8e0;\n  --txt:   #1a2535;\n  --muted: #4a6580;\n  --acc:   #1a7fc4;\n  --acc2:  #158060;\n  --warn:  #a06800;\n  --bad:   #c03030;\n  --fg:    #1a2535;\n}\n\n@media (prefers-color-scheme: light) {\n  :root:not([data-theme=\"dark\"]) {\n    --bg: #f0f4f8; --bg2: #e8eef5; --panel: #dce8f2; --panel2: #ccdeed;\n    --line: #b0c8e0; --txt: #1a2535; --muted: #4a6580;\n    --acc: #1a7fc4; --acc2: #158060; --warn: #a06800; --bad: #c03030; --fg: #1a2535;\n  }\n}\n\n*, *::before, *::after { box-sizing: border-box; }\n\nbody {\n  margin: 0;\n  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);\n  background: radial-gradient(circle at 15% -20%, #2b5c9f 0, #152847 42%, #081423 76%);\n  color: var(--txt);\n  font: 16px/1.6 \"Trebuchet MS\", \"Segoe UI Variable\", Tahoma, sans-serif;\n}\n[data-theme=\"light\"] body {\n  background: radial-gradient(circle at 15% -20%, #c8dff0 0, #e4ecf5 42%, #f0f4f8 76%);\n}\n\n/* ── Layout ── */\n.wrap {\n  max-width: 1160px;\n  margin: 0 auto;\n  padding: 26px 16px 56px;\n}\n\n/* ── Hero ── */\n.hero {\n  padding: 28px;\n  border: 1px solid var(--line);\n  border-radius: 20px;\n  background: linear-gradient(-45deg, #081423, #0f1f38, #163056, #081423);\n  background-size: 400% 400%;\n  animation: gradientBG 15s ease infinite;\n  box-shadow: 0 16px 34px rgba(0,0,0,.32);\n  margin-bottom: 28px;\n}\n[data-theme=\"light\"] .hero {\n  background: linear-gradient(-45deg, #dce8f2, #e8f0f8, #d0e4f0, #dce8f2);\n  background-size: 400% 400%;\n  box-shadow: 0 8px 24px rgba(0,0,0,.08);\n}\n\n@keyframes gradientBG {\n  0%   { background-position: 0%   50% }\n  50%  { background-position: 100% 50% }\n  100% { background-position: 0%   50% }\n}\n\n.kicker {\n  font-size: 11px;\n  letter-spacing: .2em;\n  text-transform: uppercase;\n  color: var(--muted);\n  margin-bottom: 8px;\n  font-weight: 700;\n}\n\n/* ── Typography — optimal reading width ── */\nh1 { margin: 8px 0 10px; font-size: clamp(26px, 5vw, 48px); line-height: 1.1; color: var(--txt); }\nh2 { margin: 0 0 16px;   font-size: clamp(20px, 3.5vw, 28px); color: var(--acc); }\nh3 { margin: 0 0 8px;    font-size: clamp(16px, 2.5vw, 21px); color: var(--acc2); }\n\n.lead {\n  margin: 0;\n  max-width: 72ch;\n  color: var(--muted);\n  font-size: 1.05rem;\n}\n\np, li { max-width: 72ch; }\n\n/* ── Sections ── */\n.sec {\n  margin-top: 32px;\n  padding: 24px;\n  border: 1px solid var(--line);\n  border-radius: 18px;\n  background: rgba(10,18,34,.82);\n}\n[data-theme=\"light\"] .sec { background: rgba(220,232,242,.7); }\n\n/* ── Stats grid ── */\n.stats {\n  margin-top: 20px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: 12px;\n}\n\n.stat {\n  padding: 14px 12px;\n  border: 1px solid var(--line);\n  border-radius: 11px;\n  background: rgba(10,19,36,.76);\n  text-align: center;\n}\n[data-theme=\"light\"] .stat { background: rgba(220,232,242,.8); }\n\n.stat-num, .stat b {\n  display: block;\n  font-size: 28px;\n  font-weight: 900;\n  line-height: 1.1;\n  color: var(--acc);\n  margin-bottom: 4px;\n}\n.stat-label, .stat span {\n  font-size: 11px;\n  letter-spacing: .08em;\n  text-transform: uppercase;\n  color: var(--muted);\n}\n\n/* ── Cards grid ── */\n.grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n  margin-top: 20px;\n}\n\n.card {\n  padding: 20px;\n  background: rgba(255,255,255,.03);\n  border: 1px solid var(--line);\n  border-radius: 16px;\n  transition: .25s;\n}\n[data-theme=\"light\"] .card { background: rgba(255,255,255,.6); }\n\n.card:hover {\n  transform: translateY(-3px);\n  border-color: var(--acc);\n  box-shadow: 0 8px 20px rgba(0,0,0,.25);\n}\n\n.card b {\n  display: block;\n  font-size: 11px;\n  text-transform: uppercase;\n  letter-spacing: .1em;\n  color: var(--acc);\n  margin-bottom: 8px;\n}\n\n/* ── Canvas wrapper ── */\n.canvas-wrap {\n  margin: 24px 0;\n  border: 1px solid var(--line);\n  border-radius: 16px;\n  background: var(--bg2);\n  padding: 14px;\n  overflow: hidden;\n}\ncanvas { display: block; width: 100%; height: auto; }\n\n.caption {\n  margin-top: 10px;\n  color: var(--muted);\n  font-size: 13px;\n  font-style: italic;\n  text-align: center;\n}\n\n/* ── Comparison translator ── */\n.translator {\n  margin: 24px 0;\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  background: var(--line);\n  border-radius: 18px;\n  overflow: hidden;\n  border: 1px solid var(--line);\n  gap: 1px;\n}\n\n.tr-col         { padding: 20px 22px; background: var(--bg2); }\n.tr-col.good    { background: rgba(135,239,201,.06); }\n.tr-col.bad     { background: rgba(255,143,143,.06); }\n[data-theme=\"light\"] .tr-col       { background: var(--panel); }\n[data-theme=\"light\"] .tr-col.good  { background: rgba(21,128,96,.06); }\n[data-theme=\"light\"] .tr-col.bad   { background: rgba(192,48,48,.06); }\n\n.tr-head        { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 12px; font-weight: 700; }\n.tr-head.good   { color: var(--acc2); }\n.tr-head.bad    { color: var(--bad);  }\n.tr-col ul { padding-left: 18px; margin: 0; color: var(--txt); }\n.tr-col li { margin-bottom: 6px; }\n\n/* ── Accordion (JS-driven) ── */\n.acc-item {\n  border: 1px solid var(--line);\n  border-radius: 12px;\n  background: rgba(15,31,56,.6);\n  overflow: hidden;\n  margin-bottom: 8px;\n}\n[data-theme=\"light\"] .acc-item { background: rgba(220,232,242,.7); }\n\n.acc-head {\n  padding: 13px 16px;\n  cursor: pointer;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: rgba(15,31,56,.9);\n  font-weight: 700;\n  font-size: 14px;\n  color: var(--acc);\n  transition: .15s;\n}\n[data-theme=\"light\"] .acc-head { background: rgba(220,232,242,.95); }\n.acc-head::after { content: '+'; font-size: 20px; color: var(--muted); }\n.acc-item.open .acc-head { background: rgba(114,216,255,.12); border-bottom: 1px solid var(--line); }\n.acc-item.open .acc-head::after { content: '−'; }\n\n.acc-body {\n  max-height: 0;\n  overflow: hidden;\n  transition: max-height .3s ease-out;\n  color: var(--txt);\n}\n.acc-item.open .acc-body { max-height: 800px; padding: 16px; }\n\n/* ── Native exclusive accordion (Chrome 120+, Firefox 130+, Safari 17.2+) ── */\ndetails[name] { margin-bottom: 8px; }\n\n/* ── Maturity scale ── */\n.scale {\n  display: grid;\n  grid-template-columns: repeat(5, minmax(100px, 1fr));\n  gap: 8px;\n}\n\n.lv {\n  padding: 10px;\n  border-radius: 10px;\n  border: 1px solid var(--line);\n  background: rgba(16,30,56,.7);\n  font-size: 13px;\n  color: var(--txt);\n}\n.lv b {\n  display: block;\n  font-size: 11px;\n  letter-spacing: .12em;\n  text-transform: uppercase;\n  color: var(--warn);\n  margin-bottom: 4px;\n}\n\n/* ── Panels ── */\n.panel {\n  border: 1px solid var(--line);\n  border-radius: 12px;\n  background: var(--panel);\n  padding: 16px;\n}\n\n/* ── Stat box ── */\n.stat-box {\n  margin-top: 20px;\n  padding: 20px;\n  border: 1px solid var(--line);\n  border-radius: 14px;\n  background: rgba(20,35,60,.8);\n}\n[data-theme=\"light\"] .stat-box { background: rgba(220,232,242,.8); }\n\n/* ── Badge ── */\n.badge {\n  display: inline-block;\n  padding: 2px 8px;\n  border-radius: 999px;\n  font-size: 11px;\n  border: 1px solid var(--line);\n  background: rgba(114,216,255,.16);\n  color: var(--acc);\n}\n\n/* ── Buttons ── */\nbutton {\n  cursor: pointer;\n  padding: 8px 14px;\n  border-radius: 9px;\n  border: 1px solid var(--line);\n  background: rgba(18,30,58,.72);\n  font-size: 13px;\n  font-weight: 700;\n  color: var(--txt);\n  transition: .2s;\n}\nbutton:hover, button.on { background: rgba(114,216,255,.18); border-color: var(--acc); }\n[data-theme=\"light\"] button { background: rgba(220,232,242,.8); }\n[data-theme=\"light\"] button:hover { background: rgba(26,127,196,.12); }\n\n/* ── Links ── */\na { color: var(--acc); text-decoration: none; border-bottom: 1px solid rgba(114,216,255,.3); transition: .2s; }\na:hover { background: rgba(114,216,255,.1); border-bottom-color: var(--acc); }\n[data-theme=\"light\"] a { color: var(--acc); }\n\n/* ── Blockquote ── */\nblockquote {\n  margin: 32px 0;\n  padding-left: 28px;\n  border-left: 4px solid var(--acc);\n  font-style: italic;\n  font-size: 1.2em;\n  color: var(--txt);\n  line-height: 1.5;\n  max-width: 68ch;\n}\n\n/* ── Table ── */\n.matrix { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }\ntable { width: 100%; border-collapse: collapse; background: var(--panel); }\nth, td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }\nth { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); background: var(--panel2); text-align: left; }\ntd { color: var(--txt); font-size: 14px; }\n\n/* ── Scrollbar ── */\n::-webkit-scrollbar { width: 5px; }\n::-webkit-scrollbar-track { background: transparent; }\n::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }\n::-webkit-scrollbar-thumb:hover { background: var(--acc); }\n\n/* ── Responsive ── */\n@media (max-width: 900px) {\n  .scale      { grid-template-columns: 1fr 1fr; }\n  .translator { grid-template-columns: 1fr; }\n}\n@media (max-width: 640px) {\n  .grid  { grid-template-columns: 1fr; }\n  .stats { grid-template-columns: 1fr 1fr; }\n  .hero  { padding: 18px; }\n  .sec   { padding: 16px; }\n}\n\n/* ── Universal enrichments (chapter_processor auto-passes) ── */\ndetails.long-para {\n  margin-bottom: 14px;\n  border-left: 2px solid var(--line);\n  padding-left: 14px;\n}\ndetails.long-para summary {\n  cursor: pointer;\n  color: var(--acc);\n  font-size: .88rem;\n  padding: 4px 0;\n  list-style: none;\n  user-select: none;\n  outline: none;\n}\ndetails.long-para summary::marker { display: none; content: ''; }\ndetails.long-para[open] summary   { display: none; }\ndetails.long-para[open] > p       { margin-top: 8px; }\n\ndetails.more-text summary {\n  cursor: pointer;\n  color: var(--acc);\n  font-size: .88rem;\n  padding: 6px 0;\n  list-style: none;\n  user-select: none;\n}\ndetails.more-text summary::marker { display: none; content: ''; }\n\nblockquote.insight {\n  margin: 24px 0;\n  padding: 16px 20px;\n  border-left: 4px solid var(--acc);\n  background: rgba(114,216,255,.06);\n  border-radius: 0 12px 12px 0;\n  max-width: 68ch;\n}\n[data-theme=\"light\"] blockquote.insight { background: rgba(26,127,196,.07); }\nblockquote.insight p {\n  margin: 0;\n  font-size: 1.05rem;\n  font-style: italic;\n  line-height: 1.65;\n  color: var(--txt);\n}\n\n.lead-para {\n  font-size: 1.08rem;\n  line-height: 1.8;\n  opacity: .95;\n}\n\n/* ── Reduced motion ── */\n@media (prefers-reduced-motion: reduce) {\n  *, *::before, *::after { animation: none !important; transition: none !important; }\n}\n\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n  <div class=\"hero\">\n    <p class=\"kicker\">Chapter 1</p>\n    <h1>The Core Idea</h1>\n    <p class=\"lead\">Every complex system starts with a single, clear principle. This chapter introduces that principle and shows why most people miss it.</p>\n  </div>\n\n  <div class=\"sec\">\n    <h2>Why simplicity is hard</h2>\n    <p class=\"lead-para\">The human brain is a pattern-recognition machine. It finds complexity comforting because complexity feels thorough. Simplicity feels like something is missing — even when nothing is.</p>\n\n    <p class=\"lead-para\">This is the first trap: mistaking completeness for complexity. A complete explanation can be short. A complete solution can be small. The best tools do one thing and do it well.</p>\n<blockquote class=\"insight\"><p>Every complex system starts with a single, clear principle.</p></blockquote>\n\n    <p>When faced with a problem, most people ask \"what can I add?\" The better question is \"what can I remove?\" Subtraction reveals structure. Addition hides it.</p>\n\n    <blockquote class=\"insight\">The best solutions are the ones you can explain in one sentence without losing accuracy.</blockquote>\n\n    <p>Think about the last decision you overcomplicated. You probably added conditions, exceptions, edge cases — all before testing whether the simple version even worked. That is the second trap: pre-emptive complexity.</p>\n  </div>\n\n  <div class=\"sec\">\n    <h2>Three signs you are overcomplicating</h2>\n    <div class=\"stats\">\n      <div class=\"stat\"><b class=\"stat-num\">3+</b><span>levels of nesting in your logic</span></div>\n      <div class=\"stat\"><b class=\"stat-num\">5+</b><span>conditions before the first action</span></div>\n      <div class=\"stat\"><b class=\"stat-num\">2x</b><span>longer than the problem itself</span></div>\n    </div>\n\n    <p>If your solution has any of these, step back. Strip it to the minimal version that solves the actual problem in front of you, not the hypothetical problem three steps ahead.</p>\n  </div>\n\n  <div class=\"sec\">\n    <h2>The reframe</h2>\n    <div class=\"grid\">\n      <div class=\"card\">\n        <h3>Instead of...</h3>\n        <p>\"How do I handle every case?\"</p>\n      </div>\n      <div class=\"card\">\n        <h3>Ask...</h3>\n        <p>\"What is the smallest thing that solves the real case in front of me?\"</p>\n      </div>\n    </div>\n\n    <p>The core idea is not a formula. It is a habit of questioning complexity before accepting it. That habit, practiced consistently, compounds into dramatically better outcomes.</p>\n<blockquote class=\"insight\"><p>The human brain is a pattern-recognition machine.</p></blockquote>\n  </div>\n</div>\n\n<script>\n(function() {\n  // Map both chapter1.html and 001.html patterns to 0-based indices\n  const chapterMap = {};\n  for (let i = 1; i <= 3; i++) {\n    chapterMap['chapter' + i + '.html'] = i - 1;\n    const padded = String(i).padStart(3, '0') + '.html';\n    chapterMap[padded] = i - 1;\n  }\n\n  document.addEventListener('click', e => {\n    const a = e.target.closest('a');\n    if (!a) return;\n    const href = a.getAttribute('href');\n    if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('data:')) return;\n\n    e.preventDefault();\n    const parts = href.split('#');\n    const pathPart = parts[0].toLowerCase();\n    const anchor = parts[1] || null;\n\n    let targetIdx = chapterMap[pathPart];\n    if (targetIdx === undefined && pathPart.includes('chapter')) {\n      const m = pathPart.match(/chapter(\\d+)/);\n      if (m) targetIdx = parseInt(m[1]) - 1;\n    }\n\n    if (targetIdx !== undefined) {\n      window.parent.postMessage({ action: 'bookGo', chapterIdx: targetIdx, anchorId: anchor }, '*');\n    } else if (anchor) {\n      const el = document.getElementById(anchor);\n      if (el) el.scrollIntoView({ behavior: 'smooth' });\n    }\n  });\n})();\n</script></body>\n</html>","<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<style>\n/* === SHARED THEME === */\n/*\n  HTML Book Bundler v5 — Shared Theme\n  Injected into every chapter before chapter-specific styles.\n  Chapters can override any rule via cascade.\n*/\n\n/* ── Dark theme (default) ── */\n:root {\n  --bg:    #081423;\n  --bg2:   #0c1b35;\n  --panel: #0f1f38;\n  --panel2:#163056;\n  --line:  #395f9d;\n  --txt:   #eef5ff;\n  --muted: #adc2e1;\n  --acc:   #72d8ff;\n  --acc2:  #87efc9;\n  --warn:  #ffd18a;\n  --bad:   #ff8f8f;\n  --fg:    #eef5ff; /* alias for --txt, kept for compatibility */\n}\n\n/* ── Light theme ── */\n[data-theme=\"light\"] {\n  --bg:    #f0f4f8;\n  --bg2:   #e8eef5;\n  --panel: #dce8f2;\n  --panel2:#ccdeed;\n  --line:  #b0c8e0;\n  --txt:   #1a2535;\n  --muted: #4a6580;\n  --acc:   #1a7fc4;\n  --acc2:  #158060;\n  --warn:  #a06800;\n  --bad:   #c03030;\n  --fg:    #1a2535;\n}\n\n@media (prefers-color-scheme: light) {\n  :root:not([data-theme=\"dark\"]) {\n    --bg: #f0f4f8; --bg2: #e8eef5; --panel: #dce8f2; --panel2: #ccdeed;\n    --line: #b0c8e0; --txt: #1a2535; --muted: #4a6580;\n    --acc: #1a7fc4; --acc2: #158060; --warn: #a06800; --bad: #c03030; --fg: #1a2535;\n  }\n}\n\n*, *::before, *::after { box-sizing: border-box; }\n\nbody {\n  margin: 0;\n  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);\n  background: radial-gradient(circle at 15% -20%, #2b5c9f 0, #152847 42%, #081423 76%);\n  color: var(--txt);\n  font: 16px/1.6 \"Trebuchet MS\", \"Segoe UI Variable\", Tahoma, sans-serif;\n}\n[data-theme=\"light\"] body {\n  background: radial-gradient(circle at 15% -20%, #c8dff0 0, #e4ecf5 42%, #f0f4f8 76%);\n}\n\n/* ── Layout ── */\n.wrap {\n  max-width: 1160px;\n  margin: 0 auto;\n  padding: 26px 16px 56px;\n}\n\n/* ── Hero ── */\n.hero {\n  padding: 28px;\n  border: 1px solid var(--line);\n  border-radius: 20px;\n  background: linear-gradient(-45deg, #081423, #0f1f38, #163056, #081423);\n  background-size: 400% 400%;\n  animation: gradientBG 15s ease infinite;\n  box-shadow: 0 16px 34px rgba(0,0,0,.32);\n  margin-bottom: 28px;\n}\n[data-theme=\"light\"] .hero {\n  background: linear-gradient(-45deg, #dce8f2, #e8f0f8, #d0e4f0, #dce8f2);\n  background-size: 400% 400%;\n  box-shadow: 0 8px 24px rgba(0,0,0,.08);\n}\n\n@keyframes gradientBG {\n  0%   { background-position: 0%   50% }\n  50%  { background-position: 100% 50% }\n  100% { background-position: 0%   50% }\n}\n\n.kicker {\n  font-size: 11px;\n  letter-spacing: .2em;\n  text-transform: uppercase;\n  color: var(--muted);\n  margin-bottom: 8px;\n  font-weight: 700;\n}\n\n/* ── Typography — optimal reading width ── */\nh1 { margin: 8px 0 10px; font-size: clamp(26px, 5vw, 48px); line-height: 1.1; color: var(--txt); }\nh2 { margin: 0 0 16px;   font-size: clamp(20px, 3.5vw, 28px); color: var(--acc); }\nh3 { margin: 0 0 8px;    font-size: clamp(16px, 2.5vw, 21px); color: var(--acc2); }\n\n.lead {\n  margin: 0;\n  max-width: 72ch;\n  color: var(--muted);\n  font-size: 1.05rem;\n}\n\np, li { max-width: 72ch; }\n\n/* ── Sections ── */\n.sec {\n  margin-top: 32px;\n  padding: 24px;\n  border: 1px solid var(--line);\n  border-radius: 18px;\n  background: rgba(10,18,34,.82);\n}\n[data-theme=\"light\"] .sec { background: rgba(220,232,242,.7); }\n\n/* ── Stats grid ── */\n.stats {\n  margin-top: 20px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: 12px;\n}\n\n.stat {\n  padding: 14px 12px;\n  border: 1px solid var(--line);\n  border-radius: 11px;\n  background: rgba(10,19,36,.76);\n  text-align: center;\n}\n[data-theme=\"light\"] .stat { background: rgba(220,232,242,.8); }\n\n.stat-num, .stat b {\n  display: block;\n  font-size: 28px;\n  font-weight: 900;\n  line-height: 1.1;\n  color: var(--acc);\n  margin-bottom: 4px;\n}\n.stat-label, .stat span {\n  font-size: 11px;\n  letter-spacing: .08em;\n  text-transform: uppercase;\n  color: var(--muted);\n}\n\n/* ── Cards grid ── */\n.grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n  margin-top: 20px;\n}\n\n.card {\n  padding: 20px;\n  background: rgba(255,255,255,.03);\n  border: 1px solid var(--line);\n  border-radius: 16px;\n  transition: .25s;\n}\n[data-theme=\"light\"] .card { background: rgba(255,255,255,.6); }\n\n.card:hover {\n  transform: translateY(-3px);\n  border-color: var(--acc);\n  box-shadow: 0 8px 20px rgba(0,0,0,.25);\n}\n\n.card b {\n  display: block;\n  font-size: 11px;\n  text-transform: uppercase;\n  letter-spacing: .1em;\n  color: var(--acc);\n  margin-bottom: 8px;\n}\n\n/* ── Canvas wrapper ── */\n.canvas-wrap {\n  margin: 24px 0;\n  border: 1px solid var(--line);\n  border-radius: 16px;\n  background: var(--bg2);\n  padding: 14px;\n  overflow: hidden;\n}\ncanvas { display: block; width: 100%; height: auto; }\n\n.caption {\n  margin-top: 10px;\n  color: var(--muted);\n  font-size: 13px;\n  font-style: italic;\n  text-align: center;\n}\n\n/* ── Comparison translator ── */\n.translator {\n  margin: 24px 0;\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  background: var(--line);\n  border-radius: 18px;\n  overflow: hidden;\n  border: 1px solid var(--line);\n  gap: 1px;\n}\n\n.tr-col         { padding: 20px 22px; background: var(--bg2); }\n.tr-col.good    { background: rgba(135,239,201,.06); }\n.tr-col.bad     { background: rgba(255,143,143,.06); }\n[data-theme=\"light\"] .tr-col       { background: var(--panel); }\n[data-theme=\"light\"] .tr-col.good  { background: rgba(21,128,96,.06); }\n[data-theme=\"light\"] .tr-col.bad   { background: rgba(192,48,48,.06); }\n\n.tr-head        { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 12px; font-weight: 700; }\n.tr-head.good   { color: var(--acc2); }\n.tr-head.bad    { color: var(--bad);  }\n.tr-col ul { padding-left: 18px; margin: 0; color: var(--txt); }\n.tr-col li { margin-bottom: 6px; }\n\n/* ── Accordion (JS-driven) ── */\n.acc-item {\n  border: 1px solid var(--line);\n  border-radius: 12px;\n  background: rgba(15,31,56,.6);\n  overflow: hidden;\n  margin-bottom: 8px;\n}\n[data-theme=\"light\"] .acc-item { background: rgba(220,232,242,.7); }\n\n.acc-head {\n  padding: 13px 16px;\n  cursor: pointer;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: rgba(15,31,56,.9);\n  font-weight: 700;\n  font-size: 14px;\n  color: var(--acc);\n  transition: .15s;\n}\n[data-theme=\"light\"] .acc-head { background: rgba(220,232,242,.95); }\n.acc-head::after { content: '+'; font-size: 20px; color: var(--muted); }\n.acc-item.open .acc-head { background: rgba(114,216,255,.12); border-bottom: 1px solid var(--line); }\n.acc-item.open .acc-head::after { content: '−'; }\n\n.acc-body {\n  max-height: 0;\n  overflow: hidden;\n  transition: max-height .3s ease-out;\n  color: var(--txt);\n}\n.acc-item.open .acc-body { max-height: 800px; padding: 16px; }\n\n/* ── Native exclusive accordion (Chrome 120+, Firefox 130+, Safari 17.2+) ── */\ndetails[name] { margin-bottom: 8px; }\n\n/* ── Maturity scale ── */\n.scale {\n  display: grid;\n  grid-template-columns: repeat(5, minmax(100px, 1fr));\n  gap: 8px;\n}\n\n.lv {\n  padding: 10px;\n  border-radius: 10px;\n  border: 1px solid var(--line);\n  background: rgba(16,30,56,.7);\n  font-size: 13px;\n  color: var(--txt);\n}\n.lv b {\n  display: block;\n  font-size: 11px;\n  letter-spacing: .12em;\n  text-transform: uppercase;\n  color: var(--warn);\n  margin-bottom: 4px;\n}\n\n/* ── Panels ── */\n.panel {\n  border: 1px solid var(--line);\n  border-radius: 12px;\n  background: var(--panel);\n  padding: 16px;\n}\n\n/* ── Stat box ── */\n.stat-box {\n  margin-top: 20px;\n  padding: 20px;\n  border: 1px solid var(--line);\n  border-radius: 14px;\n  background: rgba(20,35,60,.8);\n}\n[data-theme=\"light\"] .stat-box { background: rgba(220,232,242,.8); }\n\n/* ── Badge ── */\n.badge {\n  display: inline-block;\n  padding: 2px 8px;\n  border-radius: 999px;\n  font-size: 11px;\n  border: 1px solid var(--line);\n  background: rgba(114,216,255,.16);\n  color: var(--acc);\n}\n\n/* ── Buttons ── */\nbutton {\n  cursor: pointer;\n  padding: 8px 14px;\n  border-radius: 9px;\n  border: 1px solid var(--line);\n  background: rgba(18,30,58,.72);\n  font-size: 13px;\n  font-weight: 700;\n  color: var(--txt);\n  transition: .2s;\n}\nbutton:hover, button.on { background: rgba(114,216,255,.18); border-color: var(--acc); }\n[data-theme=\"light\"] button { background: rgba(220,232,242,.8); }\n[data-theme=\"light\"] button:hover { background: rgba(26,127,196,.12); }\n\n/* ── Links ── */\na { color: var(--acc); text-decoration: none; border-bottom: 1px solid rgba(114,216,255,.3); transition: .2s; }\na:hover { background: rgba(114,216,255,.1); border-bottom-color: var(--acc); }\n[data-theme=\"light\"] a { color: var(--acc); }\n\n/* ── Blockquote ── */\nblockquote {\n  margin: 32px 0;\n  padding-left: 28px;\n  border-left: 4px solid var(--acc);\n  font-style: italic;\n  font-size: 1.2em;\n  color: var(--txt);\n  line-height: 1.5;\n  max-width: 68ch;\n}\n\n/* ── Table ── */\n.matrix { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }\ntable { width: 100%; border-collapse: collapse; background: var(--panel); }\nth, td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }\nth { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); background: var(--panel2); text-align: left; }\ntd { color: var(--txt); font-size: 14px; }\n\n/* ── Scrollbar ── */\n::-webkit-scrollbar { width: 5px; }\n::-webkit-scrollbar-track { background: transparent; }\n::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }\n::-webkit-scrollbar-thumb:hover { background: var(--acc); }\n\n/* ── Responsive ── */\n@media (max-width: 900px) {\n  .scale      { grid-template-columns: 1fr 1fr; }\n  .translator { grid-template-columns: 1fr; }\n}\n@media (max-width: 640px) {\n  .grid  { grid-template-columns: 1fr; }\n  .stats { grid-template-columns: 1fr 1fr; }\n  .hero  { padding: 18px; }\n  .sec   { padding: 16px; }\n}\n\n/* ── Universal enrichments (chapter_processor auto-passes) ── */\ndetails.long-para {\n  margin-bottom: 14px;\n  border-left: 2px solid var(--line);\n  padding-left: 14px;\n}\ndetails.long-para summary {\n  cursor: pointer;\n  color: var(--acc);\n  font-size: .88rem;\n  padding: 4px 0;\n  list-style: none;\n  user-select: none;\n  outline: none;\n}\ndetails.long-para summary::marker { display: none; content: ''; }\ndetails.long-para[open] summary   { display: none; }\ndetails.long-para[open] > p       { margin-top: 8px; }\n\ndetails.more-text summary {\n  cursor: pointer;\n  color: var(--acc);\n  font-size: .88rem;\n  padding: 6px 0;\n  list-style: none;\n  user-select: none;\n}\ndetails.more-text summary::marker { display: none; content: ''; }\n\nblockquote.insight {\n  margin: 24px 0;\n  padding: 16px 20px;\n  border-left: 4px solid var(--acc);\n  background: rgba(114,216,255,.06);\n  border-radius: 0 12px 12px 0;\n  max-width: 68ch;\n}\n[data-theme=\"light\"] blockquote.insight { background: rgba(26,127,196,.07); }\nblockquote.insight p {\n  margin: 0;\n  font-size: 1.05rem;\n  font-style: italic;\n  line-height: 1.65;\n  color: var(--txt);\n}\n\n.lead-para {\n  font-size: 1.08rem;\n  line-height: 1.8;\n  opacity: .95;\n}\n\n/* ── Reduced motion ── */\n@media (prefers-reduced-motion: reduce) {\n  *, *::before, *::after { animation: none !important; transition: none !important; }\n}\n\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n  <div class=\"hero\">\n    <p class=\"kicker\">Chapter 2</p>\n    <h1>The Decision Filter</h1>\n    <p class=\"lead\">A practical framework for cutting through noise and reaching the right answer faster — without missing what matters.</p>\n  </div>\n\n  <div class=\"sec\">\n    <h2>Most decisions are not hard</h2>\n    <p class=\"lead-para\">They feel hard because of how we frame them. We collect more information than needed, involve more people than necessary, and set higher bars for certainty than the stakes require.</p>\n\n    <p class=\"lead-para\">The decision filter is a two-part test applied before any significant choice. It does not guarantee the right answer — nothing does. It does eliminate the wrong process, which is most of the problem.</p>\n<blockquote class=\"insight\"><p>A practical framework for cutting through noise and reaching the right answer faster — without missing what matters.</p></blockquote>\n\n    <blockquote class=\"insight\">A fast wrong answer you can correct beats a slow right answer arrived at too late.</blockquote>\n  </div>\n\n  <div class=\"sec\">\n    <h2>Part 1: Is this reversible?</h2>\n    <p>Reversible decisions deserve low ceremony. Make them quickly, observe results, adjust. Most decisions you agonize over are reversible. You can change the meeting format. You can refactor the function. You can rewrite the email.</p>\n\n    <p>Irreversible decisions deserve careful thought proportional to their impact. Hiring, architectural choices, public commitments — these earn extended consideration. Everything else does not.</p>\n\n    <details class=\"acc-item\">\n      <summary class=\"acc-head\">How to tell if a decision is reversible</summary>\n      <div class=\"acc-body\">\n        <p>Ask: \"If I make this choice and it turns out to be wrong, what does correcting it cost?\" If the answer is measured in hours or days, it is reversible. If measured in months, large money, or damaged relationships, treat it as irreversible.</p>\n      </div>\n    </details>\n  </div>\n\n  <div class=\"sec\">\n    <h2>Part 2: Who is actually affected?</h2>\n    <p>Decisions expand to fill the number of stakeholders you invite. Define the real scope first. If the outcome only affects you and your immediate team, make the call. Do not escalate upward by default — escalation signals uncertainty and invites second-guessing.</p>\n\n    <div class=\"stats\">\n      <div class=\"stat\"><b class=\"stat-num\">1</b><span>person should own each decision</span></div>\n      <div class=\"stat\"><b class=\"stat-num\">≤3</b><span>people to consult on most choices</span></div>\n      <div class=\"stat\"><b class=\"stat-num\">24h</b><span>maximum deliberation for reversible decisions</span></div>\n    </div>\n  </div>\n\n  <div class=\"sec\">\n    <h2>Applying the filter</h2>\n    <p>Run both tests before scheduling the meeting, writing the document, or building the slide deck. Most of the time, you will find the decision was already made — you just needed permission to act on it.</p>\n\n    <p>The filter does not replace judgment. It creates the conditions in which judgment can operate quickly and cleanly, without the noise that accumulates when process becomes an end in itself.</p>\n<blockquote class=\"insight\"><p>We collect more information than needed, involve more people than necessary, and set higher bars for certainty than the stakes require.</p></blockquote>\n\n    <p>Next chapter: <a href=\"data:application/octet-stream;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICA8bWV0YSBjaGFyc2V0PSJ1dGYtOCI+CiAgPHRpdGxlPlRoZSBGZWVkYmFjayBMb29wPC90aXRsZT4KPC9oZWFkPgo8Ym9keT4KPGRpdiBjbGFzcz0id3JhcCI+CiAgPGRpdiBjbGFzcz0iaGVybyI+CiAgICA8cCBjbGFzcz0ia2lja2VyIj5DaGFwdGVyIDM8L3A+CiAgICA8aDE+VGhlIEZlZWRiYWNrIExvb3A8L2gxPgogICAgPHAgY2xhc3M9ImxlYWQiPkV2ZXJ5IHN5c3RlbSB0aGF0IGltcHJvdmVzIGRvZXMgc28gdGhyb3VnaCBmZWVkYmFjay4gVGhlIHF1ZXN0aW9uIGlzIG5vdCB3aGV0aGVyIHlvdSBoYXZlIGEgZmVlZGJhY2sgbG9vcCDigJQgaXQgaXMgd2hldGhlciB5b3UgZGVzaWduZWQgaXQgb3IgaW5oZXJpdGVkIGl0IGJ5IGFjY2lkZW50LjwvcD4KICA8L2Rpdj4KCiAgPGRpdiBjbGFzcz0ic2VjIj4KICAgIDxoMj5BY2NpZGVudGFsIGZlZWRiYWNrIGxvb3BzPC9oMj4KICAgIDxwIGNsYXNzPSJsZWFkLXBhcmEiPk1vc3QgZmVlZGJhY2sgbG9vcHMgaW4gb3JnYW5pemF0aW9ucyBhcmUgYWNjaWRlbnRhbC4gVGhleSBhY3RpdmF0ZSB0b28gbGF0ZSwgYXJyaXZlIHRocm91Z2ggdGhlIHdyb25nIGNoYW5uZWwsIG9yIG1lYXN1cmUgdGhlIHdyb25nIHNpZ25hbC4gQSBxdWFydGVybHkgcmV2aWV3IGlzIGEgZmVlZGJhY2sgbG9vcC4gU28gaXMgYSBjdXN0b21lciBjb21wbGFpbnQuIFNvIGlzIGEgdGVzdCBzdWl0ZS4gVGhlIGRpZmZlcmVuY2UgaXMgdGhlIGxhdGVuY3kuPC9wPgoKICAgIDxwPkhpZ2gtbGF0ZW5jeSBmZWVkYmFjayBwcm9kdWNlcyBjb25maWRlbnQsIHdyb25nIGRlY2lzaW9ucy4gWW91IGFjdCwgd2Vla3MgcGFzcywgdGhlIHJlc3VsdCBhcnJpdmVzIOKAlCBidXQgYnkgdGhlbiB0aGUgY29udGV4dCBoYXMgY2hhbmdlZCBhbmQgdGhlIGF0dHJpYnV0aW9uIGlzIG11cmt5LiBXYXMgdGhlIG91dGNvbWUgY2F1c2VkIGJ5IHRoZSBkZWNpc2lvbiBvciBieSB0aGUgZG96ZW4gb3RoZXIgdGhpbmdzIHRoYXQgaGFwcGVuZWQgaW4gYmV0d2Vlbj88L3A+CgogICAgPGJsb2NrcXVvdGUgY2xhc3M9Imluc2lnaHQiPlRoZSBnb2FsIGlzIG5vdCBtb3JlIGZlZWRiYWNrLiBUaGUgZ29hbCBpcyBmYXN0ZXIsIGNsZWFuZXIgc2lnbmFsIGZyb20gdGhlIHJpZ2h0IHNvdXJjZSBhdCB0aGUgcmlnaHQgdGltZS48L2Jsb2NrcXVvdGU+CiAgPC9kaXY+CgogIDxkaXYgY2xhc3M9InNlYyI+CiAgICA8aDI+RGVzaWduaW5nIGEgdGlnaHQgbG9vcDwvaDI+CiAgICA8ZGl2IGNsYXNzPSJncmlkIj4KICAgICAgPGRpdiBjbGFzcz0iY2FyZCI+CiAgICAgICAgPGgzPkFjdDwvaDM+CiAgICAgICAgPHA+TWFrZSB0aGUgc21hbGxlc3QgY2hhbmdlIHRoYXQgdGVzdHMgeW91ciBoeXBvdGhlc2lzLiBOb3QgdGhlIGZ1bGwgc29sdXRpb24g4oCUIHRoZSBwcm9iZS48L3A+CiAgICAgIDwvZGl2PgogICAgICA8ZGl2IGNsYXNzPSJjYXJkIj4KICAgICAgICA8aDM+T2JzZXJ2ZTwvaDM+CiAgICAgICAgPHA+RGVmaW5lIHdoYXQgeW91IHdpbGwgbWVhc3VyZSBiZWZvcmUgeW91IGFjdC4gUG9zdC1ob2MgbWV0cmljcyBhcmUgYWxtb3N0IGFsd2F5cyBjaGVycnktcGlja2VkLjwvcD4KICAgICAgPC9kaXY+CiAgICAgIDxkaXYgY2xhc3M9ImNhcmQiPgogICAgICAgIDxoMz5BZGp1c3Q8L2gzPgogICAgICAgIDxwPlVwZGF0ZSB5b3VyIG1vZGVsIGJhc2VkIG9uIHdoYXQgYWN0dWFsbHkgaGFwcGVuZWQsIG5vdCB3aGF0IHlvdSB3YW50ZWQgdG8gaGFwcGVuLjwvcD4KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KCiAgICA8cD5Ob3RpY2UgdGhlIGxvb3Agc3RhcnRzIHdpdGggdGhlIHNtYWxsZXN0IHBvc3NpYmxlIGFjdGlvbiwgbm90IHRoZSBtb3N0IGNvbXByZWhlbnNpdmUgb25lLiBDb21wcmVoZW5zaXZlIGFjdGlvbnMgYXJlIGV4cGVuc2l2ZSB0byByZXZlcnNlIGFuZCBleHBlbnNpdmUgdG8gYXR0cmlidXRlLiBTbWFsbCBwcm9iZXMgYXJlIGNoZWFwIHRvIHJ1biBhbmQgZWFzeSB0byByZWFkLjwvcD4KICA8L2Rpdj4KCiAgPGRpdiBjbGFzcz0ic2VjIj4KICAgIDxoMj5UaGUgZW5lbXk6IGNvbmZpcm1hdGlvbjwvaDI+CiAgICA8cD5UaGUgbW9zdCBkYW5nZXJvdXMgbW9tZW50IGluIGEgZmVlZGJhY2sgbG9vcCBpcyB3aGVuIHRoZSBmaXJzdCByZXN1bHQgY29uZmlybXMgd2hhdCB5b3UgYWxyZWFkeSBiZWxpZXZlZC4gQ29uZmlybWF0aW9uIGJpYXMgYWN0aXZhdGVzIGluc3RhbnRseSBhbmQgc3RvcHMgeW91IGZyb20gcnVubmluZyB0aGUgbmV4dCBwcm9iZS4gT25lIGRhdGEgcG9pbnQgaXMgbm90IGEgbG9vcCDigJQgaXQgaXMgYSBzdGFydGluZyBwb2ludC48L3A+CgogICAgPGRldGFpbHMgY2xhc3M9ImFjYy1pdGVtIj4KICAgICAgPHN1bW1hcnkgY2xhc3M9ImFjYy1oZWFkIj5TaWducyB5b3VyIGZlZWRiYWNrIGxvb3AgaXMgYnJva2VuPC9zdW1tYXJ5PgogICAgICA8ZGl2IGNsYXNzPSJhY2MtYm9keSI+CiAgICAgICAgPHVsPgogICAgICAgICAgPGxpPllvdSBtZWFzdXJlIHdoYXQgaXMgZWFzeSB0byBjb3VudCwgbm90IHdoYXQgYWN0dWFsbHkgbWF0dGVyczwvbGk+CiAgICAgICAgICA8bGk+UmVzdWx0cyBhcnJpdmUgYWZ0ZXIgeW91IGhhdmUgYWxyZWFkeSBjb21taXR0ZWQgdG8gdGhlIG5leHQgc3RlcDwvbGk+CiAgICAgICAgICA8bGk+TmVnYXRpdmUgcmVzdWx0cyBnZXQgcmVjbGFzc2lmaWVkIGFzICJub2lzZSIgd2hpbGUgcG9zaXRpdmUgcmVzdWx0cyBnZXQgcHJvbW90ZWQgYXMgc2lnbmFsPC9saT4KICAgICAgICAgIDxsaT5UaGUgcGVyc29uIHdobyBtYWRlIHRoZSBkZWNpc2lvbiBpcyBhbHNvIHRoZSBwZXJzb24gd2hvIGV2YWx1YXRlcyB0aGUgcmVzdWx0PC9saT4KICAgICAgICA8L3VsPgogICAgICA8L2Rpdj4KICAgIDwvZGV0YWlscz4KCiAgICA8cD5UaGVzZSBwYXR0ZXJucyBmZWVsIG5vcm1hbCBpbnNpZGUgdGhlbS4gVGhleSByZXF1aXJlIGV4dGVybmFsIHByZXNzdXJlIG9yIGRlbGliZXJhdGUgZGlzY2lwbGluZSB0byBicmVhay4gQnVpbGRpbmcgdGhlIGZlZWRiYWNrIGxvb3AgYmVmb3JlIHlvdSBhY3Qg4oCUIG5vdCBhZnRlciDigJQgaXMgdGhhdCBkaXNjaXBsaW5lLjwvcD4KICA8L2Rpdj4KPC9kaXY+CjwvYm9keT4KPC9odG1sPgo=\">The Feedback Loop</a> — what to do once the decision is made and reality starts responding.</p>\n  </div>\n</div>\n\n<script>\n(function() {\n  // Map both chapter1.html and 001.html patterns to 0-based indices\n  const chapterMap = {};\n  for (let i = 1; i <= 3; i++) {\n    chapterMap['chapter' + i + '.html'] = i - 1;\n    const padded = String(i).padStart(3, '0') + '.html';\n    chapterMap[padded] = i - 1;\n  }\n\n  document.addEventListener('click', e => {\n    const a = e.target.closest('a');\n    if (!a) return;\n    const href = a.getAttribute('href');\n    if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('data:')) return;\n\n    e.preventDefault();\n    const parts = href.split('#');\n    const pathPart = parts[0].toLowerCase();\n    const anchor = parts[1] || null;\n\n    let targetIdx = chapterMap[pathPart];\n    if (targetIdx === undefined && pathPart.includes('chapter')) {\n      const m = pathPart.match(/chapter(\\d+)/);\n      if (m) targetIdx = parseInt(m[1]) - 1;\n    }\n\n    if (targetIdx !== undefined) {\n      window.parent.postMessage({ action: 'bookGo', chapterIdx: targetIdx, anchorId: anchor }, '*');\n    } else if (anchor) {\n      const el = document.getElementById(anchor);\n      if (el) el.scrollIntoView({ behavior: 'smooth' });\n    }\n  });\n})();\n</script></body>\n</html>","<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<style>\n/* === SHARED THEME === */\n/*\n  HTML Book Bundler v5 — Shared Theme\n  Injected into every chapter before chapter-specific styles.\n  Chapters can override any rule via cascade.\n*/\n\n/* ── Dark theme (default) ── */\n:root {\n  --bg:    #081423;\n  --bg2:   #0c1b35;\n  --panel: #0f1f38;\n  --panel2:#163056;\n  --line:  #395f9d;\n  --txt:   #eef5ff;\n  --muted: #adc2e1;\n  --acc:   #72d8ff;\n  --acc2:  #87efc9;\n  --warn:  #ffd18a;\n  --bad:   #ff8f8f;\n  --fg:    #eef5ff; /* alias for --txt, kept for compatibility */\n}\n\n/* ── Light theme ── */\n[data-theme=\"light\"] {\n  --bg:    #f0f4f8;\n  --bg2:   #e8eef5;\n  --panel: #dce8f2;\n  --panel2:#ccdeed;\n  --line:  #b0c8e0;\n  --txt:   #1a2535;\n  --muted: #4a6580;\n  --acc:   #1a7fc4;\n  --acc2:  #158060;\n  --warn:  #a06800;\n  --bad:   #c03030;\n  --fg:    #1a2535;\n}\n\n@media (prefers-color-scheme: light) {\n  :root:not([data-theme=\"dark\"]) {\n    --bg: #f0f4f8; --bg2: #e8eef5; --panel: #dce8f2; --panel2: #ccdeed;\n    --line: #b0c8e0; --txt: #1a2535; --muted: #4a6580;\n    --acc: #1a7fc4; --acc2: #158060; --warn: #a06800; --bad: #c03030; --fg: #1a2535;\n  }\n}\n\n*, *::before, *::after { box-sizing: border-box; }\n\nbody {\n  margin: 0;\n  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);\n  background: radial-gradient(circle at 15% -20%, #2b5c9f 0, #152847 42%, #081423 76%);\n  color: var(--txt);\n  font: 16px/1.6 \"Trebuchet MS\", \"Segoe UI Variable\", Tahoma, sans-serif;\n}\n[data-theme=\"light\"] body {\n  background: radial-gradient(circle at 15% -20%, #c8dff0 0, #e4ecf5 42%, #f0f4f8 76%);\n}\n\n/* ── Layout ── */\n.wrap {\n  max-width: 1160px;\n  margin: 0 auto;\n  padding: 26px 16px 56px;\n}\n\n/* ── Hero ── */\n.hero {\n  padding: 28px;\n  border: 1px solid var(--line);\n  border-radius: 20px;\n  background: linear-gradient(-45deg, #081423, #0f1f38, #163056, #081423);\n  background-size: 400% 400%;\n  animation: gradientBG 15s ease infinite;\n  box-shadow: 0 16px 34px rgba(0,0,0,.32);\n  margin-bottom: 28px;\n}\n[data-theme=\"light\"] .hero {\n  background: linear-gradient(-45deg, #dce8f2, #e8f0f8, #d0e4f0, #dce8f2);\n  background-size: 400% 400%;\n  box-shadow: 0 8px 24px rgba(0,0,0,.08);\n}\n\n@keyframes gradientBG {\n  0%   { background-position: 0%   50% }\n  50%  { background-position: 100% 50% }\n  100% { background-position: 0%   50% }\n}\n\n.kicker {\n  font-size: 11px;\n  letter-spacing: .2em;\n  text-transform: uppercase;\n  color: var(--muted);\n  margin-bottom: 8px;\n  font-weight: 700;\n}\n\n/* ── Typography — optimal reading width ── */\nh1 { margin: 8px 0 10px; font-size: clamp(26px, 5vw, 48px); line-height: 1.1; color: var(--txt); }\nh2 { margin: 0 0 16px;   font-size: clamp(20px, 3.5vw, 28px); color: var(--acc); }\nh3 { margin: 0 0 8px;    font-size: clamp(16px, 2.5vw, 21px); color: var(--acc2); }\n\n.lead {\n  margin: 0;\n  max-width: 72ch;\n  color: var(--muted);\n  font-size: 1.05rem;\n}\n\np, li { max-width: 72ch; }\n\n/* ── Sections ── */\n.sec {\n  margin-top: 32px;\n  padding: 24px;\n  border: 1px solid var(--line);\n  border-radius: 18px;\n  background: rgba(10,18,34,.82);\n}\n[data-theme=\"light\"] .sec { background: rgba(220,232,242,.7); }\n\n/* ── Stats grid ── */\n.stats {\n  margin-top: 20px;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: 12px;\n}\n\n.stat {\n  padding: 14px 12px;\n  border: 1px solid var(--line);\n  border-radius: 11px;\n  background: rgba(10,19,36,.76);\n  text-align: center;\n}\n[data-theme=\"light\"] .stat { background: rgba(220,232,242,.8); }\n\n.stat-num, .stat b {\n  display: block;\n  font-size: 28px;\n  font-weight: 900;\n  line-height: 1.1;\n  color: var(--acc);\n  margin-bottom: 4px;\n}\n.stat-label, .stat span {\n  font-size: 11px;\n  letter-spacing: .08em;\n  text-transform: uppercase;\n  color: var(--muted);\n}\n\n/* ── Cards grid ── */\n.grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 16px;\n  margin-top: 20px;\n}\n\n.card {\n  padding: 20px;\n  background: rgba(255,255,255,.03);\n  border: 1px solid var(--line);\n  border-radius: 16px;\n  transition: .25s;\n}\n[data-theme=\"light\"] .card { background: rgba(255,255,255,.6); }\n\n.card:hover {\n  transform: translateY(-3px);\n  border-color: var(--acc);\n  box-shadow: 0 8px 20px rgba(0,0,0,.25);\n}\n\n.card b {\n  display: block;\n  font-size: 11px;\n  text-transform: uppercase;\n  letter-spacing: .1em;\n  color: var(--acc);\n  margin-bottom: 8px;\n}\n\n/* ── Canvas wrapper ── */\n.canvas-wrap {\n  margin: 24px 0;\n  border: 1px solid var(--line);\n  border-radius: 16px;\n  background: var(--bg2);\n  padding: 14px;\n  overflow: hidden;\n}\ncanvas { display: block; width: 100%; height: auto; }\n\n.caption {\n  margin-top: 10px;\n  color: var(--muted);\n  font-size: 13px;\n  font-style: italic;\n  text-align: center;\n}\n\n/* ── Comparison translator ── */\n.translator {\n  margin: 24px 0;\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  background: var(--line);\n  border-radius: 18px;\n  overflow: hidden;\n  border: 1px solid var(--line);\n  gap: 1px;\n}\n\n.tr-col         { padding: 20px 22px; background: var(--bg2); }\n.tr-col.good    { background: rgba(135,239,201,.06); }\n.tr-col.bad     { background: rgba(255,143,143,.06); }\n[data-theme=\"light\"] .tr-col       { background: var(--panel); }\n[data-theme=\"light\"] .tr-col.good  { background: rgba(21,128,96,.06); }\n[data-theme=\"light\"] .tr-col.bad   { background: rgba(192,48,48,.06); }\n\n.tr-head        { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 12px; font-weight: 700; }\n.tr-head.good   { color: var(--acc2); }\n.tr-head.bad    { color: var(--bad);  }\n.tr-col ul { padding-left: 18px; margin: 0; color: var(--txt); }\n.tr-col li { margin-bottom: 6px; }\n\n/* ── Accordion (JS-driven) ── */\n.acc-item {\n  border: 1px solid var(--line);\n  border-radius: 12px;\n  background: rgba(15,31,56,.6);\n  overflow: hidden;\n  margin-bottom: 8px;\n}\n[data-theme=\"light\"] .acc-item { background: rgba(220,232,242,.7); }\n\n.acc-head {\n  padding: 13px 16px;\n  cursor: pointer;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: rgba(15,31,56,.9);\n  font-weight: 700;\n  font-size: 14px;\n  color: var(--acc);\n  transition: .15s;\n}\n[data-theme=\"light\"] .acc-head { background: rgba(220,232,242,.95); }\n.acc-head::after { content: '+'; font-size: 20px; color: var(--muted); }\n.acc-item.open .acc-head { background: rgba(114,216,255,.12); border-bottom: 1px solid var(--line); }\n.acc-item.open .acc-head::after { content: '−'; }\n\n.acc-body {\n  max-height: 0;\n  overflow: hidden;\n  transition: max-height .3s ease-out;\n  color: var(--txt);\n}\n.acc-item.open .acc-body { max-height: 800px; padding: 16px; }\n\n/* ── Native exclusive accordion (Chrome 120+, Firefox 130+, Safari 17.2+) ── */\ndetails[name] { margin-bottom: 8px; }\n\n/* ── Maturity scale ── */\n.scale {\n  display: grid;\n  grid-template-columns: repeat(5, minmax(100px, 1fr));\n  gap: 8px;\n}\n\n.lv {\n  padding: 10px;\n  border-radius: 10px;\n  border: 1px solid var(--line);\n  background: rgba(16,30,56,.7);\n  font-size: 13px;\n  color: var(--txt);\n}\n.lv b {\n  display: block;\n  font-size: 11px;\n  letter-spacing: .12em;\n  text-transform: uppercase;\n  color: var(--warn);\n  margin-bottom: 4px;\n}\n\n/* ── Panels ── */\n.panel {\n  border: 1px solid var(--line);\n  border-radius: 12px;\n  background: var(--panel);\n  padding: 16px;\n}\n\n/* ── Stat box ── */\n.stat-box {\n  margin-top: 20px;\n  padding: 20px;\n  border: 1px solid var(--line);\n  border-radius: 14px;\n  background: rgba(20,35,60,.8);\n}\n[data-theme=\"light\"] .stat-box { background: rgba(220,232,242,.8); }\n\n/* ── Badge ── */\n.badge {\n  display: inline-block;\n  padding: 2px 8px;\n  border-radius: 999px;\n  font-size: 11px;\n  border: 1px solid var(--line);\n  background: rgba(114,216,255,.16);\n  color: var(--acc);\n}\n\n/* ── Buttons ── */\nbutton {\n  cursor: pointer;\n  padding: 8px 14px;\n  border-radius: 9px;\n  border: 1px solid var(--line);\n  background: rgba(18,30,58,.72);\n  font-size: 13px;\n  font-weight: 700;\n  color: var(--txt);\n  transition: .2s;\n}\nbutton:hover, button.on { background: rgba(114,216,255,.18); border-color: var(--acc); }\n[data-theme=\"light\"] button { background: rgba(220,232,242,.8); }\n[data-theme=\"light\"] button:hover { background: rgba(26,127,196,.12); }\n\n/* ── Links ── */\na { color: var(--acc); text-decoration: none; border-bottom: 1px solid rgba(114,216,255,.3); transition: .2s; }\na:hover { background: rgba(114,216,255,.1); border-bottom-color: var(--acc); }\n[data-theme=\"light\"] a { color: var(--acc); }\n\n/* ── Blockquote ── */\nblockquote {\n  margin: 32px 0;\n  padding-left: 28px;\n  border-left: 4px solid var(--acc);\n  font-style: italic;\n  font-size: 1.2em;\n  color: var(--txt);\n  line-height: 1.5;\n  max-width: 68ch;\n}\n\n/* ── Table ── */\n.matrix { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }\ntable { width: 100%; border-collapse: collapse; background: var(--panel); }\nth, td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }\nth { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); background: var(--panel2); text-align: left; }\ntd { color: var(--txt); font-size: 14px; }\n\n/* ── Scrollbar ── */\n::-webkit-scrollbar { width: 5px; }\n::-webkit-scrollbar-track { background: transparent; }\n::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }\n::-webkit-scrollbar-thumb:hover { background: var(--acc); }\n\n/* ── Responsive ── */\n@media (max-width: 900px) {\n  .scale      { grid-template-columns: 1fr 1fr; }\n  .translator { grid-template-columns: 1fr; }\n}\n@media (max-width: 640px) {\n  .grid  { grid-template-columns: 1fr; }\n  .stats { grid-template-columns: 1fr 1fr; }\n  .hero  { padding: 18px; }\n  .sec   { padding: 16px; }\n}\n\n/* ── Universal enrichments (chapter_processor auto-passes) ── */\ndetails.long-para {\n  margin-bottom: 14px;\n  border-left: 2px solid var(--line);\n  padding-left: 14px;\n}\ndetails.long-para summary {\n  cursor: pointer;\n  color: var(--acc);\n  font-size: .88rem;\n  padding: 4px 0;\n  list-style: none;\n  user-select: none;\n  outline: none;\n}\ndetails.long-para summary::marker { display: none; content: ''; }\ndetails.long-para[open] summary   { display: none; }\ndetails.long-para[open] > p       { margin-top: 8px; }\n\ndetails.more-text summary {\n  cursor: pointer;\n  color: var(--acc);\n  font-size: .88rem;\n  padding: 6px 0;\n  list-style: none;\n  user-select: none;\n}\ndetails.more-text summary::marker { display: none; content: ''; }\n\nblockquote.insight {\n  margin: 24px 0;\n  padding: 16px 20px;\n  border-left: 4px solid var(--acc);\n  background: rgba(114,216,255,.06);\n  border-radius: 0 12px 12px 0;\n  max-width: 68ch;\n}\n[data-theme=\"light\"] blockquote.insight { background: rgba(26,127,196,.07); }\nblockquote.insight p {\n  margin: 0;\n  font-size: 1.05rem;\n  font-style: italic;\n  line-height: 1.65;\n  color: var(--txt);\n}\n\n.lead-para {\n  font-size: 1.08rem;\n  line-height: 1.8;\n  opacity: .95;\n}\n\n/* ── Reduced motion ── */\n@media (prefers-reduced-motion: reduce) {\n  *, *::before, *::after { animation: none !important; transition: none !important; }\n}\n\n</style>\n</head>\n<body>\n<div class=\"wrap\">\n  <div class=\"hero\">\n    <p class=\"kicker\">Chapter 3</p>\n    <h1>The Feedback Loop</h1>\n    <p class=\"lead\">Every system that improves does so through feedback. The question is not whether you have a feedback loop — it is whether you designed it or inherited it by accident.</p>\n  </div>\n\n  <div class=\"sec\">\n    <h2>Accidental feedback loops</h2>\n    <p class=\"lead-para\">Most feedback loops in organizations are accidental. They activate too late, arrive through the wrong channel, or measure the wrong signal. A quarterly review is a feedback loop. So is a customer complaint. So is a test suite. The difference is the latency.</p>\n\n    <p class=\"lead-para\">High-latency feedback produces confident, wrong decisions. You act, weeks pass, the result arrives — but by then the context has changed and the attribution is murky. Was the outcome caused by the decision or by the dozen other things that happened in between?</p>\n<blockquote class=\"insight\"><p>Every system that improves does so through feedback.</p></blockquote>\n\n    <blockquote class=\"insight\">The goal is not more feedback. The goal is faster, cleaner signal from the right source at the right time.</blockquote>\n  </div>\n\n  <div class=\"sec\">\n    <h2>Designing a tight loop</h2>\n    <div class=\"grid\">\n      <div class=\"card\">\n        <h3>Act</h3>\n        <p>Make the smallest change that tests your hypothesis. Not the full solution — the probe.</p>\n      </div>\n      <div class=\"card\">\n        <h3>Observe</h3>\n        <p>Define what you will measure before you act. Post-hoc metrics are almost always cherry-picked.</p>\n      </div>\n      <div class=\"card\">\n        <h3>Adjust</h3>\n        <p>Update your model based on what actually happened, not what you wanted to happen.</p>\n      </div>\n    </div>\n\n    <p>Notice the loop starts with the smallest possible action, not the most comprehensive one. Comprehensive actions are expensive to reverse and expensive to attribute. Small probes are cheap to run and easy to read.</p>\n  </div>\n\n  <div class=\"sec\">\n    <h2>The enemy: confirmation</h2>\n    <p>The most dangerous moment in a feedback loop is when the first result confirms what you already believed. Confirmation bias activates instantly and stops you from running the next probe. One data point is not a loop — it is a starting point.</p>\n\n    <details class=\"acc-item\">\n      <summary class=\"acc-head\">Signs your feedback loop is broken</summary>\n      <div class=\"acc-body\">\n        <ul>\n          <li>You measure what is easy to count, not what actually matters</li>\n          <li>Results arrive after you have already committed to the next step</li>\n          <li>Negative results get reclassified as \"noise\" while positive results get promoted as signal</li>\n          <li>The person who made the decision is also the person who evaluates the result</li>\n        </ul>\n      </div>\n    </details>\n\n    <p>These patterns feel normal inside them. They require external pressure or deliberate discipline to break. Building the feedback loop before you act — not after — is that discipline.</p>\n<blockquote class=\"insight\"><p>Most feedback loops in organizations are accidental.</p></blockquote>\n  </div>\n</div>\n\n<script>\n(function() {\n  // Map both chapter1.html and 001.html patterns to 0-based indices\n  const chapterMap = {};\n  for (let i = 1; i <= 3; i++) {\n    chapterMap['chapter' + i + '.html'] = i - 1;\n    const padded = String(i).padStart(3, '0') + '.html';\n    chapterMap[padded] = i - 1;\n  }\n\n  document.addEventListener('click', e => {\n    const a = e.target.closest('a');\n    if (!a) return;\n    const href = a.getAttribute('href');\n    if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('data:')) return;\n\n    e.preventDefault();\n    const parts = href.split('#');\n    const pathPart = parts[0].toLowerCase();\n    const anchor = parts[1] || null;\n\n    let targetIdx = chapterMap[pathPart];\n    if (targetIdx === undefined && pathPart.includes('chapter')) {\n      const m = pathPart.match(/chapter(\\d+)/);\n      if (m) targetIdx = parseInt(m[1]) - 1;\n    }\n\n    if (targetIdx !== undefined) {\n      window.parent.postMessage({ action: 'bookGo', chapterIdx: targetIdx, anchorId: anchor }, '*');\n    } else if (anchor) {\n      const el = document.getElementById(anchor);\n      if (el) el.scrollIntoView({ behavior: 'smooth' });\n    }\n  });\n})();\n</script></body>\n</html>"];
+  const SIDX     = {"the":[0,1,2],"core":[0],"idea":[0],"chapter":[0,1,2],"every":[0,2],"complex":[0],"system":[0,2],"starts":[0,1,2],"with":[0,2],"single":[0],"clear":[0],"principle":[0],"this":[0,1],"introduces":[0],"that":[0,1,2],"and":[0,1,2],"shows":[0],"why":[0],"most":[0,1,2],"people":[0,1],"miss":[0],"simplicity":[0],"hard":[0,1],"human":[0],"brain":[0],"pattern":[0],"recognition":[0],"machine":[0],"finds":[0],"complexity":[0],"comforting":[0],"because":[0,1],"feels":[0],"thorough":[0],"like":[0],"something":[0],"missing":[0,1],"even":[0],"when":[0,1,2],"nothing":[0,1],"first":[0,1,2],"trap":[0],"mistaking":[0],"completeness":[0],"for":[0,1],"complete":[0],"explanation":[0],"can":[0,1],"short":[0],"solution":[0,2],"small":[0,2],"best":[0],"tools":[0],"one":[0,2],"thing":[0],"well":[0],"faced":[0],"problem":[0,1],"ask":[0,1],"what":[0,1,2],"add":[0],"better":[0],"question":[0,2],"remove":[0],"subtraction":[0],"reveals":[0],"structure":[0],"addition":[0],"hides":[0],"solutions":[0],"are":[0,1,2],"ones":[0],"you":[0,1,2],"explain":[0],"sentence":[0],"without":[0,1],"losing":[0],"accuracy":[0],"think":[0],"about":[0],"last":[0],"decision":[0,1,2],"overcomplicated":[0],"probably":[0],"added":[0],"conditions":[0,1],"exceptions":[0],"edge":[0],"cases":[0],"all":[0],"before":[0,1,2],"testing":[0],"whether":[0,2],"simple":[0],"version":[0],"worked":[0],"second":[0,1],"pre":[0],"emptive":[0],"three":[0],"signs":[0,2],"overcomplicating":[0],"levels":[0],"nesting":[0],"your":[0,1,2],"logic":[0],"action":[0,2],"longer":[0],"than":[0,1],"itself":[0,1],"has":[0,2],"any":[0,1],"these":[0,1,2],"step":[0,2],"back":[0],"strip":[0],"minimal":[0],"solves":[0],"actual":[0],"front":[0],"not":[0,1,2],"hypothetical":[0],"steps":[0],"ahead":[0],"reframe":[0],"instead":[0],"how":[0,1],"handle":[0],"case":[0],"smallest":[0,2],"real":[0,1],"formula":[0],"habit":[0],"questioning":[0],"accepting":[0],"practiced":[0],"consistently":[0],"compounds":[0],"into":[0],"dramatically":[0],"outcomes":[0],"filter":[1],"practical":[1],"framework":[1],"cutting":[1],"through":[1,2],"noise":[1,2],"reaching":[1],"right":[1,2],"answer":[1],"faster":[1,2],"matters":[1,2],"decisions":[1,2],"they":[1,2],"feel":[1,2],"frame":[1],"them":[1,2],"collect":[1],"more":[1,2],"information":[1],"needed":[1],"involve":[1],"necessary":[1],"set":[1],"higher":[1],"bars":[1],"certainty":[1],"stakes":[1],"require":[1,2],"two":[1],"part":[1],"test":[1,2],"applied":[1],"significant":[1],"choice":[1],"does":[1,2],"guarantee":[1],"eliminate":[1],"wrong":[1,2],"process":[1],"which":[1],"fast":[1],"correct":[1],"beats":[1],"slow":[1],"arrived":[1],"too":[1,2],"late":[1,2],"reversible":[1],"deserve":[1],"low":[1],"ceremony":[1],"make":[1,2],"quickly":[1],"observe":[1,2],"results":[1,2],"adjust":[1,2],"agonize":[1],"over":[1],"change":[1,2],"meeting":[1],"format":[1],"refactor":[1],"function":[1],"rewrite":[1],"email":[1],"irreversible":[1],"careful":[1],"thought":[1],"proportional":[1],"their":[1],"impact":[1],"hiring":[1],"architectural":[1],"choices":[1],"public":[1],"commitments":[1],"earn":[1],"extended":[1],"consideration":[1],"everything":[1],"else":[1],"tell":[1],"turns":[1],"out":[1],"correcting":[1],"cost":[1],"measured":[1],"hours":[1],"days":[1],"months":[1],"large":[1],"money":[1],"damaged":[1],"relationships":[1],"treat":[1],"who":[1,2],"actually":[1,2],"affected":[1],"expand":[1],"fill":[1],"number":[1],"stakeholders":[1],"invite":[1],"define":[1,2],"scope":[1],"outcome":[1,2],"only":[1],"affects":[1],"immediate":[1],"team":[1],"call":[1],"escalate":[1],"upward":[1],"default":[1],"escalation":[1],"signals":[1],"uncertainty":[1],"invites":[1],"guessing":[1],"person":[1,2],"should":[1],"own":[1],"each":[1],"consult":[1],"24h":[1],"maximum":[1],"deliberation":[1],"applying":[1],"run":[1,2],"both":[1],"tests":[1,2],"scheduling":[1],"writing":[1],"document":[1],"building":[1,2],"slide":[1],"deck":[1],"time":[1,2],"will":[1,2],"find":[1],"was":[1,2],"already":[1,2],"made":[1,2],"just":[1],"permission":[1],"act":[1,2],"replace":[1],"judgment":[1],"creates":[1],"operate":[1],"cleanly":[1],"accumulates":[1],"becomes":[1],"end":[1],"next":[1,2],"feedback":[1,2],"loop":[1,2],"once":[1],"reality":[1],"responding":[1],"improves":[2],"have":[2],"designed":[2],"inherited":[2],"accident":[2],"accidental":[2],"loops":[2],"organizations":[2],"activate":[2],"arrive":[2],"channel":[2],"measure":[2],"signal":[2],"quarterly":[2],"review":[2],"customer":[2],"complaint":[2],"suite":[2],"difference":[2],"latency":[2],"high":[2],"produces":[2],"confident":[2],"weeks":[2],"pass":[2],"result":[2],"arrives":[2],"but":[2],"then":[2],"context":[2],"changed":[2],"attribution":[2],"murky":[2],"caused":[2],"dozen":[2],"other":[2],"things":[2],"happened":[2],"between":[2],"goal":[2],"cleaner":[2],"from":[2],"source":[2],"designing":[2],"tight":[2],"hypothesis":[2],"full":[2],"probe":[2],"post":[2],"hoc":[2],"metrics":[2],"almost":[2],"always":[2],"cherry":[2],"picked":[2],"update":[2],"model":[2],"based":[2],"wanted":[2],"happen":[2],"notice":[2],"possible":[2],"comprehensive":[2],"actions":[2],"expensive":[2],"reverse":[2],"attribute":[2],"probes":[2],"cheap":[2],"easy":[2],"read":[2],"enemy":[2],"confirmation":[2],"dangerous":[2],"moment":[2],"confirms":[2],"believed":[2],"bias":[2],"activates":[2],"instantly":[2],"stops":[2],"running":[2],"data":[2],"point":[2],"starting":[2],"broken":[2],"count":[2],"after":[2],"committed":[2],"negative":[2],"get":[2],"reclassified":[2],"while":[2],"positive":[2],"promoted":[2],"also":[2],"evaluates":[2],"patterns":[2],"normal":[2],"inside":[2],"external":[2],"pressure":[2],"deliberate":[2],"discipline":[2],"break":[2]};
+
+  // ── DOM refs ──────────────────────────────────────────────────────────────
+  const fr       = document.getElementById('fr');
+  const tt       = document.getElementById('tt');
+  const bar      = document.getElementById('bar');
+  const side     = document.getElementById('side');
+  const overlay  = document.getElementById('overlay');
+  const searchEl = document.getElementById('search');
+  const app      = document.getElementById('app');
+  const bmBtn    = document.getElementById('bm-btn');
+  const bmList   = document.getElementById('bm-list');
+  const bmDetails = document.getElementById('bm-details');
+
+  let cur = 0;
+  let searchFilter = '';
+
+  // ── i18n helpers ─────────────────────────────────────────────────────────
+  document.getElementById('search').placeholder = LANG.search_placeholder;
+  document.getElementById('prev-btn').textContent = LANG.prev;
+  document.getElementById('next-btn').textContent = LANG.next;
+  document.getElementById('bm-summary').textContent = LANG.bookmarks_title;
+  document.getElementById('vol-info').textContent = LANG.total_chapters.replace('{n}', T.length);
+  document.documentElement.lang = LANG.code || 'ru';
+
+  // ── Theme ─────────────────────────────────────────────────────────────────
+  const themeBtn = document.getElementById('theme-btn');
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    themeBtn.textContent = t === 'dark' ? LANG.theme_to_light : LANG.theme_to_dark;
+    localStorage.setItem('theme_' + BOOK_ID, t);
+    // Propagate to iframe if loaded
+    try { fr.contentDocument.documentElement.setAttribute('data-theme', t); } catch(e) {}
+  }
+  const savedTheme = localStorage.getItem('theme_' + BOOK_ID)
+    || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  applyTheme(savedTheme);
+  themeBtn.onclick = () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+
+  // ── Bookmarks ─────────────────────────────────────────────────────────────
+  function getBookmarks() {
+    try { return JSON.parse(localStorage.getItem('bm_' + BOOK_ID) || '[]'); }
+    catch(e) { return []; }
+  }
+  function saveBookmarks(bm) {
+    localStorage.setItem('bm_' + BOOK_ID, JSON.stringify(bm));
+  }
+  function toggleBookmark() {
+    const bm = getBookmarks();
+    const idx = bm.indexOf(cur);
+    if (idx === -1) bm.push(cur); else bm.splice(idx, 1);
+    saveBookmarks(bm);
+    updateBookmarkBtn();
+    buildBookmarkList();
+    buildList(searchFilter); // refresh stars in chapter list
+  }
+  function updateBookmarkBtn() {
+    const bm = getBookmarks();
+    bmBtn.textContent = bm.includes(cur) ? LANG.bookmark_remove : LANG.bookmark_add;
+  }
+  function buildBookmarkList() {
+    const bm = getBookmarks();
+    bmList.innerHTML = '';
+    if (!bm.length) {
+      bmList.innerHTML = `<div class="bm-empty">${LANG.no_bookmarks}</div>`;
+      return;
+    }
+    bm.forEach(i => {
+      const btn = document.createElement('button');
+      btn.className = 'bm-item';
+      btn.textContent = `${LANG.chapter} ${i + 1} — ${T[i] || ''}`;
+      btn.onclick = () => { go(i); closeSidebarMobile(); };
+      bmList.appendChild(btn);
+    });
+  }
+  bmBtn.onclick = toggleBookmark;
+
+  // ── Search (inverted index) ───────────────────────────────────────────────
+  function searchChapters(query) {
+    const words = query.toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, '')
+      .split(/\s+/)
+      .filter(w => w.length > 1);
+    if (!words.length) return null; // null = show all
+
+    const wordSets = words.map(word => {
+      const hits = new Set();
+      for (const [key, indices] of Object.entries(SIDX)) {
+        if (key.startsWith(word)) indices.forEach(i => hits.add(i));
+      }
+      return hits;
+    });
+
+    // AND intersection
+    let result = wordSets[0];
+    for (let i = 1; i < wordSets.length; i++) {
+      result = new Set([...result].filter(x => wordSets[i].has(x)));
+    }
+    return result;
+  }
+
+  // ── Chapter navigation ────────────────────────────────────────────────────
+  function go(i, anchor = null) {
+    if (i < 0 || i >= T.length) return;
+    cur = i;
+
+    const doSwitch = () => {
+      fr.onload = () => {
+        // Propagate theme to iframe
+        try { fr.contentDocument.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')); } catch(e) {}
+
+        // Restore scroll position
+        const savedRatio = parseFloat(localStorage.getItem('sc_' + BOOK_ID + '_' + i) || '0');
+        if (savedRatio > 0.005) {
+          try {
+            const maxY = fr.contentDocument.body.scrollHeight - fr.clientHeight;
+            if (maxY > 0) fr.contentWindow.scrollTo({ top: savedRatio * maxY, behavior: 'instant' });
+          } catch(e) {}
+        }
+
+        // Navigate to anchor if specified
+        if (anchor) {
+          try {
+            const el = fr.contentDocument.getElementById(anchor);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          } catch(e) {}
+        }
+
+        // Save scroll position on scroll
+        try {
+          fr.contentWindow.addEventListener('scroll', () => {
+            try {
+              const maxY = fr.contentDocument.body.scrollHeight - fr.clientHeight;
+              if (maxY > 10) {
+                const ratio = fr.contentWindow.scrollY / maxY;
+                localStorage.setItem('sc_' + BOOK_ID + '_' + cur, ratio.toFixed(4));
+              }
+            } catch(e) {}
+          }, { passive: true });
+        } catch(e) {}
+      };
+
+      fr.srcdoc = CHAPTERS[i];
+
+      // Update UI
+      const chLabel = LANG.chapter_label.replace('{n}', i + 1);
+      tt.innerHTML = `<i>${chLabel}</i> ${T[i] || ''}`;
+      bar.style.width = ((i + 1) / T.length * 100) + '%';
+      document.querySelectorAll('.ch').forEach(el => el.classList.toggle('on', +el.dataset.i === i));
+      localStorage.setItem('prog_' + BOOK_ID, i);
+      updateBookmarkBtn();
+    };
+
+    if (document.startViewTransition) {
+      document.startViewTransition(doSwitch);
+    } else {
+      doSwitch();
+    }
+  }
+
+  // ── Sidebar chapter list ──────────────────────────────────────────────────
+  function buildList(filter) {
+    searchFilter = filter || '';
+    const list = document.getElementById('list');
+    list.innerHTML = '';
+    const matchSet = filter ? searchChapters(filter.toLowerCase()) : null;
+    const bm = getBookmarks();
+
+    T.forEach((t, i) => {
+      if (matchSet !== null && !matchSet.has(i)) return;
+      const btn = document.createElement('button');
+      btn.className = 'ch' + (i === cur ? ' on' : '');
+      btn.dataset.i = i;
+      const chLabel = LANG.chapter_label.replace('{n}', i + 1);
+      btn.innerHTML = `<b>${chLabel}</b>${t}${bm.includes(i) ? '<span class="bm-star">★</span>' : ''}`;
+      btn.onclick = () => { go(i); closeSidebarMobile(); };
+      list.appendChild(btn);
+    });
+
+    if (matchSet !== null && matchSet.size === 0) {
+      list.innerHTML = `<div style="padding:16px;color:var(--muted);font-size:13px;text-align:center">—</div>`;
+    }
+  }
+
+  // ── Mobile sidebar ────────────────────────────────────────────────────────
+  function closeSidebarMobile() {
+    if (window.innerWidth <= 860) side.classList.remove('open');
+  }
+
+  document.getElementById('menu-btn').onclick = e => {
+    e.stopPropagation();
+    if (window.innerWidth <= 860) {
+      side.classList.toggle('open');
+    } else {
+      app.classList.toggle('side-hide');
+    }
+  };
+  overlay.onclick = () => side.classList.remove('open');
+
+  // ── Keyboard navigation ───────────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.target === searchEl) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
+  });
+
+  // ── postMessage bridge (from iframe to shell) ─────────────────────────────
+  window.addEventListener('message', e => {
+    if (e.data && e.data.action === 'bookGo') go(e.data.chapterIdx, e.data.anchorId);
+  });
+
+  // ── Wire up buttons ───────────────────────────────────────────────────────
+  document.getElementById('prev-btn').onclick = () => go(cur - 1);
+  document.getElementById('next-btn').onclick = () => go(cur + 1);
+  searchEl.oninput = e => buildList(e.target.value);
+
+  // ── Initial render ────────────────────────────────────────────────────────
+  buildBookmarkList();
+  buildList('');
+  const saved = parseInt(localStorage.getItem('prog_' + BOOK_ID) || '0', 10);
+  go(isNaN(saved) || saved >= T.length ? 0 : saved);
+
+})();
+</script>
+</body>
+</html>

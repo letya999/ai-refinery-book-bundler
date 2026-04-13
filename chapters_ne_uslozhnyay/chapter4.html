@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4. Раздел 3: Запуск проекта</title>
+</head>
+<body>
+<main class="wrap">
+
+  <section class="hero">
+    <div class="kicker">Методология P3.express • Глава 4</div>
+    <h1>Раздел 3. Запуск проекта</h1>
+    <p class="lead">Многие проекты умирают не потому, что их плохо делали, а потому, что их не нужно было начинать. Фаза запуска — это фильтр жизнеспособности.</p>
+    <div class="stats">
+      <div class="stat"><b>71%</b><span>Провалов можно было предотвратить на старте</span></div>
+      <div class="stat"><b>A01–A10</b><span>Шагов фазы запуска</span></div>
+      <div class="stat"><b>5</b><span>Обязательных артефактов</span></div>
+      <div class="stat"><b>1</b><span>Итог: запускать или нет</span></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Почему запуск — это фильтр?</h2>
+    <p>P3.express превращает интуитивное «начнём и разберёмся» в осознанное решение. Фаза запуска заставляет команду ответить на неудобные вопросы до того, как потрачен первый рубль.</p>
+
+    <div class="canvas-wrap">
+      <canvas id="filter-viz" width="860" height="320"></canvas>
+      <div class="caption">Интерактив: нажимайте на холст, чтобы пройти через фазы фильтрации идей.</div>
+    </div>
+
+    <div class="translator">
+      <div class="tr-col bad">
+        <div class="tr-head bad">Без фильтра</div>
+        <ul>
+          <li>«Просто начнём, разберёмся»</li>
+          <li>Спонсор не назначен</li>
+          <li>Команда непонятна</li>
+          <li>Риски — «потом обсудим»</li>
+          <li>Цель размыта: «сделаем хорошо»</li>
+        </ul>
+      </div>
+      <div class="tr-col good">
+        <div class="tr-head good">С фазой запуска</div>
+        <ul>
+          <li>Осознанное решение стартовать</li>
+          <li>Спонсор утверждён (A01)</li>
+          <li>Роли зафиксированы (A02–A03)</li>
+          <li>Риски задокументированы (A05)</li>
+          <li>Цель формализована (A04)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Шаги A01–A10: запускаем правильно</h2>
+    <p>Каждый шаг закрывает конкретный риск «старта по наитию».</p>
+    <div class="grid">
+      <div class="card"><b>A01</b><h3>Спонсор</h3><p>Самый высокопоставленный защитник проекта. Без него менеджер — секретарь с подписью.</p></div>
+      <div class="card"><b>A02</b><h3>Менеджер</h3><p>Тот, кто крутит педали методологии каждый день. Назначается явно, не по умолчанию.</p></div>
+      <div class="card"><b>A03</b><h3>Команда</h3><p>Список людей с обязательствами: кто, когда, сколько часов. Не «привлечём по мере надобности».</p></div>
+      <div class="card"><b>A04</b><h3>Планирование</h3><p>Черновой план: объём, деньги, время. Достаточно для принятия решения — не для исполнения.</p></div>
+      <div class="card"><b>A05</b><h3>Риски</h3><p>Честный взгляд на то, что может пойти не так. Реестр с вероятностью и планом реагирования.</p></div>
+      <div class="card"><b>A06–A10</b><h3>Гейт запуска</h3><p>Проблемы, допущения, ограничения, сфера охвата и официальное одобрение. Проект стартует.</p></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Артефакты фазы запуска</h2>
+    <p>Минимальный набор — ровно столько, чтобы никто не сказал «а мы не договаривались».</p>
+    <div id="acc-list"></div>
+  </section>
+
+  <section class="sec">
+    <h2>Рейтинг ошибок старта</h2>
+    <div class="canvas-wrap">
+      <canvas id="mistakes-viz" width="860" height="280"></canvas>
+      <div class="caption">Чем выше полоса — тем чаще эта ошибка топит проект ещё на старте.</div>
+    </div>
+  </section>
+
+</main>
+<script>
+// === Фильтр-визуализация ===
+(function() {
+  const cv = document.getElementById('filter-viz');
+  const ctx = cv.getContext('2d');
+  let phase = 0;
+  cv.style.cursor = 'pointer';
+  cv.onclick = () => { phase = (phase + 1) % 4; draw(); };
+
+  const ideas = [
+    { y: 45,  label: 'А', ok: true  },
+    { y: 95,  label: 'Б', ok: false },
+    { y: 145, label: 'В', ok: true  },
+    { y: 195, label: 'Г', ok: false },
+    { y: 245, label: 'Д', ok: false },
+    { y: 285, label: 'Е', ok: true  },
+  ];
+
+  function draw() {
+    ctx.clearRect(0, 0, 860, 320);
+    // grid
+    ctx.strokeStyle = 'rgba(57,95,157,0.18)'; ctx.lineWidth = 1;
+    for (let x = 0; x < 860; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,320); ctx.stroke(); }
+    for (let y = 0; y < 320; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(860,y); ctx.stroke(); }
+
+    // ideas
+    ideas.forEach(idea => {
+      const color = phase === 0 ? '#3f66a6' : (idea.ok ? '#87efc9' : '#ff8f8f');
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(70, idea.y, 14, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#081423'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(idea.label, 70, idea.y + 4);
+    });
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#adc2e1'; ctx.font = '13px sans-serif';
+    ctx.fillText('6 идей', 48, 18);
+
+    // gate
+    const gateX = 320;
+    const gateColor = phase > 0 ? '#72d8ff' : '#395f9d';
+    ctx.strokeStyle = gateColor; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(gateX, 16); ctx.lineTo(gateX, 304); ctx.stroke();
+    ctx.fillStyle = gateColor; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('ФИЛЬТР', gateX, 12);
+    ctx.fillStyle = '#adc2e1'; ctx.font = '11px sans-serif';
+    ctx.fillText('A01–A10', gateX, 314);
+    ctx.textAlign = 'left';
+
+    // passed
+    if (phase >= 2) {
+      const passed = ideas.filter(i => i.ok);
+      passed.forEach((idea, idx) => {
+        const tx = phase >= 3 ? 520 + idx * 70 : 460;
+        const ty = 90 + idx * 80;
+        ctx.fillStyle = '#87efc9';
+        ctx.beginPath(); ctx.arc(tx, ty, 20, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#081423'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(idea.label, tx, ty + 5);
+      });
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#87efc9'; ctx.font = '13px sans-serif';
+      ctx.fillText('Прошли фильтр: 3', 400, 18);
+    }
+
+    // rejected
+    if (phase >= 3) {
+      const rejected = ideas.filter(i => !i.ok);
+      rejected.forEach((idea, idx) => {
+        ctx.fillStyle = 'rgba(255,143,143,0.35)';
+        ctx.beginPath(); ctx.arc(360 + idx * 55, 295, 10, 0, Math.PI*2); ctx.fill();
+      });
+      ctx.fillStyle = '#ff8f8f'; ctx.font = '12px sans-serif';
+      ctx.fillText('Отклонено: 3', 330, 278);
+    }
+
+    // phase prompt
+    const labels = ['▶ Нажмите для оценки', '▶ Фильтрация...', '▶ Прошли фильтр', '▶ Итог'];
+    ctx.fillStyle = '#72d8ff'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(labels[phase], 850, 16);
+    ctx.textAlign = 'left';
+  }
+  draw();
+})();
+
+// === Артефакты аккордеон ===
+(function() {
+  const items = [
+    { t: 'Project Charter',   b: 'Один документ: зачем проект, кто спонсор, кто менеджер, общий масштаб и дата старта. Максимум 2 страницы — если не помещается, значит цель ещё не ясна.' },
+    { t: 'Risk Register',      b: 'Таблица рисков: что может пойти не так, вероятность (1–5), ущерб (1–5), план реагирования. Обновляется каждый цикл управления.' },
+    { t: 'Stakeholder List',   b: 'Список всех, кого проект затрагивает. Спонсор, менеджер, команда, внешние стороны. Фиксируем интересы и уровень вовлечённости.' },
+    { t: 'Initial Plan',       b: 'Черновой план работ, бюджет и сроки. Достаточен для принятия решения — не для исполнения. Уточняется после гейта запуска.' },
+    { t: 'Approval Record',    b: 'Подтверждение спонсора: «Да, мы это запускаем». Без этого проект не переходит к фазе ежедневного управления.' },
+  ];
+  const c = document.getElementById('acc-list');
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'acc-item';
+    el.innerHTML = `<div class="acc-head">${item.t}</div><div class="acc-body"><p>${item.b}</p></div>`;
+    el.querySelector('.acc-head').onclick = () => el.classList.toggle('open');
+    c.appendChild(el);
+  });
+})();
+
+// === Ошибки бар-чарт ===
+(function() {
+  const cv = document.getElementById('mistakes-viz');
+  const ctx = cv.getContext('2d');
+  const bars = [
+    { label: 'Нет спонсора',         pct: 84, color: '#ff8f8f' },
+    { label: 'Цель не согласована',  pct: 71, color: '#ffd18a' },
+    { label: 'Команда не назначена', pct: 63, color: '#ffd18a' },
+    { label: 'Риски проигнорированы',pct: 58, color: '#72d8ff' },
+    { label: 'Нет плана',            pct: 47, color: '#72d8ff' },
+    { label: 'Нет одобрения',        pct: 39, color: '#87efc9' },
+  ];
+
+  const ml = 30, mt = 24, mr = 10, mb = 56;
+  const W = 860 - ml - mr, H = 280 - mt - mb;
+  ctx.translate(ml, mt);
+
+  for (let p = 0; p <= 100; p += 25) {
+    const y = H - H * p / 100;
+    ctx.strokeStyle = 'rgba(57,95,157,0.3)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    ctx.fillStyle = '#adc2e1'; ctx.font = '11px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(p + '%', -5, y + 4);
+  }
+
+  const bW = W / bars.length - 14;
+  bars.forEach((bar, i) => {
+    const x = i * (bW + 14);
+    const bH = H * bar.pct / 100;
+    const grad = ctx.createLinearGradient(x, H - bH, x, H);
+    grad.addColorStop(0, bar.color); grad.addColorStop(1, 'rgba(8,20,35,.4)');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.roundRect(x, H - bH, bW, bH, [5, 5, 0, 0]); ctx.fill();
+
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(bar.pct + '%', x + bW/2, H - bH - 6);
+
+    ctx.fillStyle = '#adc2e1'; ctx.font = '11px sans-serif';
+    const words = bar.label.split(' ');
+    words.forEach((w, wi) => ctx.fillText(w, x + bW/2, H + 16 + wi * 13));
+  });
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+})();
+</script>
+</body>
+</html>
