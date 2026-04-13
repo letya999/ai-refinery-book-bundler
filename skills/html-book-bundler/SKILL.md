@@ -1,278 +1,60 @@
 ---
 name: html-book-bundler
-description: Converts book chapters (HTML, FB2, EPUB, DOCX, OCR output) into a single self-contained offline HTML app with sidebar navigation, full-text search, bookmarks, scroll persistence, and dark/light theme.
+description: The ultimate AI-driven book compiler. Converts raw source files into a semantically enriched, visually engaging single-file HTML app. Implements a strict pipeline: Text Extraction -> Theme Ideation -> Visual Planning -> Semantic Assembly.
 ---
 
-# HTML Book Bundler (v5.0)
+# HTML Book Bundler (v6.0 — The AI-Architect Edition)
 
-Transforms raw chapter HTML files into a single `.html` file that works 100% offline with no external dependencies. The output is a mobile-first reading app: sidebar chapter list, full-text search, bookmarks, scroll persistence, keyboard navigation, dark/light theme toggle, and chapter content loaded via `iframe.srcdoc`.
+This skill elevates the book creation process from simple format conversion to **intelligent architectural redesign**. It transforms raw text into a modern, highly concentrated, interactive reading app. 
 
-## Architecture
+When you (the AI) invoke this skill, you are not just a parser; you are an Editor-in-Chief and an Information Designer. **You MUST strictly follow this 5-Phase pipeline.**
 
-```
-chapters/*.html  →  bundle.cjs  →  book.html
-      ↓                ↓
-  ingest.py       chapter_processor.cjs  (enrichment pipeline)
-  (FB2/EPUB/DOCX)      ↓
-                  assets/theme.css       (shared styles injected into every chapter)
-                  lang/ru.json           (i18n strings, --lang flag)
-                  lang/en.json
-                  templates/default.html (shell: sidebar + iframe + JS navigation)
-```
+## MANDATORY 5-PHASE PIPELINE
 
-### What the shell does
-- Left sidebar: chapter list with search filter and collapsible bookmarks panel
-- Top nav: prev/next buttons + chapter title + progress bar
-- Chapter content loaded via `iframe.srcdoc` (UTF-8, no base64, no Blob URL lifecycle)
-- Full-text search with inverted index (SIDX), prefix matching, AND intersection
-- Scroll position saved/restored per chapter (ratio-based, survives window resize)
-- Theme toggle (dark/light) propagated into iframe via `contentDocument.documentElement`
-- Keyboard navigation: ArrowLeft/ArrowRight
-- Mobile: hamburger opens sidebar over overlay
-- All UI strings from `const LANG = {{LANG_JSON}}` (ru/en or custom)
+### PHASE 1: Complete Raw Text Extraction
+- **Action**: Use tools like `ingest.py`, PDF parsing scripts, or read existing files to extract the 100% complete raw text from the source material.
+- **Rule**: Do not summarize yet. Just get the text into a readable format (e.g., raw HTML chapters) so you have the full context to analyze. Strip out OCR garbage, page numbers, and running headers.
 
-### What `chapter_processor.cjs` does (before srcdoc)
-Applied universally to every chapter regardless of source:
+### PHASE 2: Theme & Style Ideation
+- **Action**: Analyze the overall message, tone, and target audience of the entire book.
+- **Rule**: Decide on a visual theme. Should it be strict and corporate? Playful and modern? Deep and philosophical? 
+- **Deliverable**: Mentally define (or write to a config) the color palette, typography tweaks, and structural logic that will guide the visuals. If needed, customize `assets/theme.css` to fit this specific book's vibe (e.g., adding specific background gradients or interactive CSS components).
 
-1. **`autoCollapseLongParas()`** — wraps `<p>` blocks > 480 chars in `<details class="long-para">` with a preview summary
-2. **`autoInjectInsights()`** — extracts clean sentences (45-160 chars, Unicode `[\p{L}\p{N}...]`) from early paragraphs and injects `<blockquote class="insight">` pullquotes after 4th and 10th `</p>` (language-agnostic)
-3. **`styleFirstPara()`** — adds `class="lead-para"` to the first `<p>` for larger opening text
-4. **navScript injection** — intercepts `<a href="chapterN.html">` (and `001.html` padded pattern) and routes them via `window.parent.postMessage` for cross-chapter navigation
-5. **Shared theme injection** — `theme.css` is injected as a `<style>` block before the chapter's own styles
+### PHASE 3: Chapter-by-Chapter Visual Planning
+- **Action**: Before touching the code, build a "Visual Blueprint" for every chapter.
+- **Rule**: For each chapter, identify 2-4 key "Semantic Anchors" — concepts that are too important to remain plain text.
+- **Mapping**:
+  - *Processes, algorithms, historical timelines* → **Timeline** (`.vis-timeline`)
+  - *Comparisons, "Good vs. Bad", "Myth vs. Reality"* → **Translator** (`.translator`)
+  - *Metrics, "Inputs/Outputs", KPIs, requirements* → **Stats** (`.stats`)
+  - *Lists of types, definitions, categorizations* → **Grid/Cards** (`.grid`, `.card`)
+  - *Deep dives, case studies, optional lengthy details* → **Accordion** (`details.acc-item`)
+  - *The single most critical takeaway* → **Insight Quote** (`blockquote.insight`)
 
-### Why `srcdoc` (v5.0 change from base64+Blob)
-- **No size overhead**: base64 adds 33% to binary assets; `srcdoc` stores chapters as raw UTF-8 strings
-- **No 2MB limit**: Chrome's `data:` URI limit blocked large chapters; `srcdoc` has no such restriction
-- **No Blob URL lifecycle**: no `URL.createObjectURL` / `URL.revokeObjectURL` needed
-- **Same-origin access**: `fr.contentDocument` directly accessible for scroll tracking and theme propagation — no postMessage round-trips
+### PHASE 4: Semantic Assembly & Volume Constraint
+- **Action**: Rewrite and assemble each chapter HTML using your blueprint.
+- **Strict Volume Constraint**: REDUCE the word count by 50-75%. Extract only the **"meat"** (essence, summary, overview, main takeaways). Eliminate fluff, repetitive anecdotes, and filler, while perfectly retaining the author's unique voice and wisdom.
+- **Rule**: A "wall of text" is an automatic FAILURE. Every chapter MUST be a rich mix of concise paragraphs and the visual components planned in Phase 3. Add emojis strategically to guide the reader's eye.
 
-### What `theme.css` provides
-CSS variables (dark + light), layout (`.wrap`, `.hero`, `.sec`), stats grid, card grid, accordion, translator, table, badge, scrollbar, responsive breakpoints, `env(safe-area-inset-*)` mobile notch, `max-width: 72ch` reading width, `prefers-reduced-motion` support, `prefers-color-scheme: light` auto-detection.
+### PHASE 5: Bundling & Quality Assurance
+- **Action**: Run `node skills/html-book-bundler/scripts/bundle.cjs --input <chapters_dir> --output <final_book.html> --title "Book Title" --lang ru`.
+- **Rule**: Open the final bundled HTML file and run a semantic check. Ensure that styles from `theme.css` applied correctly and no visual tags are broken. 
 
-## Usage
+---
 
-### 1. (Recommended) Add AI-generated pullquotes before bundling
+## Component Reference (from `theme.css`)
 
-The bundler's built-in `autoInjectInsights` uses a simple heuristic. For better results, **have Claude read each chapter file and manually insert `<blockquote class="insight">` elements** at the most impactful moments:
+All components are CSS-only and require zero JS (except native HTML tags like `<details>`). Use these exact classes when rewriting the HTML in Phase 4.
 
-```
-For each chapter in ./chapters/:
-  1. Read the chapter HTML
-  2. Identify 1-2 sentences (40-160 chars) that best capture the chapter's key insight
-  3. Insert after the 4th or 8th </p> tag:
-     <blockquote class="insight"><p>The sentence here.</p></blockquote>
-```
-
-Then bundle with `--skip-insights` to disable the heuristic fallback:
-
-```bash
-node skills/html-book-bundler/scripts/bundle.cjs \
-  --input ./chapters \
-  --output my-book.html \
-  --title "Book Name" \
-  --lang ru \
-  --skip-insights
-```
-
-### 2. Assemble a book from HTML chapters (quick, heuristic insights)
-```bash
-node skills/html-book-bundler/scripts/bundle.cjs \
-  --input ./chapters \
-  --output my-book.html \
-  --title "Book Name" \
-  --lang ru
-```
-
-Chapters must be named `chapter1.html`, `chapter2.html`, ... The bundler reads them in `localeCompare` numeric order. A local `theme.css` in the chapters directory takes precedence over `assets/theme.css`.
-
-### 2. Ingest from FB2, EPUB, or DOCX
-```bash
-python skills/html-book-bundler/scripts/ingest.py \
-  --input ./book.fb2 \
-  --output ./chapters
-# Supports: .fb2  .fb2.zip  .epub  .docx
-# Add --force to overwrite existing output directory
-```
-
-Then run step 1.
-
-### 3. From PDF (The "Cool Book" Workflow)
-
-Standard PDF-to-text tools often fail on complex layouts (running headers, multi-column text, sidebars). **Mandatory Rule:** If a book has unique visual "quirks" or complex structures, do NOT use a generic parser. Instead, create a dedicated converter script based on existing templates.
-
-#### Phase 0: PDF Intelligence & Extraction
-1. **Analyze Structure**: Run `pdf_parser_general.py --input book.pdf` to get a style-aware JSON of blocks and font sizes.
-2. **Identify "Quirks"**: Look for repeating headers (author name, site URL), page number patterns, and specific content types (e.g., "Letters to Greg" or "Business Case").
-3. **Choose Template**:
-   - For business/technical books (stats, timelines, grids): use `examples/scripts/template_business_pdf.py`.
-   - For lifestyle/narrative books (letters, callouts, myths): use `examples/scripts/template_lifestyle_pdf.py`.
-4. **Customize**: Modify the `IGNORE_PATTERNS` (RegEx) and `CHAPTER_VISUALS` mapping in your new script.
-5. **AI Verification Loop**: After generating chapters, perform a spot-check. Ask the AI:
-   *"Compare this generated chapter1.html with pages 5-10 of the original PDF. Are there missing headers, OCR artifacts, or layout breaks?"*
-
-```bash
-# Example: Using the general parser to bootstrap
-python skills/html-book-bundler/scripts/pdf_parser_general.py \
-  --input my_book.pdf \
-  --config my_config.json \
-  --output ./chapters
-```
-
-### 4. Dev server (live-reload)
-```bash
-node skills/html-book-bundler/scripts/dev_server.cjs \
-  --input ./chapters \
-  --output ./preview.html \
-  --port 3000
-```
-
-### 5. Audit and lint
-```bash
-python skills/html-book-bundler/scripts/audit_single_file_html.py --file my-book.html
-python skills/html-book-bundler/scripts/lint_book.py --file my-book.html
-```
-
-### 6. Run tests
-```bash
-node skills/html-book-bundler/tests/test_bundler.cjs
-# 17 tests: build, placeholders, srcdoc, CSP, i18n, titles, numeric sort, search, --help, error exit, a11y
-```
-
-## CLI Reference
-
-```
-node bundle.cjs --input <dir> --output <file.html> [options]
-
-Required:
-  --input  <dir>      Directory containing chapter HTML files
-  --output <file>     Output HTML file path
-
-Options:
-  --title  <string>   Book title (default: output filename)
-  --lang   <code>     UI language: ru | en  (default: ru)
-  --dev               Inject live-reload script
-  --optimize          Run optimize_assets.py before bundling
-  --template <file>   Custom HTML template (default: templates/default.html)
-  --help              Show usage
-```
-
-## Visual Components (CSS-only, no dependencies)
-
-Available in `theme.css` — use in chapter HTML:
-
-| Class | Description |
-|---|---|
-| `.stats` / `.stat` | Stats grid with big number + label |
-| `.card` / `.grid` | Card grid with hover lift |
-| `.translator` | Two-column comparison (good/bad) |
-| `.acc-item` / `.acc-head` / `.acc-body` | Accordion (details/summary pattern) |
-| `blockquote.insight` | Pullquote with accent left border |
-| `details.long-para` | Collapsible long paragraph |
-| `.lead-para` | Larger opening paragraph |
-| `.sec` | Section container with subtle background |
-| `.badge` | Status badge |
-
-### Chapter-specific visual types (for book scripts)
-
-Add CSS in the chapter's own `<style>` block:
-
-| Type | Class | Use when |
+| Visual Type | CSS Classes Required | Purpose |
 |---|---|---|
-| `red_flags` | `.red-flags`, `.rf-item`, `.rf-num` | Numbered warning list |
-| `checklist` | `.checklist`, `.cl-item.yes/.no` | Yes/No comparison list |
-| `timeline` | `.vis-timeline`, `.tl-step`, `.tl-arrow` | Sequential steps |
-| `status_badge` | `.status-badge`, `.sb-icon/.sb-label/.sb-sub` | Single bold statement |
-| `truth_scale` | `.truth-scale`, `.ts-col.myth/.reality` | Myth vs reality columns |
-| `compare_grid` | `.compare-grid`, `.cg-col.excuse/.truth` | Excuse vs truth columns |
+| **Stats** | `<div class="stats"><div class="stat"><b class="stat-num">...</b><span class="stat-label">...</span></div></div>` | Metrics, short inputs/outputs. |
+| **Translator** | `<div class="translator"><div class="tr-col bad/good"><div class="tr-head bad/good">...</div><ul>...</ul></div></div>` | Strong contrasts. |
+| **Cards Grid** | `<div class="grid"><div class="card"><b>...</b><p>...</p></div></div>` | Collections of concepts. |
+| **Timeline** | `<div class="vis-timeline"><div class="tl-step"><div class="tl-num">1</div><div class="tl-content">...</div></div></div>` | Step-by-step logic. |
+| **Accordion** | `<details class="acc-item"><summary class="acc-head">...</summary><div class="acc-body">...</div></details>` | Expandable deep dives. |
 
-## Security
-
-- **CSP**: `default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:` — no external requests
-- **iframe sandbox**: `allow-scripts allow-same-origin` — chapter content isolated from shell
-- **No CDN, no external fonts, no network calls** — fully offline
-- **All inter-frame communication** via `window.parent.postMessage` for navigation; scroll/theme use direct `contentDocument` access (same-origin srcdoc)
-
-## i18n
-
-Add language files in `lang/`:
-```json
-{
-  "code": "en",
-  "dir": "ltr",
-  "chapter": "Chapter",
-  "loading": "Loading...",
-  "search_placeholder": "Search the book...",
-  "prev": "← Back",
-  "next": "Forward →",
-  "bookmark_add": "☆",
-  "bookmark_remove": "★",
-  "bookmarks_title": "Bookmarks",
-  "no_bookmarks": "No bookmarks yet",
-  "theme_to_light": "☀",
-  "theme_to_dark": "☾",
-  "chapter_label": "Chapter {n}"
-}
-```
-
-Pass `--lang <code>` to `bundle.cjs`. Falls back to `ru.json` if file not found.
-
-## Lessons Learned
-
-### Architecture
-- `iframe.srcdoc` vs base64+Blob: srcdoc wins on all dimensions for text content (no overhead, no limits, same-origin, lifecycle-free)
-- Template placeholder replacement: use `str.split(placeholder).join(value)` — handles multiple occurrences and avoids regex escaping issues with JSON content
-- Lint regex for JSON arrays: `re.search(r'\[')` + `json.JSONDecoder.raw_decode()` — never use `[\s\S]*?` which stops at first `]` inside string values
-
-### OCR-sourced text
-- OCR output is one page = one paragraph. Call `split_long_para()` at sentence boundaries every ~600 chars before any classification
-- Running book headers appear on every OCR page — strip them with regex before processing
-- Q&A-structured books benefit from `_is_qa_para()` detection to separate narrative from Q&A sections
-
-### Visual variety
-- Every chapter having the same visual type makes the book monotonous
-- Use a `CHAPTER_VISUALS` dict mapping chapter index → visual type config
-- Match visual type semantically: warnings → red_flags, cycles → timeline, binary judgements → status_badge
-
-### CSS injection architecture
-- Inject `theme.css` as a `<style>` block BEFORE the chapter's own styles (inside `prepareChapter`)
-- Chapter styles override the base theme via cascade
-- Do NOT inject CSS into the shell HTML after the fact — the iframe is sandboxed
-
-### Language-agnostic text quality
-- Use Unicode property escapes `[\p{L}\p{N}...]` instead of Cyrillic-specific ranges
-- This makes `autoInjectInsights()` work for English, German, French, etc.
-
-### Sidebar scrolling with many chapters
-- `.side` needs explicit `height: 100vh; overflow: hidden` for `.list { flex:1; overflow-y: auto }` to activate
-- Without bounded parent height, `flex: 1` has no reference and overflow never kicks in
-
-### Cross-chapter links
-- navScript must map BOTH `chapterN.html` AND `NNN.html` (padded) patterns
-- `ingest.py` outputs `chapter1.html`; some EPUB spines use zero-padded names
-
-## Visual Enrichment Workflow (Visual-First Standard)
-
-To make books more engaging, avoid "walls of text". The bundler supports a rich set of CSS-only components via `assets/theme.css`.
-
-### 1. The Visual Bank
-Refer to `references/visual-bank.md` for ready-to-use HTML snippets for:
-- **Stats Grid** (`.stats`, `.stat`): Use for Inputs/Outputs, key metrics, or "at a glance" summaries.
-- **Comparison Translator** (`.translator`): Use for Myth vs Reality, Good vs Bad, or Before vs After.
-- **Info Cards** (`.grid`, `.card`): Use for definitions, warnings (Red Flags), or key takeaways.
-- **Timeline** (`.vis-timeline`): Use for sequential steps, project phases, or cycles.
-- **Accordions** (`.acc-item`): Use for case studies, detailed examples, or FAQ.
-
-### 2. Implementation Strategy
-When writing a `convert_book.py` script:
-1. **Define a Mapping**: Create a `CHAPTER_VISUALS` dictionary mapping chapter indices to visual configurations.
-2. **Inject Semantically**:
-   - Chapter about Risks? Use `.translator` (Risk vs Mitigation).
-   - Chapter about Planning? Use `.vis-timeline` (Steps 1-N).
-   - Chapter introduction? Use `.stats` (Required inputs).
-3. **Automatic Conversion**: Use regex to detect bullet points or numbered lists and transform them into `.card` grids or `.vis-timeline` blocks.
-
-### 3. Visual Variety Rule
-Ensure no more than 3 consecutive chapters use the same visual type. Rotate between cards, stats, and translators to maintain reader engagement.
-
-### 4. Avoiding shell breakage
-... (existing content) ...
+## Absolute Prohibitions
+1. **NO EXTERNAL DEPENDENCIES**: No CDNs, no external JS libraries, no web fonts. The book must be 100% offline.
+2. **NO BLIND COPY-PASTING**: Do not just wrap the original text in HTML tags. You MUST distill the semantic essence.
+3. **NO VISUAL MONOTONY**: Do not use the exact same visual component (e.g., only Cards) for three chapters in a row. Rotate them intelligently based on the context.

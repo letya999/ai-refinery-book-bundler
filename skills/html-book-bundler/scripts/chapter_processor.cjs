@@ -70,6 +70,52 @@ function styleFirstPara(html) {
   });
 }
 
+/** 
+ * Automatically transform simple lists (3-6 items) into visual grids/cards.
+ * Heuristic: if items are short and there's no nested markup.
+ */
+function autoEnrichLists(html) {
+  return html.replace(/<(ul|ol)>([\s\S]*?)<\/\1>/g, (match, tag, inner) => {
+    const items = inner.match(/<li>([\s\S]*?)<\/li>/g);
+    if (!items || items.length < 3 || items.length > 6) return match;
+    
+    // Check if items are "clean" (short text, no complex tags)
+    const isSimple = items.every(li => {
+      const text = li.replace(/<[^>]+>/g, '').trim();
+      return text.length > 0 && text.length < 120 && !/<(?:table|blockquote|details|div|ul|ol)\b/.test(li);
+    });
+
+    if (!isSimple) return match;
+
+    // Pattern 1: Stats (Key: Value)
+    const stats = items.map(li => {
+      const text = li.replace(/<[^>]+>/g, '').trim();
+      const m = text.match(/^([^:—]+)[:—]\s*(.+)$/);
+      return m ? { label: m[1].trim(), val: m[2].trim() } : null;
+    });
+
+    if (stats.every(s => s !== null)) {
+      const cards = stats.map(s => 
+        `<div class="stat"><b class="stat-num">${s.label}</b><span class="stat-label">${s.val}</span></div>`
+      ).join('\n');
+      return `<div class="stats">\n${cards}\n</div>`;
+    }
+
+    // Pattern 2: Simple cards
+    const cards = items.map(li => {
+      const text = li.replace(/<[^>]+>/g, '').trim();
+      // If it has a bold prefix, use it as card title
+      const m = li.match(/<li><b>(.*?)<\/b>[:.\s]*(.*?)<\/li>/i);
+      if (m) {
+        return `<div class="card"><b>${m[1]}</b><p>${m[2] || ''}</p></div>`;
+      }
+      return `<div class="card"><p>${text}</p></div>`;
+    }).join('\n');
+    
+    return `<div class="grid">\n${cards}\n</div>`;
+  });
+}
+
 // ---------------------------------------------------------------------------
 
 /**
@@ -138,6 +184,13 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
   bodyContent = autoCollapseLongParas(bodyContent);
   if (!skipInsights) bodyContent = autoInjectInsights(bodyContent);
   bodyContent = styleFirstPara(bodyContent);
+  bodyContent = autoEnrichLists(bodyContent);
+
+  // Semantic Quality Check (v5.5)
+  const visualTags = /class="(stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge)"|<table>/i;
+  if (!visualTags.test(bodyContent)) {
+    console.warn(`[Semantic Warning] Chapter ${index + 1} ("${title}") is a "wall of text" with no visual components.`);
+  }
 
   // Ensure .wrap container exists
   if (!bodyContent.includes('class="wrap"')) {
