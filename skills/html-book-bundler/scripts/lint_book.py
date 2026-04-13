@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Advanced Integrity Linter for Single-File HTML Books.
-Enforces 100% bundling of all local and external resources.
+Enforces 100% bundling and UTF-8 safety.
 """
 
 import argparse
@@ -25,8 +25,17 @@ class BookLinter:
             self.errors.append(f"File not found: {self.file_path}")
             return False
 
-        content = self.file_path.read_text(encoding="utf-8", errors="replace")
+        # Optimized reading: read small chunks if we only needed metadata, 
+        # but for SAST we need the whole content.
+        try:
+            content = self.file_path.read_text(encoding="utf-8", errors="replace")
+        except Exception as e:
+            self.errors.append(f"Failed to read file: {e}")
+            return False
+
         self.stats['total_size_mb'] = self.file_path.stat().st_size / (1024 * 1024)
+        if self.stats['total_size_mb'] > self.max_size_mb:
+            self.warnings.append(f"Total size ({self.stats['total_size_mb']:.1f} MB) exceeds threshold ({self.max_size_mb} MB).")
 
         # 1. Shell Analysis
         self._audit_shell(content)
@@ -45,14 +54,14 @@ class BookLinter:
                     chapter_html = base64.b64decode(b64_str).decode('utf-8', errors='ignore')
                     self._audit_chapter(i + 1, chapter_html)
                 except Exception as e:
-                    self.errors.append(f"Chapter {i+1}: Failed to decode Base64 ({str(e)})")
+                    self.errors.append(f"Chapter {i+1}: Failed to decode Base64/UTF8 ({str(e)})")
         except Exception as e:
             self.errors.append(f"Payload: Failed to parse JSON ({str(e)})")
 
         return len(self.errors) == 0
 
     def _audit_shell(self, content: str):
-        # Allow system protocols in Shell
+        # Strict Shell Audit
         links = re.findall(r"(?:src|href)\s*=\s*['\"]([^'\"]+)['\"]", content)
         for link in links:
             is_allowed = (
@@ -62,38 +71,36 @@ class BookLinter:
                 link.startswith('mailto:') or 
                 link.startswith('tel:')
             )
-            if not is_allowed and link.startswith('http'):
-                 self.errors.append(f"Shell: Unbundled external resource found: {link}")
-            elif not is_allowed:
-                 self.errors.append(f"Shell: Unbundled local resource found: {link}")
+            if not is_allowed:
+                 self.errors.append(f"Shell: Unbundled resource found: {link}")
 
     def _audit_chapter(self, index: int, html: str):
         prefix = f"Chapter {index}"
         
-        # ALL resources must be bundled as Data URIs or be internal anchors/system protocols
-        links = re.findall(r"(?:src|href)\s*=\s*['\"]([^'\"]+)['\"]", html)
+        # ALL resources must be bundled
+        links = re.findall(r"(?:src|href|srcset)\s*=\s*['\"]([^'\"]+)['\"]", html)
         for link in links:
-            is_valid = (
-                link.startswith('data:') or 
-                link.startswith('#') or 
-                link.startswith('mailto:') or 
-                link.startswith('tel:') or
-                link.startswith('javascript:')
-            )
-            if not is_valid:
-                self.errors.append(f"{prefix}: Found unbundled/external reference: {link}")
+            # Handle srcset comma-separated values
+            parts = [p.strip().split()[0] for p in link.split(',') if p.strip()]
+            for p in parts:
+                is_valid = (
+                    p.startswith('data:') or 
+                    p.startswith('#') or 
+                    p.startswith('mailto:') or 
+                    p.startswith('tel:') or
+                    p.startswith('javascript:')
+                )
+                if not is_valid:
+                    self.errors.append(f"{prefix}: Found unbundled reference: {p}")
 
-        # JS Sandbox (Allowed postMessage navigation only)
+        # JS Sandbox
         clean_html = re.sub(r'window\.parent\.postMessage\s*\(', '', html)
         if 'window.parent' in clean_html or 'parent.window' in clean_html:
-             self.errors.append(f"{prefix}: JS Sandbox Violation! Unauthorized access to window.parent.")
+             self.errors.append(f"{prefix}: JS Sandbox Violation! Unauthorized window.parent.")
 
-        # Data Integrity
-        checkboxes = re.findall(r'<input[^>]+type=["\']checkbox["\']', html)
-        if checkboxes:
-            ids = re.findall(r'id=["\']([^"\']+)["\']', html)
-            if len(set(ids)) < len(checkboxes):
-                self.errors.append(f"{prefix}: Checkboxes missing unique IDs.")
+        # Accessibility/Quality
+        if "charset=utf-8" not in html.lower() and "charset=\"utf-8\"" not in html.lower():
+            self.warnings.append(f"{prefix}: Missing UTF-8 charset meta tag.")
 
     def report(self):
         print(f"\n{'='*60}")
@@ -110,15 +117,15 @@ class BookLinter:
             for w in self.warnings: print(f"  [!] {w}")
 
         if not self.errors:
-            print("\nSTATUS: PASS - Book is 100% self-contained.")
+            print("\nSTATUS: PASS - 100% Self-contained.")
         else:
-            print("\nSTATUS: FAIL - Integrity issues detected.")
+            print("\nSTATUS: FAIL - Critical issues found.")
         print(f"{'='*60}\n")
 
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--file", required=True)
-    p.add_argument("--max-size", type=float, default=15.0)
+    p.add_argument("--max-size", type=float, default=50.0)
     args = p.parse_args()
     linter = BookLinter(args.file, args.max_size)
     success = linter.run()

@@ -21,10 +21,11 @@ html,body{height:100%;background:radial-gradient(circle at 85% -20%,#2e5e9d 0,#1
 .search-box input{width:100%;padding:8px;background:#0c1831;border:1px solid #3f66a6;color:#fff;border-radius:6px;outline:none}
 .search-box input:focus{border-color:var(--acc);box-shadow:0 0 5px rgba(114,216,255,0.3)}
 .list{padding:10px;display:grid;gap:8px;overflow:auto}
-.ch{all:unset;cursor:pointer;padding:10px 12px;border-radius:10px;border:1px solid #3f66a6;background:rgba(17,31,57,.72);font-size:13px;line-height:1.35;color:#dce9ff;transition:0.2s}
+.ch{all:unset;cursor:pointer;padding:10px 12px;border-radius:10px;border:1px solid #3f66a6;background:rgba(17,31,57,.72);font-size:13px;line-height:1.35;color:#dce9ff;transition:0.2s;display:flex;flex-direction:column}
 .ch:hover, .ch.focused{border-color:var(--acc);background:rgba(25,45,82,0.8)}
 .ch.on{background:linear-gradient(135deg,rgba(114,216,255,.2),rgba(135,239,201,.14));border-color:var(--acc)}
-.ch .match{font-size:10px;color:var(--acc2);margin-top:4px;display:block}
+.ch b{color:#fff;font-weight:700;margin-bottom:2px}
+.ch .match{font-size:10px;color:var(--acc2);margin-top:4px}
 .foot{margin-top:auto;padding:10px;border-top:1px solid #223258;color:var(--muted);font-size:12px}
 .main{display:flex;flex-direction:column;min-width:0;background:rgba(8,20,35,0.4)}
 .top{height:48px;flex-shrink:0;border-bottom:1px solid #2c4d80;background:rgba(13,25,49,0.8);display:flex;align-items:center;gap:10px;padding:0 10px;backdrop-filter:blur(8px)}
@@ -38,18 +39,12 @@ html,body{height:100%;background:radial-gradient(circle at 85% -20%,#2e5e9d 0,#1
 .frame iframe{width:100%;height:100%;border:none;background:#0c1831;display:block}
 .mob{display:inline-block}
 
-::view-transition-old(chapter-frame) {
-  animation: 200ms cubic-bezier(0.4, 0, 1, 1) both fade-out;
-}
-::view-transition-new(chapter-frame) {
-  animation: 300ms cubic-bezier(0, 0, 0.2, 1) both fade-in;
-}
+::view-transition-old(chapter-frame) { animation: 200ms cubic-bezier(0.4, 0, 1, 1) both fade-out; }
+::view-transition-new(chapter-frame) { animation: 300ms cubic-bezier(0, 0, 0.2, 1) both fade-in; }
 @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
 
-@media (prefers-reduced-motion: reduce){
-  *{animation:none!important;transition:none!important}
-}
+@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
 @media (max-width:900px){
   .app{grid-template-columns:1fr}
   .side{position:fixed;left:0;top:0;bottom:0;width:86vw;max-width:320px;transform:translateX(-100%);transition:.25s;z-index:20;box-shadow:10px 0 30px rgba(0,0,0,.4)}
@@ -147,7 +142,22 @@ function buildList(filter = '') {
     b.dataset.i = i;
     b.role = 'option';
     b.setAttribute('aria-selected', i === cur);
-    b.innerHTML = '<b>Глава ' + (i + 1) + '</b><br>' + t + (contentMatch && !titleMatch ? '<span class="match">Совпадение в тексте</span>' : '');
+    
+    const label = document.createElement('b');
+    label.textContent = 'Глава ' + (i + 1);
+    const title = document.createElement('span');
+    title.textContent = t;
+    
+    b.appendChild(label);
+    b.appendChild(title);
+    
+    if (contentMatch && !titleMatch) {
+       const m = document.createElement('span');
+       m.className = 'match';
+       m.textContent = 'Совпадение в тексте';
+       b.appendChild(m);
+    }
+    
     b.onclick = () => go(i, null, true);
     if (i === cur) b.classList.add('on');
     list.appendChild(b);
@@ -184,17 +194,20 @@ searchInput.addEventListener('keydown', (e) => {
   }
 });
 
-function go(i, anchor = null, close = false) {
+// High-speed DataURI to Blob conversion using native fetch
+async function base64ToBlob(b64) {
+  const response = await fetch(`data:text/html;charset=utf-8;base64,${b64}`);
+  return await response.blob();
+}
+
+async function go(i, anchor = null, close = false) {
   if (i < 0 || i >= B64.length) return;
   cur = i;
 
-  const switchLogic = () => {
+  const switchLogic = async () => {
     try {
-        const bin = atob(B64[i]);
-        const bytes = new Uint8Array(bin.length);
-        for (let j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
-        const blob = new Blob([bytes], { type: 'text/html;charset=utf-8' });
         if (curBlobUrl) URL.revokeObjectURL(curBlobUrl);
+        const blob = await base64ToBlob(B64[i]);
         curBlobUrl = URL.createObjectURL(blob);
         fr.onload = () => {
           if (anchor) {
@@ -205,11 +218,16 @@ function go(i, anchor = null, close = false) {
         };
         fr.src = curBlobUrl;
     } catch(e) {
-        console.error('Ошибка загрузки главы:', e);
-        fr.srcdoc = '<div style="color:white;padding:20px">Ошибка загрузки содержимого.</div>';
+        console.error('Ошибка:', e);
+        fr.srcdoc = '<div style="color:white;padding:20px">Ошибка загрузки.</div>';
     }
 
-    tt.innerHTML = '<b>Глава ' + (i + 1) + '</b>&ensp;' + T[i];
+    tt.innerHTML = '';
+    const ttB = document.createElement('b');
+    ttB.textContent = 'Глава ' + (i + 1);
+    tt.appendChild(ttB);
+    tt.appendChild(document.createTextNode('\u2002' + T[i]));
+
     const progress = ((i + 1) / B64.length * 100);
     bar.style.width = progress + '%';
     document.querySelector('.prog').setAttribute('aria-valuenow', Math.round(progress));
@@ -221,7 +239,7 @@ function go(i, anchor = null, close = false) {
   if (document.startViewTransition) {
     document.startViewTransition(() => switchLogic());
   } else {
-    switchLogic();
+    await switchLogic();
   }
 }
 
