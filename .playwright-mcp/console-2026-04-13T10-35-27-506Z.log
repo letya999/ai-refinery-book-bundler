@@ -1,0 +1,6 @@
+[      22ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ about:blank:0
+[      75ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/60742169-1910-4734-ae5a-02b0b1e8244a:0
+[   14479ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/15168bcf-7558-473c-aca1-6f2f71d0107e:0
+[   22651ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/4ab79e59-9980-4940-8b0b-b626d95a6354:0
+[   37495ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/48d8e3fb-1ce7-4d42-8e7a-ee72d195bfa1:0
+[   52650ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/5bb5fb8e-641d-40ab-8d31-c41b2554ef19:0

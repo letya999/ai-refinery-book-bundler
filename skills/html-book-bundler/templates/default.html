@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; connect-src 'none';">
 <title>{{BOOK_TITLE}}</title>
 <style>
 /* ── Dark theme (default) ── */
@@ -232,6 +231,12 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   const CHAPTERS = {{LOCAL_CHAPTERS}};
   const SIDX     = {{SEARCH_IDX}};
 
+  // ── Safe Storage ──────────────────────────────────────────────────────────
+  const store = {
+    get: (k) => { try { return localStorage.getItem(k); } catch(e) { return null; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} }
+  };
+
   // ── DOM refs ──────────────────────────────────────────────────────────────
   const fr       = document.getElementById('fr');
   const tt       = document.getElementById('tt');
@@ -260,22 +265,22 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   function applyTheme(t) {
     document.documentElement.setAttribute('data-theme', t);
     themeBtn.textContent = t === 'dark' ? LANG.theme_to_light : LANG.theme_to_dark;
-    localStorage.setItem('theme_' + BOOK_ID, t);
+    store.set('theme_' + BOOK_ID, t);
     // Propagate to iframe if loaded
     try { fr.contentDocument.documentElement.setAttribute('data-theme', t); } catch(e) {}
   }
-  const savedTheme = localStorage.getItem('theme_' + BOOK_ID)
+  const savedTheme = store.get('theme_' + BOOK_ID)
     || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
   applyTheme(savedTheme);
   themeBtn.onclick = () => applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 
   // ── Bookmarks ─────────────────────────────────────────────────────────────
   function getBookmarks() {
-    try { return JSON.parse(localStorage.getItem('bm_' + BOOK_ID) || '[]'); }
+    try { return JSON.parse(store.get('bm_' + BOOK_ID) || '[]'); }
     catch(e) { return []; }
   }
   function saveBookmarks(bm) {
-    localStorage.setItem('bm_' + BOOK_ID, JSON.stringify(bm));
+    store.set('bm_' + BOOK_ID, JSON.stringify(bm));
   }
   function toggleBookmark() {
     const bm = getBookmarks();
@@ -342,7 +347,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
         try { fr.contentDocument.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')); } catch(e) {}
 
         // Restore scroll position
-        const savedRatio = parseFloat(localStorage.getItem('sc_' + BOOK_ID + '_' + i) || '0');
+        const savedRatio = parseFloat(store.get('sc_' + BOOK_ID + '_' + i) || '0');
         if (savedRatio > 0.005) {
           try {
             const maxY = fr.contentDocument.body.scrollHeight - fr.clientHeight;
@@ -365,7 +370,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
               const maxY = fr.contentDocument.body.scrollHeight - fr.clientHeight;
               if (maxY > 10) {
                 const ratio = fr.contentWindow.scrollY / maxY;
-                localStorage.setItem('sc_' + BOOK_ID + '_' + cur, ratio.toFixed(4));
+                store.set('sc_' + BOOK_ID + '_' + cur, ratio.toFixed(4));
               }
             } catch(e) {}
           }, { passive: true });
@@ -379,7 +384,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
       tt.innerHTML = `<i>${chLabel}</i> ${T[i] || ''}`;
       bar.style.width = ((i + 1) / T.length * 100) + '%';
       document.querySelectorAll('.ch').forEach(el => el.classList.toggle('on', +el.dataset.i === i));
-      localStorage.setItem('prog_' + BOOK_ID, i);
+      store.set('prog_' + BOOK_ID, i);
       updateBookmarkBtn();
     };
 
@@ -449,7 +454,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   // ── Initial render ────────────────────────────────────────────────────────
   buildBookmarkList();
   buildList('');
-  const saved = parseInt(localStorage.getItem('prog_' + BOOK_ID) || '0', 10);
+  const saved = parseInt(store.get('prog_' + BOOK_ID) || '0', 10);
   go(isNaN(saved) || saved >= T.length ? 0 : saved);
 
 })();

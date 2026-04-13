@@ -1,0 +1,116 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Интерактивная книга" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Всего 5 глав
+    - textbox "Поиск по книге..." [ref=e8]
+    - generic [ref=e9]:
+      - button "Глава 1 Введение и смысл метода" [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: Глава 1
+        - text: Введение и смысл метода
+      - 'button "Глава 2 Схема P3.express: спираль" [ref=e12] [cursor=pointer]':
+        - generic [ref=e13]: Глава 2
+        - text: "Схема P3.express: спираль"
+      - 'button "Глава 3 NUP: принципы и оценка зрелости" [ref=e14] [cursor=pointer]':
+        - generic [ref=e15]: Глава 3
+        - text: "NUP: принципы и оценка зрелости"
+      - button "Глава 4 Раздел 3. Запуск проекта" [ref=e16] [cursor=pointer]:
+        - generic [ref=e17]: Глава 4
+        - text: Раздел 3. Запуск проекта
+      - button "Глава 5 A01 — Назначить спонсора" [active] [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: Глава 5
+        - text: A01 — Назначить спонсора
+  - main [ref=e20]:
+    - generic [ref=e21]:
+      - button "☰" [ref=e22] [cursor=pointer]
+      - button "← Назад" [ref=e23] [cursor=pointer]
+      - button "Вперед →" [ref=e24] [cursor=pointer]
+      - generic [ref=e25]: Глава 5 A01 — Назначить спонсора
+    - iframe [ref=e29]:
+      - main [ref=f1e2]:
+        - generic [ref=f1e3]:
+          - generic [ref=f1e4]: Роли в проекте • Глава 5
+          - heading "A01 — Назначить спонсора" [level=1] [ref=f1e5]
+          - paragraph [ref=f1e6]: Спонсор — это не «банкомат». Это самый высокопоставленный защитник проекта, единственный, кто может пробить внешние барьеры организации.
+          - generic [ref=f1e7]:
+            - generic [ref=f1e8]:
+              - generic [ref=f1e9]: ×2.5
+              - text: Выше шанс успеха с активным спонсором
+            - generic [ref=f1e10]:
+              - generic [ref=f1e11]: 62%
+              - text: Провалов — из-за слабого спонсора
+            - generic [ref=f1e12]:
+              - generic [ref=f1e13]: A01
+              - text: Первый шаг запуска — без исключений
+        - generic [ref=f1e14]:
+          - 'heading "Власть vs Управление: схема ролей" [level=2] [ref=f1e15]'
+          - paragraph [ref=f1e16]: Менеджер управляет процессом изнутри. Спонсор защищает проект снаружи — на уровне организации. Разница не в должности, а в полномочиях.
+          - generic [ref=f1e19]: Кликните на роль, чтобы увидеть её обязанности в проекте.
+        - generic [ref=f1e20]:
+          - 'heading "Спонсор vs Менеджер: кто за что?" [level=2] [ref=f1e21]'
+          - generic [ref=f1e22]:
+            - generic [ref=f1e23]:
+              - generic [ref=f1e24]: Спонсор
+              - list [ref=f1e25]:
+                - listitem [ref=f1e26]: Обеспечивает бюджет и ресурсы
+                - listitem [ref=f1e27]: Разрешает политические конфликты
+                - listitem [ref=f1e28]: Принимает решения выше уровня PM
+                - listitem [ref=f1e29]: Утверждает изменения масштаба
+                - listitem [ref=f1e30]: Представляет проект топ-менеджменту
+            - generic [ref=f1e31]:
+              - generic [ref=f1e32]: Менеджер проекта
+              - list [ref=f1e33]:
+                - listitem [ref=f1e34]: Ведёт ежедневный цикл P3.express
+                - listitem [ref=f1e35]: Управляет командой и задачами
+                - listitem [ref=f1e36]: Ведёт реестры рисков и проблем
+                - listitem [ref=f1e37]: Эскалирует нерешаемое к спонсору
+                - listitem [ref=f1e38]: Отчитывается перед спонсором
+        - generic [ref=f1e39]:
+          - heading "Хороший vs плохой спонсор" [level=2] [ref=f1e40]
+          - generic [ref=f1e41]:
+            - generic [ref=f1e42]:
+              - generic [ref=f1e43]: Хороший
+              - heading "Присутствует" [level=3] [ref=f1e44]
+              - paragraph [ref=f1e45]: Бывает на ключевых встречах, читает недельный отчёт, доступен для эскалаций в течение 24 часов.
+            - generic [ref=f1e46]:
+              - generic [ref=f1e47]: Хороший
+              - heading "Решает" [level=3] [ref=f1e48]
+              - paragraph [ref=f1e49]: "Не откладывает решения. Понимает: промедление — это тоже решение, и обычно плохое."
+            - generic [ref=f1e50]:
+              - generic [ref=f1e51]: Хороший
+              - heading "Защищает" [level=3] [ref=f1e52]
+              - paragraph [ref=f1e53]: Сам звонит юристам, не просит менеджера «как-то договориться». Пробивает стены.
+            - generic [ref=f1e54]:
+              - generic [ref=f1e55]: Плохой
+              - heading "«Занят»" [level=3] [ref=f1e56]
+              - paragraph [ref=f1e57]: Не читает отчёты, не приходит на встречи. Проект управляет им, а не он проектом.
+            - generic [ref=f1e58]:
+              - generic [ref=f1e59]: Плохой
+              - heading "Делегирует всё" [level=3] [ref=f1e60]
+              - paragraph [ref=f1e61]: «Вы профессионалы, решайте сами». Теряет контекст на второй неделе. Помощник всё фильтрует.
+            - generic [ref=f1e62]:
+              - generic [ref=f1e63]: Плохой
+              - heading "Меняет приоритеты" [level=3] [ref=f1e64]
+              - paragraph [ref=f1e65]: Каждую неделю новая «стратегия». Команда перегружена, план неактуален, доверие убито.
+        - generic [ref=f1e66]:
+          - heading "Как назначить правильно" [level=2] [ref=f1e67]
+          - generic [ref=f1e68]:
+            - generic [ref=f1e69]:
+              - generic [ref=f1e70] [cursor=pointer]: 1. Определите кандидата +
+              - paragraph [ref=f1e71]: Спонсор — это тот, кто имеет полномочий достаточно для защиты проекта. Обычно директор или выше, заинтересованный в результате.
+            - generic [ref=f1e72]:
+              - generic [ref=f1e73] [cursor=pointer]: 2. Проведите разговор +
+              - paragraph [ref=f1e74]: "Недостаточно «назначить» — нужно, чтобы человек понял и принял роль. Обсудите: что ожидается, сколько времени, как работает эскалация."
+            - generic [ref=f1e75]:
+              - generic [ref=f1e76] [cursor=pointer]: 3. Задокументируйте +
+              - paragraph [ref=f1e77]: Имя спонсора должно быть в Project Charter. Это не формальность — это якорь ответственности для всей команды и стейкхолдеров.
+            - generic [ref=f1e78]:
+              - generic [ref=f1e79] [cursor=pointer]: 4. Настройте коммуникацию +
+              - paragraph [ref=f1e80]: "Как часто? В каком формате? Оптимально: короткий еженедельный отчёт + канал экстренной эскалации. Договоритесь заранее."
+            - generic [ref=f1e81]:
+              - generic [ref=f1e82] [cursor=pointer]: 5. Согласуйте красные линии +
+              - paragraph [ref=f1e83]: Что эскалируется немедленно? Превышение бюджета? Срыв вехи? Потеря ключевого человека? Список должен быть у обоих участников.
+          - blockquote [ref=f1e84]: Если вы не можете ответить на вопрос «кто ваш спонсор?» за 3 секунды — у вашего проекта нет спонсора.
+        - generic [ref=f1e85]:
+          - heading "Индикатор вовлечённости спонсора" [level=2] [ref=f1e86]
+          - generic [ref=f1e89]: "Интерактив: оцените своего спонсора по трём параметрам — нажмите на метку."

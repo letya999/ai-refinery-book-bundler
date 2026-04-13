@@ -1,0 +1,47 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Интерактивная книга" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Всего 11 глав
+    - textbox "Поиск по книге..." [ref=e8]
+    - generic [ref=e9]:
+      - button "Глава 1 1. Предисловие" [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: Глава 1
+        - text: 1. Предисловие
+      - button "Глава 2 2. Он вам не звонит" [ref=e12] [cursor=pointer]:
+        - generic [ref=e13]: Глава 2
+        - text: 2. Он вам не звонит
+      - button "Глава 3 3. Он не признаёт, что вы встречаетесь" [ref=e14] [cursor=pointer]:
+        - generic [ref=e15]: Глава 3
+        - text: 3. Он не признаёт, что вы встречаетесь
+      - button "Глава 4 4. Он изменяет или не хочет близости" [ref=e16] [cursor=pointer]:
+        - generic [ref=e17]: Глава 4
+        - text: 4. Он изменяет или не хочет близости
+      - button "Глава 5 5. Он видит вас только пьяным" [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: Глава 5
+        - text: 5. Он видит вас только пьяным
+      - button "Глава 6 6. Он не хочет на вас жениться" [ref=e20] [cursor=pointer]:
+        - generic [ref=e21]: Глава 6
+        - text: 6. Он не хочет на вас жениться
+      - button "Глава 7 7. Он хочет расстаться" [ref=e22] [cursor=pointer]:
+        - generic [ref=e23]: Глава 7
+        - text: 7. Он хочет расстаться
+      - button "Глава 8 8. Он просто исчез" [ref=e24] [cursor=pointer]:
+        - generic [ref=e25]: Глава 8
+        - text: 8. Он просто исчез
+      - button "Глава 9 9. Он женат" [ref=e26] [cursor=pointer]:
+        - generic [ref=e27]: Глава 9
+        - text: 9. Он женат
+      - button "Глава 10 10. Он ведёт себя как эгоист или придурок" [ref=e28] [cursor=pointer]:
+        - generic [ref=e29]: Глава 10
+        - text: 10. Он ведёт себя как эгоист или придурок
+      - 'button "Глава 11 11. Заключение: вы этого заслуживаете" [ref=e30] [cursor=pointer]':
+        - generic [ref=e31]: Глава 11
+        - text: "11. Заключение: вы этого заслуживаете"
+  - main [ref=e32]:
+    - generic [ref=e33]:
+      - button "☰" [ref=e34] [cursor=pointer]
+      - button "← Назад" [ref=e35] [cursor=pointer]
+      - button "Вперед →" [ref=e36] [cursor=pointer]
+    - iframe [ref=e39]:
+      

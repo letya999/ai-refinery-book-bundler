@@ -1,0 +1,3 @@
+[      69ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ about:blank:0
+[    2010ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/f3653082-4165-4000-910e-3f501dd4adbe:0
+[   34451ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/3a1902e9-cbe2-4c6f-a326-fd7fdd968e03:0

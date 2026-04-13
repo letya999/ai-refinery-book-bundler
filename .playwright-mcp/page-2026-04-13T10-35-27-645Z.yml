@@ -1,0 +1,85 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Интерактивная книга" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Всего 5 глав
+    - textbox "Поиск по книге..." [ref=e8]
+    - generic [ref=e9]:
+      - button "Глава 1 Введение и смысл метода" [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: Глава 1
+        - text: Введение и смысл метода
+      - 'button "Глава 2 Скелет проекта: 33 шага" [ref=e12] [cursor=pointer]':
+        - generic [ref=e13]: Глава 2
+        - text: "Скелет проекта: 33 шага"
+      - 'button "Глава 3 NUP: Принципы и оценка зрелости" [ref=e14] [cursor=pointer]':
+        - generic [ref=e15]: Глава 3
+        - text: "NUP: Принципы и оценка зрелости"
+      - button "Глава 4 Роли и ответственность" [ref=e16] [cursor=pointer]:
+        - generic [ref=e17]: Глава 4
+        - text: Роли и ответственность
+      - button "Глава 5 Управление ожиданиями" [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: Глава 5
+        - text: Управление ожиданиями
+  - main [ref=e20]:
+    - generic [ref=e21]:
+      - button "☰" [ref=e22] [cursor=pointer]
+      - button "← Назад" [ref=e23] [cursor=pointer]
+      - button "Вперед →" [ref=e24] [cursor=pointer]
+      - generic [ref=e25]: Глава 1 Введение и смысл метода
+    - iframe [ref=e28]:
+      - main [ref=f2e2]:
+        - generic [ref=f2e3]:
+          - generic [ref=f2e4]: Ознакомительный фрагмент • Глава 1
+          - 'heading "Коротко: зачем нужен P3.express" [level=1] [ref=f2e5]'
+          - paragraph [ref=f2e6]: "Корень проблем проектов: рваный ритм управления. Метод дает базовый каркас: принципы решений, цикл действий, обязательное закрытие с уроками."
+          - generic [ref=f2e7]:
+            - generic [ref=f2e8]:
+              - generic [ref=f2e9]: "33"
+              - text: шага метода
+            - generic [ref=f2e10]:
+              - generic [ref=f2e11]: "7"
+              - text: этапов цикла
+            - generic [ref=f2e12]:
+              - generic [ref=f2e13]: "6"
+              - text: nup-принципов
+            - generic [ref=f2e14]:
+              - generic [ref=f2e15]: "1"
+              - text: "цель: предсказуемость"
+        - generic [ref=f2e16]:
+          - heading "Почему проекты буксуют?" [level=2] [ref=f2e17]
+          - generic [ref=f2e18]:
+            - img [ref=f2e19]:
+              - generic [ref=f2e23]: Люди (эго)
+              - generic [ref=f2e26]: Процесс (хаос)
+              - generic [ref=f2e29]: Цели (туман)
+              - generic [ref=f2e32]: Связь (разрыв)
+              - generic [ref=f2e33]: КРАХ
+            - generic [ref=f2e34]: "Диаграмма Исикавы: типовые причины провала без системного метода."
+          - heading "Суть перехода" [level=2] [ref=f2e35]
+          - generic [ref=f2e36]:
+            - generic "Переход от хаоса к управляемому циклу" [ref=f2e37]
+            - generic [ref=f2e38]: "Схема читается слева направо: хаос → управленческий цикл → устойчивый результат."
+          - generic [ref=f2e39]:
+            - generic [ref=f2e40]:
+              - generic [ref=f2e41]: Сложно (PMBOK/Prince2)
+              - paragraph [ref=f2e42]: Сотни процессов, тяжелые отчеты, порог входа в месяцы обучения. Риск бюрократического паралича.
+            - generic [ref=f2e43]:
+              - generic [ref=f2e44]: Просто (P3.express)
+              - paragraph [ref=f2e45]: 33 понятных шага, фокус на ритме и принципах. Запуск за 1 день. Минимум лишнего шума.
+          - generic [ref=f2e46]:
+            - article [ref=f2e47]:
+              - generic [ref=f2e48]: 1. Диагностика
+              - paragraph [ref=f2e49]: "Фиксируем точки потерь: где плавают сроки, роли и риски."
+            - article [ref=f2e50]:
+              - generic [ref=f2e51]: 2. Ритм
+              - paragraph [ref=f2e52]: Внедряем недельный и ежедневный контур. Регулярность важнее штурмов.
+            - article [ref=f2e53]:
+              - generic [ref=f2e54]: 3. Закрепление
+              - paragraph [ref=f2e55]: Цикл замыкается на ретроспективу и обновление артефактов.
+          - generic [ref=f2e56]:
+            - heading "Как это работает на практике?" [level=3] [ref=f2e57]
+            - paragraph [ref=f2e58]:
+              - text: P3.express — это не про бюрократию, а про ритм. Мы не пишем отчеты ради отчетов, мы создаем ценность. Весь процесс укладывается в
+              - link "понятную схему-улитку" [ref=f2e59] [cursor=pointer]:
+                - /url: chapter2.html#A
+              - text: ", где каждый шаг логичен и необходим."

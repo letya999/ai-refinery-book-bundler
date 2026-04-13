@@ -1,0 +1,118 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Интерактивная книга" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Всего 5 глав
+    - textbox "Поиск по книге..." [ref=e8]
+    - generic [ref=e9]:
+      - button "Глава 1 Введение и смысл метода" [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: Глава 1
+        - text: Введение и смысл метода
+      - 'button "Глава 2 Схема P3.express: спираль" [ref=e12] [cursor=pointer]':
+        - generic [ref=e13]: Глава 2
+        - text: "Схема P3.express: спираль"
+      - 'button "Глава 3 NUP: принципы и оценка зрелости" [ref=e14] [cursor=pointer]':
+        - generic [ref=e15]: Глава 3
+        - text: "NUP: принципы и оценка зрелости"
+      - button "Глава 4 Раздел 3. Запуск проекта" [active] [ref=e16] [cursor=pointer]:
+        - generic [ref=e17]: Глава 4
+        - text: Раздел 3. Запуск проекта
+      - button "Глава 5 A01 — Назначить спонсора" [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: Глава 5
+        - text: A01 — Назначить спонсора
+  - main [ref=e20]:
+    - generic [ref=e21]:
+      - button "☰" [ref=e22] [cursor=pointer]
+      - button "← Назад" [ref=e23] [cursor=pointer]
+      - button "Вперед →" [ref=e24] [cursor=pointer]
+      - generic [ref=e25]: Глава 4 Раздел 3. Запуск проекта
+    - iframe [ref=e29]:
+      - main [ref=f1e2]:
+        - generic [ref=f1e3]:
+          - generic [ref=f1e4]: Методология P3.express • Глава 4
+          - heading "Раздел 3. Запуск проекта" [level=1] [ref=f1e5]
+          - paragraph [ref=f1e6]: Многие проекты умирают не потому, что их плохо делали, а потому, что их не нужно было начинать. Фаза запуска — это фильтр жизнеспособности.
+          - generic [ref=f1e7]:
+            - generic [ref=f1e8]:
+              - generic [ref=f1e9]: 71%
+              - text: Провалов можно было предотвратить на старте
+            - generic [ref=f1e10]:
+              - generic [ref=f1e11]: A01–A10
+              - text: Шагов фазы запуска
+            - generic [ref=f1e12]:
+              - generic [ref=f1e13]: "5"
+              - text: Обязательных артефактов
+            - generic [ref=f1e14]:
+              - generic [ref=f1e15]: "1"
+              - text: "Итог: запускать или нет"
+        - generic [ref=f1e16]:
+          - heading "Почему запуск — это фильтр?" [level=2] [ref=f1e17]
+          - paragraph [ref=f1e18]: P3.express превращает интуитивное «начнём и разберёмся» в осознанное решение. Фаза запуска заставляет команду ответить на неудобные вопросы до того, как потрачен первый рубль.
+          - generic [ref=f1e21]: "Интерактив: нажимайте на холст, чтобы пройти через фазы фильтрации идей."
+          - generic [ref=f1e22]:
+            - generic [ref=f1e23]:
+              - generic [ref=f1e24]: Без фильтра
+              - list [ref=f1e25]:
+                - listitem [ref=f1e26]: «Просто начнём, разберёмся»
+                - listitem [ref=f1e27]: Спонсор не назначен
+                - listitem [ref=f1e28]: Команда непонятна
+                - listitem [ref=f1e29]: Риски — «потом обсудим»
+                - listitem [ref=f1e30]: "Цель размыта: «сделаем хорошо»"
+            - generic [ref=f1e31]:
+              - generic [ref=f1e32]: С фазой запуска
+              - list [ref=f1e33]:
+                - listitem [ref=f1e34]: Осознанное решение стартовать
+                - listitem [ref=f1e35]: Спонсор утверждён (A01)
+                - listitem [ref=f1e36]: Роли зафиксированы (A02–A03)
+                - listitem [ref=f1e37]: Риски задокументированы (A05)
+                - listitem [ref=f1e38]: Цель формализована (A04)
+        - generic [ref=f1e39]:
+          - 'heading "Шаги A01–A10: запускаем правильно" [level=2] [ref=f1e40]'
+          - paragraph [ref=f1e41]: Каждый шаг закрывает конкретный риск «старта по наитию».
+          - generic [ref=f1e42]:
+            - generic [ref=f1e43]:
+              - generic [ref=f1e44]: A01
+              - heading "Спонсор" [level=3] [ref=f1e45]
+              - paragraph [ref=f1e46]: Самый высокопоставленный защитник проекта. Без него менеджер — секретарь с подписью.
+            - generic [ref=f1e47]:
+              - generic [ref=f1e48]: A02
+              - heading "Менеджер" [level=3] [ref=f1e49]
+              - paragraph [ref=f1e50]: Тот, кто крутит педали методологии каждый день. Назначается явно, не по умолчанию.
+            - generic [ref=f1e51]:
+              - generic [ref=f1e52]: A03
+              - heading "Команда" [level=3] [ref=f1e53]
+              - paragraph [ref=f1e54]: "Список людей с обязательствами: кто, когда, сколько часов. Не «привлечём по мере надобности»."
+            - generic [ref=f1e55]:
+              - generic [ref=f1e56]: A04
+              - heading "Планирование" [level=3] [ref=f1e57]
+              - paragraph [ref=f1e58]: "Черновой план: объём, деньги, время. Достаточно для принятия решения — не для исполнения."
+            - generic [ref=f1e59]:
+              - generic [ref=f1e60]: A05
+              - heading "Риски" [level=3] [ref=f1e61]
+              - paragraph [ref=f1e62]: Честный взгляд на то, что может пойти не так. Реестр с вероятностью и планом реагирования.
+            - generic [ref=f1e63]:
+              - generic [ref=f1e64]: A06–A10
+              - heading "Гейт запуска" [level=3] [ref=f1e65]
+              - paragraph [ref=f1e66]: Проблемы, допущения, ограничения, сфера охвата и официальное одобрение. Проект стартует.
+        - generic [ref=f1e67]:
+          - heading "Артефакты фазы запуска" [level=2] [ref=f1e68]
+          - paragraph [ref=f1e69]: Минимальный набор — ровно столько, чтобы никто не сказал «а мы не договаривались».
+          - generic [ref=f1e70]:
+            - generic [ref=f1e71]:
+              - generic [ref=f1e72] [cursor=pointer]: Project Charter +
+              - paragraph [ref=f1e73]: "Один документ: зачем проект, кто спонсор, кто менеджер, общий масштаб и дата старта. Максимум 2 страницы — если не помещается, значит цель ещё не ясна."
+            - generic [ref=f1e74]:
+              - generic [ref=f1e75] [cursor=pointer]: Risk Register +
+              - paragraph [ref=f1e76]: "Таблица рисков: что может пойти не так, вероятность (1–5), ущерб (1–5), план реагирования. Обновляется каждый цикл управления."
+            - generic [ref=f1e77]:
+              - generic [ref=f1e78] [cursor=pointer]: Stakeholder List +
+              - paragraph [ref=f1e79]: Список всех, кого проект затрагивает. Спонсор, менеджер, команда, внешние стороны. Фиксируем интересы и уровень вовлечённости.
+            - generic [ref=f1e80]:
+              - generic [ref=f1e81] [cursor=pointer]: Initial Plan +
+              - paragraph [ref=f1e82]: Черновой план работ, бюджет и сроки. Достаточен для принятия решения — не для исполнения. Уточняется после гейта запуска.
+            - generic [ref=f1e83]:
+              - generic [ref=f1e84] [cursor=pointer]: Approval Record +
+              - paragraph [ref=f1e85]: "Подтверждение спонсора: «Да, мы это запускаем». Без этого проект не переходит к фазе ежедневного управления."
+        - generic [ref=f1e86]:
+          - heading "Рейтинг ошибок старта" [level=2] [ref=f1e87]
+          - generic [ref=f1e90]: Чем выше полоса — тем чаще эта ошибка топит проект ещё на старте.

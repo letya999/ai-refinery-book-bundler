@@ -1,0 +1,16 @@
+[    1004ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ about:blank:0
+[    1079ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/685ebc05-bbbb-45ef-b2a9-4c1a50ed2bcf:0
+[    1107ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:7788/favicon.ico:0
+[   18640ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/98377b7b-6ee9-4160-8e97-8c1ff6e32fb4:0
+[   28239ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/40540163-f715-4b38-8ffd-f9ec9ff4fd52:0
+[   40542ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/d248b47b-26e9-4cf8-a929-06a0c1cc12f7:0
+[   76745ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/3f2337f2-ee52-4cf4-b4c0-a71e91fafc9d:0
+[  178899ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ about:blank:0
+[  178925ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/2679635f-d5d3-46e6-867b-9481f99ecfd7:0
+[  185958ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/6b9b9507-394e-4b7f-964c-b847c2ee54c1:0
+[  190190ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/7a884297-521b-476b-aada-05525daaea68:0
+[  202494ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:7788/ne-uslozhnyay-ULTIMATE-v7.html:0
+[  203805ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/4793431d-72ed-4caf-aa9d-5ccc1934b087:0
+[  204657ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/e12cb0d9-d8ca-4b9c-af40-3b6ebe7c3c93:0
+[  208623ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/3c84caea-7f24-406c-aac0-36189c97794a:0
+[  228708ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7788/c3d06877-b46a-44b3-9046-9a84f7ee5190:0

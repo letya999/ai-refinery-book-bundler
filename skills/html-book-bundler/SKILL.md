@@ -237,3 +237,7 @@ Pass `--lang <code>` to `bundle.cjs`. Falls back to `ru.json` if file not found.
 ### Cross-chapter links
 - navScript must map BOTH `chapterN.html` AND `NNN.html` (padded) patterns
 - `ingest.py` outputs `chapter1.html`; some EPUB spines use zero-padded names
+
+### Avoiding shell breakage
+- **CRITICAL**: When embedding chapter HTML strings inside a `<script>` block in the shell (e.g., via `JSON.stringify`), any occurrence of `</script>` will prematurely terminate the parent script.
+- **Solution**: Always escape `</script>` as `<\/script>` in chapter strings. This is valid in JS/JSON and invisible to the HTML parser of the shell. `chapter_processor.cjs` handles this systematically.

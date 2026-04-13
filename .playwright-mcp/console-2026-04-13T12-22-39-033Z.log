@@ -1,0 +1,12 @@
+[      73ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ about:blank:0
+[    2121ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/6f552ee5-faa6-4bf7-a765-6e7320761033:0
+[   29500ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/ef0c8f8c-451e-42c1-a472-a3c13ee488e2:0
+[  793519ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ about:blank:0
+[  793546ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/817ec82e-23e8-4e3a-83a1-cf58f91e3d08:0
+[  799416ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/24328506-30fc-4380-bc15-e3e06d0deed3:0
+[  802104ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/184db384-ca53-458d-a352-db7ac91de6c7:0
+[  802649ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/98ae1c4a-8c70-4a38-a35e-cb895542d7ce:0
+[  805718ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/2d42bc56-700d-4802-a974-8e539c6360de:0
+[  809585ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/bc40799c-938d-47a6-b9a2-b8d94947eef8:0
+[  814070ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/f733766f-fc6f-4e4a-8f05-98efabbbecd0:0
+[  817816ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ blob:http://localhost:7789/c739edce-2523-4351-a6be-ec65871c69df:0

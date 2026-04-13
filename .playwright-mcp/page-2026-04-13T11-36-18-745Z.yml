@@ -1,0 +1,46 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Интерактивная книга" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Всего 5 глав
+    - textbox "Поиск по книге..." [ref=e8]
+    - generic [ref=e9]:
+      - button "Глава 1 Введение и смысл метода" [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: Глава 1
+        - text: Введение и смысл метода
+      - 'button "Глава 2 Схема P3.express: спираль" [ref=e12] [cursor=pointer]':
+        - generic [ref=e13]: Глава 2
+        - text: "Схема P3.express: спираль"
+      - 'button "Глава 3 NUP: принципы и оценка зрелости" [ref=e14] [cursor=pointer]':
+        - generic [ref=e15]: Глава 3
+        - text: "NUP: принципы и оценка зрелости"
+      - button "Глава 4 Раздел 3. Запуск проекта" [ref=e16] [cursor=pointer]:
+        - generic [ref=e17]: Глава 4
+        - text: Раздел 3. Запуск проекта
+      - button "Глава 5 A01 — Назначить спонсора" [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: Глава 5
+        - text: A01 — Назначить спонсора
+  - main [ref=e20]:
+    - generic [ref=e21]:
+      - button "☰" [ref=e22] [cursor=pointer]
+      - button "← Назад" [ref=e23] [cursor=pointer]
+      - button "Вперед →" [ref=e24] [cursor=pointer]
+      - generic [ref=e25]: "Глава 2 Схема P3.express: спираль"
+    - iframe [ref=e29]:
+      - main [ref=f1e2]:
+        - generic [ref=f1e3]:
+          - generic [ref=f1e4]: Глава 2 • Методология
+          - 'heading "P3.express: схема-улитка" [level=1] [ref=f1e5]'
+          - paragraph [ref=f1e6]: Интерактивная карта процесса. Выберите фазу справа, детали шагов появятся ниже под схемой.
+        - complementary [ref=f1e12]:
+          - heading "Фазы проекта" [level=3] [ref=f1e13]
+          - generic [ref=f1e14]:
+            - button "Показать все" [ref=f1e15] [cursor=pointer]
+            - button "A — Запуск" [ref=f1e16] [cursor=pointer]
+            - button "B — Начало цикла" [ref=f1e17] [cursor=pointer]
+            - button "C — Еженедельно" [ref=f1e18] [cursor=pointer]
+            - button "D — Отклонения" [ref=f1e19] [cursor=pointer]
+            - button "E — Конец цикла" [ref=f1e20] [cursor=pointer]
+            - button "F — Закрытие" [ref=f1e21] [cursor=pointer]
+            - button "G — После проекта" [ref=f1e22] [cursor=pointer]
+          - generic [ref=f1e23]: "Полная схема P3.express: 33 шага."

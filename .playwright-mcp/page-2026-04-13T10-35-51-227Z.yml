@@ -1,0 +1,41 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Интерактивная книга" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Всего 5 глав
+    - textbox "Поиск по книге..." [ref=e8]
+    - generic [ref=e9]:
+      - button "Глава 1 Введение и смысл метода" [ref=e10] [cursor=pointer]:
+        - generic [ref=e11]: Глава 1
+        - text: Введение и смысл метода
+      - 'button "Глава 2 Скелет проекта: 33 шага" [ref=e12] [cursor=pointer]':
+        - generic [ref=e13]: Глава 2
+        - text: "Скелет проекта: 33 шага"
+      - 'button "Глава 3 NUP: Принципы и оценка зрелости" [ref=e14] [cursor=pointer]':
+        - generic [ref=e15]: Глава 3
+        - text: "NUP: Принципы и оценка зрелости"
+      - button "Глава 4 Роли и ответственность" [ref=e16] [cursor=pointer]:
+        - generic [ref=e17]: Глава 4
+        - text: Роли и ответственность
+      - button "Глава 5 Управление ожиданиями" [active] [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: Глава 5
+        - text: Управление ожиданиями
+  - main [ref=e20]:
+    - generic [ref=e21]:
+      - button "☰" [ref=e22] [cursor=pointer]
+      - button "← Назад" [ref=e23] [cursor=pointer]
+      - button "Вперед →" [ref=e24] [cursor=pointer]
+      - generic [ref=e25]: Глава 5 Управление ожиданиями
+    - iframe [ref=e28]:
+      - main [ref=f2e2]:
+        - generic [ref=f2e3]:
+          - generic [ref=f2e4]: Роли в проекте • Глава 5
+          - heading "A01 — Назначить спонсора" [level=1] [ref=f2e5]
+          - paragraph [ref=f2e6]: Спонсор — это не "банкомат", это самый высокопоставленный защитник проекта.
+        - generic [ref=f2e7]:
+          - heading "Спонсор vs Менеджер" [level=2] [ref=f2e8]
+          - paragraph [ref=f2e9]: Менеджер проекта (вы) отвечает за процессы. Спонсор отвечает за то, чтобы проект принес пользу бизнесу. Если вы не можете договориться с юристами — это ваша проблема. Если юристы блокируют проект по политическим причинам — это проблема Спонсора.
+          - generic [ref=f2e12]: "Схема власти: Спонсор находится \"над\" проектом, пробивая внешние преграды."
+          - generic [ref=f2e13]:
+            - heading "Зачем он нужен?" [level=3] [ref=f2e14]
+            - paragraph [ref=f2e15]: Без Спонсора менеджер превращается в "секретаря", который собирает подписи. Со Спонсором менеджер становится "директором", у которого есть мандат на изменения.

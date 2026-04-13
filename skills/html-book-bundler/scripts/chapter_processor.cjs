@@ -91,12 +91,11 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
 
   const hasOwnStyles = /<style[\s\S]*?<\/style>/i.test(content);
 
-  // Inter-chapter navigation: intercept <a href="chapterN.html"> clicks
-  // and route through parent shell via postMessage
+  // Inter-chapter navigation script.
+  // Note the breakup of </script> to avoid breaking the shell template during generation.
   const navScript = `
 <script>
 (function() {
-  // Map both chapter1.html and 001.html patterns to 0-based indices
   const chapterMap = {};
   for (let i = 1; i <= ${totalChapters}; i++) {
     chapterMap['chapter' + i + '.html'] = i - 1;
@@ -129,7 +128,7 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
     }
   });
 })();
-</script>`;
+<\/script>`.replace(/<\\\/script>/, '</' + 'script>');
 
   // Extract body content
   const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
@@ -173,7 +172,7 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
     : '';
   const styleBlock = [sharedBlock, chapterStyles].filter(Boolean).join('\n');
 
-  return [
+  const finalHtml = [
     '<!DOCTYPE html>',
     '<html lang="en">',
     '<head>',
@@ -184,6 +183,11 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
     `<body>${bodyContent}${navScript}</body>`,
     '</html>',
   ].join('\n');
+
+  // CRITICAL: Escape all </script> tags to avoid premature script termination
+  // when this string is embedded inside a <script> block in the parent shell.
+  // Using <\/script> is valid in JS strings and prevents the HTML parser from stopping.
+  return finalHtml.replace(/<\/script>/gi, '<\\/script>');
 }
 
 module.exports = { prepareChapter };
