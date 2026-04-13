@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Глава XIV. Что дальше? Рекомендованная литература</title>
+<style>
+:root {
+  --bg: #081423; --panel: #0f1f38; --panel2: #163056; --line: #395f9d;
+  --txt: #eef5ff; --muted: #adc2e1; --acc: #b4a0ff; --acc2: #87efc9; --warn: #ffd18a;
+}
+[data-theme="light"] {
+  --bg: #f0f4f8; --panel: #e4ecf5; --panel2: #d4e2ee; --line: #b0c8e0;
+  --txt: #1a2535; --muted: #4a6580; --acc: #1a7fc4; --acc2: #158060; --warn: #b07000;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--txt); font-family: system-ui, sans-serif;
+        line-height: 1.75; padding: 0; }
+
+.hero {
+  background: linear-gradient(135deg, var(--panel) 0%, var(--panel2) 100%);
+  border-bottom: 2px solid var(--acc);
+  padding: 3rem 2rem 2.5rem;
+}
+.kicker { font-size: .75rem; font-weight: 700; letter-spacing: .12em;
+           text-transform: uppercase; color: var(--acc); margin-bottom: .6rem; }
+.hero h1 { font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 800;
+            line-height: 1.2; color: var(--txt); max-width: 700px; }
+.hero .lead { margin-top: 1rem; color: var(--muted); font-size: 1.05rem; max-width: 640px; }
+
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+.sec { background: var(--panel); border-radius: 12px; padding: 1.5rem;
+        margin-bottom: 1.5rem; border: 1px solid var(--line); }
+
+h1, h2 { color: var(--acc); }
+h2 { font-size: 1.3rem; margin: 2rem 0 .75rem; padding-bottom: .4rem;
+      border-bottom: 1px solid var(--line); }
+h3 { font-size: 1.05rem; color: var(--acc2); margin: 1.5rem 0 .5rem; }
+h3.step-head { background: var(--panel2); border-left: 3px solid var(--acc);
+                padding: .5rem 1rem; border-radius: 0 6px 6px 0; }
+p { max-width: 72ch; margin-bottom: 1rem; color: var(--txt); }
+p.lead-para { font-size: 1.1rem; color: var(--txt); font-weight: 500;
+               line-height: 1.7; max-width: 65ch; }
+b { color: var(--warn); }
+
+blockquote.insight {
+  border-left: 3px solid var(--acc);
+  margin: 1.5rem 0; padding: .75rem 1.25rem;
+  background: rgba(114,216,255,.07);
+  border-radius: 0 8px 8px 0;
+  font-style: italic; color: var(--muted); max-width: 70ch;
+}
+blockquote.insight p { color: var(--muted); margin: 0; }
+
+ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; max-width: 70ch; }
+li { margin-bottom: .4rem; color: var(--txt); }
+
+.stats { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.5rem 0; }
+.stat { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px;
+         padding: 1rem 1.25rem; min-width: 130px; flex: 1; }
+.stat-num { display: block; font-size: 2rem; font-weight: 800; color: var(--acc);
+             line-height: 1; margin-bottom: .25rem; }
+.stat span:last-child { font-size: .8rem; color: var(--muted); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+         gap: 1rem; margin: 1.5rem 0; }
+.card { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px;
+         padding: 1.25rem; }
+.card h3 { margin-top: 0; font-size: .95rem; color: var(--acc); }
+.card p  { font-size: .9rem; margin: 0; color: var(--muted); max-width: none; }
+
+details.acc-item { border: 1px solid var(--line); border-radius: 8px;
+                    margin-bottom: .75rem; overflow: hidden; }
+summary.acc-head { padding: .75rem 1rem; cursor: pointer; font-weight: 600;
+                    background: var(--panel2); color: var(--acc2); list-style: none; }
+summary.acc-head::-webkit-details-marker { display: none; }
+summary.acc-head::before { content: '▸ '; font-size: .9em; }
+details[open] summary.acc-head::before { content: '▾ '; }
+.acc-body { padding: 1rem; background: var(--panel); }
+.acc-body p { max-width: none; }
+
+.process-steps { counter-reset: step; list-style: none; padding: 0;
+                  margin: 1.5rem 0; max-width: 70ch; }
+.process-steps li { counter-increment: step; padding: .75rem 1rem .75rem 3.5rem;
+                     position: relative; border-left: 2px solid var(--line);
+                     margin-bottom: .75rem; }
+.process-steps li::before { content: counter(step); position: absolute;
+                              left: -.9rem; top: .6rem; width: 1.8rem; height: 1.8rem;
+                              background: var(--acc); color: #081423; border-radius: 50%;
+                              display: flex; align-items: center; justify-content: center;
+                              font-weight: 800; font-size: .8rem; }
+
+.risk-matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+.risk-col { background: var(--panel2); border-radius: 8px; padding: 1rem; }
+.risk-col.high { border-top: 3px solid #ff8a8a; }
+.risk-col.low  { border-top: 3px solid #87efc9; }
+.risk-col h4 { font-size: .85rem; text-transform: uppercase; letter-spacing: .08em;
+                margin-bottom: .75rem; }
+.risk-col.high h4 { color: #ff8a8a; }
+.risk-col.low  h4 { color: #87efc9; }
+
+@media (max-width: 600px) {
+  .hero { padding: 2rem 1rem; }
+  .wrap { padding: 1rem; }
+  .risk-matrix { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="hero">
+  <p class="kicker">Глава XIV.</p>
+  <h1>Что дальше? Рекомендованная литература</h1>
+</div>
+
+<blockquote class="insight"><p>Лучшая рекомендованная литература — та, которую вы откроете снова, когда столкнётесь с реальной проблемой.</p></blockquote>
+
+<div class="wrap">
+<h2>Глава XIV. Что дальше?  В данной книге мы рассмотрели лишь общие положения методологии PMI. Развивайте свои знания в  этой области – изучите PMBoK в оригинале, проведите сравнение с другими широко  распространенными подходами к проектному менеджменту (перечислены в главе III).</h2>
+<p>Мы не касались прикладных навыков менеджера (лидерства, коммуникативности и прочих) – на эту  тему изданы сотни книг и периодических изданий. Осваивайте их по мере необходимости.</p>
+<p>Изучите методологическую специфику управления программами и портфелями – рано или поздно вам  придется столкнуться с управлением несколькими, как-то взаимосвязанными проектами.</p>
+<p>Дорабатывайте информацию. Модернизируйте «под себя». Сохраняйте результаты и «извлеченные  уроки» и умейте делиться ими с коллегами. Это позволит вашей организации эффективнее строить  работу по проектам (в том числе и «затачивая» ее под ваши нужды), а ваш личный профессионализм и  признание как менеджера проектов будет расти.</p>
+<p>Удачи вам в ваших проектах!</p>
+<h2>Рекомендованная литература 1.«Руководство к своду знаний по управлению проектами», Project Management Institute, 496</h2>
+<p>стр.</p>
+<ol>
+<li>«Вальсируя с медведями: управление рисками в проектах по разработке программного</li>
+</ol>
+<p>обеспечения» ДеМарко Т., Листер Т., 304 стр.</p>
+<ol>
+<li>«Путь камикадзе» Эдвард Йордон, 290 стр.</li>
+<li>«Управление высокотехнологичными проектами» Арчибальд Рассел Д., 464 стр.</li>
+<li>«Мифический человеко-месяц» Брукс Фредерик, 196 стр.</li>
+<li>«Как привести дела в порядок. Искусство продуктивности без стресса» Ален Дэвид</li>
+<li>«Человеческий фактор. Успешные проекты и команды» ДеМарко Т., Листер Т., 256 стр.</li>
+<li>«Project Management Institute Practice Standard for Work Breakdown Structures, Second Edition»,</li>
+</ol>
+<p>Project Management Institute, 123 стр.</p>
+<h2>Глоссарий</h2>
+<p>Балансировка требований – отбор требований, реализация которых предполагается в рамках проекта.</p>
+<p>Бюджет проекта – это сумма предельной цены проекта (cost baseline) и управленческих резервов  (management reserves). Определяется спонсором.</p>
+<p>Веха – это работа с нулевой длительностью (используется при создании расписания проекта, чтобы  обозначить значимый этап).</p>
+<p>Грубые оценки (ROM-estimate) - предполагают отклонение до 50%. Применимы в фазе инициации  проекта.</p>
+<p>Заинтересованные лица проекта – все персоны, на интересы которых влияет реализация проекта  (положительным или отрицательным образом).</p>
+<p>Золотая сервировка (gold platting) - добавление в продукт  возможностей и функциональности,  которая хоть и приятна заказчику, но не была им запрошена и не является необходимой для закрытия  работ.</p>
+<p>Иерархическая структура работ (ИСР) (WBS) – поставко-ориентированная, иерархическая  декомпозиция работ, выполняемых командой проекта для достижения целей проекта и необходимых  результатов поставки.</p>
+<p>Качество – это уровень выполнения работ, при котором создаваемый продукт удовлетворяет  предъявленным требованиям.</p>
+<p>Качественный анализ рисков – это субъективная оценка выявленных рисков. Мы должны определить  – как сильно тот или иной угрожает проекту.</p>
+<p>Количественный анализ рисков – это форма объективной оценки риска. Ему подвергаются только  «значимые» риски, отобранные в ходе предыдущего шага.</p>
+<p>Критический путь – отражает самый длинный путь в сетевой диаграмме и самое короткое время, за  которое можно выполнить проект. У одного проекта может быть более одного критического пути.</p>
+<p>Ожидание – «умозрительная картинка будущего». Как правило - достаточно широкая. Ожидание  нельзя включить в состав проекта, не преобразовав в  требование. Пример ожидания: «чтобы  производительность отдела возросла после внедрения ИТ-системы»; или «чтобы внедрение  проекта не сильно сказалось на работе соседнего департамента».</p>
+<p>План управления проектом – это совокупность всех проектных планов.</p>
+<p>ПМ – проектный менеджер (аббревиатура)</p>
+<p>Предельная цена проекта (cost baseline)  - это сумма себестоимости всех работ по проекту и стоимости  всех резервов на непредвиденные случаи (contingency reserves). Определяется менеджером проекта.</p>
+<p>Продукт  - результат (или набор результатов) поставки по контракту. Продукт, это то, что хочет  получить заказчик.</p>
+<p>Проект - это процесс создания продукта. Это то, что делает команда, чтобы выдать заказчику продукт.  Заказчику, обычно, проект не интересен.</p>
+<p>Риск – это вероятностное событие, которое может оказать положительное или отрицательное влияние  на проект.</p>
+<p>Содержание проекта – описание работ, которые необходимо выполнить, чтобы получить продукт.</p>
+<p>Список ресурсов – совокупность договоренностей о выделении ресурсов на проект.</p>
+<p>Спонсор проекта – это фигура, обеспечивающая проект финансовыми ресурсами. .</p>
+<p>Требование – конкретный, измеримый, проверяемый запрос заинтересованного лица. Пример  требования: «система должна позволять проходить все пользовательские сценарии без  использования манипулятора «мышь»».</p>
+<p>Триггеры риска – признаки, по которым «хозяин риска» поймет, что превентивные действия не  сработали и пора «отступать» (использовать План Б).</p>
+<p>Устав проекта – документ, формализующий договоренности со спонсором в ходе инициации проекта.</p>
+<p>Хозяин риска - персона, которой поручено обрабатывать риск (контролировать, что превентивные  меры предприняты, а в случае наступления риска – реагировать на него).</p>
+</div>
+</body>
+</html>
