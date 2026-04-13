@@ -1,50 +1,46 @@
 ---
 name: html-book-bundler
-description: Engineering self-contained, high-performance, 100% offline interactive HTML books with WebP optimization, strict CSP security, and smart search indexing.
+description: Engineering self-contained, multi-volume, mobile-first HTML books with universal ingestion (EPUB, FB2) and advanced adaptive typography.
 ---
 
-# HTML Book Bundler (v2.0)
+# HTML Book Bundler (v3.0 - Enterprise Edition)
 
-Expert skill for transforming manuscripts into secure, single-file HTML applications that run entirely offline without external dependencies.
+A top-tier publishing pipeline that transforms standard e-books (FB2, EPUB) and raw HTML into highly optimized, adaptive, and 100% offline web applications.
 
-## 1. Zero-Trust Architecture
+## 1. Core Innovations
 
-### A. Security First
-- **Strict CSP:** Built-in Content Security Policy blocks all network access (`default-src 'none'`).
-- **Sandbox Isolation:** Chapters run in a sandboxed `<iframe>` to prevent access to parent `localStorage` or `cookie`.
-- **Safe Bridge:** Cross-chapter navigation uses a secure `postMessage` bridge with origin/source validation.
+### A. The Universal Ingester (`ingest.py`)
+Automatically parses `FB2` and `EPUB` archives, extracts structural semantic HTML, and safely unloads binary assets (images) into an isolated `assets/` directory.
 
-### B. Smart Payloads
-- **WebP Optimization:** Automatically converts all images to WebP to minimize Base64 overhead.
-- **Deduplicated Search Index:** Removes stop-words and duplicates to save up to 40% of text memory.
-- **UTF-8 Enforcement:** Guarantees correct encoding for offline viewing across all devices.
+### B. Smart Volume Splitting (Многотомник)
+Never crash a mobile browser again. The bundler (`bundle.cjs`) tracks Base64 payload weight. If a book exceeds the defined threshold (default: 15MB), it seamlessly splits it into multiple HTML files (`book_vol1.html`, `book_vol2.html`).
+- Global Manifest ensures cross-volume navigation is completely invisible to the user.
+- Shared `LocalStorage` syncs reading progress and scroll position across all volumes.
 
-### C. Resource Lifecycle
-- **Memory Management:** Explicit `URL.revokeObjectURL()` calls prevent memory leaks during page flipping.
-- **Zero-External:** Fails build if any `http(s)` links are present (everything must be bundled).
+### C. Mobile-First App Shell
+- **Thumb-Friendly:** "Next Chapter" huge action buttons at the bottom of the content.
+- **Fluid Typography:** CSS `clamp()` dynamically scales fonts to match the exact screen width (from iPhone SE to 4K monitors).
+- **Responsive Wrappers:** Automatically detects huge tables and injects `overflow-x: auto` wrappers.
 
-## 2. Advanced Tooling
+## 2. Workflows
 
-### Asset Optimization:
+### 1. Ingestion (Convert FB2/EPUB to Raw HTML)
 ```bash
-# Compress images to WebP
-python scripts/optimize_assets.py --input ./raw_images --output ./chapters/assets
+# Requires: pip install lxml (for FB2)
+python scripts/ingest.py --input ./book.fb2 --output ./staging_chapters
 ```
 
-### Production Build:
+### 2. Assembly & Splitting
 ```bash
-# Bundle chapters into one HTML
-node scripts/bundle.cjs --input ./chapters --output my-book.html
-# Mandatory Security Audit
-python scripts/lint_book.py --file ./my-book.html
+# Packs HTML into offline bundles. Split if > 15MB.
+node scripts/bundle.cjs --input ./staging_chapters --output my_book.html --max-size 15
 ```
 
-## 3. Best Practices
-- **Images:** Use `.webp` for all assets to keep the final file under 20MB.
-- **CSS/JS:** Keep styles and scripts local to chapters; the bundler will inline them automatically.
-- **Navigation:** Use standard `<a href="chapter2.html#section">` links; the bridge will handle them.
+### 3. Security Audit
+```bash
+python scripts/lint_book.py --file my_book.html
+```
 
-## 4. References
-- `references/single-file-architecture.md` (Updated)
-- `references/interactive-visual-patterns.md`
-- `references/pdf-visual-workflow.md`
+## 3. Security Constraints (Enforced)
+- **Zero Network:** Strict `Content-Security-Policy: default-src 'none'` blocks any tracking or remote exploitation.
+- **Iframe Sandboxing:** The reader frame strictly utilizes `sandbox="allow-scripts allow-same-origin"` to prevent cross-origin contamination.
