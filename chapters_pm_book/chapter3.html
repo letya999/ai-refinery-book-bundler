@@ -1,79 +1,81 @@
 <html>
 <head>
-  <title>Глава II. Предлагают должность — соглашаться?</title>
+  <title>Глава 3. Оффер на РП: Прыжок в бездну</title>
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
       <p class="kicker">Глава 3</p>
-      <h1>Предлагают должность — соглашаться?</h1>
+      <h1>Предлагают стать РП? Сначала проверьте тормоза</h1>
+      <p class="essence">Вы меняете спокойствие на ответственность за чужие косяки. ⚠️</p>
     </section>
 
     <blockquote class="insight">
-      Всегда рассматривайте ваше назначение как предложение, а не приказ, и реагируйте на него осознанно.
+      ⚠️ Назначение на проект — это не награда, это сделка. Проект — это всегда **Цель + Срок + Бюджет**.
     </blockquote>
 
     <div class="stats">
       <div class="stat">
         <b class="stat-num">ВХОД</b>
-        <span class="stat-label">Предложение возглавить проект</span>
+        <span class="stat-label">Смутные обещания</span>
       </div>
       <div class="stat">
         <b class="stat-num">ВЫХОД</b>
-        <span class="stat-label">Осознанное решение об участии</span>
+        <span class="stat-label">Устав проекта (Charter)</span>
       </div>
     </div>
 
-    <h3>Что такое проект?</h3>
-    <p>Проект — это то, что имеет <b>начало, конец и цель</b>. «Разработка ПО» — это процесс, а «Создание системы X к 1 декабря» — это проект.</p>
-    
+    <div class="vis-diag">
+      <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="400,50 200,250 600,250" fill="none" stroke="#395f9d" stroke-width="4" />
+        <text x="400" y="40" text-anchor="middle" font-weight="bold">Scope (Содержание)</text>
+        <text x="150" y="270" text-anchor="middle" font-weight="bold">Time (Сроки)</text>
+        <text x="650" y="270" text-anchor="middle" font-weight="bold">Cost (Бюджет)</text>
+        <circle cx="400" cy="180" r="40" fill="#87efc9" fill-opacity="0.5" />
+        <text x="400" y="185" text-anchor="middle" font-weight="bold" font-size="14">Quality</text>
+        <text x="400" y="290" text-anchor="middle" font-style="italic">Project Triangle: Change one, all move. 🔺</text>
+      </svg>
+    </div>
+
     <div class="grid">
       <div class="card">
-        <b>Лимиты</b>
-        <p>Эффективный ПМ ведет не более 2-3 проектов одновременно.</p>
+        <b>📐 Треугольник</b>
+        <p>Меняете <a href="glossary.html#scope" class="term-link">Scope</a> — едут Сроки. Хотите быстро и дешево? Готовьтесь к провалу Качества. 🔺</p>
       </div>
       <div class="card">
-        <b>Масштаб</b>
-        <p>Выделенный ПМ нужен при бюджете >$50k и команде >5 человек.</p>
+        <b>🏢 Матрица</b>
+        <p>В ИТ вы чаще всего "проситель" ресурсов. Ваша власть — это ваши навыки переговоров. 🤝</p>
       </div>
     </div>
 
-    <h3>Тройственное ограничение</h3>
-    <p>ПМ отвечает за баланс «треугольника». Изменение одной грани неизбежно тянет остальные.</p>
-    <div class="translator">
-      <div class="tr-col bad">
-        <div class="tr-head bad">ПРОВАЛ</div>
-        <ul>
-          <li>Нарушены сроки или бюджет</li>
-          <li>Заказчик недоволен</li>
-          <li>Виновата команда или обстоятельства</li>
-        </ul>
+    <div class="scale">
+      <div class="sc-step">
+        <div class="sc-head">Функциональная 💀</div>
+        <p>Вы никто, ресурсы у начальников отделов.</p>
       </div>
-      <div class="tr-col good">
-        <div class="tr-head good">УСПЕХ</div>
-        <ul>
-          <li>Рамки треугольника соблюдены</li>
-          <li>Заказчик доволен результатом</li>
-          <li>Ответственность полностью на ПМ</li>
-        </ul>
+      <div class="sc-step current">
+        <div class="sc-head">Матричная ⚖️</div>
+        <p>У программиста два босса. Вечный конфликт.</p>
+      </div>
+      <div class="sc-step">
+        <div class="sc-head">Проектная 👑</div>
+        <p>Вы — бог и царь. Но и виноваты во всём вы.</p>
       </div>
     </div>
 
-    <h3>Типы организаций</h3>
-    <div class="grid">
-      <div class="card">
-        <b>Функциональная</b>
-        <p>Власть у начальников отделов. ПМ — проситель ресурсов.</p>
-      </div>
-      <div class="card">
-        <b>Матричная</b>
-        <p>Власть разделена. Ресурсы выдаются ПМ в «пользование».</p>
-      </div>
-      <div class="card">
-        <b>Проектная</b>
-        <p>Команда набирается под проект. ПМ — единственный босс.</p>
-      </div>
+    <div class="acc-item">
+      <details>
+        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
+        <div class="acc-body">
+          <p>«Я готов взять ответственность, но мне нужны полномочия, закрепленные в Уставе. Без них я не смогу гарантировать, что мы не выйдем за <a href="glossary.html#scope" class="term-link">Scope</a>». 🎯</p>
+        </div>
+      </details>
     </div>
+
+    <footer class="summary">
+      <p><span class="badge warn">СОВЕТ</span> Соглашайтесь только если понимаете, КТО дает деньги и ЗАЧЕМ ему это нужно. 💰</p>
+    </footer>
   </main>
 </body>
 </html>

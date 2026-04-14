@@ -1,74 +1,86 @@
 <html>
 <head>
-  <title>Глава V. Приступаем к планированию</title>
+  <title>Глава 6. Планирование: Иллюзия контроля</title>
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
       <p class="kicker">Глава 6</p>
-      <h1>Приступаем к планированию</h1>
+      <h1>Приступаем к планированию: Не клятва, а карта</h1>
+      <p class="essence">План нужен не боссу, а ВАМ и КОМАНДЕ. Чтобы не бегать с криками «всё пропало». 🛠️</p>
     </section>
 
     <blockquote class="insight">
-      🎯 План — это не клятва «уложиться в срок», а инструмент коммуникации и прогноз, снижающий неопределенность.
+      📉 Цель плана — не угадать будущее, а снизить неопределенность до приемлемого уровня. План — это прогноз.
     </blockquote>
 
     <div class="stats">
       <div class="stat">
-        <b class="stat-num">🎯 ЦЕЛЬ</b>
-        <span class="stat-label">Снижение неопределенности</span>
+        <b class="stat-num">+/- 10%</b>
+        <span class="stat-label">Точность плана</span>
       </div>
       <div class="stat">
-        <b class="stat-num">📉 ТОЧНОСТЬ</b>
-        <span class="stat-label">Допуск +/- 10-25%</span>
+        <b class="stat-num"><a href="glossary.html#wbs" class="term-link">WBS</a></b>
+        <span class="stat-label">Фундамент</span>
+      </div>
+    </div>
+
+    <div class="vis-diag">
+      <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+        <rect x="325" y="20" width="150" height="50" rx="5" fill="#72d8ff" stroke="#395f9d" stroke-width="2" />
+        <text x="400" y="50" text-anchor="middle" font-weight="bold">Project</text>
+        <path d="M400 70 L400 120" stroke="#395f9d" fill="none" stroke-width="2" />
+        <path d="M400 90 L200 90 L200 120" stroke="#395f9d" fill="none" stroke-width="2" />
+        <path d="M400 90 L600 90 L600 120" stroke="#395f9d" fill="none" stroke-width="2" />
+        <rect x="125" y="120" width="150" height="45" rx="5" fill="#87efc9" stroke="#395f9d" />
+        <text x="200" y="148" text-anchor="middle">Phase 1</text>
+        <rect x="325" y="120" width="150" height="45" rx="5" fill="#87efc9" stroke="#395f9d" />
+        <text x="400" y="148" text-anchor="middle">Phase 2</text>
+        <rect x="525" y="120" width="150" height="45" rx="5" fill="#87efc9" stroke="#395f9d" />
+        <text x="600" y="148" text-anchor="middle">Phase 3</text>
+        <text x="400" y="260" text-anchor="middle" font-style="italic"><a href="glossary.html#wbs" class="term-link">WBS</a> Tree: Decomposition from Goal to Task</text>
+      </svg>
+    </div>
+
+    <div class="vis-timeline">
+      <div class="tl-step">
+        <div class="tl-num">1</div>
+        <div class="tl-content"><b><a href="glossary.html#scope" class="term-link">Scope</a></b>: Что мы делаем? (И чего НЕ делаем). 📋</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">2</div>
+        <div class="tl-content"><b><a href="glossary.html#wbs" class="term-link">WBS</a></b>: Декомпозиция. Режем слона на стейки. 🥩</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">3</div>
+        <div class="tl-content"><b>Network</b>: Что за чем идет. <a href="glossary.html#critical_path" class="term-link">Критический путь</a>. 🕸️</div>
       </div>
     </div>
 
     <div class="translator">
       <div class="tr-col bad">
-        <div class="tr-head bad">❌ ДЛЯ ЧЕГО ПЛАН НЕ НУЖЕН</div>
-        <ul>
-          <li>Для наказания сотрудников</li>
-          <li>Как самоцель и «священный текст»</li>
-          <li>Для имитации бурной деятельности</li>
-        </ul>
+        <div class="tr-head bad">❌ ПЛАН-ДУБИНА</div>
+        <p>Используется для наказания тех, кто «не успел». Вызывает ложь и саботаж. 💀</p>
       </div>
       <div class="tr-col good">
-        <div class="tr-head good">✅ ЗАЧЕМ ПЛАНУ НУЖЕН ПМ</div>
-        <ul>
-          <li>Чтобы не забыть важное в суете</li>
-          <li>Для синхронизации команды</li>
-          <li>Чтобы заказчик понимал прогресс</li>
-        </ul>
-      </div>
-    </div>
-
-    <h3>🛠️ Алгоритм планирования</h3>
-    <div class="vis-timeline">
-      <div class="tl-step">
-        <div class="tl-num">1</div>
-        <div class="tl-content"><b>Сбор требований</b> 📋: Финализация концепции (Scope).</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">2</div>
-        <div class="tl-content"><b>WBS</b> 🌲: Декомпозиция работ до пакетов.</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">3</div>
-        <div class="tl-content"><b>Сетевой анализ</b> 🕸️: Оценка ресурсов и расписания.</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">4</div>
-        <div class="tl-content"><b>Риски и Качество</b> ⚠️: Планирование резервов и метрик.</div>
+        <div class="tr-head good">✅ ПЛАН-МАЯК</div>
+        <p>Помогает понять, где мы сейчас и когда увидим берег. Синхронизирует хаос. 🔦</p>
       </div>
     </div>
 
     <div class="acc-item">
-      <div class="acc-head">📁 Что такое «План управления проектом»? (развернуть)</div>
-      <div class="acc-body">
-        <p>Это не один документ, а живая совокупность всех планов: по времени, стоимости, рискам, коммуникациям и конфигурациям. Он постоянно корректируется через механизм контроля изменений. 💡</p>
-      </div>
+      <details>
+        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
+        <div class="acc-body">
+          <p>«Этот план — не клятва в крови, а прогноз развития событий. Он поможет нам вовремя увидеть риски и скорректировать действия, чтобы не сорвать дедлайны». 🎯</p>
+        </div>
+      </details>
     </div>
+
+    <footer class="summary">
+      <p><span class="badge warn">ВЕРДИКТ</span> Не тратьте месяцы на «идеальный» план. Он устареет в первый день разработки. Лучше планируйте итеративно.</p>
+    </footer>
   </main>
 </body>
 </html>

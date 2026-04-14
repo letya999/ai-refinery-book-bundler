@@ -1,78 +1,86 @@
 <html>
 <head>
-  <title>Глава X. Планируем и работаем с рисками</title>
+  <title>Глава 11. Риски: Управление страхом</title>
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
       <p class="kicker">Глава 11</p>
-      <h1>Работа с рисками</h1>
+      <h1>Работа с рисками: Как подстелить соломку</h1>
+      <p class="essence">Риск — это вероятность. Если событие гарантированно — это не риск, а Вводная. ⚠️</p>
     </section>
 
     <blockquote class="insight">
-      ⚠️ Риск — это не то, что случится гарантированно, а вероятностное событие. Если событие неизбежно — это не риск, а данность.
+      ⚠️ Риски бывают не только плохими (Угрозы), но и хорошими (Возможности). Цель — минимизировать первые и выжать максимум из вторых. 🛡️
     </blockquote>
 
     <div class="stats">
       <div class="stat">
-        <b class="stat-num">🎲 ВЕРОЯТНОСТЬ</b>
-        <span class="stat-label">0% < P < 100%</span>
+        <b class="stat-num">🎲 P < 100%</b>
+        <span class="stat-label">Вероятность</span>
       </div>
       <div class="stat">
-        <b class="stat-num">💥 ВЛИЯНИЕ</b>
-        <span class="stat-label">+/- на треугольник</span>
+        <b class="stat-num">📉 I</b>
+        <span class="stat-label">Влияние</span>
       </div>
+    </div>
+
+    <div class="vis-diag">
+      <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+        <rect x="50" y="50" width="100" height="100" fill="#ff4d4d" fill-opacity="0.8" />
+        <rect x="150" y="50" width="100" height="100" fill="#ffcccb" fill-opacity="0.8" />
+        <rect x="250" y="50" width="100" height="100" fill="#fff7d1" fill-opacity="0.8" />
+        <rect x="50" y="150" width="100" height="100" fill="#ffcccb" fill-opacity="0.8" />
+        <rect x="150" y="150" width="100" height="100" fill="#fff7d1" fill-opacity="0.8" />
+        <rect x="250" y="150" width="100" height="100" fill="#87efc9" fill-opacity="0.8" />
+        <text x="25" y="100" transform="rotate(-90 25,100)" text-anchor="middle" font-weight="bold">Impact (I)</text>
+        <text x="200" y="280" text-anchor="middle" font-weight="bold">Probability (P)</text>
+        <text x="100" y="110" text-anchor="middle" font-size="10">High</text>
+        <text x="200" y="110" text-anchor="middle" font-size="10">Med</text>
+        <text x="300" y="110" text-anchor="middle" font-size="10">Low</text>
+        <text x="200" y="200" text-anchor="middle" font-style="italic">Risk Heatmap: Focus on Red! 🚦</text>
+      </svg>
     </div>
 
     <div class="translator">
       <div class="tr-col bad">
-        <div class="tr-head bad">💀 УГРОЗЫ (Отрицательные)</div>
-        <p>Уход ключевого сотрудника, задержка серверов, кража идей. 📉</p>
+        <div class="tr-head bad">💀 УГРОЗЫ (Threats)</div>
+        <p>Разработчик уволился. Сервер сгорел. Клиент передумал. 📉</p>
       </div>
       <div class="tr-col good">
-        <div class="tr-head good">💎 ВОЗМОЖНОСТИ (Положительные)</div>
-        <p>Досрочное освобождение эксперта, новые технологии, скидки поставщиков. 🚀</p>
+        <div class="tr-head good">💎 ВОЗМОЖНОСТИ (Opportunities)</div>
+        <p>Скидка на софт. Досрочный финиш. Новая технология. 🚀</p>
       </div>
     </div>
 
-    <h3>🔍 Алгоритм управления рисками</h3>
     <div class="vis-timeline">
       <div class="tl-step">
         <div class="tl-num">1</div>
-        <div class="tl-content"><b>Идентификация</b> 📋: Сбор рисков «всем миром» в Реестр.</div>
+        <div class="tl-content"><b>Идентификация</b>: Что может пойти не так? 📋</div>
       </div>
       <div class="tl-step">
         <div class="tl-num">2</div>
-        <div class="tl-content"><b>Качественный анализ</b> ⚖️: Сортировка по «Светофору» (Вероятность x Влияние).</div>
+        <div class="tl-content"><b>Анализ (Светофор)</b>: Сортировка по P x I. 🚦</div>
       </div>
       <div class="tl-step">
         <div class="tl-num">3</div>
-        <div class="tl-content"><b>Реагирование</b> 🛡️: Разработка Плана А (предотвращение) и Плана Б (отступление).</div>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <b>👤 Хозяин риска</b>
-        <p>Персона, ответственная за мониторинг триггеров и запуск Плана Б.</p>
-      </div>
-      <div class="card">
-        <b>🔔 Триггер</b>
-        <p>Признак, по которому мы понимаем: риск наступил, пора действовать.</p>
+        <div class="tl-content"><b>Реагирование</b>: Планы А и Б. 🛠️</div>
       </div>
     </div>
 
     <div class="acc-item">
-      <div class="acc-head">🚀 Стратегии реагирования на угрозы (развернуть)</div>
-      <div class="acc-body">
-        <ul>
-          <li><b>🚫 Уклонение</b>: Изменить план, чтобы риск стал невозможен.</li>
-          <li><b>📉 Минимизация</b>: Снизить вероятность или влияние.</li>
-          <li><b>🤝 Передача</b>: Отдать риск страховщику или субподрядчику.</li>
-          <li><b>🆗 Принятие</b>: Ничего не делать (только для мелких рисков).</li>
-        </ul>
-      </div>
+      <details>
+        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
+        <div class="acc-body">
+          <p>«Риск — это управляемая неопределенность. Наличие реестра рисков означает, что мы готовы к сюрпризам и не потеряем голову, если что-то пойдет не так». 🎯</p>
+        </div>
+      </details>
     </div>
+
+    <footer class="summary">
+      <p><span class="badge warn">ВЕРДИКТ</span> Прятать голову в песок — плохая стратегия. Лучше честно обсудить риски со спонсором. 🦒</p>
+    </footer>
   </main>
 </body>
 </html>

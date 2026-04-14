@@ -1,54 +1,98 @@
 <html>
 <head>
-  <title>Глава VIII. Время и стоимость</title>
+  <title>Глава 9. Время и Деньги: Игры с расписанием</title>
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
       <p class="kicker">Глава 9</p>
-      <h1>Оценка времени и стоимости</h1>
+      <h1>Оценка Времени и Стоимости: Как не остаться крайним</h1>
+      <p class="essence">Оценивать задачи "от балды" — путь к выгоранию. ⏳</p>
     </section>
 
     <blockquote class="insight">
-      Критический путь — это пульс проекта; любая задержка на нем мгновенно переносит дату финиша всего проекта.
+      ⏳ <a href="glossary.html#critical_path" class="term-link">Критический путь</a> не прощает задержек. Опоздал на день на нем — весь проект сдан на день позже.
     </blockquote>
 
-    <h3>Методы оценки (PERT)</h3>
-    <p>Для сложных задач используйте оценку по трем точкам:</p>
     <div class="stats">
       <div class="stat">
-        <b class="stat-num">PERT</b>
+        <b class="stat-num"><a href="glossary.html#pert" class="term-link">PERT</a></b>
         <span class="stat-label">(P + 4M + O) / 6</span>
+      </div>
+      <div class="stat">
+        <b class="stat-num">BASELINE</b>
+        <span class="stat-label">Базовый план</span>
       </div>
     </div>
 
     <div class="grid">
-      <div class="card"><b>P (Pessimistic)</b><p>Худший сценарий.</p></div>
-      <div class="card"><b>M (Most Likely)</b><p>Реалистичный прогноз.</p></div>
-      <div class="card"><b>O (Optimistic)</b><p>Идеальный ход дел.</p></div>
+      <div class="card"><b>P (Pessimistic)</b><p>Всё сломалось. 💥</p></div>
+      <div class="card"><b>M (Most Likely)</b><p>Реалистично. 😐</p></div>
+      <div class="card"><b>O (Optimistic)</b><p>Идеально. ✨</p></div>
     </div>
 
-    <h3>Сжатие расписания</h3>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Задача / Роль</th>
+            <th>РП</th>
+            <th>Техлид</th>
+            <th>Команда</th>
+            <th>Спонсор</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Разработка <a href="glossary.html#wbs" class="term-link">WBS</a></td>
+            <td><b>A</b></td>
+            <td>C</td>
+            <td>R</td>
+            <td>I</td>
+          </tr>
+          <tr>
+            <td>Оценка <a href="glossary.html#pert" class="term-link">PERT</a></td>
+            <td><b>A</b></td>
+            <td>C</td>
+            <td>R</td>
+            <td>I</td>
+          </tr>
+          <tr>
+            <td>Утверждение Baseline</td>
+            <td>R</td>
+            <td>I</td>
+            <td>I</td>
+            <td><b>A</b></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="diag-text" style="text-align: center;"><a href="glossary.html#raci" class="term-link">RACI Matrix</a>: Who is doing what? 🤝</p>
+    </div>
+
     <div class="translator">
       <div class="tr-col bad">
-        <div class="tr-head bad">CRASHING</div>
-        <p>Добавление ресурсов. Ускоряет проект, но увеличивает стоимость (деньги).</p>
+        <div class="tr-head bad">💸 CRASHING (Разбивка)</div>
+        <p>Заливаем проблему деньгами: овертаймы, люди. Сокращаем срок, раздуваем бюджет. 📈</p>
       </div>
       <div class="tr-col good">
-        <div class="tr-head good">FAST TRACKING</div>
-        <p>Параллельное выполнение. Ускоряет проект, но повышает риски (переделки).</p>
+        <div class="tr-head good">⚡ FAST TRACKING (Параллельно)</div>
+        <p>Делаем задачи параллельно. Ускоряет процесс, но множит риски переделок. 🚀</p>
       </div>
     </div>
 
     <div class="acc-item">
-      <div class="acc-head">Baseline vs Budget (нажми)</div>
-      <div class="acc-body">
-        <ul>
-          <li><b>Cost Baseline</b>: Себестоимость + Резервы на риски (зона ответственности ПМ).</li>
-          <li><b>Бюджет</b>: Baseline + Управленческие резервы (зона ответственности Спонсора).</li>
-        </ul>
-      </div>
+      <details>
+        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
+        <div class="acc-body">
+          <p>«Я использую метод <a href="glossary.html#pert" class="term-link">PERT</a>, чтобы сгладить экспертный оптимизм. Это дает нам более реалистичный прогноз, а не просто "самое лучшее время"». 🎯</p>
+        </div>
+      </details>
     </div>
+
+    <footer class="summary">
+      <p><span class="badge warn">ЗАПОМНИТЕ</span> Вы всегда платите либо деньгами, либо рисками за сжатие проекта. 💰</p>
+    </footer>
   </main>
 </body>
 </html>

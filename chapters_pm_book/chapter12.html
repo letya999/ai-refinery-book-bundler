@@ -1,62 +1,75 @@
 <html>
 <head>
-  <title>Глава XI. Завершаем планирование</title>
+  <title>Глава 12. Финализация Плана: Пуск!</title>
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
       <p class="kicker">Глава 12</p>
-      <h1>Финальные штрихи планирования</h1>
+      <h1>Завершаем планирование: Единый источник правды</h1>
+      <p class="essence">План управления проектом — это согласованный пакет документов. 📁</p>
     </section>
 
     <blockquote class="insight">
-      План — это средство коммуникации. Если сотрудники не знают, где лежит актуальная версия — плана не существует.
+      📁 Главная беда ИТ — "версионный ад". Планирование закончено только тогда, когда все знают, где лежит АКТУАЛЬНЫЙ план.
     </blockquote>
 
     <div class="stats">
       <div class="stat">
-        <b class="stat-num">ИТОГ</b>
-        <span class="stat-label">План управления проектом (совокупность планов)</span>
+        <b class="stat-num">BASELINE</b>
+        <span class="stat-label">Подписано и зафиксировано</span>
       </div>
     </div>
 
-    <h3>Контроль конфигураций</h3>
-    <p>Каждый член команды должен быть уверен, что работает с <b>актуальной версией</b> документа. Неважно, как это реализовано: в софте или на доске в офисе.</p>
+    <div class="vis-diag">
+      <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#395f9d" />
+          </marker>
+        </defs>
+        <g transform="translate(400, 200)">
+          <rect x="-60" y="-160" width="120" height="50" rx="10" fill="#72d8ff" stroke="#395f9d" stroke-width="2" />
+          <text x="0" y="-130" text-anchor="middle" font-weight="bold">PLAN</text>
+          <rect x="80" y="-25" width="120" height="50" rx="10" fill="#87efc9" stroke="#395f9d" stroke-width="2" />
+          <text x="140" y="5" text-anchor="middle" font-weight="bold">DO</text>
+          <rect x="-60" y="110" width="120" height="50" rx="10" fill="#72d8ff" stroke="#395f9d" stroke-width="2" />
+          <text x="0" y="140" text-anchor="middle" font-weight="bold">CHECK</text>
+          <rect x="-200" y="-25" width="120" height="50" rx="10" fill="#87efc9" stroke="#395f9d" stroke-width="2" />
+          <text x="-140" y="5" text-anchor="middle" font-weight="bold">ACT</text>
+          <path d="M70 -135 Q 160 -135 160 -45" stroke="#395f9d" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
+          <path d="M160 45 Q 160 135 70 135" stroke="#395f9d" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
+          <path d="M-70 135 Q -160 135 -160 45" stroke="#395f9d" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
+          <path d="M-160 -45 Q -160 -135 -70 -135" stroke="#395f9d" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
+        </g>
+        <text x="400" y="380" text-anchor="middle" class="diag-text" font-style="italic">PDCA Cycle: The Project Control Loop 🕸️</text>
+      </svg>
+    </div>
 
     <div class="grid">
       <div class="card">
-        <b>Управление изменениями</b>
-        <p>Договоритесь «на берегу», как вы будете менять планы в ходе работы.</p>
+        <b>🔀 Контроль изменений</b>
+        <p>Новая идея? Оцениваем влияние. Спонсор согласен? Меняем Baseline. Нет? Идея в корзину. 📉</p>
       </div>
       <div class="card">
-        <b>План закупок</b>
-        <p>Ваша ответственность, даже если закупает другой отдел. Провалят они — отвечать вам.</p>
+        <b>🛒 План закупок</b>
+        <p>Ваша ответственность. Даже если сервер покупает админ, ВЫ отвечаете за дату. ⚠️</p>
       </div>
     </div>
 
     <div class="acc-item">
-      <div class="acc-head">Чек-лист готовности к запуску</div>
-      <div class="acc-body">
-        <ol>
-          <li>Требования финализированы в Концепции.</li>
-          <li>WBS и Расписание созданы и проверены командой.</li>
-          <li>Ресурсы распределены, бюджет (Baseline) понятен.</li>
-          <li>Риски идентифицированы, хозяева назначены.</li>
-          <li>Механизм контроля изменений согласован.</li>
-        </ol>
-      </div>
+      <details>
+        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
+        <div class="acc-body">
+          <p>«Baseline — это точка отсчета. Она позволит нам честно оценить, где мы отклонились и почему, чтобы принимать верные решения, а не действовать вслепую». 🎯</p>
+        </div>
+      </details>
     </div>
 
-    <div class="translator">
-      <div class="tr-col bad">
-        <div class="tr-head bad">КАК НЕ НАДО</div>
-        <p>Хранить планы в голове или в закрытых файлах на своем ПК.</p>
-      </div>
-      <div class="tr-col good">
-        <div class="tr-head good">КАК ПРАВИЛЬНО</div>
-        <p>Обеспечить доступ всех нуждающихся к «единому источнику правды».</p>
-      </div>
-    </div>
+    <footer class="summary">
+      <p><span class="badge warn">ЗАПОМНИТЕ</span> План — это контракт. Если меняете его втихую — вы нарушаете условия игры. 🤝</p>
+    </footer>
   </main>
 </body>
 </html>

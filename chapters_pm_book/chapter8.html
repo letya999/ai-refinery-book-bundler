@@ -1,68 +1,108 @@
 <html>
 <head>
-  <title>Глава VII. Структура работ (WBS)</title>
+  <title>Глава 8. WBS: Анатомия слона</title>
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
       <p class="kicker">Глава 8</p>
-      <h1>WBS: Иерархическая структура работ</h1>
+      <h1><a href="glossary.html#wbs" class="term-link">WBS</a>: Иерархическая структура работ. Как съесть слона?</h1>
+      <p class="essence">Если работы нет в ИСР — её нет в проекте. Никто не заплатит за то, чего нет на этой схеме. 🌲</p>
     </section>
 
     <blockquote class="insight">
-      ИСР — это фундамент планирования. Если работы нет в ИСР, значит, она не входит в проект.
+      🌲 <a href="glossary.html#wbs" class="term-link">ИСР (WBS)</a> — это декомпозиция. Вы не пишете "программировать" (процесс), вы пишете "Модуль авторизации" (результат).
     </blockquote>
 
     <div class="stats">
       <div class="stat">
-        <b class="stat-num">ПРИНЦИП</b>
-        <span class="stat-label">Ориентация на результат</span>
+        <b class="stat-num">ФОКУС</b>
+        <span class="stat-label">На результат</span>
+      </div>
+      <div class="stat">
+        <b class="stat-num">100%</b>
+        <span class="stat-label">Правило полноты</span>
       </div>
     </div>
 
-    <h3>Как строить ИСР (WBS)</h3>
-    <p>Разбивайте проект на управляемые <b>пакеты работ</b>. Пакет должен быть достаточно мелким для оценки, но не избыточным.</p>
+    <div class="vis-diag">
+      <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#395f9d" />
+          </marker>
+          <marker id="arrowhead-crit" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#ff4d4d" />
+          </marker>
+        </defs>
 
-    <div class="grid">
-      <div class="card">
-        <b>Метод набегающей волны</b>
-        <p>Детализируем ближайшие задачи, а далекие оставляем укрупненными блоками.</p>
-      </div>
-      <div class="card">
-        <b>Словарь ИСР</b>
-        <p>Подробное описание каждого элемента структуры: что именно нужно сделать.</p>
-      </div>
+        <g class="diag-node">
+          <rect x="50" y="150" width="100" height="60" rx="5" fill="#72d8ff" stroke="#395f9d" stroke-width="2" />
+          <text x="100" y="185" text-anchor="middle" font-weight="bold">Start</text>
+        </g>
+
+        <g class="diag-node">
+          <rect x="250" y="50" width="120" height="60" rx="5" fill="#87efc9" stroke="#395f9d" stroke-width="2" />
+          <text x="310" y="85" text-anchor="middle" font-weight="bold">Task A</text>
+        </g>
+
+        <g class="diag-node diag-highlight">
+          <rect x="250" y="250" width="120" height="60" rx="5" fill="#ffcccb" stroke="#ff4d4d" stroke-width="3" />
+          <text x="310" y="285" text-anchor="middle" font-weight="bold">Task B (CRIT)</text>
+        </g>
+
+        <g class="diag-node">
+          <rect x="450" y="150" width="120" height="60" rx="5" fill="#87efc9" stroke="#395f9d" stroke-width="2" />
+          <text x="510" y="185" text-anchor="middle" font-weight="bold">Task C</text>
+        </g>
+
+        <g class="diag-node">
+          <rect x="650" y="150" width="100" height="60" rx="5" fill="#72d8ff" stroke="#395f9d" stroke-width="2" />
+          <text x="700" y="185" text-anchor="middle" font-weight="bold">Finish</text>
+        </g>
+
+        <path d="M150 180 L250 80" stroke="#395f9d" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+        <path d="M150 180 L250 280" stroke="#ff4d4d" stroke-width="3" fill="none" marker-end="url(#arrowhead-crit)" />
+        <path d="M370 80 L450 180" stroke="#395f9d" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+        <path d="M370 280 L450 180" stroke="#ff4d4d" stroke-width="3" fill="none" marker-end="url(#arrowhead-crit)" />
+        <path d="M570 180 L650 180" stroke="#ff4d4d" stroke-width="3" fill="none" marker-end="url(#arrowhead-crit)" />
+
+        <text x="400" y="370" text-anchor="middle" class="diag-text" font-style="italic"><a href="glossary.html#critical_path" class="term-link">Critical Path Method</a> (Red Line) 🕸️</text>
+      </svg>
     </div>
 
     <div class="translator">
       <div class="tr-col bad">
-        <div class="tr-head bad">ОШИБКИ</div>
+        <div class="tr-head bad">❌ ОШИБКИ ДЕКОМПОЗИЦИИ</div>
         <ul>
-          <li>Декомпозиция ради декомпозиции (слишком мелко)</li>
-          <li>Функциональный подход («программирование», «тестирование»)</li>
-          <li>Создание ИСР в одиночку без команды</li>
+          <li>Резать до атомов (микроменеджмент). 🔬</li>
+          <li>Группировать по отделам ("Дизайн"). 🏢</li>
+          <li>Рисовать <a href="glossary.html#wbs" class="term-link">ИСР</a> в одно лицо. 👤</li>
         </ul>
       </div>
       <div class="tr-col good">
-        <div class="tr-head good">ПРАВИЛА</div>
+        <div class="tr-head good">✅ ПРАВИЛЬНЫЙ ПОДХОД</div>
         <ul>
-          <li>Поставко-ориентированный подход («макет», «модуль Х»)</li>
-          <li>Совместное творчество с исполнителями</li>
-          <li>Разумная глубина (пакет работ)</li>
+          <li>Резать до "пакетов работ" (управляемо). 📦</li>
+          <li>Группировать по продукту ("Сайт", "API"). 🚀</li>
+          <li>Вовлекать исполнителей (они знают детали). 🤝</li>
         </ul>
       </div>
     </div>
 
     <div class="acc-item">
-      <div class="acc-head">Признаки хорошего пакета работ</div>
-      <div class="acc-body">
-        <ul>
-          <li>Относительно короткий по времени.</li>
-          <li>Может быть выполнен без прерываний на внешние согласования.</li>
-          <li>Имеет четкий, измеримый результат.</li>
-        </ul>
-      </div>
+      <details>
+        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
+        <div class="acc-body">
+          <p>«<a href="glossary.html#wbs" class="term-link">WBS</a> — это основа бюджета и расписания. Она наглядно показывает, из чего состоит проект и кто за что отвечает. Это исключает споры о том, "кто должен был это сделать"». 🎯</p>
+        </div>
+      </details>
     </div>
+
+    <footer class="summary">
+      <p><span class="badge warn">ВЕРДИКТ</span> <a href="glossary.html#wbs" class="term-link">WBS</a> — это скелет расписания и бюджета. Сделали криво — проект родится уродом. 🌲</p>
+    </footer>
   </main>
 </body>
 </html>
