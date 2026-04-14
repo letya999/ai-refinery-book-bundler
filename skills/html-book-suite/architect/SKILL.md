@@ -23,6 +23,7 @@ You are the Intelligence Layer. Your goal is to transform "Bulk Text" into a "Le
 
 ### 3. Visual Blueprinting
 - For every chapter, plan 2-4 visual anchors.
+- **Domain-Specific Logic**: When the text describes industry-standard models (like Gantt charts, WBS, Network Diagrams, BPMN workflows, or Org Charts), you MUST blueprint them for a custom SVG diagram. Do not downgrade them to simple lists.
 - Assign components: Timeline, Translator, Stats, Grid, or SVG Diagram.
 - Pass the blueprint to the Designer.
 
