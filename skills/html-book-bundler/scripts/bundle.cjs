@@ -92,7 +92,7 @@ if (optimize) {
   const { spawnSync } = require('child_process');
   const optimizer = path.join(__dirname, 'optimize_assets.py');
   if (fs.existsSync(optimizer)) {
-    console.log('Optimizing assets...');
+    console.log('Optimizing assets in-place...');
     spawnSync('python', [optimizer, '--dir', inputDirAbs], { stdio: 'inherit' });
   }
 }

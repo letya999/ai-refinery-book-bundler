@@ -13,8 +13,7 @@ let clients = [];
 
 function rebuild() {
     console.log('Rebuilding book...');
-    // БЕЗОПАСНО: Используем spawnSync с массивом аргументов вместо строки
-    const result = spawnSync('node', [bundlerPath, '--input', inputDir, '--output', outputFile], { stdio: 'inherit' });
+    const result = spawnSync('node', [bundlerPath, '--input', inputDir, '--output', outputFile, '--dev'], { stdio: 'inherit' });
     
     if (result.status === 0) {
         console.log('Rebuild successful. Notifying clients...');
@@ -28,10 +27,7 @@ const server = http.createServer((req, res) => {
     if (req.url === '/') {
         if (!fs.existsSync(outputFile)) rebuild();
         if (fs.existsSync(outputFile)) {
-            let content = fs.readFileSync(outputFile, 'utf8');
-            // Inject live-reload: EventSource listener that reloads on rebuild signal
-            const devInjected = '<script>(function(){var es=new EventSource("/events");es.onmessage=function(){location.reload()};es.onerror=function(){es.close();setTimeout(function(){location.reload()},1500)}})();</script>';
-            content = content.replace('</body>', devInjected + '</body>');
+            const content = fs.readFileSync(outputFile, 'utf8');
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(content);
         } else {

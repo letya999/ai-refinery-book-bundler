@@ -196,7 +196,7 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
   bodyContent = autoEnrichLists(bodyContent);
 
   // Semantic Quality Check (v5.5)
-  const visualTags = /class="(vis-diag|vis-stats|vis-grid|stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge|diag-node|matrix)"|<table>/i;
+  const visualTags = /class=["'][^"']*\b(vis-diag|vis-stats|vis-grid|stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge|diag-node|matrix)\b[^"']*["']|<table>/i;
   if (!visualTags.test(bodyContent)) {
     console.warn(`[Semantic Warning] Chapter ${index + 1} ("${title}") is a "wall of text" with no visual components.`);
   }

@@ -76,7 +76,7 @@ class BookLinter:
                 self.errors.append(f"{label}: Hardcoded hex color found in <svg>. Must use CSS variables (e.g. fill: var(--acc)).")
 
         # Detect wall of text (long chapter without visual components)
-        visual_tags = r'class=["\'](vis-diag|vis-stats|vis-grid|stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge|diag-node|matrix)["\']|<table>'
+        visual_tags = r'class=["\'][^"\']*\b(vis-diag|vis-stats|vis-grid|stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge|diag-node|matrix)\b[^"\']*["\']|<table>'
         if len(html) > 5000 and not re.search(visual_tags, html, re.I):
             self.warnings.append(f"{label}: Potential 'wall of text' detected ({len(html)} chars) with no visual components.")
 
