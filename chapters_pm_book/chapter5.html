@@ -1,71 +1,74 @@
-<html>
-<head>
-  <title>Глава 5. Инициация: Танцы со Спонсором</title>
-  <link rel="stylesheet" href="theme.css">
-</head>
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><title>Глава 5. Планирование</title></head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <p class="kicker">Глава 5</p>
-      <h1>Инициация: Договариваемся «на берегу»</h1>
-      <p class="essence">Устав проекта — это ваша юридическая броня. Без него вы просто парень, который делает одолжение коллегам. 📜</p>
-    </section>
+<section class="hero"><p class="kicker">Глава 5</p><h1>Планирование: 5 групп процессов</h1></section>
+<div class="wrap">
 
-    <blockquote class="insight">
-      🛡️ В начале пути ваша задача — не оценить проект до копейки, а зафиксировать полномочия. Устав (Charter) подтверждает, что проект СУЩЕСТВУЕТ.
-    </blockquote>
+<div class="vis-diag">
+<svg viewBox="0 0 700 120" xmlns="http://www.w3.org/2000/svg">
+  <line x1="50" y1="60" x2="650" y2="60" class="diag-link" stroke-width="2"/>
+  
+  <circle cx="100" cy="60" r="10" style="fill:var(--acc)"/>
+  <text x="100" y="90" text-anchor="middle" class="diag-text" style="font-size:11px;">Требования</text>
+  
+  <circle cx="225" cy="60" r="10" style="fill:var(--acc)"/>
+  <text x="225" y="90" text-anchor="middle" class="diag-text" style="font-size:11px;">Состав (WBS)</text>
+  
+  <circle cx="350" cy="60" r="10" style="fill:var(--acc)"/>
+  <text x="350" y="90" text-anchor="middle" class="diag-text" style="font-size:11px;">График</text>
+  
+  <circle cx="475" cy="60" r="10" style="fill:var(--acc)"/>
+  <text x="475" y="90" text-anchor="middle" class="diag-text" style="font-size:11px;">Бюджет</text>
+  
+  <circle cx="600" cy="60" r="10" style="fill:var(--acc)"/>
+  <text x="600" y="90" text-anchor="middle" class="diag-text" style="font-size:11px;">Риски</text>
+</svg>
+<div class="caption">5 групп процессов планирования по PMBOK</div>
+</div>
 
-    <div class="stats">
-      <div class="stat">
-        <b class="stat-num">СПОНСОР</b>
-        <span class="stat-label">Источник власти и денег</span>
-      </div>
-      <div class="stat">
-        <b class="stat-num">+/- 50%</b>
-        <span class="stat-label">Допуск <a href="glossary.html#rom" class="term-link">ROM-оценки</a></span>
-      </div>
+<div class="vis-stats">
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#milestone" class="term-link">Milestone</a></div><div class="stat-lab">Вехи</div></div>
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#baseline" class="term-link">Baseline</a></div><div class="stat-lab">Базовый план</div></div>
+</div>
+
+<p>Планирование — это итеративный процесс. Ваша цель — создать <a href="glossary.html#baseline" class="term-link">Baseline</a>, с которым вы будете сравнивать реальность. Без плана вы не управляете, вы реагируете.</p>
+
+<blockquote class="insight">План — это ничто, планирование — это всё.</blockquote>
+
+<div class="grid">
+    <div class="card">
+        <span class="badge">Rule</span>
+        <b>Вехи проекта</b>
+        <p>Важные события с нулевой длительностью. Контрольные точки на пути к цели.</p>
     </div>
-
-    <div class="grid">
-      <div class="card">
-        <b>💰 <a href="glossary.html#rom" class="term-link">ROM-оценка</a></b>
-        <p>Называйте диапазон, а не цифру. Иначе вас распнуть за ошибку в 5% позже. 📉</p>
-      </div>
-      <div class="card">
-        <b>⛔ Ограничения</b>
-        <p>Если бюджет $10k, а хотят космолет — говорите об этом сейчас, а не на релизе. ⚠️</p>
-      </div>
+    <div class="card">
+        <span class="badge">Method</span>
+        <b>Rolling Wave</b>
+        <p>Детально планируйте только ближайшие 2-3 итерации. Дальше — только вехи. Реальность всё равно изменится.</p>
     </div>
+</div>
 
+<details class="acc-item" open>
+    <summary>Что выходит из планирования?</summary>
     <div class="translator">
-      <div class="tr-col bad">
-        <div class="tr-head bad">❌ ГЛУПОСТЬ</div>
+        <div class="trans-meta">Артефакты плана:</div>
         <ul>
-          <li>Padding: Накинуть «на всякий случай» x3. 🤡</li>
-          <li>Страх: «Если я скажу нет, меня уволят». 💀</li>
+            <li><a href="glossary.html#wbs" class="term-link">WBS</a> — иерархия результатов (что делаем)</li>
+            <li>Сетевая диаграмма — зависимости задач</li>
+            <li>Расписание + <a href="glossary.html#gantt" class="term-link">Gantt</a> — когда делаем</li>
+            <li><a href="glossary.html#budget" class="term-link">Бюджет</a> — сколько стоит</li>
+            <li>Реестр рисков — что может пойти не так</li>
         </ul>
-      </div>
-      <div class="tr-col good">
-        <div class="tr-head good">✅ ПРОФЕССИОНАЛИЗМ</div>
-        <ul>
-          <li>Экспертная оценка: Спросить тех, кто делал. 🧠</li>
-          <li>Честность: «Это стоит X, если повезет, и Y, если нет». 🤝</li>
-        </ul>
-      </div>
+        <p>Все вместе — это <a href="glossary.html#baseline" class="term-link">Baseline</a>. С ним вы будете сравнивать реальность.</p>
     </div>
+</details>
 
-    <div class="acc-item">
-      <details>
-        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
-        <div class="acc-body">
-          <p>«Чтобы проект был успешным, нам нужно четкое понимание целей и границ. Устав закрепит наши договоренности и позволит мне эффективно управлять ресурсами». 🎯</p>
-        </div>
-      </details>
+<div class="vis-grid">
+    <div class="card">
+        <span class="badge">Danger</span>
+        <b>Паралич планирования</b>
+        <p>Планирование без конца — тоже провал. Когда план «достаточно хорош» — запускайте выполнение.</p>
     </div>
+</div>
 
-    <footer class="summary">
-      <p><span class="badge ok">ЗАПОМНИТЕ</span> Спонсор платит за результат, а не за процесс. Держите его в курсе. 💰</p>
-    </footer>
-  </main>
-</body>
-</html>
+</div></body></html>

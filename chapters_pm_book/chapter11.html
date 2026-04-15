@@ -1,86 +1,113 @@
-<html>
-<head>
-  <title>Глава 11. Риски: Управление страхом</title>
-  <link rel="stylesheet" href="theme.css">
-</head>
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><title>Глава 11. Управление рисками</title></head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <p class="kicker">Глава 11</p>
-      <h1>Работа с рисками: Как подстелить соломку</h1>
-      <p class="essence">Риск — это вероятность. Если событие гарантированно — это не риск, а Вводная. ⚠️</p>
-    </section>
+<section class="hero"><p class="kicker">Глава 11</p><h1>Риски: Чего вы боитесь?</h1></section>
+<div class="wrap">
 
-    <blockquote class="insight">
-      ⚠️ Риски бывают не только плохими (Угрозы), но и хорошими (Возможности). Цель — минимизировать первые и выжать максимум из вторых. 🛡️
-    </blockquote>
+<div class="vis-stats">
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#risk" class="term-link">Risk</a></div><div class="stat-lab">Вероятность</div></div>
+    <div class="stat-item"><div class="stat-val">P*I</div><div class="stat-lab">Оценка</div></div>
+    <div class="stat-item"><div class="stat-val">10%</div><div class="stat-lab">Max Принятие</div></div>
+</div>
 
-    <div class="stats">
-      <div class="stat">
-        <b class="stat-num">🎲 P < 100%</b>
-        <span class="stat-label">Вероятность</span>
-      </div>
-      <div class="stat">
-        <b class="stat-num">📉 I</b>
-        <span class="stat-label">Влияние</span>
-      </div>
+<p><a href="glossary.html#risk" class="term-link">Риск</a> — это вероятностное событие. Если оно наступило, это уже проблема. Управление рисками экономит время и деньги, которых у вас и так нет.</p>
+
+<div class="grid">
+    <div class="card">
+        <span class="badge">Step 1</span>
+        <b>Реестр рисков</b>
+        <p>Запишите всё, что может пойти не так. Если вы этого не сделаете, оно пойдёт не так первым.</p>
     </div>
-
-    <div class="vis-diag">
-      <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-        <rect x="50" y="50" width="100" height="100" fill="#ff4d4d" fill-opacity="0.8" />
-        <rect x="150" y="50" width="100" height="100" fill="#ffcccb" fill-opacity="0.8" />
-        <rect x="250" y="50" width="100" height="100" fill="#fff7d1" fill-opacity="0.8" />
-        <rect x="50" y="150" width="100" height="100" fill="#ffcccb" fill-opacity="0.8" />
-        <rect x="150" y="150" width="100" height="100" fill="#fff7d1" fill-opacity="0.8" />
-        <rect x="250" y="150" width="100" height="100" fill="#87efc9" fill-opacity="0.8" />
-        <text x="25" y="100" transform="rotate(-90 25,100)" text-anchor="middle" font-weight="bold">Impact (I)</text>
-        <text x="200" y="280" text-anchor="middle" font-weight="bold">Probability (P)</text>
-        <text x="100" y="110" text-anchor="middle" font-size="10">High</text>
-        <text x="200" y="110" text-anchor="middle" font-size="10">Med</text>
-        <text x="300" y="110" text-anchor="middle" font-size="10">Low</text>
-        <text x="200" y="200" text-anchor="middle" font-style="italic">Risk Heatmap: Focus on Red! 🚦</text>
-      </svg>
+    <div class="card">
+        <span class="badge">Step 2</span>
+        <b>Качественный анализ</b>
+        <p>Субъективно оцените: насколько вероятно и насколько больно будет проекту.</p>
     </div>
+</div>
 
-    <div class="translator">
-      <div class="tr-col bad">
-        <div class="tr-head bad">💀 УГРОЗЫ (Threats)</div>
-        <p>Разработчик уволился. Сервер сгорел. Клиент передумал. 📉</p>
-      </div>
-      <div class="tr-col good">
-        <div class="tr-head good">💎 ВОЗМОЖНОСТИ (Opportunities)</div>
-        <p>Скидка на софт. Досрочный финиш. Новая технология. 🚀</p>
-      </div>
+<details class="acc-item" open>
+    <summary>План А и План Б</summary>
+    <div class="vis-stats">
+        <div class="stat-item"><div class="stat-val">🛡️</div><div class="stat-lab">План А</div></div>
+        <div class="stat-item"><div class="stat-val">🔥</div><div class="stat-lab">План Б</div></div>
     </div>
+    <p>План А (Contingency) — как снизить <a href="glossary.html#risk" class="term-link">риск</a>. План Б (Fallback) — что делать, когда всё-таки полыхнуло.</p>
+</details>
 
-    <div class="vis-timeline">
-      <div class="tl-step">
-        <div class="tl-num">1</div>
-        <div class="tl-content"><b>Идентификация</b>: Что может пойти не так? 📋</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">2</div>
-        <div class="tl-content"><b>Анализ (Светофор)</b>: Сортировка по P x I. 🚦</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">3</div>
-        <div class="tl-content"><b>Реагирование</b>: Планы А и Б. 🛠️</div>
-      </div>
+<div class="vis-diag">
+  <svg viewBox="0 0 580 200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr11" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" style="fill:var(--line)"/>
+      </marker>
+    </defs>
+    <!-- Risk event diamond -->
+    <polygon points="80,100 120,70 160,100 120,130" class="diag-node" style="stroke:var(--bad);stroke-width:2"/>
+    <text x="120" y="97"  class="diag-text" style="font-size:10px;">Риск</text>
+    <text x="120" y="110" class="diag-text" style="font-size:10px;">выявлен?</text>
+
+    <!-- Yes path -->
+    <line x1="160" y1="100" x2="200" y2="100" class="diag-link" marker-end="url(#arr11)"/>
+    <text x="178" y="94" class="diag-text" style="font-size:9px;fill:var(--acc);">Да</text>
+
+    <!-- Probability/Impact assess -->
+    <rect x="200" y="74" width="110" height="52" rx="4" class="diag-node"/>
+    <text x="255" y="97"  class="diag-text" style="font-size:10px;">Оценить</text>
+    <text x="255" y="111" class="diag-text" style="font-size:10px;">P × I</text>
+
+    <!-- Arrow from assess to vertical trunk -->
+    <line x1="310" y1="100" x2="348" y2="100" class="diag-link" marker-end="url(#arr11)"/>
+
+    <!-- Vertical distribution trunk -->
+    <line x1="350" y1="31" x2="350" y2="163" class="diag-link"/>
+
+    <!-- 4 horizontal branches to strategy boxes -->
+    <line x1="350" y1="31"  x2="368" y2="31"  class="diag-link" marker-end="url(#arr11)"/>
+    <line x1="350" y1="75"  x2="368" y2="75"  class="diag-link" marker-end="url(#arr11)"/>
+    <line x1="350" y1="119" x2="368" y2="119" class="diag-link" marker-end="url(#arr11)"/>
+    <line x1="350" y1="163" x2="368" y2="163" class="diag-link" marker-end="url(#arr11)"/>
+
+    <!-- Strategy boxes at x=370 -->
+    <rect x="370" y="14"  width="90" height="34" rx="4" style="fill:var(--bad);opacity:.15" class="diag-node"/>
+    <text x="415" y="34"  class="diag-text" style="font-size:10px;">Нивелировать</text>
+    <text x="415" y="46"  class="diag-text" style="font-size:9px;fill:var(--muted);">убить причину</text>
+
+    <rect x="370" y="58"  width="90" height="34" rx="4" class="diag-node"/>
+    <text x="415" y="78"  class="diag-text" style="font-size:10px;">Ослабить</text>
+    <text x="415" y="90"  class="diag-text" style="font-size:9px;fill:var(--muted);">снизить P или I</text>
+
+    <rect x="370" y="102" width="90" height="34" rx="4" class="diag-node"/>
+    <text x="415" y="122" class="diag-text" style="font-size:10px;">Перенести</text>
+    <text x="415" y="134" class="diag-text" style="font-size:9px;fill:var(--muted);">страховка / субп.</text>
+
+    <rect x="370" y="146" width="90" height="34" rx="4" class="diag-node" style="opacity:.6"/>
+    <text x="415" y="166" class="diag-text" style="font-size:10px;">Принять</text>
+    <text x="415" y="178" class="diag-text" style="font-size:9px;fill:var(--muted);">если P×I мал</text>
+
+    <!-- Owner box -->
+    <rect x="470" y="60" width="104" height="50" rx="4" style="fill:var(--acc);opacity:.12;stroke:var(--acc);stroke-width:1"/>
+    <text x="522" y="81" class="diag-text" style="font-size:10px;">Хозяин риска</text>
+    <text x="522" y="94" class="diag-text" style="font-size:9px;fill:var(--muted);">следит за триггером</text>
+    <line x1="460" y1="88" x2="468" y2="85" class="diag-link" marker-end="url(#arr11)"/>
+  </svg>
+  <div class="caption">Процесс управления рисками: выявление → оценка P×I → выбор стратегии → назначение хозяина</div>
+</div>
+
+<div class="translator">
+    <div class="trans-meta">Стратегии:</div>
+    <p>Нивелировать (убить причину), Ослабить (уменьшить боль), Перенести (на субподрядчика), Принять (смириться).</p>
+</div>
+
+<div class="vis-grid">
+    <div class="card">
+        <span class="badge">Rule</span>
+        <b>Хозяин риска</b>
+        <p>Тот, кто на передовой. ПМ только курирует, а «хозяин» ловит триггер первым.</p>
     </div>
+</div>
 
-    <div class="acc-item">
-      <details>
-        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
-        <div class="acc-body">
-          <p>«Риск — это управляемая неопределенность. Наличие реестра рисков означает, что мы готовы к сюрпризам и не потеряем голову, если что-то пойдет не так». 🎯</p>
-        </div>
-      </details>
-    </div>
+<div class="translator">
+    <p>Выход главы: реестр рисков и планы реагирования. Переходим к циклам.</p>
+</div>
 
-    <footer class="summary">
-      <p><span class="badge warn">ВЕРДИКТ</span> Прятать голову в песок — плохая стратегия. Лучше честно обсудить риски со спонсором. 🦒</p>
-    </footer>
-  </main>
-</body>
-</html>
+</div></body></html>

@@ -1,100 +1,54 @@
-<html>
-<head>
-  <title>Глава 4. Выбор оружия: Методология</title>
-  <link rel="stylesheet" href="theme.css">
-</head>
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><title>Глава 4. Инициация</title></head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <p class="kicker">Глава 4</p>
-      <h1>Как определиться с подходом? (Спойлер: Карта не есть местность)</h1>
-      <p class="essence">Методология — это не догма, а инструмент навигации. 🧭</p>
-    </section>
+<section class="hero"><p class="kicker">Глава 4</p><h1>Инициация: Устав проекта</h1></section>
+<div class="wrap">
 
-    <blockquote class="insight">
-      🎯 Мы используем <a href="glossary.html#pmbok" class="term-link">PMBOK</a> как базу, но не забываем об <a href="glossary.html#agile" class="term-link">Agile</a>, PRINCE2 или MSF. Главное — **Интеграция**.
-    </blockquote>
+<div class="vis-diag">
+<svg viewBox="0 0 560 160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" style="fill:var(--line)"/>
+    </marker>
+  </defs>
+  <rect x="10" y="50" width="100" height="60" style="fill:var(--acc)" rx="4"/>
+  <text x="60" y="85" text-anchor="middle" class="diag-text" style="fill:var(--bg);font-weight:bold;">Идея</text>
 
-    <div class="stats">
-      <div class="stat">
-        <b class="stat-num"><a href="glossary.html#pmi" class="term-link">PMI</a></b>
-        <span class="stat-label">Фундамент</span>
-      </div>
-      <div class="stat">
-        <b class="stat-num">9</b>
-        <span class="stat-label">Областей знаний</span>
-      </div>
+  <path d="M110 80 L138 80" class="diag-link" marker-end="url(#arr4)"/>
+
+  <rect x="140" y="50" width="120" height="60" class="diag-node" rx="4"/>
+  <text x="200" y="81" text-anchor="middle" class="diag-text">Бизнес-</text>
+  <text x="200" y="95" text-anchor="middle" class="diag-text">кейс</text>
+
+  <path d="M260 80 L288 80" class="diag-link" marker-end="url(#arr4)"/>
+
+  <rect x="290" y="50" width="120" height="60" class="diag-node" rx="4"/>
+  <text x="350" y="81" text-anchor="middle" class="diag-text">Устав</text>
+  <text x="350" y="95" text-anchor="middle" class="diag-text" style="font-size:9px;fill:var(--muted);">(Charter)</text>
+
+  <path d="M410 80 L438 80" class="diag-link" marker-end="url(#arr4)"/>
+
+  <rect x="440" y="50" width="100" height="60" style="fill:var(--acc)" rx="4"/>
+  <text x="490" y="85" text-anchor="middle" class="diag-text" style="fill:var(--bg);font-weight:bold;">Kick-off</text>
+</svg>
+<div class="caption">Процесс инициации: от идеи через <a href="glossary.html#charter" class="term-link">Устав</a> к официальному старту</div>
+</div>
+
+<div class="vis-stats">
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#charter" class="term-link">Charter</a></div><div class="stat-lab">Устав</div></div>
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#stakeholder" class="term-link">SH</a></div><div class="stat-lab">Стейкхолдеры</div></div>
+</div>
+
+<p>Инициация — это авторизация проекта. Без <a href="glossary.html#charter" class="term-link">Устава</a> проекта у вас нет полномочий. <a href="glossary.html#stakeholder" class="term-link">Стейкхолдеры</a> должны договориться на берегу, зачем мы это делаем.</p>
+
+<blockquote class="insight">Нет устава — нет проекта. Вы просто группа людей, обсуждающих что-то.</blockquote>
+
+<div class="grid">
+    <div class="card">
+        <span class="badge">Docs</span>
+        <b>Устав проекта</b>
+        <p>Цель, спонсор, менеджер, границы и ограничения. Подписано кровью спонсора.</p>
     </div>
+</div>
 
-    <div class="translator">
-      <div class="tr-col bad">
-        <div class="tr-head bad">📦 ПРОДУКТ</div>
-        <p>То, что хочет заказчик (код, система, железка). Результат.</p>
-      </div>
-      <div class="tr-col good">
-        <div class="tr-head good">⚙️ ПРОЕКТ</div>
-        <p>То, как мы это делаем (процесс, управление, план). Путь.</p>
-      </div>
-    </div>
-
-    <div class="vis-diag">
-      <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#395f9d" />
-          </marker>
-        </defs>
-        
-        <g transform="translate(50, 50)">
-          <rect x="0" y="0" width="120" height="40" rx="5" fill="#72d8ff" stroke="#395f9d" stroke-width="2" />
-          <text x="60" y="25" text-anchor="middle" font-size="14"><a href="glossary.html#waterfall" class="term-link">Waterfall</a></text>
-          <path d="M120 20 L180 20" stroke="#395f9d" fill="none" marker-end="url(#arrowhead)" />
-          <rect x="180" y="0" width="40" height="40" rx="5" fill="#87efc9" stroke="#395f9d" />
-        </g>
-
-        <g transform="translate(350, 50)">
-          <circle cx="60" cy="60" r="50" fill="none" stroke="#395f9d" stroke-dasharray="5,5" />
-          <path d="M60 10 A 50 50 0 1 1 59.9 10" stroke="#87efc9" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
-          <text x="60" y="65" text-anchor="middle" font-size="14" font-weight="bold"><a href="glossary.html#agile" class="term-link">Agile</a></text>
-        </g>
-
-        <g transform="translate(580, 50)">
-          <rect x="0" y="0" width="150" height="100" rx="10" fill="#72d8ff" fill-opacity="0.2" stroke="#395f9d" />
-          <rect x="10" y="10" width="60" height="30" rx="5" fill="#72d8ff" stroke="#395f9d" />
-          <circle cx="110" cy="60" r="25" fill="#87efc9" stroke="#395f9d" />
-          <path d="M70 25 Q 110 25 110 35" stroke="#395f9d" fill="none" marker-end="url(#arrowhead)" />
-          <text x="75" y="120" text-anchor="middle" font-size="14" font-weight="bold">Hybrid</text>
-        </g>
-      </svg>
-    </div>
-
-    <div class="vis-timeline">
-      <div class="tl-step">
-        <div class="tl-num">1</div>
-        <div class="tl-content"><b>Инициация</b>: Рождение идеи. 🥚</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">2</div>
-        <div class="tl-content"><b>Планирование & Мониторинг</b>: Циклы «Удава». 🐍</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">3</div>
-        <div class="tl-content"><b>Закрытие</b>: Финал. Сдача ключей. 🏁</div>
-      </div>
-    </div>
-
-    <div class="acc-item">
-      <details>
-        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
-        <div class="acc-body">
-          <p>«Мы не строим систему с нуля — мы адаптируем лучшие практики под наши задачи. Это позволит нам быть гибкими там, где нужно, и сохранять контроль там, где это критично». 🛠️</p>
-        </div>
-      </details>
-    </div>
-
-    <footer class="summary">
-      <p><span class="badge warn">ВЕРДИКТ</span> Не тратьте время на "священные войны" методологий. Используйте то, что дает результат. 🛠️</p>
-    </footer>
-  </main>
-</body>
-</html>
+</div></body></html>

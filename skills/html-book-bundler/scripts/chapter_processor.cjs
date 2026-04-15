@@ -131,8 +131,10 @@ function autoEnrichLists(html) {
  * @param {number} totalChapters - total number of chapters (for nav script)
  * @param {string} globalCSS     - CSS to inject as shared theme base
  * @param {string} bookTitle     - book title for the kicker line (optional)
+ * @param {boolean} skipInsights - whether to skip auto-injecting insights
+ * @param {string} langCode      - UI language code (e.g., 'ru' or 'en')
  */
-function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookTitle = '', skipInsights = false) {
+function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookTitle = '', skipInsights = false, langCode = 'ru') {
   let content = html;
 
   const hasOwnStyles = /<style[\s\S]*?<\/style>/i.test(content);
@@ -148,6 +150,8 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
     const padded = String(i).padStart(3, '0') + '.html';
     chapterMap[padded] = i - 1;
   }
+  // FIX: include glossary in chapterMap
+  chapterMap['glossary.html'] = ${totalChapters} - 1;
 
   document.addEventListener('click', e => {
     const a = e.target.closest('a');
@@ -187,7 +191,7 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
   bodyContent = autoEnrichLists(bodyContent);
 
   // Semantic Quality Check (v5.5)
-  const visualTags = /class="(stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge)"|<table>/i;
+  const visualTags = /class="(vis-diag|vis-stats|vis-grid|stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge|diag-node|matrix)"|<table>/i;
   if (!visualTags.test(bodyContent)) {
     console.warn(`[Semantic Warning] Chapter ${index + 1} ("${title}") is a "wall of text" with no visual components.`);
   }
@@ -227,7 +231,7 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
 
   const finalHtml = [
     '<!DOCTYPE html>',
-    '<html lang="en">',
+    `<html lang="${langCode}">`,
     '<head>',
     '<meta charset="UTF-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1.0">',

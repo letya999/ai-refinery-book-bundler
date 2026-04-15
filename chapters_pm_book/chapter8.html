@@ -1,108 +1,119 @@
-<html>
-<head>
-  <title>Глава 8. WBS: Анатомия слона</title>
-  <link rel="stylesheet" href="theme.css">
-</head>
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><title>Глава 8. Время и Стоимость</title></head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <p class="kicker">Глава 8</p>
-      <h1><a href="glossary.html#wbs" class="term-link">WBS</a>: Иерархическая структура работ. Как съесть слона?</h1>
-      <p class="essence">Если работы нет в ИСР — её нет в проекте. Никто не заплатит за то, чего нет на этой схеме. 🌲</p>
-    </section>
+<section class="hero"><p class="kicker">Глава 8</p><h1>Время и Стоимость: Критический путь</h1></section>
+<div class="wrap">
 
-    <blockquote class="insight">
-      🌲 <a href="glossary.html#wbs" class="term-link">ИСР (WBS)</a> — это декомпозиция. Вы не пишете "программировать" (процесс), вы пишете "Модуль авторизации" (результат).
-    </blockquote>
+<div class="vis-diag">
+<svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+  <!-- Grid -->
+  <line x1="120" y1="20" x2="120" y2="180" stroke="var(--line)" stroke-width="0.5" opacity="0.4"/>
+  <line x1="190" y1="20" x2="190" y2="180" stroke="var(--line)" stroke-width="0.5" opacity="0.4"/>
+  <line x1="260" y1="20" x2="260" y2="180" stroke="var(--line)" stroke-width="0.5" opacity="0.4"/>
+  <line x1="330" y1="20" x2="330" y2="180" stroke="var(--line)" stroke-width="0.5" opacity="0.4"/>
+  <line x1="400" y1="20" x2="400" y2="180" stroke="var(--line)" stroke-width="0.5" opacity="0.4"/>
+  <line x1="470" y1="20" x2="470" y2="180" stroke="var(--line)" stroke-width="0.5" opacity="0.4"/>
+  <line x1="540" y1="20" x2="540" y2="180" stroke="var(--line)" stroke-width="0.5" opacity="0.4"/>
+  <line x1="610" y1="20" x2="610" y2="180" stroke="var(--line)" stroke-width="0.5" opacity="0.4"/>
 
-    <div class="stats">
-      <div class="stat">
-        <b class="stat-num">ФОКУС</b>
-        <span class="stat-label">На результат</span>
-      </div>
-      <div class="stat">
-        <b class="stat-num">100%</b>
-        <span class="stat-label">Правило полноты</span>
-      </div>
-    </div>
+  <!-- X-Axis -->
+  <text x="120" y="200" text-anchor="middle" class="diag-text" style="font-size:10px;">Нед.1</text>
+  <text x="190" y="200" text-anchor="middle" class="diag-text" style="font-size:10px;">Нед.2</text>
+  <text x="260" y="200" text-anchor="middle" class="diag-text" style="font-size:10px;">Нед.3</text>
+  <text x="330" y="200" text-anchor="middle" class="diag-text" style="font-size:10px;">Нед.4</text>
+  <text x="400" y="200" text-anchor="middle" class="diag-text" style="font-size:10px;">Нед.5</text>
+  <text x="470" y="200" text-anchor="middle" class="diag-text" style="font-size:10px;">Нед.6</text>
+  <text x="540" y="200" text-anchor="middle" class="diag-text" style="font-size:10px;">Нед.7</text>
+  <text x="610" y="200" text-anchor="middle" class="diag-text" style="font-size:10px;">Нед.8</text>
 
-    <div class="vis-diag">
-      <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#395f9d" />
-          </marker>
-          <marker id="arrowhead-crit" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#ff4d4d" />
-          </marker>
-        </defs>
+  <!-- Tasks -->
+  <text x="110" y="45" text-anchor="end" class="diag-text">Анализ</text>
+  <rect x="120" y="30" width="140" height="25" class="diag-node" style="fill:var(--bad)" rx="2"/>
 
-        <g class="diag-node">
-          <rect x="50" y="150" width="100" height="60" rx="5" fill="#72d8ff" stroke="#395f9d" stroke-width="2" />
-          <text x="100" y="185" text-anchor="middle" font-weight="bold">Start</text>
-        </g>
+  <text x="110" y="75" text-anchor="end" class="diag-text">Архит.</text>
+  <rect x="260" y="60" width="70" height="25" class="diag-node" style="fill:var(--bad)" rx="2"/>
 
-        <g class="diag-node">
-          <rect x="250" y="50" width="120" height="60" rx="5" fill="#87efc9" stroke="#395f9d" stroke-width="2" />
-          <text x="310" y="85" text-anchor="middle" font-weight="bold">Task A</text>
-        </g>
+  <text x="110" y="105" text-anchor="end" class="diag-text">Разраб.</text>
+  <rect x="330" y="90" width="210" height="25" class="diag-node" style="fill:var(--bad)" rx="2"/>
 
-        <g class="diag-node diag-highlight">
-          <rect x="250" y="250" width="120" height="60" rx="5" fill="#ffcccb" stroke="#ff4d4d" stroke-width="3" />
-          <text x="310" y="285" text-anchor="middle" font-weight="bold">Task B (CRIT)</text>
-        </g>
+  <text x="110" y="135" text-anchor="end" class="diag-text">Докум.</text>
+  <rect x="330" y="120" width="70" height="25" class="diag-node" style="fill:var(--acc2)" rx="2"/>
 
-        <g class="diag-node">
-          <rect x="450" y="150" width="120" height="60" rx="5" fill="#87efc9" stroke="#395f9d" stroke-width="2" />
-          <text x="510" y="185" text-anchor="middle" font-weight="bold">Task C</text>
-        </g>
+  <text x="110" y="165" text-anchor="end" class="diag-text">Тесты</text>
+  <rect x="540" y="150" width="70" height="25" class="diag-node" style="fill:var(--bad)" rx="2"/>
+</svg>
+<div class="caption">Диаграмма Ганта: пример 5 задач, критический путь выделен красным</div>
+</div>
 
-        <g class="diag-node">
-          <rect x="650" y="150" width="100" height="60" rx="5" fill="#72d8ff" stroke="#395f9d" stroke-width="2" />
-          <text x="700" y="185" text-anchor="middle" font-weight="bold">Finish</text>
-        </g>
+<div class="vis-stats">
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#gantt" class="term-link">Gantt</a></div><div class="stat-lab">График</div></div>
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#critical_path" class="term-link">CP</a></div><div class="stat-lab">Крит. путь</div></div>
+</div>
 
-        <path d="M150 180 L250 80" stroke="#395f9d" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
-        <path d="M150 180 L250 280" stroke="#ff4d4d" stroke-width="3" fill="none" marker-end="url(#arrowhead-crit)" />
-        <path d="M370 80 L450 180" stroke="#395f9d" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
-        <path d="M370 280 L450 180" stroke="#ff4d4d" stroke-width="3" fill="none" marker-end="url(#arrowhead-crit)" />
-        <path d="M570 180 L650 180" stroke="#ff4d4d" stroke-width="3" fill="none" marker-end="url(#arrowhead-crit)" />
+<p>Критический путь — это самая длинная цепочка задач, определяющая дату финиша. Задержка любой задачи на этом пути сдвигает весь проект.</p>
 
-        <text x="400" y="370" text-anchor="middle" class="diag-text" font-style="italic"><a href="glossary.html#critical_path" class="term-link">Critical Path Method</a> (Red Line) 🕸️</text>
-      </svg>
-    </div>
+<blockquote class="insight">Критический путь — это то, что не дает вам спать.</blockquote>
 
-    <div class="translator">
-      <div class="tr-col bad">
-        <div class="tr-head bad">❌ ОШИБКИ ДЕКОМПОЗИЦИИ</div>
-        <ul>
-          <li>Резать до атомов (микроменеджмент). 🔬</li>
-          <li>Группировать по отделам ("Дизайн"). 🏢</li>
-          <li>Рисовать <a href="glossary.html#wbs" class="term-link">ИСР</a> в одно лицо. 👤</li>
-        </ul>
-      </div>
-      <div class="tr-col good">
-        <div class="tr-head good">✅ ПРАВИЛЬНЫЙ ПОДХОД</div>
-        <ul>
-          <li>Резать до "пакетов работ" (управляемо). 📦</li>
-          <li>Группировать по продукту ("Сайт", "API"). 🚀</li>
-          <li>Вовлекать исполнителей (они знают детали). 🤝</li>
-        </ul>
-      </div>
-    </div>
+<div class="vis-diag">
+<svg viewBox="0 0 580 185" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr8" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" style="fill:var(--line)"/>
+    </marker>
+    <marker id="arr8r" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" style="fill:var(--bad)"/>
+    </marker>
+  </defs>
 
-    <div class="acc-item">
-      <details>
-        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
-        <div class="acc-body">
-          <p>«<a href="glossary.html#wbs" class="term-link">WBS</a> — это основа бюджета и расписания. Она наглядно показывает, из чего состоит проект и кто за что отвечает. Это исключает споры о том, "кто должен был это сделать"». 🎯</p>
-        </div>
-      </details>
-    </div>
+  <!-- Start -->
+  <circle cx="50" cy="80" r="28" style="fill:var(--acc);stroke:var(--acc)"/>
+  <text x="50" y="85" text-anchor="middle" class="diag-text" style="fill:var(--bg);font-weight:bold;">Старт</text>
 
-    <footer class="summary">
-      <p><span class="badge warn">ВЕРДИКТ</span> <a href="glossary.html#wbs" class="term-link">WBS</a> — это скелет расписания и бюджета. Сделали криво — проект родится уродом. 🌲</p>
-    </footer>
-  </main>
-</body>
-</html>
+  <!-- Node A (CP) -->
+  <circle cx="200" cy="38" r="28" class="diag-node" style="stroke:var(--bad);stroke-width:3"/>
+  <text x="200" y="35" text-anchor="middle" class="diag-text">A</text>
+  <text x="200" y="50" text-anchor="middle" class="diag-text" style="font-size:9px;fill:var(--bad);">4д (КП)</text>
+
+  <!-- Node B -->
+  <circle cx="200" cy="128" r="28" class="diag-node"/>
+  <text x="200" y="125" text-anchor="middle" class="diag-text">B</text>
+  <text x="200" y="140" text-anchor="middle" class="diag-text" style="font-size:9px;fill:var(--muted);">2д (резерв)</text>
+
+  <!-- Node C (CP) -->
+  <circle cx="380" cy="80" r="28" class="diag-node" style="stroke:var(--bad);stroke-width:3"/>
+  <text x="380" y="77" text-anchor="middle" class="diag-text">C</text>
+  <text x="380" y="92" text-anchor="middle" class="diag-text" style="font-size:9px;fill:var(--bad);">5д (КП)</text>
+
+  <!-- Finish -->
+  <circle cx="530" cy="80" r="28" style="fill:var(--acc);stroke:var(--acc)"/>
+  <text x="530" y="85" text-anchor="middle" class="diag-text" style="fill:var(--bg);font-weight:bold;">Финиш</text>
+
+  <!-- Critical path: Start→A→C→Finish -->
+  <path d="M77 63 L173 47" style="fill:none;stroke:var(--bad);stroke-width:2" marker-end="url(#arr8r)"/>
+  <path d="M227 46 L353 70" style="fill:none;stroke:var(--bad);stroke-width:2" marker-end="url(#arr8r)"/>
+  <path d="M408 80 L502 80" style="fill:none;stroke:var(--bad);stroke-width:2" marker-end="url(#arr8r)"/>
+
+  <!-- Normal path: Start→B→C -->
+  <path d="M77 97 L173 119" class="diag-link" marker-end="url(#arr8)"/>
+  <path d="M227 119 L353 90" class="diag-link" marker-end="url(#arr8)"/>
+
+  <!-- Legend -->
+  <line x1="420" y1="155" x2="460" y2="155" style="stroke:var(--bad);stroke-width:2"/>
+  <text x="465" y="159" class="diag-text" style="font-size:9px;text-anchor:start;fill:var(--bad);">Критический путь</text>
+  <line x1="420" y1="172" x2="460" y2="172" class="diag-link"/>
+  <text x="465" y="176" class="diag-text" style="font-size:9px;text-anchor:start;fill:var(--muted);">Некритический</text>
+</svg>
+<div class="caption">Сетевая диаграмма: критический путь A→C задаёт минимальную длину проекта (9 дн.), путь B→C — с резервом</div>
+</div>
+
+
+<div class="translator">
+    <div class="trans-meta">Ключевые термины:</div>
+    <ul>
+        <li><b>Float (резерв)</b> — время, на которое можно задержать задачу без сдвига финиша</li>
+        <li><b>Fast-tracking</b> — распараллеливание задач, которые обычно идут последовательно</li>
+        <li><b>Crashing</b> — добавление ресурсов для ускорения критического пути (деньги vs. время)</li>
+    </ul>
+</div>
+
+</div></body></html>
