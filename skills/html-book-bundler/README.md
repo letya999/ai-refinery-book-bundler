@@ -1,4 +1,4 @@
-# HTML Book Bundler v5.0
+# HTML Book Bundler v8.0
 
 Bundles book chapters into a single offline-first HTML reading app. No server, no internet, no dependencies — open the output file in any browser.
 

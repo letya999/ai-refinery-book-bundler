@@ -69,6 +69,17 @@ class BookLinter:
         # Mask our intentional inter-chapter bridge before security checks
         safe = html.replace('window.parent.postMessage', '__BRIDGE__')
 
+        # Enforce CSS variables in SVGs
+        svgs = re.findall(r'<svg[^>]*>.*?</svg>', html, re.I | re.S)
+        for svg in svgs:
+            if re.search(r'(?:fill|stroke)\s*=\s*["\']#[0-9a-fA-F]{3,6}["\']', svg, re.I):
+                self.errors.append(f"{label}: Hardcoded hex color found in <svg>. Must use CSS variables (e.g. fill: var(--acc)).")
+
+        # Detect wall of text (long chapter without visual components)
+        visual_tags = r'class=["\'](vis-diag|vis-stats|vis-grid|stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge|diag-node|matrix)["\']|<table>'
+        if len(html) > 5000 and not re.search(visual_tags, html, re.I):
+            self.warnings.append(f"{label}: Potential 'wall of text' detected ({len(html)} chars) with no visual components.")
+
         # Detect genuinely dangerous DOM escape patterns
         danger = re.search(
             r'\b(?:window|top|parent|opener)\s*\.\s*(?:location|cookie|href|assign|replace|open)\b',

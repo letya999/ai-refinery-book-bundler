@@ -110,22 +110,37 @@ const globalCSS = fs.readFileSync(themePath, 'utf8');
 // Asset inlining (images referenced in chapter HTML)
 // ---------------------------------------------------------------------------
 function bundleAssets(htmlContent, baseDir) {
-  return htmlContent.replace(/(src|href)=["']([^"']+)["']/gi, (match, attr, src) => {
-    if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('#')) return match;
+  const mimeMap = {
+    png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+    gif: 'image/gif', svg: 'image/svg+xml', webp: 'image/webp',
+    woff: 'font/woff', woff2: 'font/woff2',
+  };
+
+  const inline = (src) => {
+    if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('#')) return null;
     const abs = path.resolve(baseDir, src);
     if (fs.existsSync(abs)) {
       const ext = path.extname(abs).slice(1).toLowerCase();
-      const mimeMap = {
-        png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
-        gif: 'image/gif', svg: 'image/svg+xml', webp: 'image/webp',
-        woff: 'font/woff', woff2: 'font/woff2',
-      };
       const mime = mimeMap[ext] || 'application/octet-stream';
       const data = fs.readFileSync(abs).toString('base64');
-      return `${attr}="data:${mime};base64,${data}"`;
+      return `data:${mime};base64,${data}`;
     }
-    return match;
+    return null;
+  };
+
+  // Replace attributes (src, href)
+  let content = htmlContent.replace(/(src|href)=["']([^"']+)["']/gi, (match, attr, src) => {
+    const dataUri = inline(src);
+    return dataUri ? `${attr}="${dataUri}"` : match;
   });
+
+  // Replace CSS url(...)
+  content = content.replace(/url\(["']?([^"'\)]+)["']?\)/gi, (match, src) => {
+    const dataUri = inline(src);
+    return dataUri ? `url("${dataUri}")` : match;
+  });
+
+  return content;
 }
 
 // ---------------------------------------------------------------------------
@@ -211,7 +226,7 @@ files.forEach((file, idx) => {
   chapterTexts.push(content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
 
   // Prepare chapter HTML string (srcdoc-ready)
-  chapters.push(prepareChapter(content, idx, title, files.length, globalCSS, bookTitle, skipInsights, langCode));
+  chapters.push(prepareChapter(content, idx, title, files, globalCSS, bookTitle, skipInsights, langCode));
 });
 
 // Warn about large image payloads

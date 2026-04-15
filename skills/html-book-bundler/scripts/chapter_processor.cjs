@@ -134,7 +134,7 @@ function autoEnrichLists(html) {
  * @param {boolean} skipInsights - whether to skip auto-injecting insights
  * @param {string} langCode      - UI language code (e.g., 'ru' or 'en')
  */
-function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookTitle = '', skipInsights = false, langCode = 'ru') {
+function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitle = '', skipInsights = false, langCode = 'ru') {
   let content = html;
 
   const hasOwnStyles = /<style[\s\S]*?<\/style>/i.test(content);
@@ -146,14 +146,17 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
   const navScript = `
 <script>
 (function() {
+  const fileArray = ${JSON.stringify(filesArray)};
   const chapterMap = {};
-  for (let i = 1; i <= ${totalChapters}; i++) {
-    chapterMap['chapter' + i + '.html'] = i - 1;
-    const padded = String(i).padStart(3, '0') + '.html';
-    chapterMap[padded] = i - 1;
-  }
-  // FIX: include glossary in chapterMap
-  chapterMap['glossary.html'] = ${totalChapters} - 1;
+  fileArray.forEach((f, i) => {
+    chapterMap[f] = i;
+    // Keep support for padded links
+    const m = f.match(/chapter(\\d+)\\.html/);
+    if (m) {
+      const padded = String(m[1]).padStart(3, '0') + '.html';
+      chapterMap[padded] = i;
+    }
+  });
 
   document.addEventListener('click', e => {
     const a = e.target.closest('a');
