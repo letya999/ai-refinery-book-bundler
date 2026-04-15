@@ -1,75 +1,51 @@
-<html>
-<head>
-  <title>Глава 12. Финализация Плана: Пуск!</title>
-  <link rel="stylesheet" href="theme.css">
-</head>
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><title>Глава 12. Контроль исполнения</title></head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <p class="kicker">Глава 12</p>
-      <h1>Завершаем планирование: Единый источник правды</h1>
-      <p class="essence">План управления проектом — это согласованный пакет документов. 📁</p>
-    </section>
+<section class="hero"><p class="kicker">Глава 12</p><h1>Контроль: Исполнение и мониторинг</h1></section>
+<div class="wrap">
 
-    <blockquote class="insight">
-      📁 Главная беда ИТ — "версионный ад". Планирование закончено только тогда, когда все знают, где лежит АКТУАЛЬНЫЙ план.
-    </blockquote>
+<div class="vis-diag">
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cycle nodes -->
+  <rect x="110" y="20" width="80" height="40" class="diag-node" rx="4"/>
+  <text x="150" y="45" text-anchor="middle" class="diag-text" style="font-weight:bold;">План</text>
+  
+  <rect x="220" y="130" width="80" height="40" class="diag-node" rx="4"/>
+  <text x="260" y="155" text-anchor="middle" class="diag-text" style="font-weight:bold;">Дело</text>
+  
+  <rect x="110" y="240" width="80" height="40" class="diag-node" rx="4"/>
+  <text x="150" y="265" text-anchor="middle" class="diag-text" style="font-weight:bold;">Учет</text>
+  
+  <rect x="0" y="130" width="80" height="40" class="diag-node" rx="4"/>
+  <text x="40" y="155" text-anchor="middle" class="diag-text" style="font-weight:bold;">Коррект.</text>
+  
+  <!-- Curved arrows (simplified) -->
+  <path d="M190 40 Q260 40 260 130" class="diag-link" fill="none" style="stroke-width:2"/>
+  <path d="M260 170 Q260 260 190 260" class="diag-link" fill="none" style="stroke-width:2"/>
+  <path d="M110 260 Q40 260 40 170" class="diag-link" fill="none" style="stroke-width:2"/>
+  <path d="M40 130 Q40 40 110 40" class="diag-link" fill="none" style="stroke-width:2"/>
+  
+  <circle cx="150" cy="150" r="30" style="fill:var(--acc)"/>
+  <text x="150" y="155" text-anchor="middle" style="fill:var(--bg); font-weight:bold; font-size:14px;">PDCA</text>
+</svg>
+<div class="caption">Цикл контроля исполнения проекта (PDCA)</div>
+</div>
 
-    <div class="stats">
-      <div class="stat">
-        <b class="stat-num">BASELINE</b>
-        <span class="stat-label">Подписано и зафиксировано</span>
-      </div>
+<div class="vis-stats">
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#kpi" class="term-link">KPI</a></div><div class="stat-lab">Метрики</div></div>
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#status_report" class="term-link">Status</a></div><div class="stat-lab">Отчетность</div></div>
+</div>
+
+<p>Контроль — это постоянное сравнение факта с планом. Если вы видите отклонение, вы должны либо вернуть проект в русло, либо перепланировать.</p>
+
+<blockquote class="insight">То, что не измеряется, не контролируется.</blockquote>
+
+<div class="grid">
+    <div class="card">
+        <span class="badge">Tool</span>
+        <b>Статус-отчет</b>
+        <p>Кратко: что сделано, что планируем, какие риски и проблемы требуют внимания спонсора.</p>
     </div>
+</div>
 
-    <div class="vis-diag">
-      <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#395f9d" />
-          </marker>
-        </defs>
-        <g transform="translate(400, 200)">
-          <rect x="-60" y="-160" width="120" height="50" rx="10" fill="#72d8ff" stroke="#395f9d" stroke-width="2" />
-          <text x="0" y="-130" text-anchor="middle" font-weight="bold">PLAN</text>
-          <rect x="80" y="-25" width="120" height="50" rx="10" fill="#87efc9" stroke="#395f9d" stroke-width="2" />
-          <text x="140" y="5" text-anchor="middle" font-weight="bold">DO</text>
-          <rect x="-60" y="110" width="120" height="50" rx="10" fill="#72d8ff" stroke="#395f9d" stroke-width="2" />
-          <text x="0" y="140" text-anchor="middle" font-weight="bold">CHECK</text>
-          <rect x="-200" y="-25" width="120" height="50" rx="10" fill="#87efc9" stroke="#395f9d" stroke-width="2" />
-          <text x="-140" y="5" text-anchor="middle" font-weight="bold">ACT</text>
-          <path d="M70 -135 Q 160 -135 160 -45" stroke="#395f9d" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
-          <path d="M160 45 Q 160 135 70 135" stroke="#395f9d" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
-          <path d="M-70 135 Q -160 135 -160 45" stroke="#395f9d" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
-          <path d="M-160 -45 Q -160 -135 -70 -135" stroke="#395f9d" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
-        </g>
-        <text x="400" y="380" text-anchor="middle" class="diag-text" font-style="italic">PDCA Cycle: The Project Control Loop 🕸️</text>
-      </svg>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <b>🔀 Контроль изменений</b>
-        <p>Новая идея? Оцениваем влияние. Спонсор согласен? Меняем Baseline. Нет? Идея в корзину. 📉</p>
-      </div>
-      <div class="card">
-        <b>🛒 План закупок</b>
-        <p>Ваша ответственность. Даже если сервер покупает админ, ВЫ отвечаете за дату. ⚠️</p>
-      </div>
-    </div>
-
-    <div class="acc-item">
-      <details>
-        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
-        <div class="acc-body">
-          <p>«Baseline — это точка отсчета. Она позволит нам честно оценить, где мы отклонились и почему, чтобы принимать верные решения, а не действовать вслепую». 🎯</p>
-        </div>
-      </details>
-    </div>
-
-    <footer class="summary">
-      <p><span class="badge warn">ЗАПОМНИТЕ</span> План — это контракт. Если меняете его втихую — вы нарушаете условия игры. 🤝</p>
-    </footer>
-  </main>
-</body>
-</html>
+</div></body></html>

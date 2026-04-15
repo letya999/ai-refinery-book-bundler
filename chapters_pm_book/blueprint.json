@@ -1,0 +1,200 @@
+[
+  {
+    "chapter": 1,
+    "title": "Введение: Кто я и почему это важно",
+    "core_concept": "Personal experience and philosophy of PM in harsh IT reality.",
+    "pm_terms_found": ["PMBoK"],
+    "diagrams_needed": [],
+    "visual_components": ["stats_block", "grid_cards"],
+    "glossary_terms_to_link": ["PMBoK"],
+    "insight_quotes": ["Проект — это хаос, который вы обязаны упорядочить. Или он сожрёт вас."]
+  },
+  {
+    "chapter": 2,
+    "title": "Зачем вам это читать?",
+    "core_concept": "Structure of the book and differentiation between projects and operations.",
+    "pm_terms_found": ["PMBoK", "Scope"],
+    "diagrams_needed": [],
+    "visual_components": ["stats_block", "grid_cards", "accordion"],
+    "glossary_terms_to_link": ["PMBoK", "Scope"],
+    "insight_quotes": ["Ваш мостик от наивного энтузиазма к реальному профессионализму."]
+  },
+  {
+    "chapter": 3,
+    "title": "Соглашаться или бежать?",
+    "core_concept": "Project selection and initial approach definition.",
+    "pm_terms_found": ["ROM"],
+    "diagrams_needed": [
+      {
+        "type": "translator_block",
+        "placement": "end",
+        "caption": "Выбор подхода: Waterfall vs Agile",
+        "content": {
+          "left_title": "Waterfall",
+          "left_items": ["Фиксированные требования", "Линейный процесс", "Низкая неопределенность"],
+          "right_title": "Agile",
+          "right_items": ["Гибкие требования", "Итеративный процесс", "Высокая неопределенность"]
+        }
+      }
+    ],
+    "visual_components": ["stats_block", "grid_cards", "translator_block"],
+    "glossary_terms_to_link": ["ROM"],
+    "insight_quotes": ["Назначение на проект — не приговор, а сделка."]
+  },
+  {
+    "chapter": 4,
+    "title": "Инициация",
+    "core_concept": "The start of the project: charter and kick-off.",
+    "pm_terms_found": ["Charter", "Stakeholder"],
+    "diagrams_needed": [
+      {
+        "type": "flowchart",
+        "placement": "after_intro",
+        "caption": "Процесс инициации проекта",
+        "steps": ["Идея", "Бизнес-кейс", "Устав проекта", "Kick-off"]
+      }
+    ],
+    "visual_components": ["stats_block"],
+    "glossary_terms_to_link": ["Charter", "Stakeholder"],
+    "insight_quotes": ["Нет устава — нет проекта. Вы просто группа людей, обсуждающих что-то."]
+  },
+  {
+    "chapter": 5,
+    "title": "Планирование",
+    "core_concept": "The 5 groups of planning processes according to PMBoK.",
+    "pm_terms_found": ["Milestone", "Baseline"],
+    "diagrams_needed": [
+      {
+        "type": "timeline_horizontal",
+        "placement": "after_intro",
+        "caption": "5 групп процессов планирования по PMBOK",
+        "milestones": ["Сбор требований", "Определение состава", "График", "Бюджет", "Риски"]
+      }
+    ],
+    "visual_components": ["stats_block"],
+    "glossary_terms_to_link": ["Milestone", "Baseline"],
+    "insight_quotes": ["План — это ничто, планирование — это всё."]
+  },
+  {
+    "chapter": 6,
+    "title": "Глава VI. Планируем содержание",
+    "core_concept": "WBS decomposition and scope management.",
+    "pm_terms_found": ["WBS", "Scope", "Deliverable"],
+    "diagrams_needed": [
+      {
+        "type": "wbs_tree",
+        "placement": "after_intro",
+        "caption": "Иерархическая структура работ (WBS): декомпозиция по фазам"
+      }
+    ],
+    "visual_components": ["stats_block"],
+    "glossary_terms_to_link": ["WBS", "Scope", "Deliverable"],
+    "insight_quotes": ["Если вы не можете разложить проект на части — вы не понимаете его содержания."]
+  },
+  {
+    "chapter": 7,
+    "title": "Команда проекта",
+    "core_concept": "Roles and responsibilities.",
+    "pm_terms_found": ["RACI", "Stakeholder"],
+    "diagrams_needed": [
+      {
+        "type": "raci_table",
+        "placement": "middle",
+        "caption": "Пример матрицы RACI"
+      }
+    ],
+    "visual_components": ["stats_block"],
+    "glossary_terms_to_link": ["RACI", "Stakeholder"],
+    "insight_quotes": ["Один человек может быть 'A', но много 'R'."]
+  },
+  {
+    "chapter": 8,
+    "title": "Время и Стоимость",
+    "core_concept": "Scheduling and critical path.",
+    "pm_terms_found": ["Gantt", "Critical Path"],
+    "diagrams_needed": [
+      {
+        "type": "gantt",
+        "placement": "middle",
+        "caption": "Диаграмма Ганта: пример 5 задач"
+      },
+      {
+        "type": "critical_path_network",
+        "placement": "end",
+        "caption": "Сетевая диаграмма и критический путь"
+      }
+    ],
+    "visual_components": ["stats_block"],
+    "glossary_terms_to_link": ["Gantt", "Critical Path"],
+    "insight_quotes": ["Критический путь — это то, что не дает вам спать."]
+  },
+  {
+    "chapter": 9,
+    "title": "Ответственность и коммуникации",
+    "core_concept": "Communication matrix and expectations management.",
+    "pm_terms_found": ["Stakeholder"],
+    "diagrams_needed": [],
+    "visual_components": ["stats_block", "translator_block"],
+    "glossary_terms_to_link": ["Stakeholder"],
+    "insight_quotes": ["90% времени ПМ — это коммуникации."]
+  },
+  {
+    "chapter": 10,
+    "title": "Риски",
+    "core_concept": "Identification and assessment of risks.",
+    "pm_terms_found": ["Risk", "Mitigation"],
+    "diagrams_needed": [
+      {
+        "type": "risk_matrix",
+        "placement": "after_intro",
+        "caption": "Матрица рисков: вероятность × воздействие"
+      }
+    ],
+    "visual_components": ["stats_block"],
+    "glossary_terms_to_link": ["Risk", "Mitigation"],
+    "insight_quotes": ["Управление рисками — это не про предсказание будущего, а про готовность к нему."]
+  },
+  {
+    "chapter": 11,
+    "title": "Другие планы",
+    "core_concept": "Change management and quality.",
+    "pm_terms_found": ["Change Request"],
+    "diagrams_needed": [
+      {
+        "type": "flowchart",
+        "placement": "middle",
+        "caption": "Процесс управления изменениями",
+        "steps": ["Запрос", "Анализ", "CCB Approval", "Обновление планов"]
+      }
+    ],
+    "visual_components": ["stats_block"],
+    "glossary_terms_to_link": ["Change Request"],
+    "insight_quotes": ["Изменения неизбежны, кроме как из торгового автомата."]
+  },
+  {
+    "chapter": 12,
+    "title": "Контроль исполнения",
+    "core_concept": "Monitoring and controlling the project progress.",
+    "pm_terms_found": ["KPI", "Status Report"],
+    "diagrams_needed": [
+      {
+        "type": "circular_cycle",
+        "placement": "after_intro",
+        "caption": "Цикл контроля исполнения проекта"
+      }
+    ],
+    "visual_components": ["stats_block"],
+    "glossary_terms_to_link": ["KPI", "Status Report"],
+    "insight_quotes": ["То, что не измеряется, не контролируется."]
+  },
+  {
+    "chapter": 13,
+    "title": "Закрытие проекта",
+    "core_concept": "Lessons learned and formal closing.",
+    "pm_terms_found": ["Lessons Learned"],
+    "diagrams_needed": [],
+    "visual_components": ["stats_block", "checklist"],
+    "glossary_terms_to_link": ["Lessons Learned"],
+    "insight_quotes": ["Закрыть проект сложнее, чем открыть."]
+  }
+]

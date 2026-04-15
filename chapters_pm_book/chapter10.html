@@ -1,59 +1,66 @@
-<html>
-<head>
-  <title>Глава 10. Ответственность и Качество: Кто виноват и что делать</title>
-  <link rel="stylesheet" href="theme.css">
-</head>
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><title>Глава 10. Риски</title></head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <p class="kicker">Глава 10</p>
-      <h1>Ответственность, Коммуникации, Качество: Не плодите хаос</h1>
-      <p class="essence">РП управляет не людьми, а их ожиданиями и ответственностью. 🛠️</p>
-    </section>
+<section class="hero"><p class="kicker">Глава 10</p><h1>Риски: Матрица воздействия</h1></section>
+<div class="wrap">
 
-    <blockquote class="insight">
-      🎯 Правильно выстроенная ответственность — это когда вы не слышите вопроса "Я всё, что дальше?".
-    </blockquote>
+<div class="vis-diag">
+<svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Matrix Cells -->
+  <!-- Low (Greenish) -->
+  <rect x="60" y="180" width="80" height="60" fill="rgba(135,239,201,.2)" stroke="var(--line)" stroke-width="0.5"/>
+  <rect x="140" y="180" width="80" height="60" fill="rgba(135,239,201,.2)" stroke="var(--line)" stroke-width="0.5"/>
+  <rect x="60" y="120" width="80" height="60" fill="rgba(135,239,201,.2)" stroke="var(--line)" stroke-width="0.5"/>
+  
+  <!-- Medium (Yellowish) -->
+  <rect x="220" y="180" width="80" height="60" fill="rgba(255,209,138,.2)" stroke="var(--line)" stroke-width="0.5"/>
+  <rect x="140" y="120" width="80" height="60" fill="rgba(255,209,138,.2)" stroke="var(--line)" stroke-width="0.5"/>
+  <rect x="60" y="60" width="80" height="60" fill="rgba(255,209,138,.2)" stroke="var(--line)" stroke-width="0.5"/>
+  
+  <!-- High (Reddish) -->
+  <rect x="220" y="120" width="80" height="60" fill="rgba(255,143,143,.2)" stroke="var(--line)" stroke-width="0.5"/>
+  <rect x="220" y="60" width="80" height="60" fill="rgba(255,143,143,.2)" stroke="var(--line)" stroke-width="0.5"/>
+  <rect x="140" y="60" width="80" height="60" fill="rgba(255,143,143,.2)" stroke="var(--line)" stroke-width="0.5"/>
 
-    <div class="stats">
-      <div class="stat">
-        <b class="stat-num"><a href="glossary.html#raci" class="term-link">RACI</a></b>
-        <span class="stat-label">Матрица</span>
-      </div>
-      <div class="stat">
-        <b class="stat-num">Q = R</b>
-        <span class="stat-label">Качество = Соответствие Требованиям</span>
-      </div>
+  <!-- Labels -->
+  <text x="100" y="215" text-anchor="middle" class="diag-text" style="font-size:10px;">Низкий</text>
+  <text x="180" y="215" text-anchor="middle" class="diag-text" style="font-size:10px;">Низкий</text>
+  <text x="260" y="215" text-anchor="middle" class="diag-text" style="font-size:10px;">Средний</text>
+  
+  <text x="100" y="155" text-anchor="middle" class="diag-text" style="font-size:10px;">Низкий</text>
+  <text x="180" y="155" text-anchor="middle" class="diag-text" style="font-size:10px;">Средний</text>
+  <text x="260" y="155" text-anchor="middle" class="diag-text" style="font-size:10px;">Высокий</text>
+
+  <text x="100" y="95" text-anchor="middle" class="diag-text" style="font-size:10px;">Средний</text>
+  <text x="180" y="95" text-anchor="middle" class="diag-text" style="font-size:10px;">Высокий</text>
+  <text x="260" y="95" text-anchor="middle" class="diag-text" style="font-size:10px;">Высокий</text>
+
+  <!-- Axes -->
+  <text x="10" y="150" text-anchor="middle" class="diag-text" transform="rotate(-90 10 150)" style="font-weight:bold;">Вероятность</text>
+  <text x="180" y="280" text-anchor="middle" class="diag-text" style="font-weight:bold;">Воздействие</text>
+  
+  <text x="50" y="215" text-anchor="end" class="diag-text" style="font-size:10px;">Низкая</text>
+  <text x="50" y="155" text-anchor="end" class="diag-text" style="font-size:10px;">Средняя</text>
+  <text x="50" y="95" text-anchor="end" class="diag-text" style="font-size:10px;">Высокая</text>
+</svg>
+<div class="caption">Матрица рисков: вероятность × воздействие</div>
+</div>
+
+<div class="vis-stats">
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#risk" class="term-link">Risk</a></div><div class="stat-lab">Угроза</div></div>
+    <div class="stat-item"><div class="stat-val"><a href="glossary.html#mitigation" class="term-link">Mitigation</a></div><div class="stat-lab">Снижение</div></div>
+</div>
+
+<p>Риск — это неопределенное событие, которое может повлиять на проект. Мы не можем убрать все риски, но мы обязаны иметь план реагирования для критических.</p>
+
+<blockquote class="insight">Управление рисками — это не про предсказание будущего, а про готовность к нему.</blockquote>
+
+<div class="grid">
+    <div class="card">
+        <span class="badge">Strategy</span>
+        <b>Реагирование</b>
+        <p>Уклонение, минимизация, передача или принятие. Выбирайте с умом.</p>
     </div>
+</div>
 
-    <div class="translator">
-      <div class="tr-col bad">
-        <div class="tr-head bad">👨‍💻 TEAM LEAD</div>
-        <p>Фокус на коде, архитектуре и технологиях. «Как сделать?». 🖥️</p>
-      </div>
-      <div class="tr-col good">
-        <div class="tr-head good">💼 PROJECT MANAGER</div>
-        <p>Фокус на сроках, бюджете и заказчике. «Когда и за сколько?». 🎯</p>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="card"><b>A (Accountable)</b><p>Один человек, отвечающий головой. Его подпись — финальная. 👑</p></div>
-      <div class="card"><b>R (Responsible)</b><p>Исполнитель. Тот, кто делает задачу руками. ⌨️</p></div>
-    </div>
-
-    <div class="acc-item">
-      <details>
-        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
-        <div class="acc-body">
-          <p>«Чтобы проект был прозрачным, нам нужно четко разграничить зоны ответственности. <a href="glossary.html#raci" class="term-link">RACI</a>-матрица позволит каждому знать свою роль и не ждать указаний на каждом шагу». 🛠️</p>
-        </div>
-      </details>
-    </div>
-
-    <footer class="summary">
-      <p><span class="badge warn">ОСТОРОЖНО</span> Gold Plating (Золотая сервировка) — добавление фич вне <a href="glossary.html#scope" class="term-link">Scope</a>. Это воровство времени проекта. 👑 -> ❌</p>
-    </footer>
-  </main>
-</body>
-</html>
+</div></body></html>

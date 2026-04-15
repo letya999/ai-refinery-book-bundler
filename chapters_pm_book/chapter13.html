@@ -1,80 +1,103 @@
-<html>
-<head>
-  <title>Глава 13. Выполнение и Контроль: Борьба с энтропией</title>
-  <link rel="stylesheet" href="theme.css">
-</head>
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><title>Глава 13. Исполнение и контроль</title></head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <p class="kicker">Глава 13</p>
-      <h1>Выполнение и Контроль: Удержание курса</h1>
-      <p class="essence">Если вы не контролируете прогресс — вы плывете к обрыву. 🌊</p>
-    </section>
+<section class="hero"><p class="kicker">Глава 13</p><h1>Исполнение: В «туловище удава»</h1></section>
+<div class="wrap">
 
-    <blockquote class="insight">
-      📉 Работа РП в фазе выполнения — это не написание кода, а борьба с отклонениями. Собрали данные -> Сравнили с Базовым планом.
-    </blockquote>
+<div class="vis-stats">
+    <div class="stat-item"><div class="stat-val">Run</div><div class="stat-lab">Исполнение</div></div>
+    <div class="stat-item"><div class="stat-val">Control</div><div class="stat-lab">Мониторинг</div></div>
+    <div class="stat-item"><div class="stat-val">Change</div><div class="stat-lab">Изменения</div></div>
+</div>
 
-    <div class="stats">
-      <div class="stat">
-        <b class="stat-num">ФОКУС</b>
-        <span class="stat-label">Удержание в Triangle 🔺</span>
-      </div>
-      <div class="stat">
-        <b class="stat-num">%</b>
-        <span class="stat-label">Реальный прогресс</span>
-      </div>
+<p>Работы запущены. Команда пашет, а вы? Ваша задача — удержать проект в треугольнике. Теперь вы не планировщик, а диспетчер хаоса. Контроль, <a href="glossary.html#risk" class="term-link">риски</a>, изменения — вот ваша жизнь.</p>
+
+<div class="grid">
+    <div class="card">
+        <span class="badge">Rule</span>
+        <b>Сбор прогресса</b>
+        <p>Не верьте на слово. Используйте отчёты в % или часах. И не тратьте время на пустые совещания о статусе.</p>
     </div>
-
-    <div class="translator">
-      <div class="tr-col bad">
-        <div class="tr-head bad">❌ ОШИБКА ОТЧЕТА</div>
-        <p>Использовать формальное "50/50". Или спрашивать "ну как там?". 🤡</p>
-      </div>
-      <div class="tr-col good">
-        <div class="tr-head good">✅ ПРАВИЛЬНЫЙ ОТЧЕТ</div>
-        <p>Спросить исполнителя "Сколько еще осталось?". Личная оценка в часах — точный прогноз. 🤝</p>
-      </div>
+    <div class="card">
+        <span class="badge">Change</span>
+        <b>Контроль изменений</b>
+        <p>Заказчик хочет «ещё одну кнопочку»? Сначала оцените влияние на <a href="glossary.html#budget" class="term-link">бюджет</a> и сроки, а потом решайте.</p>
     </div>
+</div>
 
-    <div class="vis-timeline">
-      <div class="tl-step">
-        <div class="tl-num">1</div>
-        <div class="tl-content"><b>Сбор</b>: Что сделано по факту? 📊</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">2</div>
-        <div class="tl-content"><b>Анализ</b>: Где мы отклонились? На <a href="glossary.html#critical_path" class="term-link">Критическом пути</a>? 🔍</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">3</div>
-        <div class="tl-content"><b>Действие</b>: Сжимаем расписание или меняем приоритеты. 🛠️</div>
-      </div>
+<details class="acc-item" open>
+    <summary>Управление ожиданиями</summary>
+    <div class="vis-stats">
+        <div class="stat-item"><div class="stat-val">🗣️</div><div class="stat-lab">Диалог</div></div>
     </div>
+    <p>Постоянно спрашивайте себя: «Что будет, КОГДА придётся сдавать проект?». Если заказчик не знает, что он получит, вы проиграли.</p>
+</details>
 
-    <div class="grid">
-      <div class="card">
-        <b>👥 Команда</b>
-        <p>Лучшая мотивация — когда люди сами планировали свои задачи. <a href="glossary.html#wbs" class="term-link">ИСР</a> — лучший тим-билдинг. 🤝</p>
-      </div>
-      <div class="card">
-        <b>🤝 Заказчик</b>
-        <p>Управляйте его ожиданиями. Плохие новости нужно сообщать сразу. ⚠️</p>
-      </div>
+<div class="vis-diag">
+  <svg viewBox="0 0 620 140" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr13" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" style="fill:var(--line)"/>
+      </marker>
+      <marker id="arr13r" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" style="fill:var(--bad)"/>
+      </marker>
+    </defs>
+    <!-- Step 1: Request -->
+    <rect x="10"  y="52" width="90" height="36" rx="4" style="fill:var(--acc)"/>
+    <text x="55"  y="71"  class="diag-text" style="fill:var(--bg);font-size:10px;">Запрос на</text>
+    <text x="55"  y="83"  class="diag-text" style="fill:var(--bg);font-size:10px;">изменение</text>
+
+    <line x1="100" y1="70" x2="125" y2="70" class="diag-link" marker-end="url(#arr13)"/>
+
+    <!-- Step 2: Assess -->
+    <rect x="125" y="52" width="100" height="36" rx="4" class="diag-node"/>
+    <text x="175" y="71"  class="diag-text" style="font-size:10px;">Оценить</text>
+    <text x="175" y="83"  class="diag-text" style="font-size:10px;">влияние</text>
+
+    <line x1="225" y1="70" x2="255" y2="70" class="diag-link" marker-end="url(#arr13)"/>
+
+    <!-- Step 3: Decision diamond -->
+    <polygon points="285,70 315,48 345,70 315,92" class="diag-node"/>
+    <text x="315" y="67"  class="diag-text" style="font-size:9px;">Одобрить</text>
+    <text x="315" y="79"  class="diag-text" style="font-size:9px;">CCB?</text>
+
+    <!-- Approved path -->
+    <line x1="345" y1="70" x2="380" y2="70" class="diag-link" marker-end="url(#arr13)"/>
+    <text x="360" y="64"  class="diag-text" style="font-size:9px;fill:var(--acc2);">Да</text>
+
+    <rect x="380" y="52" width="100" height="36" rx="4" class="diag-node"/>
+    <text x="430" y="71"  class="diag-text" style="font-size:10px;">Внедрить</text>
+    <text x="430" y="83"  class="diag-text" style="font-size:10px;">изменение</text>
+
+    <line x1="480" y1="70" x2="510" y2="70" class="diag-link" marker-end="url(#arr13)"/>
+
+    <rect x="510" y="52" width="100" height="36" rx="4" style="fill:var(--acc2);opacity:.2" class="diag-node"/>
+    <text x="560" y="71"  class="diag-text" style="font-size:10px;">Обновить</text>
+    <text x="560" y="83"  class="diag-text" style="font-size:10px;fill:var(--muted);">Baseline</text>
+
+    <!-- Rejected path -->
+    <line x1="315" y1="92" x2="315" y2="120" class="diag-link" style="stroke:var(--bad)" marker-end="url(#arr13r)"/>
+    <text x="320" y="114" class="diag-text" style="font-size:9px;fill:var(--bad);text-anchor:start;">Отклонить → задокументировать</text>
+  </svg>
+  <div class="caption">Контроль изменений: каждый запрос через CCB (Комитет по изменениям), <a href="glossary.html#gold-plating" class="term-link">Gold Plating</a> — вне процесса и запрещён</div>
+</div>
+
+<div class="translator">
+    <div class="trans-meta">Задачи ПМ:</div>
+    <p>Отслеживать прогресс, бить по рукам за <a href="glossary.html#gold-plating" class="term-link">Gold Plating</a>, проверять <a href="glossary.html#quality" class="term-link">качество</a> и мотивировать тех, кто ещё не уволился.</p>
+</div>
+
+<div class="vis-grid">
+    <div class="card">
+        <span class="badge">Caution</span>
+        <b>Отчёты</b>
+        <p>Никогда не лгите спонсору. Искажённая информация в отчёте — это бомба замедленного действия.</p>
     </div>
+</div>
 
-    <div class="acc-item">
-      <details>
-        <summary class="acc-head">👨‍💼 Как объяснить это боссу?</summary>
-        <div class="acc-body">
-          <p>«Контроль — это не слежка за командой, а обеспечение безопасности проекта. Это позволяет нам вовремя вносить корректировки и сдавать этапы вовремя». 🎯</p>
-        </div>
-      </details>
-    </div>
+<div class="translator">
+    <p>Выход главы: отчёты о выполнении и запросы на изменения. Двигаемся к финалу.</p>
+</div>
 
-    <footer class="summary">
-      <p><span class="badge ok">ЗАПОМНИТЕ</span> Не делайте из сдачи проекта сюрприз. Сдавайте куски работы итеративно. 🔄</p>
-    </footer>
-  </main>
-</body>
-</html>
+</div></body></html>
