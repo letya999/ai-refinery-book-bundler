@@ -140,7 +140,9 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
   const hasOwnStyles = /<style[\s\S]*?<\/style>/i.test(content);
 
   // Inter-chapter navigation script.
-  // Note the breakup of </script> to avoid breaking the shell template during generation.
+  // The closing </script> tag is appended via concatenation so the template literal
+  // never contains the raw closing tag sequence (which causes issues in certain parsers).
+  const navScriptClose = '</' + 'script>';
   const navScript = `
 <script>
 (function() {
@@ -178,7 +180,7 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
     }
   });
 })();
-<\/script>`.replace(/<\\\/script>/, '</' + 'script>');
+` + navScriptClose;
 
   // Extract body content
   const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
@@ -241,10 +243,9 @@ function prepareChapter(html, index, title, totalChapters, globalCSS = '', bookT
     '</html>',
   ].join('\n');
 
-  // CRITICAL: Escape all </script> tags to avoid premature script termination
-  // when this string is embedded inside a <script> block in the parent shell.
-  // Using <\/script> is valid in JS strings and prevents the HTML parser from stopping.
-  return finalHtml.replace(/<\/script>/gi, '<\\/script>');
+  // Return the plain HTML. The bundler (bundle.cjs) is responsible for escaping
+  // </script> in the JSON serialization step to prevent premature script termination.
+  return finalHtml;
 }
 
 module.exports = { prepareChapter };

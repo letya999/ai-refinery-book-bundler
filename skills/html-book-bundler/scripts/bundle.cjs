@@ -168,7 +168,11 @@ function buildSearchIndex(chapterTexts) {
 const files = fs
   .readdirSync(inputDirAbs)
   .filter(f => f.endsWith('.html'))
-  .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  .sort((a, b) => {
+    if (a === 'glossary.html') return 1;
+    if (b === 'glossary.html') return -1;
+    return a.localeCompare(b, undefined, { numeric: true });
+  });
 
 if (files.length === 0) {
   console.error(`Error: no .html files found in ${inputDirAbs}`);
@@ -207,7 +211,7 @@ files.forEach((file, idx) => {
   chapterTexts.push(content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
 
   // Prepare chapter HTML string (srcdoc-ready)
-  chapters.push(prepareChapter(content, idx, title, files.length, globalCSS, bookTitle, skipInsights));
+  chapters.push(prepareChapter(content, idx, title, files.length, globalCSS, bookTitle, skipInsights, langCode));
 });
 
 // Warn about large image payloads
@@ -237,7 +241,9 @@ const replacements = {
   '{{LANG_CODE}}':      LANG.code || langCode,
   '{{LANG_JSON}}':      JSON.stringify(LANG),
   '{{GLOBAL_TITLES}}':  JSON.stringify(globalTitles),
-  '{{LOCAL_CHAPTERS}}': JSON.stringify(chapters),
+  // Escape </script> so it never terminates the outer <script> block prematurely.
+  // In JSON, <\/ is parsed as </ by JS (the \/ escape = /) giving correct srcdoc HTML.
+  '{{LOCAL_CHAPTERS}}': JSON.stringify(chapters).replace(/<\/script>/gi, '<\\/script>'),
   '{{SEARCH_IDX}}':     JSON.stringify(searchIndex),
   '{{DEV_SCRIPT}}':     devScript,
 };
