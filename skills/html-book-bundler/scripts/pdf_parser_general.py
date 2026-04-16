@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 """
-General PDF to Structured HTML Parser (v1.1)
+General PDF to Structured HTML Parser (v1.2)
 Part of html-book-bundler skill.
 
-This script uses PyMuPDF (fitz) to extract text with style information
-and detects tables using built-in TableFinder.
-
-Usage:
-    python pdf_parser_general.py --input book.pdf --config config.json --output ./chapters
+Supports: Text styles, Tables, and Raster Images.
 """
 
 import fitz
@@ -25,6 +21,7 @@ class PDFParser:
         self.config = config or {}
         self.chapters_meta = self.config.get("chapters", [])
         self.ignore_patterns = [re.compile(p, re.I) for p in self.config.get("ignore", [])]
+        self.output_dir: Optional[Path] = None
         
     def is_ignored(self, text: str) -> bool:
         text = text.strip()
@@ -35,7 +32,7 @@ class PDFParser:
         return False
 
     def extract_page_content(self, page_num: int) -> str:
-        """Extract text blocks and tables from a page."""
+        """Extract text blocks, tables, and images from a page."""
         page = self.doc[page_num - 1]
         
         # 1. Find tables
@@ -59,60 +56,69 @@ class PDFParser:
         except Exception as e:
             print(f"  Warning: table detection failed on p.{page_num}: {e}")
 
-        # 2. Extract text blocks
+        # 2. Extract blocks (Text and Images)
         raw = page.get_text("dict")
         page_items = []
         
-        for b in raw.get("blocks", []):
-            if b.get("type") != 0: continue
+        for b_idx, b in enumerate(raw.get("blocks", [])):
+            block_bbox = b["bbox"]
             
             # Check if block overlaps with any table
-            block_bbox = b["bbox"]
             is_inside_table = False
             for t in tables:
-                # If block center is inside table bbox, skip it
                 cx = (block_bbox[0] + block_bbox[2]) / 2
                 cy = (block_bbox[1] + block_bbox[3]) / 2
                 tx0, ty0, tx1, ty1 = t["bbox"]
                 if tx0 <= cx <= tx1 and ty0 <= cy <= ty1:
                     is_inside_table = True
                     break
-            
             if is_inside_table: continue
 
-            max_size = 0
-            is_bold = False
-            content_parts = []
-            
-            for line in b.get("lines", []):
-                for span in line.get("spans", []):
-                    txt = span["text"]
-                    if not txt.strip(): continue
-                    
-                    size = span["size"]
-                    flags = span["flags"]
-                    bold = bool(flags & (1 << 4))
-                    
-                    max_size = max(max_size, size)
-                    if bold: is_bold = True
-                    
-                    escaped = html_lib.escape(txt)
-                    content_parts.append(f"<b>{escaped}</b>" if bold else escaped)
-                content_parts.append(" ")
+            if b.get("type") == 0:  # TEXT
+                max_size = 0
+                is_bold = False
+                content_parts = []
+                for line in b.get("lines", []):
+                    for span in line.get("spans", []):
+                        txt = span["text"]
+                        if not txt.strip(): continue
+                        size = span["size"]
+                        flags = span["flags"]
+                        bold = bool(flags & (1 << 4))
+                        max_size = max(max_size, size)
+                        if bold: is_bold = True
+                        escaped = html_lib.escape(txt)
+                        content_parts.append(f"<b>{escaped}</b>" if bold else escaped)
+                    content_parts.append(" ")
 
-            plain = "".join(content_parts).strip()
-            if not plain or self.is_ignored(re.sub(r'<[^>]+>', '', plain)): continue
+                plain = "".join(content_parts).strip()
+                if not plain or self.is_ignored(re.sub(r'<[^>]+>', '', plain)): continue
 
-            # Heuristic for tag
-            if max_size >= 18: tag = "h1"
-            elif max_size >= 14: tag = "h2"
-            elif max_size >= 12 or (is_bold and max_size >= 11): tag = "h3"
-            else: tag = "p"
-            
-            page_items.append({
-                "y": block_bbox[1],
-                "html": f"<{tag}>{plain}</{tag}>"
-            })
+                if max_size >= 18: tag = "h1"
+                elif max_size >= 14: tag = "h2"
+                elif max_size >= 12 or (is_bold and max_size >= 11): tag = "h3"
+                else: tag = "p"
+                
+                page_items.append({
+                    "y": block_bbox[1],
+                    "html": f"<{tag}>{plain}</{tag}>"
+                })
+
+            elif b.get("type") == 1:  # IMAGE
+                try:
+                    img_data = b.get("image")
+                    ext = b.get("ext", "png")
+                    if img_data and self.output_dir:
+                        img_name = f"p{page_num:03d}_b{b_idx:02d}.{ext}"
+                        img_path = self.output_dir / "assets" / img_name
+                        img_path.write_bytes(img_data)
+                        
+                        page_items.append({
+                            "y": block_bbox[1],
+                            "html": f'\n<div class="pdf-img"><img src="assets/{img_name}" alt="PDF Image"></div>\n'
+                        })
+                except Exception as e:
+                    print(f"  Warning: failed to extract image on p.{page_num}: {e}")
 
         # 3. Add tables to items
         for t in tables:
@@ -126,7 +132,9 @@ class PDFParser:
         return "\n".join(item["html"] for item in page_items)
 
     def run(self, output_dir: str):
-        os.makedirs(output_dir, exist_ok=True)
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        (self.output_dir / "assets").mkdir(exist_ok=True)
         
         if not self.chapters_meta:
             print("No chapters defined in config. Extracting whole book as one file.")
@@ -158,11 +166,11 @@ class PDFParser:
 </body>
 </html>"""
             
-            out_file = Path(output_dir) / f"chapter{idx}.html"
+            out_file = self.output_dir / f"chapter{idx}.html"
             out_file.write_text(full_html, encoding="utf-8")
 
 def main():
-    parser = argparse.ArgumentParser(description="Style-aware PDF to HTML with Table detection")
+    parser = argparse.ArgumentParser(description="PDF to HTML with Table and Image support")
     parser.add_argument("--input", required=True, help="Input PDF file")
     parser.add_argument("--output", default="./chapters", help="Output directory")
     parser.add_argument("--config", help="JSON config file")
@@ -175,7 +183,7 @@ def main():
 
     processor = PDFParser(args.input, config)
     processor.run(args.output)
-    print(f"Done! Chapters saved to {args.output}")
+    print(f"Done! Chapters and assets saved to {args.output}")
 
 if __name__ == "__main__":
     main()

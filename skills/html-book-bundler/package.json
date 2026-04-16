@@ -9,7 +9,7 @@
   "scripts": {
     "build":   "node scripts/bundle.cjs",
     "test":    "node tests/test_bundler.cjs",
-    "audit":   "python scripts/audit_single_file_html.py --file",
+    "audit":   "python scripts/lint_book.py --file",
     "lint":    "python scripts/lint_book.py --file",
     "dev":     "node scripts/dev_server.cjs",
     "ingest":  "python scripts/ingest.py",
