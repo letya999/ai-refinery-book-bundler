@@ -283,19 +283,24 @@ def ingest_docx(input_path: Path, out_dir: Path, lang: str = 'ru'):
     """Requires: pip install python-docx"""
     try:
         from docx import Document
-        from docx.shared import Pt
+        from docx.enum.shape import WD_INLINE_SHAPE
     except ImportError:
         print("Error: python-docx required for DOCX support. Run: pip install python-docx")
         return
 
     print(f"Parsing DOCX: {input_path}")
     doc = Document(str(input_path))
+    assets_dir = out_dir / 'assets'
+    assets_dir.mkdir(exist_ok=True)
 
     HEADING_STYLES = {'Heading 1', 'Heading 2', 'Heading 3', 'Заголовок 1', 'Заголовок 2'}
 
     chapters: list[tuple[str, list[str]]] = []  # [(title, [html_parts])]
     current_title = 'Chapter 1'
     current_parts: list[str] = []
+
+    # Map for deduplicating images
+    img_map: dict[str, str] = {} # rId -> path
 
     for para in doc.paragraphs:
         style_name = para.style.name if para.style else ''
@@ -307,24 +312,45 @@ def ingest_docx(input_path: Path, out_dir: Path, lang: str = 'ru'):
             current_title = text or current_title
             current_parts = [f'<h1>{escape_html(text)}</h1>']
         else:
-            if not text:
-                continue
             # Build paragraph with inline formatting
             html_parts = []
+            
+            # Extract images from this paragraph
             for run in para.runs:
+                # 1. Process Text
                 t = escape_html(run.text)
                 if run.bold:   t = f'<b>{t}</b>'
                 if run.italic: t = f'<em>{t}</em>'
                 if run.underline: t = f'<u>{t}</u>'
                 html_parts.append(t)
-            current_parts.append(f'<p>{"".join(html_parts)}</p>')
+
+                # 2. Process Images in Run
+                # Check for drawing elements in the run's XML
+                from lxml import etree
+                r_el = run._r
+                drawings = r_el.xpath('.//w:drawing', namespaces=r_el.nsmap)
+                for drawing in drawings:
+                    blips = drawing.xpath('.//a:blip', namespaces=drawing.nsmap)
+                    for blip in blips:
+                        rId = blip.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed')
+                        if rId and rId not in img_map:
+                            image_part = doc.part.related_parts[rId]
+                            img_ext = Path(image_part.partname).suffix or '.png'
+                            img_name = f"docx_{rId}{img_ext}"
+                            (assets_dir / img_name).write_bytes(image_part.blob)
+                            img_map[rId] = f"assets/{img_name}"
+                        
+                        if rId in img_map:
+                            html_parts.append(f'<img src="{img_map[rId]}" alt="DOCX Image">')
+
+            para_html = "".join(html_parts).strip()
+            if para_html:
+                current_parts.append(f'<p>{para_html}</p>')
 
     if current_parts:
         chapters.append((current_title, current_parts))
     
-    # Check for images
-    if len(doc.inline_shapes) > 0:
-        print(f"  Warning: {len(doc.inline_shapes)} inline image(s) detected in DOCX but not extracted (not supported).")
+    print(f"  Extracted {len(img_map)} images from DOCX.")
 
     for i, (title, parts) in enumerate(chapters, 1):
         html = (

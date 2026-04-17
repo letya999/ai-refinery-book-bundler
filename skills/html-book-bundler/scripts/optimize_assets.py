@@ -65,7 +65,7 @@ def optimize_image(input_path: Path, max_width=1400, quality=75):
 def main():
     p = argparse.ArgumentParser(description="In-place image optimizer for HTML bundles.")
     p.add_argument("--dir", required=True, help="Directory containing chapters and assets")
-    p.add_argument("--max-width", type=int, default=1400)
+    p.add_argument("--max-width", type=int, default=1000)
     p.add_argument("--quality", type=int, default=75)
     p.add_argument("--keep", action="store_true", help="Keep original files")
     args = p.parse_args()

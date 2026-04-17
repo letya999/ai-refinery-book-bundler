@@ -16,6 +16,22 @@ function isCleanText(s) {
 function processWithCheerio(html, skipInsights) {
   const $ = cheerio.load(html, { decodeEntities: false }, false);
 
+  // 0. Robust Sanitization (AST-based)
+  // Strip dangerous elements
+  $('script, object, embed, applet, iframe, meta, base, link[rel="import"]').remove();
+  // Strip dangerous attributes (inline event handlers and javascript: URIs)
+  $('*').each((_, el) => {
+    const attribs = el.attribs;
+    if (!attribs) return;
+    for (const attr in attribs) {
+      if (attr.startsWith('on')) {
+        $(el).removeAttr(attr);
+      } else if ((attr === 'href' || attr === 'src') && attribs[attr].trim().toLowerCase().startsWith('javascript:')) {
+        $(el).attr(attr, '#');
+      }
+    }
+  });
+
   // 1. autoCollapseLongParas
   const LIMIT = 480;
   const blockTags = ['div', 'details', 'blockquote', 'table', 'section', 'article', 'aside', 'header', 'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li'];
@@ -134,23 +150,6 @@ function processWithCheerio(html, skipInsights) {
   return $.html();
 }
 
-/**
- * Basic HTML sanitizer to strip dangerous tags, inline events, and javascript: URIs.
- * This prevents Sandbox Escapes and XSS when ingesting untrusted EPUBs/HTML.
- */
-function sanitizeHtml(html) {
-  let clean = html;
-  // Strip dangerous elements
-  clean = clean.replace(/<(script|object|embed|applet|iframe|meta|base)[^>]*>[\s\S]*?<\/\1>/gi, '');
-  clean = clean.replace(/<(script|object|embed|applet|iframe|meta|base)[^>]*\/?>/gi, '');
-  // Strip inline event handlers (e.g. onload="...")
-  clean = clean.replace(/(\s)on[a-z]+\s*=\s*(["'])(?:(?!\2).)*\2/gi, '$1');
-  clean = clean.replace(/(\s)on[a-z]+\s*=\s*[^\s>]+/gi, '$1');
-  // Strip javascript: URIs
-  clean = clean.replace(/(href|src)\s*=\s*(["'])\s*javascript:[^"']*\2/gi, '$1="#"');
-  return clean;
-}
-
 // ---------------------------------------------------------------------------
 
 /**
@@ -225,10 +224,7 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
   const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   let bodyContent = bodyMatch ? bodyMatch[1] : content;
 
-  // 1. Sanitize untrusted markup
-  bodyContent = sanitizeHtml(bodyContent);
-
-  // Universal enrichment passes with Cheerio
+  // Universal enrichment passes with Cheerio (includes sanitization)
   bodyContent = processWithCheerio(bodyContent, skipInsights);
 
   // Semantic Quality Check (v5.5)

@@ -1,37 +1,38 @@
 ---
 name: book-architect
-description: Intelligence Layer. Handles semantic distillation, terminology mining, and automated blueprinting for visuals.
+description: Intelligence Layer. Handles semantic distillation, terminology mining via terms.json, and visual blueprinting.
 ---
 
-# Book Architect (v8.2)
+# Book Architect (v8.3)
 
 You are the Intelligence Layer. Your goal is to transform "Bulk Text" into a "Lean Knowledge Base".
 
 ## MANDATORY STEPS:
 
 ### 1. Semantic Distillation
-- Reduce text volume while keeping the "meat" (essence, summaries, takeaways).
-- **Key Takeaways:** Identify 1-3 high-signal quotes or points per chapter for `insight` pullquotes.
-- Identify specialized terms for the `glossary.html`.
+- Reduce text volume while keeping the essences and summaries.
+- Identify specialized terms for the glossary.
 
-### 2. Glossary Mapping (Crucial)
-- **Rule:** Every term referenced from main chapters MUST have a matching `id="term_id"` anchor in `glossary.html`.
-- **Lesson Learned:** `glossary.html` must be named and placed so it is parsed by the bundler (it will be registered in `chapterMap` automatically).
+### 2. Terminology Tracking (`terms.json`)
+- Maintain a `terms.json` file to track terminology across chapters.
+- **Rule:** Every term referenced from main chapters MUST have an entry in `terms.json`.
+- After processing all chapters, generate `glossary.html` using the collected terms.
 
-### 3. Visual Blueprinting
-- For every chapter, plan 2-4 visual anchors.
-- **Rules:** When describing workflows (BPMN), structures (WBS), or hierarchies (Org Chart), blueprint them as SVG diagrams, not lists.
-- Pass the blueprint as `blueprint.json` in the working directory.
-
-> **Note:** `blueprint.json` is a design communication artifact for the Designer role. It is NOT read by `bundle.cjs` — it guides manual SVG creation in the next step.
+### 3. Visual Blueprinting (`blueprint.json`)
+- Plan 2-4 visual anchors per chapter.
+- **Rules:** Blueprint complex flows, structures, or hierarchies as SVG diagrams, not lists.
+- **Insights:** Include "high-signal quotes" for each chapter in the blueprint. Designer will decide where to inject them.
 
 Minimal `blueprint.json` schema:
 ```json
 {
-  "chapter1": [
-    { "type": "vis-diag", "title": "Process Flow", "nodes": ["Start", "Step A", "End"], "links": [["Start","Step A"],["Step A","End"]] },
-    { "type": "stats", "items": [{"label": "Metric", "value": "42%"}] }
-  ]
+  "chapter1": {
+    "visuals": [
+      { "type": "vis-diag", "title": "Process Flow", "nodes": ["Start", "End"], "links": [["Start","End"]] }
+    ],
+    "insights": ["Quote 1", "Quote 2"]
+  }
 }
 ```
-Supported types: `vis-diag`, `vis-network`, `vis-timeline`, `stats`, `translator`, `matrix`.
+
+> **Note:** `blueprint.json` is the source of truth for the Designer.

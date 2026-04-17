@@ -1,105 +1,30 @@
 ---
 name: html-book-bundler
-description: Master Skill Bundle (v8.2). A 4-role pipeline (Ingest, Architect, Design, Assemble) for creating offline-first interactive books.
+description: Master Skill Bundle (v8.3). A 4-role pipeline (Ingest, Architect, Design, Assemble) for creating offline-first interactive books.
 ---
 
-# HTML Book Bundler (Skill Bundle v8.2)
+# HTML Book Bundler (Skill Bundle v8.3)
 
 This is the umbrella skill for the book production toolchain. It manages 4 specialized sub-skills for each layer of production.
 
 ## Components (Sub-skills):
-1. **book-ingester:** OCR cleanup and structural extraction.
-2. **book-architect:** Semantic analysis, glossary mining, and visual blueprinting.
-3. **book-designer:** SVG authoring, CSS enrichment, and contrast enforcement.
-4. **book-assembler:** Final bundling, QA, and security linting.
+1. **book-ingester:** Unified extraction from PDF, EPUB, FB2, DOCX (including images).
+2. **book-architect:** Semantic distillation, `terms.json` mining, and visual blueprinting.
+3. **book-designer:** AST-based enrichment, high-fidelity SVGs, and contrast enforcement.
+4. **book-assembler:** Final bundling with stable MD5 indexing and security audit.
 
 ## Shared Mantras:
-- **In-place Workflow:** Always edit files in the target book directory. No complex subfolder hierarchies.
 - **Zero Hex Colors:** SVGs must be theme-adaptive via CSS variables.
 - **Variables Contract:** Both the shell (`default.html`) and chapters (`theme.css`) MUST use identical CSS variable names (`--bg`, `--txt`, `--acc`, `--acc2`, `--line`, `--muted`, `--warn`, `--bad`, `--bg2`, `--fg`, `--panel`, `--panel2`) to ensure seamless visual integration.
-- **Mobile First:** All output must be responsive and respect safe-area-insets.
-- **Linter Enforcement:** `lint_book.py` will fail on hex colors in SVG and warn on "Wall of Text" (long chapters without `vis-` components).
+- **Stable Identity:** `BOOK_ID` is derived from the book title (MD5 hash). Changing the `--title` resets user progress; changing the output filename does NOT.
+- **Cheerio over Regex:** All structural HTML modifications MUST use Cheerio AST parsing for reliability.
+- **Mobile First:** All output must be responsive, respect safe-area-insets, and allow pinch-to-zoom (WCAG 1.4.4).
 
-## Lessons Learned (2026-04-15):
-- SVG links inside `<text>` are invalid.
-- Fan-out arrows need "trunk and branch" pattern.
-- Arrowheads require `<defs>` and `marker-end`.
-- Glossary links require explicit file registration (fixed in v8.0).
-- Anchor navigation bypasses scroll restoration (fixed in v8.0).
-
-## Lessons Learned (2026-04-17):
-- **STOP_WORDS JS bug:** `.split()` chain must be wrapped in `()` when building from concatenated string literals — operator precedence calls `.split()` only on the last literal otherwise.
-- **Python raw string quotes:** In `r'...'` strings, an unescaped `'` inside `[^"']` terminates the raw string. Use `r"""..."""` triple quotes or escape as `[^"\'` for character classes containing single quotes.
-- **langCode propagation:** `prepareChapter` receives `langCode` but had no access to LANG object for hero block generation. Chapter-level i18n strings must be derived from `langCode` directly or LANG must be passed down.
-- **`user-scalable=no` is WCAG 1.4.4 violation:** Never disable pinch-to-zoom; users with low vision need it.
-- **EPUB CSS via data URI href doesn't work:** Browsers ignore `<link href="data:text/css;base64,...">` as stylesheets. CSS must be inlined as `<style>` blocks.
-- **Non-existent files in README:** Always verify all referenced filenames exist before committing documentation.
-
-## Lessons Learned (2026-04-17, v8.1):
-- **`const` vs `let` for fallback vars:** Any variable that gets a default-fallback assignment (e.g. unsupported lang) must be declared `let`, not `const`. A `const` reassignment in strict mode throws TypeError silently during error handling.
-- **`bundleAssets` must skip `.html` files:** Inlining `<a href="chapter2.html">` as a base64 data URI breaks inter-chapter navigation — navScript bails early on `data:` hrefs. Only inline images/fonts/CSS.
-- **EPUB `<link>` attribute order:** HTML attribute order is arbitrary. Regex that assumes `rel=` before `href=` misses most real EPUB files. Match the whole `<link>` tag, then extract each attribute with a separate `re.search()`.
-- **Light mode rgba backgrounds:** `rgba(15,31,56,.4)` is invisible on dark but creates dark patches on light backgrounds. Always add `[data-theme="light"]` overrides for any element using hardcoded dark rgba values.
-- **Define helper functions outside loops:** Python functions redefined on every loop iteration cause confusing closure behavior (late binding). Move them above the loop with explicit parameters.
-
-## Lessons Learned (2026-04-17, v8.2 audit):
-1. **DOCX images are `InlineShape` objects, not paragraphs** — `doc.paragraphs` iteration silently skips all embedded images. Always check `doc.inline_shapes` count and warn.
-2. **Always `html.escape()` ALL config-sourced strings going into HTML** — including chapter titles, not just extracted body content.
-3. **`chapterWord` i18n** — never use hardcoded language ternaries; always route through the LANG object so new languages work automatically.
-4. **FB2/DOCX ingesters must emit `lang` attribute on `<html>`** — inconsistency with `pdf_parser_general.py` was a silent a11y violation.
-5. **`theme.css` hero override must exist in both `[data-theme]` AND `@media (prefers-color-scheme)`** — the OS preference fallback and the explicit toggle are two separate CSS paths.
-6. **Linter must enforce `viewBox` on all SVGs** — a designer rule without linter enforcement is an honor system, not a rule.
-7. **Search index must be built before `bundleAssets`:** building from post-base64 content floods the SIDX with noise tokens from data URIs.
-8. **`bundleAssets` must skip `.css` — use `inlineStylesheets()` instead:** browsers ignore `<link href="data:application/octet-stream;...">` as stylesheets; CSS must be inlined as `<style>` blocks.
-9. **`el_to_html` tail text must be HTML-escaped:** FB2 XML element tail text is auto-decoded by the parser; forgetting `escape_html(tail)` is a silent XSS vector.
-10. **`LANG.dir` was a dead field:** now wired to `dir="{{LANG_DIR}}"` on the shell `<html>` element — RTL books work correctly.
-11. **`autoEnrichLists` must skip `<ol>` entirely:** ordered lists have sequence semantics that card grids destroy.
-12. **Keep output filename stable:** the base name becomes the localStorage key prefix (`BOOK_ID`). Renaming the output file silently resets all bookmarks and reading position.
-
-## Lessons Learned (2026-04-17, Final Deep Audit):
-1. **XSS & Sandbox Escape:** `sandbox="allow-scripts allow-same-origin"` inside `default.html` enables RCE if an untrusted EPUB is ingested. Implemented robust HTML sanitization (`sanitizeHtml`) in `chapter_processor.cjs` to strip dangerous tags and event handlers.
-2. **Regex vs DOM Parsers:** Using `[\s\S]*?` to parse nested structures like `<li>` in `autoEnrichLists` is mathematically flawed and destroys valid HTML. Migrated enrichment passes to Cheerio (`processWithCheerio`) for AST-based robust transformations.
-3. **EPUB Asset Renaming vs Navigation:** Blindly replacing all `href` attributes during EPUB import destroys inter-chapter navigation (`chapter2.html` -> `assets/chapter2.html`). The replacement regex now safely skips `.html`, `.xhtml`, and `#` links.
-4. **Data Loss via LocalStorage Key:** Binding the `BOOK_ID` to the output file's basename means users lose all bookmarks and progress if they rename the `.html` file. Changed `bundle.cjs` to generate a stable MD5 hash based on the book's title instead.
-5. **Relative Typography Thresholds:** Hardcoded pt values for header extraction in PDF parser fail on varied book sizes (e.g., pocket format vs A4). Implemented font size histogram generation (`_calculate_baseline`) to deduce headers dynamically (e.g., `> baseline * 1.5`).
-6. **Search Index Navigation Blindness:** An inverted index that only points to chapter indices without jumping to the specific match is frustrating. Implemented `window.find(query)` inside `fr.onload` in `default.html` to automatically jump to and highlight the first search match.
-7. **Dirty Asset Replacement in Optimizer:** Standard string replacement in `optimize_assets.py` accidentally corrupted prose that happened to contain image filenames. Updated to strict Regex targeting only `src=`, `href=`, and `url()`.
-
-## AUDIT TRAIL
-
-### Open
-_(none — all known issues resolved in v8.2 audit pass)_
-
-### Resolved (2026-04-17)
-- `[CRIT]` Search index poisoned by base64 — `bundle.cjs:chapterTexts` now extracted before `bundleAssets`
-- `[CRIT]` CSS `<link>` silently broken by bundleAssets — added `.css` skip + `inlineStylesheets()` function
-- `[CRIT]` FB2 tail text XSS — all `el_to_html` returns now call `escape_html(tail)`
-- `[CRIT]` `LANG.dir` dead field — wired to `{{LANG_DIR}}` template placeholder
-- `[SIG]`  `autoEnrichLists` converts `<ol>` — now skipped; also skips already-classed lists
-- `[SIG]`  `dev_server.cjs --port` NaN — validates range 1-65535 and exits with error
-- `[BUG]`  Duplicate `document.getElementById('search')` — now uses `searchEl`
-- `[BUG]`  `document.documentElement.lang` set twice — removed JS duplicate (template handles it)
-- `[BUG]`  `styleFirstPara` ignores single-quoted class attributes — regex now handles both quote styles
-- `[DEAD]` `"loading"` key in lang JSONs — removed from `en.json` and `ru.json`
-- `[DOC]`  Version mismatch across files — all sub-skills, README, package.json bumped to v8.1
-- `[DOC]`  `--skip-insights` risk of duplicate pullquotes — documented in assembler SKILL.md
-- `[DOC]`  `bookId` → localStorage coupling — documented in assembler SKILL.md
-- `[AUDIT v8.2]` Version string in --help → fixed in `bundle.cjs` (v8.2)
-- `[AUDIT v8.2]` Expand Russian/English stop words → fixed in `bundle.cjs`
-- `[AUDIT v8.2]` `chapterWord` hardcoded ternary → replaced with `chapterLabel` parameter in `chapter_processor.cjs` and passed from `bundle.cjs` via i18n JSON
-- `[AUDIT v8.2]` Unescaped title in `pdf_parser_general.py` → title now escaped in `<title>` and `<h1>`
-- `[AUDIT v8.2]` Missing `lang` attribute in FB2/DOCX output → now emitted from `ingest.py`
-- `[AUDIT v8.2]` Support for `.doc` binary → explicitly blocked in `ingest.py` with helpful error
-- `[AUDIT v8.2]` Silent skip of images in DOCX → warning now printed if `inline_shapes` detected
-- `[AUDIT v8.2]` Linter: Missing `viewBox` in SVG → check added to `lint_book.py`
-- `[AUDIT v8.2]` Linter: `user-scalable=no` check → check added to `lint_book.py`
-- `[AUDIT v8.2]` Linter: Extended SVG hex check → now catches `stop-color`, `flood-color`, `lighting-color`
-- `[AUDIT v8.2]` `theme.css` hero background inconsistency → added override in `@media (prefers-color-scheme: light)`
-- `[AUDIT v8.2]` Shell: origin validation in bridge → added `e.source !== fr.contentWindow` check in `default.html`
-- `[AUDIT v8.2]` Shell: legacy `blob:` in CSP → removed from `default.html`
-
-## References:
-See `references/` directory for 8 architectural docs covering architecture, shell JS API, theming, security, search, i18n, and deployment.
+## Critical Lessons (2026-04-17):
+- **Sandbox Paradox:** `allow-scripts` + `allow-same-origin` = RCE Risk. All communication between shell and book must be via `postMessage`.
+- **Base64 Bloat:** Limit image width to 1000px in `optimize_assets.py` to prevent mobile browser OOM crashes.
+- **EPUB Navigation:** Regex path rewriting must skip `.html` and `#` to preserve inter-chapter links.
+- **PDF Extraction:** Use dynamic font baseline calculation (`_calculate_baseline`) for relative heading detection (Pocket vs A4 formats).
 
 ## Usage:
 Refer to the individual SKILL.md in subdirectories for role-specific instructions.

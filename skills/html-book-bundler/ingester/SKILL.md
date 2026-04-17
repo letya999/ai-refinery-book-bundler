@@ -1,21 +1,25 @@
 ---
 name: book-ingester
-description: Foundation Layer. Extracts raw text from PDF, EPUB, FB2. Cleans OCR artifacts and sets structural H1/H2 marks.
+description: Foundation Layer. Extracts raw text and images from PDF, EPUB, FB2, DOCX. Cleans OCR artifacts and sets structural H1/H2 marks.
 ---
 
-# Book Ingester (v8.2)
+# Book Ingester (v8.3)
 
-You are the Foundation Layer. Your goal is to provide a clean, 100% complete text source for the Architect.
+You are the Foundation Layer. Your goal is to provide a clean, 100% complete text and image source for the Architect.
 
 ## Directives:
 1. **Source Fidelity:** Extract all text without summarizing.
-2. **Noise Suppression:** Strip page numbers, running headers (e.g., "Ivan Selikhovkin"), and OCR artifacts.
-3. **In-Place Editing:** Save raw chapters into the working directory (e.g., `chapters_pm_book/`). 
-4. **Table Detection:** If a table is found in the source, wrap it in `<!-- TABLE_START -->...<!-- TABLE_END -->` markers to signal the Architect.
-5. **Encoding:** Ensure UTF-8 output.
+2. **Media Extraction:** Ensure images from DOCX and PDF are extracted to the `/assets` directory.
+3. **Noise Suppression:** Strip page numbers, running headers, and OCR artifacts.
+4. **Table Detection:** If a table is found, wrap it in `<!-- TABLE_START -->...<!-- TABLE_END -->` markers.
+5. **Unified Entry:** Always use `../scripts/ingest.py` as the primary tool. It now handles PDF and DOCX (with images) natively.
 
 ## Workflow:
-- Use `../scripts/ingest.py` for FB2, EPUB, and DOCX formats.
-- Use `../scripts/pdf_parser_general.py` for style-aware PDF extraction (supports tables and raster images).
-- Use `../scripts/extract_pdf_visuals.py` for dedicated visual extraction from PDF files.
-- Output: Raw HTML chapters in `chapter1.html`, `chapter2.html`, etc.
+```bash
+# General command for all formats
+python ../scripts/ingest.py --input book.pdf --output ./chapters --force --lang ru
+```
+
+## Output:
+- Raw HTML chapters in `chapter1.html`, `chapter2.html`, etc.
+- Extracted images in `assets/`.
