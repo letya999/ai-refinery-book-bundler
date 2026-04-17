@@ -21,14 +21,16 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 - **Mobile First:** All output must be responsive, respect safe-area-insets, and allow pinch-to-zoom (WCAG 1.4.4).
 
 ## Critical Lessons (2026-04-17):
-- **Sandbox Paradox:** `allow-scripts` + `allow-same-origin` = RCE Risk. All communication between shell and book must be via `postMessage`.
-- **Base64 Bloat:** Limit image width to 1000px in `optimize_assets.py` to prevent mobile browser OOM crashes.
-- **EPUB Navigation:** Regex path rewriting must skip `.html` and `#` to preserve inter-chapter links.
-- **PDF Extraction:** Use dynamic font baseline calculation (`_calculate_baseline`) for relative heading detection (Pocket vs A4 formats).
+- **Sandbox Paradox:** `allow-scripts` + `allow-same-origin` is a necessary trade-off, NOT fixable without major refactor. The shell needs `allow-same-origin` for `fr.contentDocument` access (theme sync, scroll restore). Mitigation: CSP `connect-src: none` blocks exfiltration. Never add `window.parent.document` calls in chapter JS.
+- **Base64 Bloat:** Limit image width to 1000px in `optimize_assets.py` to prevent mobile browser OOM crashes. The function default AND the CLI default MUST both be 1000 — verify if changing either.
+- **EPUB Navigation:** Regex path rewriting must skip `.html`/`.xhtml`/`#` to preserve inter-chapter links.
+- **PDF Extraction:** Use dynamic font baseline calculation (`_calculate_baseline`) for relative heading detection (Pocket vs A4 formats). Without `--pdf-chapters`, the entire PDF becomes ONE chapter.
 - **Data-URI Memory Management:** Injecting hundreds of megabytes of Base64 strings directly into the DOM crashes mobile Safari. Move assets to a JSON dictionary and lazy load them via `IntersectionObserver` in the guest script.
 - **Standard API over Browser Hacks:** Relying on `window.find()` creates inconsistent search UI and doesn't allow scrolling through multiple hits per chapter. Custom `TreeWalker` highlighting (`<mark>`) is the correct approach.
 - **Hardcoded Logic Breaks i18n:** Stop words for inverted indices should not be hardcoded in the bundler. They are language-specific and must be loaded dynamically from `lang/*.json` files.
 - **QA Linter Hex Expansion:** Linter checking SVGs for hardcoded hex codes must support 8-character codes (`#RRGGBBAA`) exported by Figma, not just 3 or 6 characters.
+- **Text-to-HTML XSS:** When converting list items to stat cards or grid cards, always HTML-escape `.text()` values before interpolating into template literals. Cheerio `.text()` decodes entities — re-injecting them raw creates broken HTML.
+- **Sub-skill SKILL.md must be self-contained:** Each role's SKILL.md is the full context for the AI agent executing that role. Never put critical lessons only in the umbrella SKILL.md — the sub-agent won't see it.
 
 ## Usage:
 Refer to the individual SKILL.md in subdirectories for role-specific instructions.

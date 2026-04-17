@@ -280,12 +280,12 @@ def ingest_epub(input_path: Path, out_dir: Path):
 
 
 def ingest_docx(input_path: Path, out_dir: Path, lang: str = 'ru'):
-    """Requires: pip install python-docx"""
+    """Requires: pip install python-docx lxml"""
     try:
         from docx import Document
-        from docx.enum.shape import WD_INLINE_SHAPE
-    except ImportError:
-        print("Error: python-docx required for DOCX support. Run: pip install python-docx")
+        from lxml import etree  # noqa: F401 - needed for run._r.xpath()
+    except ImportError as e:
+        print(f"Error: {e}. Run: pip install python-docx lxml")
         return
 
     print(f"Parsing DOCX: {input_path}")
@@ -326,7 +326,6 @@ def ingest_docx(input_path: Path, out_dir: Path, lang: str = 'ru'):
 
                 # 2. Process Images in Run
                 # Check for drawing elements in the run's XML
-                from lxml import etree
                 r_el = run._r
                 drawings = r_el.xpath('.//w:drawing', namespaces=r_el.nsmap)
                 for drawing in drawings:
@@ -363,13 +362,16 @@ def ingest_docx(input_path: Path, out_dir: Path, lang: str = 'ru'):
     print(f"Done. Extracted {len(chapters)} chapters to {out_dir}")
 
 
-def ingest_pdf(input_path: Path, out_dir: Path, lang: str = 'ru'):
+def ingest_pdf(input_path: Path, out_dir: Path, lang: str = 'ru', chapters_config: list | None = None):
     if not HAS_PDF:
         print("Error: fitz (PyMuPDF) not found. PDF support disabled.")
         print("Install it with: pip install pymupdf")
         return
     print(f"Parsing PDF: {input_path}")
-    processor = PDFParser(str(input_path), {"lang": lang})
+    config: dict = {"lang": lang}
+    if chapters_config:
+        config["chapters"] = chapters_config
+    processor = PDFParser(str(input_path), config)
     processor.run(str(out_dir))
 
 
@@ -377,10 +379,14 @@ def main():
     p = argparse.ArgumentParser(
         description='Ingest books (FB2, EPUB, DOCX, PDF) into chapter HTML files.'
     )
-    p.add_argument('--input',  required=True, help='Path to source file (.fb2, .epub, .docx, .pdf, .fb2.zip)')
-    p.add_argument('--output', required=True, help='Output directory for chapter HTML files')
-    p.add_argument('--force',  action='store_true', help='Overwrite output directory if it exists')
-    p.add_argument('--lang',   default='ru', help='Language code for generated HTML (default: ru)')
+    p.add_argument('--input',          required=True, help='Path to source file (.fb2, .epub, .docx, .pdf, .fb2.zip)')
+    p.add_argument('--output',         required=True, help='Output directory for chapter HTML files')
+    p.add_argument('--force',          action='store_true', help='Overwrite output directory if it exists')
+    p.add_argument('--lang',           default='ru', help='Language code for generated HTML (default: ru)')
+    p.add_argument('--pdf-chapters',   default=None,
+                   help='PDF only: JSON file defining chapter splits. '
+                        'Format: [["Title", start_page, end_page], ...]. '
+                        'Without this flag, the whole PDF becomes one chapter.')
     args = p.parse_args()
 
     in_path = Path(args.input)
@@ -409,7 +415,16 @@ def main():
     elif suffix == '.docx':
         ingest_docx(in_path, out_dir, lang)
     elif suffix == '.pdf':
-        ingest_pdf(in_path, out_dir, lang)
+        chapters_config = None
+        if args.pdf_chapters:
+            import json
+            try:
+                with open(args.pdf_chapters, encoding='utf-8') as f:
+                    chapters_config = json.load(f)
+            except Exception as e:
+                print(f"Error: could not read --pdf-chapters file: {e}")
+                raise SystemExit(1)
+        ingest_pdf(in_path, out_dir, lang, chapters_config)
     elif suffix == '.doc':
         print("Error: .doc (Word 97 binary) is not supported. Please save as .docx and retry.")
         raise SystemExit(1)

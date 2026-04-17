@@ -9,7 +9,7 @@ const { prepareChapter } = require('./chapter_processor.cjs');
 // CLI argument parsing
 // ---------------------------------------------------------------------------
 const args = process.argv.slice(2);
-const VERSION = '8.2';
+const VERSION = '8.3';
 
 if (args.includes('--version') || args.includes('-v')) {
   console.log(`HTML Book Bundler v${VERSION}`);
@@ -18,7 +18,7 @@ if (args.includes('--version') || args.includes('-v')) {
 
 if (args.includes('--help') || args.length === 0) {
   console.log(`
-HTML Book Bundler v8.2
+HTML Book Bundler v${VERSION}
 Bundles chapter HTML files into a single offline-first reading app.
 
 Usage:

@@ -39,7 +39,7 @@ def update_html_references(directory: Path, replacements: dict):
             html_file.write_text(content, encoding="utf-8")
             print(f"  UPDATED: {html_file.name} references.")
 
-def optimize_image(input_path: Path, max_width=1400, quality=75):
+def optimize_image(input_path: Path, max_width=1000, quality=75):
     """Convert a single image to WebP in-place."""
     try:
         output_path = input_path.with_suffix(".webp")

@@ -6,6 +6,10 @@ const cheerio = require('cheerio');
 // Universal enrichment helpers (run on every chapter regardless of source)
 // ---------------------------------------------------------------------------
 
+function escHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function isCleanText(s) {
   if (s.length < 30 || s.length > 200) return false;
   if (s === s.toUpperCase() && s.length > 20) return false;
@@ -123,7 +127,7 @@ function processWithCheerio(html, skipInsights) {
     if (isStats && stats.length === $items.length) {
       const $grid = $('<div class="stats"></div>');
       stats.forEach(s => {
-        $grid.append(`\n<div class="stat"><b class="stat-num">${s.label}</b><span class="stat-label">${s.val}</span></div>`);
+        $grid.append(`\n<div class="stat"><b class="stat-num">${escHtml(s.label)}</b><span class="stat-label">${escHtml(s.val)}</span></div>`);
       });
       $ul.replaceWith($grid);
       return;
@@ -139,9 +143,9 @@ function processWithCheerio(html, skipInsights) {
       if ($b.length && $li.html().startsWith('<b>')) {
         const title = $b.text();
         const content = $li.html().replace(/<b>.*?<\/b>[:.\s]*/i, '');
-        $grid.append(`\n<div class="card"><b>${title}</b><p>${content}</p></div>`);
+        $grid.append(`\n<div class="card"><b>${escHtml(title)}</b><p>${content}</p></div>`);
       } else {
-        $grid.append(`\n<div class="card"><p>${text}</p></div>`);
+        $grid.append(`\n<div class="card"><p>${escHtml(text)}</p></div>`);
       }
     });
     $ul.replaceWith($grid);

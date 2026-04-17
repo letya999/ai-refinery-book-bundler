@@ -23,16 +23,21 @@ You are the Intelligence Layer. Your goal is to transform "Bulk Text" into a "Le
 - **Rules:** Blueprint complex flows, structures, or hierarchies as SVG diagrams, not lists.
 - **Insights:** Include "high-signal quotes" for each chapter in the blueprint. Designer will decide where to inject them.
 
-Minimal `blueprint.json` schema:
+Full `blueprint.json` schema with all visual types the Designer understands:
 ```json
 {
   "chapter1": {
     "visuals": [
-      { "type": "vis-diag", "title": "Process Flow", "nodes": ["Start", "End"], "links": [["Start","End"]] }
+      { "type": "vis-diag",     "title": "Flow",        "nodes": ["A","B"], "links": [["A","B"]] },
+      { "type": "vis-stats",    "title": "Key Numbers",  "items": [{"label":"Metric","value":"42%","note":"context"}] },
+      { "type": "vis-grid",     "title": "Comparison",  "cols": ["Col1","Col2"], "rows": [["A","B"]] },
+      { "type": "vis-timeline", "title": "Timeline",    "steps": [{"year":"2020","event":"Start","detail":"..."}] },
+      { "type": "matrix",       "title": "2x2 Matrix",  "axes": {"x":"Risk","y":"Value"}, "items": [{"label":"X","x":0.8,"y":0.6}] },
+      { "type": "badge-list",   "title": "Key Points",  "items": ["Point 1","Point 2"] }
     ],
-    "insights": ["Quote 1", "Quote 2"]
+    "insights": ["High-signal quote for callout block", "Second quote"]
   }
 }
 ```
 
-> **Note:** `blueprint.json` is the source of truth for the Designer.
+> **Note:** `blueprint.json` is the source of truth for the Designer. Every `type` above maps to a CSS class the Designer injects. Use 2-4 visuals per chapter — more creates visual fatigue.
