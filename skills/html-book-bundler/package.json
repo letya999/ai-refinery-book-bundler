@@ -7,14 +7,24 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "build":   "node scripts/bundle.cjs",
-    "test":    "node tests/test_bundler.cjs",
-    "audit":   "python scripts/lint_book.py --file",
-    "lint":    "python scripts/lint_book.py --file",
-    "dev":     "node scripts/dev_server.cjs",
-    "ingest":  "python scripts/ingest.py",
+    "build": "node scripts/bundle.cjs",
+    "test": "node tests/test_bundler.cjs",
+    "audit": "python scripts/lint_book.py --file",
+    "lint": "python scripts/lint_book.py --file",
+    "dev": "node scripts/dev_server.cjs",
+    "ingest": "python scripts/ingest.py",
     "optimize": "python scripts/optimize_assets.py"
   },
-  "keywords": ["ebook", "epub", "offline", "single-file", "html", "reader"],
-  "license": "MIT"
+  "keywords": [
+    "ebook",
+    "epub",
+    "offline",
+    "single-file",
+    "html",
+    "reader"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.2.0"
+  }
 }

@@ -1,26 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const cheerio = require('cheerio');
 
 // ---------------------------------------------------------------------------
 // Universal enrichment helpers (run on every chapter regardless of source)
 // ---------------------------------------------------------------------------
 
-/** Wrap <p> blocks longer than LIMIT chars in a collapsible <details>. */
-function autoCollapseLongParas(html) {
-  const LIMIT = 480;
-  return html.replace(/<p([^>]*)>([\s\S]*?)<\/p>/g, (match, attrs, inner) => {
-    if (/<(?:div|details|blockquote|table)\b/.test(inner)) return match;
-    const text = inner.replace(/<[^>]+>/g, '');
-    if (text.length <= LIMIT) return match;
-    const preview = text.slice(0, 120).replace(/\s+\S*$/, '') + '\u2026';
-    return `<details class="long-para"><summary>${preview}</summary><p>${inner}</p></details>`;
-  });
-}
-
-/**
- * Language-agnostic text quality check.
- * A sentence is clean if: not too short, not ALL-CAPS, mostly word characters.
- */
 function isCleanText(s) {
   if (s.length < 30 || s.length > 200) return false;
   if (s === s.toUpperCase() && s.length > 20) return false;
@@ -28,97 +13,142 @@ function isCleanText(s) {
   return wordChars / s.length > 0.75;
 }
 
-/** Extract clean sentences and inject as insight pullquotes after 4th and 10th </p>. */
-function autoInjectInsights(html) {
-  const candidates = [];
-  const paraRe = /<p[^>]*>([\s\S]*?)<\/p>/g;
-  let m;
-  while ((m = paraRe.exec(html)) !== null && candidates.length < 2) {
-    const text = m[1].replace(/<[^>]+>/g, '').trim();
-    if (text.length < 80 || text.length > 1200) continue;
-    const sents = text.split(/(?<=[.!?])\s+/);
-    for (const s of sents) {
-      const clean = s.trim();
-      if (clean.length >= 45 && clean.length <= 180 && isCleanText(clean)) {
-        candidates.push(clean);
-        break;
+function processWithCheerio(html, skipInsights) {
+  const $ = cheerio.load(html, { decodeEntities: false }, false);
+
+  // 1. autoCollapseLongParas
+  const LIMIT = 480;
+  const blockTags = ['div', 'details', 'blockquote', 'table', 'section', 'article', 'aside', 'header', 'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li'];
+  
+  $('p').each((_, el) => {
+    const $p = $(el);
+    const hasBlock = blockTags.some(tag => $p.find(tag).length > 0);
+    if (hasBlock) return;
+
+    const text = $p.text();
+    if (text.length > LIMIT) {
+      const preview = text.slice(0, 120).replace(/\s+\S*$/, '') + '\u2026';
+      const $details = $('<details class="long-para"><summary></summary></details>');
+      $details.find('summary').text(preview);
+      $p.wrap($details);
+    }
+  });
+
+  // 2. autoInjectInsights
+  if (!skipInsights) {
+    const candidates = [];
+    const $topParas = $('body > p, .content-body > p'); // Only top-level or main content paragraphs
+    
+    $topParas.each((_, el) => {
+      if (candidates.length >= 2) return false;
+      const $p = $(el);
+      const text = $p.text().trim();
+      if (text.length < 80 || text.length > 1200) return;
+      
+      const sents = text.split(/(?<=[.!?])\s+/);
+      for (const s of sents) {
+        const clean = s.trim();
+        if (clean.length >= 45 && clean.length <= 180 && isCleanText(clean)) {
+          candidates.push({ text: clean, el: el });
+          break;
+        }
       }
+    });
+
+    if (candidates[1] && $topParas.length > 10) {
+      const $target = $($topParas[10]);
+      $target.before(`\n<blockquote class="insight"><p>${candidates[1].text}</p></blockquote>\n`);
+    }
+    if (candidates[0] && $topParas.length > 4) {
+      const $target = $($topParas[4]);
+      $target.before(`\n<blockquote class="insight"><p>${candidates[0].text}</p></blockquote>\n`);
     }
   }
-  if (!candidates.length) return html;
 
-  const parts = html.split('</p>');
-  if (candidates[1] && parts.length > 10) {
-    parts[10] = `\n<blockquote class="insight"><p>${candidates[1]}</p></blockquote>\n` + parts[10];
+  // 3. styleFirstPara
+  const $firstP = $('p').first();
+  if ($firstP.length && !$firstP.hasClass('lead-para')) {
+    $firstP.addClass('lead-para');
   }
-  if (candidates[0] && parts.length > 4) {
-    parts[4] = `\n<blockquote class="insight"><p>${candidates[0]}</p></blockquote>\n` + parts[4];
-  }
-  return parts.join('</p>');
-}
 
-/** Add lead-para class to the first <p> in the document. */
-function styleFirstPara(html) {
-  let done = false;
-  return html.replace(/<p(\s[^>]*)?>/i, (match, attrs) => {
-    if (done) return match;
-    done = true;
-    if (!attrs) return '<p class="lead-para">';
-    if (attrs.includes('lead-para')) return match;
-    if (!attrs.includes('class=')) return `<p${attrs} class="lead-para">`;
-    // Handle both single- and double-quoted class attributes
-    return `<p${attrs.replace(/class=(["'])([^"']*)\1/, (_, q, cls) => `class=${q}${cls} lead-para${q}`)}>`;
-  });
-}
+  // 4. autoEnrichLists
+  $('ul').each((_, el) => {
+    const $ul = $(el);
+    if ($ul.attr('class')) return; // author explicitly styled this
 
-/** 
- * Automatically transform simple lists (3-6 items) into visual grids/cards.
- * Heuristic: if items are short and there's no nested markup.
- */
-function autoEnrichLists(html) {
-  return html.replace(/<(ul|ol)([^>]*)>([\s\S]*?)<\/\1>/g, (match, tag, _attrs, inner) => {
-    // Ordered lists have sequence semantics — never convert to cards
-    if (tag === 'ol') return match;
-    // Author explicitly styled this list — preserve it
-    if (_attrs.includes('class=')) return match;
-    const items = inner.match(/<li>([\s\S]*?)<\/li>/g);
-    if (!items || items.length < 3 || items.length > 6) return match;
-    
-    // Check if items are "clean" (short text, no complex tags)
-    const isSimple = items.every(li => {
-      const text = li.replace(/<[^>]+>/g, '').trim();
-      return text.length > 0 && text.length < 120 && !/<(?:table|blockquote|details|div|ul|ol)\b/.test(li);
+    const $items = $ul.children('li');
+    if ($items.length < 3 || $items.length > 6) return;
+
+    let isSimple = true;
+    $items.each((i, li) => {
+      const $li = $(li);
+      const text = $li.text().trim();
+      if (text.length === 0 || text.length >= 120 || $li.find('table, blockquote, details, div, ul, ol').length > 0) {
+        isSimple = false;
+        return false; // break
+      }
     });
 
-    if (!isSimple) return match;
+    if (!isSimple) return;
 
     // Pattern 1: Stats (Key: Value)
-    const stats = items.map(li => {
-      const text = li.replace(/<[^>]+>/g, '').trim();
+    const stats = [];
+    let isStats = true;
+    $items.each((i, li) => {
+      const text = $(li).text().trim();
       const m = text.match(/^([^:—]+)[:—]\s*(.+)$/);
-      return m ? { label: m[1].trim(), val: m[2].trim() } : null;
+      if (!m) { isStats = false; return false; }
+      const label = m[1].trim();
+      const val = m[2].trim();
+      if (label.length > 35 || label.split(/\s+/).length > 5) { isStats = false; return false; }
+      stats.push({ label, val });
     });
 
-    if (stats.every(s => s !== null)) {
-      const cards = stats.map(s => 
-        `<div class="stat"><b class="stat-num">${s.label}</b><span class="stat-label">${s.val}</span></div>`
-      ).join('\n');
-      return `<div class="stats">\n${cards}\n</div>`;
+    if (isStats && stats.length === $items.length) {
+      const $grid = $('<div class="stats"></div>');
+      stats.forEach(s => {
+        $grid.append(`\n<div class="stat"><b class="stat-num">${s.label}</b><span class="stat-label">${s.val}</span></div>`);
+      });
+      $ul.replaceWith($grid);
+      return;
     }
 
     // Pattern 2: Simple cards
-    const cards = items.map(li => {
-      const text = li.replace(/<[^>]+>/g, '').trim();
-      // If it has a bold prefix, use it as card title
-      const m = li.match(/<li><b>(.*?)<\/b>[:.\s]*(.*?)<\/li>/i);
-      if (m) {
-        return `<div class="card"><b>${m[1]}</b><p>${m[2] || ''}</p></div>`;
+    const $grid = $('<div class="grid"></div>');
+    $items.each((i, li) => {
+      const $li = $(li);
+      const text = $li.text().trim();
+      // Check if starts with bold
+      const $b = $li.find('b').first();
+      if ($b.length && $li.html().startsWith('<b>')) {
+        const title = $b.text();
+        const content = $li.html().replace(/<b>.*?<\/b>[:.\s]*/i, '');
+        $grid.append(`\n<div class="card"><b>${title}</b><p>${content}</p></div>`);
+      } else {
+        $grid.append(`\n<div class="card"><p>${text}</p></div>`);
       }
-      return `<div class="card"><p>${text}</p></div>`;
-    }).join('\n');
-    
-    return `<div class="grid">\n${cards}\n</div>`;
+    });
+    $ul.replaceWith($grid);
   });
+
+  return $.html();
+}
+
+/**
+ * Basic HTML sanitizer to strip dangerous tags, inline events, and javascript: URIs.
+ * This prevents Sandbox Escapes and XSS when ingesting untrusted EPUBs/HTML.
+ */
+function sanitizeHtml(html) {
+  let clean = html;
+  // Strip dangerous elements
+  clean = clean.replace(/<(script|object|embed|applet|iframe|meta|base)[^>]*>[\s\S]*?<\/\1>/gi, '');
+  clean = clean.replace(/<(script|object|embed|applet|iframe|meta|base)[^>]*\/?>/gi, '');
+  // Strip inline event handlers (e.g. onload="...")
+  clean = clean.replace(/(\s)on[a-z]+\s*=\s*(["'])(?:(?!\2).)*\2/gi, '$1');
+  clean = clean.replace(/(\s)on[a-z]+\s*=\s*[^\s>]+/gi, '$1');
+  // Strip javascript: URIs
+  clean = clean.replace(/(href|src)\s*=\s*(["'])\s*javascript:[^"']*\2/gi, '$1="#"');
+  return clean;
 }
 
 // ---------------------------------------------------------------------------
@@ -147,8 +177,6 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
   const effectiveChapterLabel = chapterLabel || (langCode === 'en' ? 'Chapter' : 'Глава');
 
   // Inter-chapter navigation script.
-  // The closing </script> tag is appended via concatenation so the template literal
-  // never contains the raw closing tag sequence (which causes issues in certain parsers).
   const navScriptClose = '</' + 'script>';
   const navScript = `
 <script>
@@ -197,11 +225,11 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
   const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   let bodyContent = bodyMatch ? bodyMatch[1] : content;
 
-  // Universal enrichment passes
-  bodyContent = autoCollapseLongParas(bodyContent);
-  if (!skipInsights) bodyContent = autoInjectInsights(bodyContent);
-  bodyContent = styleFirstPara(bodyContent);
-  bodyContent = autoEnrichLists(bodyContent);
+  // 1. Sanitize untrusted markup
+  bodyContent = sanitizeHtml(bodyContent);
+
+  // Universal enrichment passes with Cheerio
+  bodyContent = processWithCheerio(bodyContent, skipInsights);
 
   // Semantic Quality Check (v5.5)
   const visualTags = /class=["'][^"']*\b(vis-diag|vis-stats|vis-grid|stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge|diag-node|matrix)\b[^"']*["']|<table>/i;
@@ -214,13 +242,21 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
     if (bodyContent.includes('class="hero"')) {
       bodyContent = `<main class="wrap">${bodyContent}</main>`;
     } else {
-      const h1Match = bodyContent.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
-      const leadMatch = bodyContent.match(/<(p|div)[^>]*class="lead"[^>]*>([\s\S]*?)<\/\1>/i);
-      const h1 = h1Match ? h1Match[1] : title;
-      const lead = leadMatch ? leadMatch[2] : '';
-      let clean = bodyContent;
-      if (h1Match) clean = clean.replace(h1Match[0], '');
-      if (leadMatch) clean = clean.replace(leadMatch[0], '');
+      const $ = cheerio.load(bodyContent, null, false);
+      const $h1 = $('h1').first();
+      let h1Text = title;
+      if ($h1.length) {
+        h1Text = $h1.html();
+        $h1.remove();
+      }
+      const $lead = $('p.lead, div.lead').first();
+      let leadText = '';
+      if ($lead.length) {
+        leadText = $lead.html();
+        $lead.remove();
+      }
+      
+      let clean = $.html();
 
       const kicker = bookTitle
         ? `${bookTitle} \u2022 ${effectiveChapterLabel} ${index + 1}`
@@ -229,8 +265,8 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
 <main class="wrap">
   <section class="hero">
     <div class="kicker">${kicker}</div>
-    <h1>${h1}</h1>
-    <p class="lead">${lead}</p>
+    <h1>${h1Text}</h1>
+    <p class="lead">${leadText}</p>
   </section>
   <div class="content-body">${clean}</div>
 </main>`;
@@ -256,8 +292,6 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
     '</html>',
   ].join('\n');
 
-  // Return the plain HTML. The bundler (bundle.cjs) is responsible for escaping
-  // </script> in the JSON serialization step to prevent premature script termination.
   return finalHtml;
 }
 

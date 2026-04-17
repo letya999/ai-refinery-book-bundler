@@ -31,6 +31,27 @@ class PDFParser:
             if pattern.match(text): return True
         return False
 
+    def _calculate_baseline(self):
+        """Analyze the whole document to find the most common font size (body text)."""
+        sizes = {}
+        print("Analyzing document font sizes...")
+        for page in self.doc:
+            for b in page.get_text("dict").get("blocks", []):
+                if b.get("type") == 0:
+                    for line in b.get("lines", []):
+                        for span in line.get("spans", []):
+                            txt = span["text"].strip()
+                            if not txt: continue
+                            s = round(span["size"], 1)
+                            sizes[s] = sizes.get(s, 0) + len(txt)
+        
+        if not sizes:
+            return 11.0 # fallback
+
+        # Find the size with the most characters
+        self.baseline_size = max(sizes.items(), key=lambda x: x[1])[0]
+        print(f"Baseline text size detected: {self.baseline_size}pt")
+
     def extract_page_content(self, page_num: int) -> str:
         """Extract text blocks, tables, and images from a page."""
         page = self.doc[page_num - 1]
@@ -94,15 +115,18 @@ class PDFParser:
                 plain = "".join(content_parts).strip()
                 if not plain or self.is_ignored(re.sub(r'<[^>]+>', '', plain)): continue
 
-                if max_size >= 18: tag = "h1"
-                elif max_size >= 14: tag = "h2"
-                elif max_size >= 12 or (is_bold and max_size >= 11): tag = "h3"
+                # Dynamic headings based on baseline
+                b_size = getattr(self, 'baseline_size', 11.0)
+                if max_size >= b_size * 1.5: tag = "h1"
+                elif max_size >= b_size * 1.2: tag = "h2"
+                elif max_size > b_size + 0.5 or (is_bold and max_size >= b_size): tag = "h3"
                 else: tag = "p"
                 
                 page_items.append({
                     "y": block_bbox[1],
                     "html": f"<{tag}>{plain}</{tag}>"
                 })
+
 
             elif b.get("type") == 1:  # IMAGE
                 try:
@@ -136,6 +160,8 @@ class PDFParser:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         (self.output_dir / "assets").mkdir(exist_ok=True)
         
+        self._calculate_baseline()
+
         lang = self.config.get("lang", "ru")
 
         if not self.chapters_meta:

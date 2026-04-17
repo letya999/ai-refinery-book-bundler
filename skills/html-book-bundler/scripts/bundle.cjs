@@ -2,12 +2,19 @@
 'use strict';
 const fs   = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { prepareChapter } = require('./chapter_processor.cjs');
 
 // ---------------------------------------------------------------------------
 // CLI argument parsing
 // ---------------------------------------------------------------------------
 const args = process.argv.slice(2);
+const VERSION = '8.2';
+
+if (args.includes('--version') || args.includes('-v')) {
+  console.log(`HTML Book Bundler v${VERSION}`);
+  process.exit(0);
+}
 
 if (args.includes('--help') || args.length === 0) {
   console.log(`
@@ -65,8 +72,9 @@ if (!fs.existsSync(inputDirAbs)) {
   process.exit(1);
 }
 
-const bookId    = path.basename(outputFileAbs, '.html');
-const bookTitle = getArg('--title', bookId.replace(/[-_]/g, ' '));
+const fallbackTitle = path.basename(outputFileAbs, '.html').replace(/[-_]/g, ' ');
+const bookTitle = getArg('--title', fallbackTitle);
+const bookId    = 'book_' + crypto.createHash('md5').update(bookTitle).digest('hex').slice(0, 8);
 let langCode    = getArg('--lang', 'ru');
 
 const SUPPORTED_LANGS = ['ru', 'en'];

@@ -30,15 +30,10 @@ def update_html_references(directory: Path, replacements: dict):
         
         for old_name in sorted_keys:
             new_name = replacements[old_name]
-            # Match only exact filenames in src/href/url
-            # e.g. src="image.jpg" -> src="image.webp"
-            content = content.replace(f'"{old_name}"', f'"{new_name}"')
-            content = content.replace(f'"./{old_name}"', f'"./{new_name}"')
-            content = content.replace(f"'{old_name}'", f"'{new_name}'")
-            content = content.replace(f"'./{old_name}'", f"'./{new_name}'")
-            # Handle url(image.jpg)
-            content = content.replace(f'({old_name})', f'({new_name})')
-            content = content.replace(f'(./{old_name})', f'(./{new_name})')
+            # Safely replace only within src="", href="", or url() attributes
+            escaped_old = re.escape(old_name)
+            pattern = re.compile(r'((?:src|href)\s*=\s*["\']|url\(\s*["\']?)(?:\./)?' + escaped_old + r'(["\']?\s*\)?)')
+            content = pattern.sub(rf'\g<1>{new_name}\g<2>', content)
             
         if content != original_content:
             html_file.write_text(content, encoding="utf-8")

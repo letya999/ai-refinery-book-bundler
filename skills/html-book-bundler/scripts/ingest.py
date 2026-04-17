@@ -16,6 +16,13 @@ import zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+# Try to import PDFParser for PDF support
+try:
+    from pdf_parser_general import PDFParser
+    HAS_PDF = True
+except ImportError:
+    HAS_PDF = False
+
 
 def strip_ns(tag: str) -> str:
     return tag.split('}')[-1]
@@ -210,7 +217,8 @@ def ingest_epub(input_path: Path, out_dir: Path):
                 try:
                     full = posixpath.join(base_path, href) if base_path else href
                     data = zf.read(full)
-                    safe = href.replace('/', '_').replace('..', '')
+                    # Use double underscore to avoid collisions
+                    safe = href.replace('/', '__').replace('..', '')
                     (assets_dir / safe).write_bytes(data)
                 except Exception:
                     pass
@@ -221,7 +229,7 @@ def ingest_epub(input_path: Path, out_dir: Path):
                 return src
             chapter_dir = posixpath.dirname(chapter_href)
             resolved = posixpath.normpath(posixpath.join(chapter_dir, src))
-            safe = resolved.replace('/', '_').replace('..', '')
+            safe = resolved.replace('/', '__').replace('..', '')
             return f'assets/{safe}'
 
         # Process spine chapters
@@ -245,9 +253,17 @@ def ingest_epub(input_path: Path, out_dir: Path):
                     html_data = raw_bytes.decode('latin-1')
 
                 # Rewrite asset paths to use assets/ flat directory
+                def replace_asset(mo):
+                    attr = mo.group(1)
+                    src = mo.group(2)
+                    # Preserve inter-chapter navigation links
+                    if src.startswith('#') or src.split('#')[0].lower().endswith(('.html', '.xhtml', '.htm')):
+                        return mo.group(0)
+                    return f'{attr}="{fix_asset_path(src, href)}"'
+
                 html_data = re.sub(
                     r'(src|href)=["\']([^"\']+)["\']',
-                    lambda mo: f'{mo.group(1)}="{fix_asset_path(mo.group(2), href)}"',
+                    replace_asset,
                     html_data
                 )
 
@@ -321,11 +337,21 @@ def ingest_docx(input_path: Path, out_dir: Path, lang: str = 'ru'):
     print(f"Done. Extracted {len(chapters)} chapters to {out_dir}")
 
 
+def ingest_pdf(input_path: Path, out_dir: Path, lang: str = 'ru'):
+    if not HAS_PDF:
+        print("Error: fitz (PyMuPDF) not found. PDF support disabled.")
+        print("Install it with: pip install pymupdf")
+        return
+    print(f"Parsing PDF: {input_path}")
+    processor = PDFParser(str(input_path), {"lang": lang})
+    processor.run(str(out_dir))
+
+
 def main():
     p = argparse.ArgumentParser(
-        description='Ingest books (FB2, FB2.ZIP, EPUB, DOCX) into chapter HTML files.'
+        description='Ingest books (FB2, EPUB, DOCX, PDF) into chapter HTML files.'
     )
-    p.add_argument('--input',  required=True, help='Path to source file (.fb2, .epub, .docx, .fb2.zip)')
+    p.add_argument('--input',  required=True, help='Path to source file (.fb2, .epub, .docx, .pdf, .fb2.zip)')
     p.add_argument('--output', required=True, help='Output directory for chapter HTML files')
     p.add_argument('--force',  action='store_true', help='Overwrite output directory if it exists')
     p.add_argument('--lang',   default='ru', help='Language code for generated HTML (default: ru)')
@@ -356,11 +382,13 @@ def main():
         ingest_epub(in_path, out_dir)
     elif suffix == '.docx':
         ingest_docx(in_path, out_dir, lang)
+    elif suffix == '.pdf':
+        ingest_pdf(in_path, out_dir, lang)
     elif suffix == '.doc':
         print("Error: .doc (Word 97 binary) is not supported. Please save as .docx and retry.")
         raise SystemExit(1)
     else:
-        print(f"Error: unsupported format '{suffix}'. Supported: .fb2, .fb2.zip, .epub, .docx")
+        print(f"Error: unsupported format '{suffix}'. Supported: .fb2, .fb2.zip, .epub, .docx, .pdf")
         raise SystemExit(1)
 
 

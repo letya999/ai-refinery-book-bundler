@@ -372,6 +372,18 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
               if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch(e) {}
           }, 80);
+        } else if (searchFilter) {
+          // Jump to first search keyword match
+          setTimeout(() => {
+            try {
+              const query = searchFilter.trim().split(/\\s+/)[0];
+              if (query && fr.contentWindow.find) {
+                // Clear selection and find
+                fr.contentWindow.getSelection().removeAllRanges();
+                fr.contentWindow.find(query, false, false, true, false, true, false);
+              }
+            } catch(e) {}
+          }, 80);
         }
 
         // Save scroll position on scroll

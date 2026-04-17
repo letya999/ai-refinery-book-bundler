@@ -56,6 +56,15 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 11. **`autoEnrichLists` must skip `<ol>` entirely:** ordered lists have sequence semantics that card grids destroy.
 12. **Keep output filename stable:** the base name becomes the localStorage key prefix (`BOOK_ID`). Renaming the output file silently resets all bookmarks and reading position.
 
+## Lessons Learned (2026-04-17, Final Deep Audit):
+1. **XSS & Sandbox Escape:** `sandbox="allow-scripts allow-same-origin"` inside `default.html` enables RCE if an untrusted EPUB is ingested. Implemented robust HTML sanitization (`sanitizeHtml`) in `chapter_processor.cjs` to strip dangerous tags and event handlers.
+2. **Regex vs DOM Parsers:** Using `[\s\S]*?` to parse nested structures like `<li>` in `autoEnrichLists` is mathematically flawed and destroys valid HTML. Migrated enrichment passes to Cheerio (`processWithCheerio`) for AST-based robust transformations.
+3. **EPUB Asset Renaming vs Navigation:** Blindly replacing all `href` attributes during EPUB import destroys inter-chapter navigation (`chapter2.html` -> `assets/chapter2.html`). The replacement regex now safely skips `.html`, `.xhtml`, and `#` links.
+4. **Data Loss via LocalStorage Key:** Binding the `BOOK_ID` to the output file's basename means users lose all bookmarks and progress if they rename the `.html` file. Changed `bundle.cjs` to generate a stable MD5 hash based on the book's title instead.
+5. **Relative Typography Thresholds:** Hardcoded pt values for header extraction in PDF parser fail on varied book sizes (e.g., pocket format vs A4). Implemented font size histogram generation (`_calculate_baseline`) to deduce headers dynamically (e.g., `> baseline * 1.5`).
+6. **Search Index Navigation Blindness:** An inverted index that only points to chapter indices without jumping to the specific match is frustrating. Implemented `window.find(query)` inside `fr.onload` in `default.html` to automatically jump to and highlight the first search match.
+7. **Dirty Asset Replacement in Optimizer:** Standard string replacement in `optimize_assets.py` accidentally corrupted prose that happened to contain image filenames. Updated to strict Regex targeting only `src=`, `href=`, and `url()`.
+
 ## AUDIT TRAIL
 
 ### Open
