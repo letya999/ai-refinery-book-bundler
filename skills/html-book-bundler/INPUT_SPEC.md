@@ -51,7 +51,7 @@ chapters/
 
 ## Optional: local assets (images)
 
-Place images relative to chapter files. `bundle.cjs` inlines them as base64 data URIs:
+Place images relative to chapter files. `bundle.cjs` stores them in a shared `ASSETS` dictionary (keyed by content hash) and lazy-loads them via `IntersectionObserver` — images are only decoded when they scroll into view, preventing mobile OOM crashes on image-heavy books:
 
 ```
 chapters/
@@ -60,7 +60,9 @@ chapters/
     cover.jpg
 ```
 
-Referenced images are detected by `src=` and `href=` attributes. External URLs (`http://`) and existing data URIs are left unchanged.
+During bundling, `src` attributes are replaced with a 1x1 transparent GIF placeholder and a `data-src="assetKey"` attribute. The shell resolves each key to a base64 data URI on demand via postMessage (`requestAsset`/`provideAsset`). Linked non-HTML assets (`href=`) are resolved on click and offered as downloads.
+
+External URLs (`http://`) and existing data URIs are left unchanged. Run `optimize_assets.py --dir ./chapters` before bundling to cap image width at 1000px.
 
 ## Chapter HTML conventions (for rich output)
 

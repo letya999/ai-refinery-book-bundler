@@ -21,7 +21,7 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 - **Mobile First:** All output must be responsive, respect safe-area-insets, and allow pinch-to-zoom (WCAG 1.4.4).
 
 ## Critical Lessons (2026-04-17):
-- **Sandbox Paradox:** `allow-scripts` + `allow-same-origin` is a necessary trade-off, NOT fixable without major refactor. The shell needs `allow-same-origin` for `fr.contentDocument` access (theme sync, scroll restore). Mitigation: CSP `connect-src: none` blocks exfiltration. Never add `window.parent.document` calls in chapter JS.
+- **Sandbox Resolution (FIXED in v8.3):** The iframe now uses ONLY `allow-scripts` — `allow-same-origin` has been removed. All shell/chapter communication is done via `postMessage` (theme, scroll, anchors, search, asset loading). Never reintroduce `allow-same-origin`; never call `window.parent.document` from chapter JS. The CSP `connect-src: none` remains as a defense-in-depth layer.
 - **Base64 Bloat:** Limit image width to 1000px in `optimize_assets.py` to prevent mobile browser OOM crashes. The function default AND the CLI default MUST both be 1000 — verify if changing either.
 - **EPUB Navigation:** Regex path rewriting must skip `.html`/`.xhtml`/`#` to preserve inter-chapter links.
 - **PDF Extraction:** Use dynamic font baseline calculation (`_calculate_baseline`) for relative heading detection (Pocket vs A4 formats). Without `--pdf-chapters`, the entire PDF becomes ONE chapter.

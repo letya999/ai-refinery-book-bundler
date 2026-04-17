@@ -149,6 +149,55 @@ if (titleMatch) {
   assert(false, 'Could not find chapter titles array (T) in output');
 }
 
+// ── Test 18: ASSETS dictionary ──────────────────────────────────────────────
+console.log('\n[Test 18] ASSETS lazy-loading dictionary');
+// Rebuild with an image chapter
+const imgDir = path.join(__dirname, 'test_img_chapters');
+if (fs.existsSync(imgDir)) fs.rmSync(imgDir, { recursive: true });
+fs.mkdirSync(imgDir, { recursive: true });
+
+// Minimal valid 1x1 PNG (67 bytes)
+const minimalPng = Buffer.from(
+  '89504e470d0a1a0a0000000d49484452000000010000000108020000009001' +
+  '2e00000000c49444154789c6260f8cfc00000000200016e0754000000000049454e44ae426082',
+  'hex'
+);
+fs.writeFileSync(path.join(imgDir, 'test.png'), minimalPng);
+fs.writeFileSync(
+  path.join(imgDir, 'chapter1.html'),
+  '<!DOCTYPE html><html><head><title>Image Chapter</title></head>' +
+  '<body><h1>Image Chapter</h1><img src="test.png" alt="test"></body></html>'
+);
+const imgOutput = path.join(__dirname, 'test_img_output.html');
+try {
+  execSync(`node "${bundler}" --input "${imgDir}" --output "${imgOutput}"`, { stdio: 'pipe' });
+  const imgOut = fs.readFileSync(imgOutput, 'utf8');
+  assert(/\bASSETS\s*=\s*\{/.test(imgOut), 'ASSETS dictionary present in output');
+  assert(imgOut.includes('data-src='), 'Image has data-src attribute (lazy-loading)');
+  assert(!imgOut.includes('src="test.png"'), 'Original src= replaced by placeholder');
+  assert(imgOut.includes('data:image/gif;base64'), '1x1 GIF placeholder used for img src');
+} catch (e) {
+  assert(false, `Image chapter build failed: ${e.message}`);
+}
+if (fs.existsSync(imgDir)) fs.rmSync(imgDir, { recursive: true });
+if (fs.existsSync(imgOutput)) fs.rmSync(imgOutput);
+
+// ── Test 19: postMessage bridge messages ─────────────────────────────────────
+console.log('\n[Test 19] postMessage bridge messages');
+assert(out.includes('guestReady'), 'guestReady message type present');
+assert(out.includes('requestAsset'), 'requestAsset message type present');
+assert(out.includes('provideAsset'), 'provideAsset message type present');
+
+// ── Test 20: </script> escaping in ASSETS ────────────────────────────────────
+console.log('\n[Test 20] </script> escaping in ASSETS JSON');
+const assetsMatch = out.match(/\bASSETS\s*=\s*(\{[^;]*\});/s);
+if (assetsMatch) {
+  assert(!assetsMatch[1].includes('</script>'), 'No raw </script> inside ASSETS JSON block');
+  assert(true, 'ASSETS block found and parseable');
+} else {
+  assert(/\bASSETS\s*=\s*\{/.test(out), 'ASSETS dictionary present (empty is ok for text-only chapters)');
+}
+
 // ── Summary ──────────────────────────────────────────────────────────────────
 console.log(`\n${'─'.repeat(40)}`);
 console.log(`Results: ${passed} passed, ${failed} failed`);

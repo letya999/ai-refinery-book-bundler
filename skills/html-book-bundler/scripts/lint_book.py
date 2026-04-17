@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Master Linter for HTML Book Bundler (v8.2).
+Master Linter for HTML Book Bundler (v8.3).
 Combines Security, Design, and Structural audits into one tool.
 """
 import argparse
@@ -61,7 +61,21 @@ class BookLinter:
         except Exception as e:
             self.errors.append(f"Data: Failed to parse CHAPTERS array: {e}")
 
-        # 4. File Size Warning
+        # 4. ASSETS Dictionary Validation
+        assets_start = re.search(r'\bASSETS\s*=\s*(\{)', content)
+        if not assets_start:
+            self.warnings.append("Data: ASSETS dictionary not found (lazy-loading disabled — all images should be inline)")
+        else:
+            try:
+                decoder = json.JSONDecoder()
+                assets, _ = decoder.raw_decode(content, assets_start.start(1))
+                self.stats['assets'] = len(assets)
+                if not isinstance(assets, dict):
+                    self.errors.append("Data: ASSETS is not a JSON object")
+            except Exception as e:
+                self.errors.append(f"Data: Failed to parse ASSETS dictionary: {e}")
+
+        # 5. File Size Warning
         if self.stats['size_mb'] > self.max_size_mb:
             self.warnings.append(
                 f"File size {self.stats['size_mb']:.1f} MB exceeds threshold {self.max_size_mb} MB"
@@ -121,7 +135,7 @@ class BookLinter:
     def report(self):
         sep = '=' * 60
         print(f"\n{sep}\nMASTER LINT REPORT: {self.file_path.name}\n{sep}")
-        print(f"Size: {self.stats.get('size_mb', 0):.2f} MB | Chapters: {self.stats.get('chapters', 0)}")
+        print(f"Size: {self.stats.get('size_mb', 0):.2f} MB | Chapters: {self.stats.get('chapters', 0)} | Assets: {self.stats.get('assets', 0)}")
         for e in self.errors:   print(f"  [ERROR] {e}")
         for w in self.warnings: print(f"  [WARN]  {w}")
         if not self.errors:

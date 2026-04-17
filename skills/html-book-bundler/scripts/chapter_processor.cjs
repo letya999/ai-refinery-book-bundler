@@ -77,11 +77,11 @@ function processWithCheerio(html, skipInsights) {
 
     if (candidates[1] && $topParas.length > 10) {
       const $target = $($topParas[10]);
-      $target.before(`\n<blockquote class="insight"><p>${candidates[1].text}</p></blockquote>\n`);
+      $target.before(`\n<blockquote class="insight"><p>${escHtml(candidates[1].text)}</p></blockquote>\n`);
     }
     if (candidates[0] && $topParas.length > 4) {
       const $target = $($topParas[4]);
-      $target.before(`\n<blockquote class="insight"><p>${candidates[0].text}</p></blockquote>\n`);
+      $target.before(`\n<blockquote class="insight"><p>${escHtml(candidates[0].text)}</p></blockquote>\n`);
     }
   }
 
@@ -197,6 +197,16 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
   document.addEventListener('click', e => {
     const a = e.target.closest('a');
     if (!a) return;
+
+    // Bundled asset download (href="#" data-href="assetKey")
+    const dataHref = a.getAttribute('data-href');
+    if (dataHref) {
+      e.preventDefault();
+      window._pendingHrefKey = dataHref;
+      window.parent.postMessage({ action: 'requestAsset', key: dataHref }, '*');
+      return;
+    }
+
     const href = a.getAttribute('href');
     if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('data:')) return;
 
@@ -254,11 +264,22 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
       document.documentElement.setAttribute('data-theme', data.theme);
     } 
     else if (data.action === 'provideAsset') {
-      const imgs = document.querySelectorAll('img[data-src="' + data.key + '"]');
-      imgs.forEach(img => {
-        img.src = data.dataUri;
-        img.removeAttribute('data-src');
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        if (img.getAttribute('data-src') === data.key) {
+          img.src = data.dataUri;
+          img.removeAttribute('data-src');
+        }
       });
+      // Resolve pending data-href download if triggered by click
+      if (window._pendingHrefKey === data.key) {
+        window._pendingHrefKey = null;
+        const a = document.createElement('a');
+        a.href = data.dataUri;
+        a.download = data.key.replace(/^asset_[0-9a-f]+_/, '');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
     }
     else if (data.action === 'setScrollRatio') {
       const maxY = document.body.scrollHeight - window.innerHeight;
@@ -291,28 +312,28 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
       while ((node = walker.nextNode())) nodes.push(node);
 
       nodes.forEach(n => {
+        const pn = n.parentNode;
+        if (!pn || pn.nodeName === 'MARK' || pn.nodeName === 'SCRIPT' || pn.nodeName === 'STYLE') return;
         const text = n.nodeValue;
         const lower = text.toLowerCase();
-        const idx = lower.indexOf(query);
-        if (idx !== -1 && n.parentNode.nodeName !== 'MARK' && n.parentNode.nodeName !== 'SCRIPT' && n.parentNode.nodeName !== 'STYLE') {
-          const matchLen = query.length;
-          const before = text.slice(0, idx);
-          const matchText = text.slice(idx, idx + matchLen);
-          const after = text.slice(idx + matchLen);
+        if (lower.indexOf(query) === -1) return;
 
-          const frag = document.createDocumentFragment();
-          if (before) frag.appendChild(document.createTextNode(before));
+        const frag = document.createDocumentFragment();
+        let pos = 0;
+        let i;
+        while ((i = lower.indexOf(query, pos)) !== -1) {
+          if (i > pos) frag.appendChild(document.createTextNode(text.slice(pos, i)));
           const mark = document.createElement('mark');
           mark.className = 'search-hit';
           mark.style.background = 'var(--acc)';
           mark.style.color = 'var(--bg)';
-          mark.textContent = matchText;
+          mark.textContent = text.slice(i, i + query.length);
           frag.appendChild(mark);
-          if (after) frag.appendChild(document.createTextNode(after));
-
-          n.parentNode.replaceChild(frag, n);
           window.searchHits.push(mark);
+          pos = i + query.length;
         }
+        if (pos < text.length) frag.appendChild(document.createTextNode(text.slice(pos)));
+        pn.replaceChild(frag, n);
       });
 
       if (window.searchHits.length > 0) {

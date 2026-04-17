@@ -176,15 +176,9 @@ function bundleAssets(htmlContent, baseDir) {
     return assetKey ? `href="#" data-href="${assetKey}"` : match;
   });
 
-  // Replace CSS url(...)
+  // Inline CSS url() references (fonts, backgrounds) as base64 data URIs.
+  // Fonts/icons are small and don't benefit from lazy loading.
   content = content.replace(/url\(["']?([^"'\)]+)["']?\)/gi, (match, src) => {
-    const assetKey = processAsset(src);
-    return assetKey ? `url("var(--${assetKey}, ${ASSETS[assetKey]})")` : match; // fallback to inline if var not set, but we will inject vars or handle it. Wait, CSS urls inside chapter styles. Better to just inline CSS urls since they are usually small (fonts, icons).
-  });
-
-  // Let's refine CSS url() replacement to just inline it as before, since lazy loading fonts/backgrounds is complex and they are usually small.
-  content = content.replace(/url\(["']?([^"'\)]+)["']?\)/gi, (match, src) => {
-    if (src.startsWith('var(')) return match; // Already a var
     const assetKey = processAsset(src);
     return assetKey ? `url("${ASSETS[assetKey]}")` : match;
   });
@@ -324,7 +318,7 @@ const replacements = {
   // Escape </script> so it never terminates the outer <script> block prematurely.
   // In JSON, <\/ is parsed as </ by JS (the \/ escape = /) giving correct srcdoc HTML.
   '{{LOCAL_CHAPTERS}}': JSON.stringify(chapters).replace(/<\/script>/gi, '<\\/script>'),
-  '{{ASSETS}}':         JSON.stringify(ASSETS),
+  '{{ASSETS}}':         JSON.stringify(ASSETS).replace(/<\/script>/gi, '<\\/script>'),
   '{{SEARCH_IDX}}':     JSON.stringify(searchIndex),
   '{{DEV_SCRIPT}}':     devScript,
 };

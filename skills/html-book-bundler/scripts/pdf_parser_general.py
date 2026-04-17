@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-General PDF to Structured HTML Parser (v8.1)
+General PDF to Structured HTML Parser (v8.3)
 Part of html-book-bundler skill.
 
 Supports: Text styles, Tables, and Raster Images.

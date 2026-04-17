@@ -20,5 +20,10 @@ You are the Presentation Layer. Your goal is to eliminate "Wall of Text" using A
 - **In-Place Modification:** Use `cheerio` for safe HTML manipulation. 
 - **Batch Processing:** Process 3-5 chapters per turn.
 
+## Image Handling (CRITICAL):
+- **Never write `data-src` manually.** Image lazy-loading is handled automatically by `bundle.cjs` — it replaces `src` with a placeholder and stores the asset in the `ASSETS` dictionary. Write normal `<img src="relative/path.jpg">` tags.
+- **Never inline base64 in chapter HTML.** All large assets must be referenced as relative file paths. The bundler handles encoding.
+- **Run `optimize_assets.py` before bundling** to cap image width at 1000px and prevent mobile OOM crashes.
+
 ## Output:
 - Enriched HTML chapters with `vis-diag`, `vis-stats`, `insight`, and `term-link` classes.

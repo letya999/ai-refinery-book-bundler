@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Universal Book Ingester for HTML Book Bundler v8.2
+Universal Book Ingester for HTML Book Bundler v8.3
 Supports: FB2, EPUB, FB2.ZIP
 Outputs chapter1.html, chapter2.html, ... (compatible with bundle.cjs navScript)
 Zero stdlib-only dependencies for FB2/EPUB (python-docx needed for DOCX).
