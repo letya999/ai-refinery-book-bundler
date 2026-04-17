@@ -33,9 +33,12 @@ def update_html_references(directory: Path, replacements: dict):
             # Match only exact filenames in src/href/url
             # e.g. src="image.jpg" -> src="image.webp"
             content = content.replace(f'"{old_name}"', f'"{new_name}"')
+            content = content.replace(f'"./{old_name}"', f'"./{new_name}"')
             content = content.replace(f"'{old_name}'", f"'{new_name}'")
+            content = content.replace(f"'./{old_name}'", f"'./{new_name}'")
             # Handle url(image.jpg)
             content = content.replace(f'({old_name})', f'({new_name})')
+            content = content.replace(f'(./{old_name})', f'(./{new_name})')
             
         if content != original_content:
             html_file.write_text(content, encoding="utf-8")

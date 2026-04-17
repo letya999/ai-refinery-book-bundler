@@ -2,7 +2,7 @@
 <html lang="{{LANG_CODE}}" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' data:; img-src 'self' data: blob:; connect-src 'none'">
 <title>{{BOOK_TITLE}}</title>
 <style>
@@ -13,7 +13,7 @@
 }
 /* ── Light theme ── */
 [data-theme="light"] {
-  --bg: #f0f4f8; --bg2: #e8eef5; --panel: #e4ecf5; --panel2: #d4e2ee; --line: #b0c8e0;
+  --bg: #f0f4f8; --bg2: #e8eef5; --panel: #dce8f2; --panel2: #ccdeed; --line: #b0c8e0;
   --txt: #1a2535; --muted: #4a6580; --acc: #1a7fc4; --acc2: #158060; --warn: #a06800; --bad: #c03030; --fg: #1a2535;
 }
 
@@ -32,7 +32,7 @@ html, body {
   background: radial-gradient(circle at 85% -20%, #2e5e9d 0, #152846 36%, #081423 72%);
 }
 [data-theme="light"] body {
-  background: radial-gradient(circle at 85% -20%, #c8dff0 0, #e4ecf5 36%, #f0f4f8 72%);
+  background: radial-gradient(circle at 85% -20%, #c8dff0 0, #dce8f2 36%, #f0f4f8 72%);
 }
 
 /* ── Stars (dark only) ── */
@@ -232,6 +232,13 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   const CHAPTERS = {{LOCAL_CHAPTERS}};
   const SIDX     = {{SEARCH_IDX}};
 
+  // ── Helper to escape HTML for safe injection into innerHTML ───────────────
+  function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
   // ── Safe Storage ──────────────────────────────────────────────────────────
   const store = {
     get: (k) => { try { return localStorage.getItem(k); } catch(e) { return null; } },
@@ -386,7 +393,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
 
       // Update UI
       const chLabel = LANG.chapter_label.replace('{n}', i + 1);
-      tt.innerHTML = `<i>${chLabel}</i> ${T[i] || ''}`;
+      tt.innerHTML = `<i>${chLabel}</i> ${esc(T[i] || '')}`;
       bar.style.width = ((i + 1) / T.length * 100) + '%';
       document.querySelectorAll('.ch').forEach(el => el.classList.toggle('on', +el.dataset.i === i));
       store.set('prog_' + BOOK_ID, i);
@@ -414,7 +421,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
       btn.className = 'ch' + (i === cur ? ' on' : '');
       btn.dataset.i = i;
       const chLabel = LANG.chapter_label.replace('{n}', i + 1);
-      btn.innerHTML = `<b>${chLabel}</b>${t}${bm.includes(i) ? '<span class="bm-star">★</span>' : ''}`;
+      btn.innerHTML = `<b>${chLabel}</b>${esc(t)}${bm.includes(i) ? '<span class="bm-star">★</span>' : ''}`;
       btn.onclick = () => { go(i); closeSidebarMobile(); };
       list.appendChild(btn);
     });

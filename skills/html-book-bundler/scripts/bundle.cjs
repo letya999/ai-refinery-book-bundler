@@ -11,7 +11,7 @@ const args = process.argv.slice(2);
 
 if (args.includes('--help') || args.length === 0) {
   console.log(`
-HTML Book Bundler v5.0
+HTML Book Bundler v8.0
 Bundles chapter HTML files into a single offline-first reading app.
 
 Usage:
@@ -22,9 +22,10 @@ Required:
   --output <file>     Output HTML file path
 
 Options:
-  --title  <string>   Book title shown in sidebar and browser tab
+  --title    <string> Book title shown in sidebar and browser tab
                       (default: output filename with hyphens replaced by spaces)
-  --lang   <code>     UI language: ru | en  (default: ru)
+  --lang     <code>   UI language: ru | en  (default: ru)
+  --template <file>   Custom HTML template (default: templates/default.html)
   --dev               Inject live-reload script (for use with dev_server.cjs)
   --optimize          Run optimize_assets.py on input dir before bundling
   --skip-insights     Disable auto-generated pullquotes (use when you insert <blockquote class="insight"> manually)
@@ -67,6 +68,13 @@ if (!fs.existsSync(inputDirAbs)) {
 const bookId    = path.basename(outputFileAbs, '.html');
 const bookTitle = getArg('--title', bookId.replace(/[-_]/g, ' '));
 const langCode  = getArg('--lang', 'ru');
+
+const SUPPORTED_LANGS = ['ru', 'en'];
+if (!SUPPORTED_LANGS.includes(langCode)) {
+  console.warn(`Warning: unsupported --lang value "${langCode}". Falling back to "ru". Supported: ${SUPPORTED_LANGS.join(', ')}`);
+  langCode = 'ru';
+}
+
 const devMode      = args.includes('--dev');
 const optimize     = args.includes('--optimize');
 const skipInsights = args.includes('--skip-insights');
@@ -76,6 +84,13 @@ const templateFile = path.resolve(
     ? getArg('--template')
     : path.join(__dirname, '../templates/default.html')
 );
+
+// Cross-platform Python resolver
+const pyCmd = (() => {
+  const { spawnSync } = require('child_process');
+  const r = spawnSync('python3', ['--version'], { stdio: 'pipe' });
+  return r.status === 0 ? 'python3' : 'python';
+})();
 
 // ---------------------------------------------------------------------------
 // Load language strings
@@ -89,11 +104,11 @@ const LANG = fs.existsSync(langFile)
 // Optionally optimize images
 // ---------------------------------------------------------------------------
 if (optimize) {
-  const { spawnSync } = require('child_process');
   const optimizer = path.join(__dirname, 'optimize_assets.py');
   if (fs.existsSync(optimizer)) {
     console.log('Optimizing assets in-place...');
-    spawnSync('python', [optimizer, '--dir', inputDirAbs], { stdio: 'inherit' });
+    const { spawnSync } = require('child_process');
+    spawnSync(pyCmd, [optimizer, '--dir', inputDirAbs], { stdio: 'inherit' });
   }
 }
 
@@ -147,12 +162,10 @@ function bundleAssets(htmlContent, baseDir) {
 // Search index builder (inverted index, language-agnostic)
 // ---------------------------------------------------------------------------
 const STOP_WORDS = new Set(
-  // Russian
-  'и в на не с а но из к по за то как что так же это да уж вот ' +
-  'он она оно они мы вы я ни ли бы до при про над под без через для ' +
-  // English
-  'the a an of to in is it on at be by this that with from are was were ' +
-  'have has had will would can could should may might do does did not '
+  ('и в на не с а но из к по за то как что так же это да уж вот ' +
+   'он она оно они мы вы я ни ли бы до при про над под без через для ' +
+   'the a an of to in is it on at be by this that with from are was were ' +
+   'have has had will would can could should may might do does did not ')
   .split(/\s+/).filter(Boolean)
 );
 

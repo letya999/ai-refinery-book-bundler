@@ -1,5 +1,5 @@
 /*
-  HTML Book Bundler v7.1 — Ultimate Theme
+  HTML Book Bundler v8.0 — Ultimate Theme
   Shared Styles for all chapters.
 */
 
@@ -33,6 +33,27 @@
   --warn:  #a06800;
   --bad:   #c03030;
   --fg:    #1a2535;
+}
+
+/* ── OS Preference Fallback (Fix 26) ── */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:    #f0f4f8;
+    --bg2:   #e8eef5;
+    --panel: #dce8f2;
+    --panel2:#ccdeed;
+    --line:  #b0c8e0;
+    --txt:   #1a2535;
+    --muted: #4a6580;
+    --acc:   #1a7fc4;
+    --acc2:  #158060;
+    --warn:  #a06800;
+    --bad:   #c03030;
+    --fg:    #1a2535;
+  }
+  :root:not([data-theme="dark"]) body {
+    background: radial-gradient(circle at 15% -20%, #c8dff0 0, #e4ecf5 42%, #f0f4f8 76%);
+  }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -122,6 +143,36 @@ th { background: var(--panel2); color: var(--acc); font-size: 12px; text-transfo
 .stat { padding: 16px; border: 1px solid var(--line); border-radius: 12px; text-align: center; background: rgba(15,31,56,.4); }
 .stat-num { display: block; font-size: 24px; font-weight: 900; color: var(--acc); }
 .stat-label { font-size: 11px; text-transform: uppercase; color: var(--muted); }
+
+/* ── Translator / Concept Map (Fix 12) ── */
+.translator {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 24px 0;
+}
+.translator-from,
+.translator-to {
+  padding: 16px 20px;
+}
+.translator-from {
+  background: rgba(15,31,56,.5);
+  border-right: 1px solid var(--line);
+}
+.translator-to {
+  background: rgba(114,216,255,.06);
+}
+.translator-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
 
 /* ── Cards ── */
 .grid {

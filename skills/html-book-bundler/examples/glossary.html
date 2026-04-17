@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Glossary</title>
+</head>
+<body>
+  <!-- 
+    GLOSSARY TEMPLATE
+    Naming convention for IDs: use term_ prefix (e.g., id="term_mvp").
+    This allows stable deep linking from chapters.
+  -->
+  <main class="wrap">
+    <section class="hero">
+      <div class="kicker">Reference</div>
+      <h1>Glossary</h1>
+      <p class="lead">Key concepts and definitions used throughout the book.</p>
+    </section>
+
+    <div class="content-body">
+      
+      <details class="acc-item" id="term_mvp">
+        <summary class="acc-head">Minimum Viable Product (MVP)</summary>
+        <div class="acc-body">
+          <p>A version of a new product which allows a team to collect the maximum amount of validated learning about customers with the least effort.</p>
+        </div>
+      </details>
+
+      <details class="acc-item" id="term_srcdoc">
+        <summary class="acc-head">srcdoc (HTML Attribute)</summary>
+        <div class="acc-body">
+          <p>An HTML attribute of the <code>&lt;iframe&gt;</code> element that specifies the HTML content of the page to show in the inline frame. Used by this bundler for high-performance offline chapter loading.</p>
+        </div>
+      </details>
+
+      <details class="acc-item" id="term_sidx">
+        <summary class="acc-head">Search Index (SIDX)</summary>
+        <div class="acc-body">
+          <p>A lightweight, bundle-time generated inverted index used for full-text search without external dependencies.</p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+</body>
+</html>

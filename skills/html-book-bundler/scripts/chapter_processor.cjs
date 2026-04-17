@@ -47,26 +47,28 @@ function autoInjectInsights(html) {
   }
   if (!candidates.length) return html;
 
-  const insertAt = {};
-  if (candidates[0]) insertAt[4]  = candidates[0];
-  if (candidates[1]) insertAt[10] = candidates[1];
-
-  let pCount = 0;
-  return html.replace(/<\/p>/g, end => {
-    pCount++;
-    const quote = insertAt[pCount];
-    if (quote) return `</p>\n<blockquote class="insight"><p>${quote}</p></blockquote>`;
-    return end;
-  });
+  const parts = html.split('</p>');
+  if (candidates[1] && parts.length > 10) {
+    parts[10] = `\n<blockquote class="insight"><p>${candidates[1]}</p></blockquote>\n` + parts[10];
+  }
+  if (candidates[0] && parts.length > 4) {
+    parts[4] = `\n<blockquote class="insight"><p>${candidates[0]}</p></blockquote>\n` + parts[4];
+  }
+  return parts.join('</p>');
 }
 
 /** Add lead-para class to the first <p> in the document. */
 function styleFirstPara(html) {
   let done = false;
-  return html.replace(/<p>/, match => {
+  return html.replace(/<p(\s[^>]*)?>/i, (match, attrs) => {
     if (done) return match;
     done = true;
-    return '<p class="lead-para">';
+    if (attrs && attrs.includes('lead-para')) return match;
+    const newAttrs = attrs ? attrs.replace(/class="([^"]*)"/, 'class="$1 lead-para"') : ' class="lead-para"';
+    if (attrs && !attrs.includes('class=')) {
+        return `<p${attrs} class="lead-para">`;
+    }
+    return `<p${newAttrs}>`;
   });
 }
 
@@ -128,7 +130,7 @@ function autoEnrichLists(html) {
  * @param {string} html          - raw chapter HTML
  * @param {number} index         - 0-based chapter index
  * @param {string} title         - chapter title
- * @param {number} totalChapters - total number of chapters (for nav script)
+ * @param {string[]} filesArray  - ordered array of chapter filenames (e.g. ['chapter1.html', ...])
  * @param {string} globalCSS     - CSS to inject as shared theme base
  * @param {string} bookTitle     - book title for the kicker line (optional)
  * @param {boolean} skipInsights - whether to skip auto-injecting insights
@@ -150,6 +152,7 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
   const chapterMap = {};
   fileArray.forEach((f, i) => {
     chapterMap[f] = i;
+    chapterMap[f.toLowerCase()] = i;  // case-insensitive fallback
     // Keep support for padded links
     const m = f.match(/chapter(\\d+)\\.html/);
     if (m) {
@@ -214,7 +217,10 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
       if (h1Match) clean = clean.replace(h1Match[0], '');
       if (leadMatch) clean = clean.replace(leadMatch[0], '');
 
-      const kicker = bookTitle ? `${bookTitle} \u2022 \u0413\u043b\u0430\u0432\u0430 ${index + 1}` : `\u0413\u043b\u0430\u0432\u0430 ${index + 1}`;
+      const chapterWord = langCode === 'en' ? 'Chapter' : 'Глава';
+      const kicker = bookTitle
+        ? `${bookTitle} \u2022 ${chapterWord} ${index + 1}`
+        : `${chapterWord} ${index + 1}`;
       bodyContent = `
 <main class="wrap">
   <section class="hero">

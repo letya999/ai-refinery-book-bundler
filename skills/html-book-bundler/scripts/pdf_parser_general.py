@@ -136,6 +136,8 @@ class PDFParser:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         (self.output_dir / "assets").mkdir(exist_ok=True)
         
+        lang = self.config.get("lang", "ru")
+
         if not self.chapters_meta:
             print("No chapters defined in config. Extracting whole book as one file.")
             self.chapters_meta = [("Full Book", 1, len(self.doc))]
@@ -151,7 +153,7 @@ class PDFParser:
             body_html = "\n".join(chapter_html)
             
             full_html = f"""<!DOCTYPE html>
-<html lang="ru">
+<html lang="{lang}">
 <head>
 <meta charset="UTF-8">
 <title>{title}</title>
@@ -174,12 +176,17 @@ def main():
     parser.add_argument("--input", required=True, help="Input PDF file")
     parser.add_argument("--output", default="./chapters", help="Output directory")
     parser.add_argument("--config", help="JSON config file")
+    parser.add_argument("--lang", default="ru", help="Language code (default: ru)")
     args = parser.parse_args()
     
     config = {}
     if args.config and os.path.exists(args.config):
         with open(args.config, "r", encoding="utf-8") as f:
             config = json.load(f)
+    
+    # Overwrite config lang if CLI arg provided
+    if args.lang:
+        config["lang"] = args.lang
 
     processor = PDFParser(args.input, config)
     processor.run(args.output)

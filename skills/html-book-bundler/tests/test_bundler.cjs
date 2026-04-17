@@ -87,10 +87,9 @@ assert(/\bSIDX\s*=\s*\{/.test(out), 'SIDX search index present');
 // ── Test 9: --help flag ──────────────────────────────────────────────────────
 console.log('\n[Test 9] --help flag');
 try {
-  const help = execSync(`node "${bundler}" --help`, { encoding: 'utf8' });
-  assert(help.includes('--input') && help.includes('--output'), '--help shows usage');
+  const helpText = execSync(`node "${bundler}" --help`, { encoding: 'utf8' });
+  assert(helpText.includes('--input') && helpText.includes('--output'), '--help shows usage');
 } catch (e) {
-  // Exit code 0 expected from --help
   assert(false, '--help exits cleanly');
 }
 
@@ -106,6 +105,49 @@ try {
 // ── Test 11: prefers-reduced-motion ──────────────────────────────────────────
 console.log('\n[Test 11] Accessibility');
 assert(out.includes('prefers-reduced-motion'), 'prefers-reduced-motion media query present');
+
+// ── Test 12: --optimize flag ────────────────────────────────────────────────
+console.log('\n[Test 12] --optimize flag smoke test');
+try {
+  execSync(`node "${bundler}" --input "${testDir}" --output "${outputFile}" --optimize`, { stdio: 'pipe' });
+  assert(true, '--optimize flag did not crash');
+} catch (e) {
+  assert(false, '--optimize flag failed');
+}
+
+// ── Test 13: --skip-insights flag ───────────────────────────────────────────
+console.log('\n[Test 13] --skip-insights flag');
+try {
+  execSync(`node "${bundler}" --input "${testDir}" --output "${outputFile}" --skip-insights`, { stdio: 'pipe' });
+  assert(true, '--skip-insights built successfully');
+} catch (e) {
+  assert(false, '--skip-insights failed');
+}
+
+// ── Test 14: Chapter nav script ─────────────────────────────────────────────
+console.log('\n[Test 14] Navigation bridge script');
+assert(out.includes('window.parent.postMessage'), 'postMessage navigation bridge present');
+
+// ── Test 15: Bookmarks ──────────────────────────────────────────────────────
+console.log('\n[Test 15] Bookmarks key');
+assert(out.includes('bm_'), 'Bookmarks storage key prefix present');
+
+// ── Test 16: UI Elements ────────────────────────────────────────────────────
+console.log('\n[Test 16] Theme toggle');
+assert(out.includes('theme-btn'), 'Theme toggle button ID present');
+
+// ── Test 17: Glossary sort ──────────────────────────────────────────────────
+console.log('\n[Test 17] Glossary sorting');
+fs.writeFileSync(path.join(testDir, 'glossary.html'), '<title>Glossary</title><h1>Glossary</h1>');
+execSync(`node "${bundler}" --input "${testDir}" --output "${outputFile}"`, { stdio: 'pipe' });
+const glossOut = fs.readFileSync(outputFile, 'utf8');
+const titleMatch = glossOut.match(/const\s+T\s+=\s+(\[.*?\]);/);
+if (titleMatch) {
+  const titles = JSON.parse(titleMatch[1]);
+  assert(titles[titles.length - 1] === 'Glossary', 'Glossary is sorted to the very end');
+} else {
+  assert(false, 'Could not find chapter titles array (T) in output');
+}
 
 // ── Summary ──────────────────────────────────────────────────────────────────
 console.log(`\n${'─'.repeat(40)}`);

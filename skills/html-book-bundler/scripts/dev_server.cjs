@@ -51,22 +51,16 @@ const server = http.createServer((req, res) => {
 });
 
 function startServer(p) {
-    const s = server.listen(p);
-    
-    s.on('error', (err) => {
+    server.on('error', (err) => {
         if (err.code === 'EADDRINUSE') {
-            if (args.includes('--port')) {
-                console.error(`Error: Port ${p} is already in use.`);
-                process.exit(1);
-            } else {
-                console.log(`Port ${p} is busy, trying ${p + 1}...`);
-                startServer(p + 1);
-            }
-        } else {
-            console.error(err);
+            console.error(`Error: port ${p} is already in use. Try a different port with --port <N>`);
+            process.exit(1);
         }
+        throw err;
     });
 
+    const s = server.listen(p);
+    
     s.on('listening', () => {
         console.log(`Dev Server started on http://localhost:${p}`);
         console.log(`Watching: chapters=${inputDir}, templates, lang`);

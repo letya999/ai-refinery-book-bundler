@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Universal Book Ingester for HTML Book Bundler v5.0
+Universal Book Ingester for HTML Book Bundler v8.0
 Supports: FB2, EPUB, FB2.ZIP
 Outputs chapter1.html, chapter2.html, ... (compatible with bundle.cjs navScript)
 Zero stdlib-only dependencies for FB2/EPUB (python-docx needed for DOCX).
@@ -9,6 +9,7 @@ import argparse
 import base64
 import os
 import posixpath
+import re
 import shutil
 import urllib.parse
 import zipfile
@@ -151,6 +152,23 @@ def ingest_fb2(input_path: Path, out_dir: Path):
     print(f"Done. Extracted {chapter_idx - 1} chapters to {out_dir}")
 
 
+def inline_epub_css(html: str, assets_dir: Path) -> str:
+    """Inline linked CSS files as <style> blocks (v8.0 Fix)."""
+    def replace_link(m):
+        href = m.group(1)
+        if href.startswith('assets/'):
+            css_path = assets_dir / href[len('assets/'):]
+            if css_path.exists():
+                try:
+                    css_content = css_path.read_text(encoding='utf-8', errors='replace')
+                    return f'<style>{css_content}</style>'
+                except Exception:
+                    pass
+        return m.group(0)
+    return re.sub(r'<link[^>]+rel=["\']stylesheet["\'][^>]+href=["\']([^"\']+)["\'][^>]*/?>',
+                  replace_link, html, flags=re.I)
+
+
 def ingest_epub(input_path: Path, out_dir: Path):
     print(f"Parsing EPUB: {input_path}")
     assets_dir = out_dir / 'assets'
@@ -222,12 +240,14 @@ def ingest_epub(input_path: Path, out_dir: Path):
                     safe = resolved.replace('/', '_').replace('..', '')
                     return f'assets/{safe}'
 
-                import re
                 def replace_src(m):
                     attr, val = m.group(1), m.group(2)
                     return f'{attr}="{fix_asset_path(val)}"'
 
                 html_data = re.sub(r'(src|href)=["\']([^"\']+)["\']', replace_src, html_data)
+                
+                # Fix 8: Inline CSS assets
+                html_data = inline_epub_css(html_data, assets_dir)
 
                 out_file = out_dir / f'chapter{chapter_idx}.html'
                 out_file.write_text(html_data, encoding='utf-8')

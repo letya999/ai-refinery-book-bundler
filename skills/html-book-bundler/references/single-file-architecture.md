@@ -1,41 +1,39 @@
 # Single-File Architecture (Offline-First)
 
-Цель: один `*.html`, который работает без сети и без внешних CDN.
+**Goal:** A single standalone `*.html` file that works entirely offline without any external network dependencies or CDN calls.
 
-## Режим A: Zero-Dependency (по умолчанию)
+## Core Strategy: The `srcdoc` Pattern
 
-1. Все главы хранить как Base64 (или как строки) и открывать в `iframe` через `Blob` URL.
-2. При переключении главы освобождать старый `Blob` URL через `URL.revokeObjectURL()`.
-3. Любые визуализации делать на `canvas + JavaScript`.
-4. Не тянуть внешние шрифты/иконки: только системные шрифты или встроенные `@font-face` (data URL).
+The bundler transforms multiple source chapters and assets into a single HTML shell that dynamically manages content.
 
-## Режим B: Controlled Library Injection (опционально)
+1. **Chapter Storage:** Chapters are stored as UTF-8 strings within a global `CHAPTERS` array in the shell's `<script>` block.
+2. **Dynamic Loading:** When a user selects a chapter, the shell updates the main `<iframe>` using the `srcdoc` attribute: `iframe.srcdoc = CHAPTERS[index]`.
+3. **Escaping:** To prevent premature script termination in the shell, any `</script>` tags within the chapter HTML are escaped as `<\/script>` during the JSON serialization process in the bundler.
+4. **Zero External Assets:** All images and small assets are converted to Base64 Data URIs and inlined directly into the chapter HTML or CSS before bundling.
 
-Использовать только когда без библиотеки теряется качество/скорость разработки.
+## Visual & Interaction Principles
 
-1. Библиотеку хранить локально в репо (`vendor/*.min.js`), не из CDN в рантайме.
-2. В финальный single-file библиотеку встраивать инлайн (или как Base64-строку с локальным loader).
-3. Загружать библиотеку лениво: только при открытии нужной главы.
-4. Ограничить разрешенный список библиотек и фиксировать версию.
-5. Если библиотека больше пользы не дает, удалять (в пользу canvas/WAAPI).
+1. **Self-Contained Visuals:** All diagrams and charts use standard HTML/CSS or `canvas`. 
+2. **No External Fonts/Icons:** Use system fonts or embed small critical fonts via `@font-face` Data URIs.
+3. **Vanilla JS Preference:** Minimize dependencies. If a library is required, it must be inlined into the shell.
+4. **Lazy Initialization:** Heavy visual components should initialize only when the chapter is loaded into the viewport.
 
-## Каркас shell
+## Shell Layout & Features
 
-- Левый сайдбар глав + top-nav.
-- `iframe` для изоляции главы.
-- Прогресс по главам.
-- Сохранение позиции чтения (`localStorage`).
-- Мобильный режим: off-canvas меню.
+- **Responsive Sidebar:** Chapter navigation with search and bookmarking.
+- **Sandboxed Execution:** The content `<iframe>` uses `sandbox="allow-scripts allow-same-origin"` to isolate chapter logic while allowing communication with the shell.
+- **Persistence:** Reading progress (current chapter and scroll position) and bookmarks are saved to `localStorage` keyed by a unique `BOOK_ID`.
+- **Navigation Bridge:** Chapters communicate back to the shell (e.g., for inter-chapter links) using `window.parent.postMessage`.
 
-## Безопасность и устойчивость
+## Security & Resilience
 
-- Запрет внешних URL в `src/href` (кроме `data:`/`blob:`).
-- Проверка на console errors обязательна.
-- Для долгоживущих сессий освобождать временные объекты (`Blob` URL, таймеры, анимации).
+- **CSP Headers:** The shell includes a strict `Content-Security-Policy` to block all external network requests.
+- **Offline Reliability:** The file must remain fully functional when opened from a local disk (`file://` protocol).
+- **Memory Management:** Since it's a single-file app, avoid memory leaks in long-running sessions by cleaning up global event listeners or heavy objects if chapters are frequently switched.
 
-## Почему так
+## Technical Rationale
 
-- `modulepreload` ускоряет загрузку модулей, но для полностью офлайн single-file не обязателен.
-- Для интерактивной книги лучше предсказуемость, чем сложный рантайм.
+The `srcdoc` approach is preferred over `Blob URLs` (legacy) because it is more robust, requires no manual memory management (`URL.revokeObjectURL`), and works consistently across all modern browsers without permission issues common with `blob:` origins.
 
-См. также: `references/performance-playbook.md`, `references/library-injection-mode.md`.
+---
+See also: `references/performance-playbook.md`, `references/library-injection-mode.md`.

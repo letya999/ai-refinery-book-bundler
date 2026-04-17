@@ -79,7 +79,7 @@ class BookLinter:
                 self.errors.append(f"{label}: Hardcoded hex color in <svg>. Use CSS variables.")
 
         # Wall of Text Check
-        visual_tags = r'class=["\'][^"\']*\b(vis-diag|vis-stats|vis-grid|stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge|diag-node|matrix)\b[^"']*["\']|<table>'
+        visual_tags = r"""class=["'][^"']*\b(vis-diag|vis-stats|vis-grid|stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge|diag-node|matrix)\b[^"']*["']|<table>"""
         if len(html) > 5000 and not re.search(visual_tags, html, re.I):
             self.warnings.append(f"{label}: Potential 'wall of text' detected ({len(html)} chars).")
 

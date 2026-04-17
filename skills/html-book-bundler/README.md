@@ -52,7 +52,6 @@ html-book-bundler/
     pdf_parser_general.py   # Style-aware PDF extractor
     extract_pdf_visuals.py  # Extracts images/tables from PDF
     lint_book.py            # Security and quality linter
-    audit_single_file_html.py
     dev_server.cjs          # Live-reload dev server
     optimize_assets.py      # Image compression
   templates/
