@@ -63,12 +63,11 @@ function styleFirstPara(html) {
   return html.replace(/<p(\s[^>]*)?>/i, (match, attrs) => {
     if (done) return match;
     done = true;
-    if (attrs && attrs.includes('lead-para')) return match;
-    const newAttrs = attrs ? attrs.replace(/class="([^"]*)"/, 'class="$1 lead-para"') : ' class="lead-para"';
-    if (attrs && !attrs.includes('class=')) {
-        return `<p${attrs} class="lead-para">`;
-    }
-    return `<p${newAttrs}>`;
+    if (!attrs) return '<p class="lead-para">';
+    if (attrs.includes('lead-para')) return match;
+    if (!attrs.includes('class=')) return `<p${attrs} class="lead-para">`;
+    // Handle both single- and double-quoted class attributes
+    return `<p${attrs.replace(/class=(["'])([^"']*)\1/, (_, q, cls) => `class=${q}${cls} lead-para${q}`)}>`;
   });
 }
 
@@ -78,6 +77,10 @@ function styleFirstPara(html) {
  */
 function autoEnrichLists(html) {
   return html.replace(/<(ul|ol)([^>]*)>([\s\S]*?)<\/\1>/g, (match, tag, _attrs, inner) => {
+    // Ordered lists have sequence semantics — never convert to cards
+    if (tag === 'ol') return match;
+    // Author explicitly styled this list — preserve it
+    if (_attrs.includes('class=')) return match;
     const items = inner.match(/<li>([\s\S]*?)<\/li>/g);
     if (!items || items.length < 3 || items.length > 6) return match;
     

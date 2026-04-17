@@ -42,6 +42,34 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 - **Light mode rgba backgrounds:** `rgba(15,31,56,.4)` is invisible on dark but creates dark patches on light backgrounds. Always add `[data-theme="light"]` overrides for any element using hardcoded dark rgba values.
 - **Define helper functions outside loops:** Python functions redefined on every loop iteration cause confusing closure behavior (late binding). Move them above the loop with explicit parameters.
 
+## Lessons Learned (2026-04-17, v8.2 audit):
+- **Search index must be built before `bundleAssets`:** building from post-base64 content floods the SIDX with noise tokens from data URIs.
+- **`bundleAssets` must skip `.css` — use `inlineStylesheets()` instead:** browsers ignore `<link href="data:application/octet-stream;...">` as stylesheets; CSS must be inlined as `<style>` blocks.
+- **`el_to_html` tail text must be HTML-escaped:** FB2 XML element tail text is auto-decoded by the parser; forgetting `escape_html(tail)` is a silent XSS vector.
+- **`LANG.dir` was a dead field:** now wired to `dir="{{LANG_DIR}}"` on the shell `<html>` element — RTL books work correctly.
+- **`autoEnrichLists` must skip `<ol>` entirely:** ordered lists have sequence semantics that card grids destroy.
+- **Keep output filename stable:** the base name becomes the localStorage key prefix (`BOOK_ID`). Renaming the output file silently resets all bookmarks and reading position.
+
+## AUDIT TRAIL
+
+### Open
+_(none — all known issues resolved in v8.1 audit pass)_
+
+### Resolved (2026-04-17)
+- `[CRIT]` Search index poisoned by base64 — `bundle.cjs:chapterTexts` now extracted before `bundleAssets`
+- `[CRIT]` CSS `<link>` silently broken by bundleAssets — added `.css` skip + `inlineStylesheets()` function
+- `[CRIT]` FB2 tail text XSS — all `el_to_html` returns now call `escape_html(tail)`
+- `[CRIT]` `LANG.dir` dead field — wired to `{{LANG_DIR}}` template placeholder
+- `[SIG]`  `autoEnrichLists` converts `<ol>` — now skipped; also skips already-classed lists
+- `[SIG]`  `dev_server.cjs --port` NaN — validates range 1-65535 and exits with error
+- `[BUG]`  Duplicate `document.getElementById('search')` — now uses `searchEl`
+- `[BUG]`  `document.documentElement.lang` set twice — removed JS duplicate (template handles it)
+- `[BUG]`  `styleFirstPara` ignores single-quoted class attributes — regex now handles both quote styles
+- `[DEAD]` `"loading"` key in lang JSONs — removed from `en.json` and `ru.json`
+- `[DOC]`  Version mismatch across files — all sub-skills, README, package.json bumped to v8.1
+- `[DOC]`  `--skip-insights` risk of duplicate pullquotes — documented in assembler SKILL.md
+- `[DOC]`  `bookId` → localStorage coupling — documented in assembler SKILL.md
+
 ## References:
 See `references/` directory for 8 architectural docs covering architecture, shell JS API, theming, security, search, i18n, and deployment.
 

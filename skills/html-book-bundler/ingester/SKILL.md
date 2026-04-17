@@ -3,7 +3,7 @@ name: book-ingester
 description: Foundation Layer. Extracts raw text from PDF, EPUB, FB2. Cleans OCR artifacts and sets structural H1/H2 marks.
 ---
 
-# Book Ingester (v8.0)
+# Book Ingester (v8.1)
 
 You are the Foundation Layer. Your goal is to provide a clean, 100% complete text source for the Architect.
 

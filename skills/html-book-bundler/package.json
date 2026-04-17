@@ -1,6 +1,6 @@
 {
   "name": "html-book-bundler",
-  "version": "8.0.0",
+  "version": "8.1.0",
   "description": "Bundles book chapters into a single offline-first HTML reading app with sidebar, search, bookmarks, and dark/light theme.",
   "main": "scripts/bundle.cjs",
   "engines": {

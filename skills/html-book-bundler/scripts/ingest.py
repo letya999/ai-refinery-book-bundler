@@ -32,19 +32,20 @@ def el_to_html(el) -> str:
     children_html = ''.join(el_to_html(c) for c in el)
     tail = el.tail or ''
 
-    if tag == 'strong':    return f'<b>{escape_html(text)}{children_html}</b>{tail}'
-    if tag == 'emphasis':  return f'<em>{escape_html(text)}{children_html}</em>{tail}'
-    if tag == 'strikethrough': return f'<s>{escape_html(text)}{children_html}</s>{tail}'
-    if tag == 'code':      return f'<code>{escape_html(text)}{children_html}</code>{tail}'
-    if tag == 'p':         return f'<p>{escape_html(text)}{children_html}</p>{tail}'
-    if tag == 'v':         return f'{escape_html(text)}{children_html}<br>{tail}'
-    if tag in ('subtitle',): return f'<h3>{escape_html(text)}{children_html}</h3>{tail}'
-    if tag == 'empty-line': return f'<br>{tail}'
+    etail = escape_html(tail)
+    if tag == 'strong':    return f'<b>{escape_html(text)}{children_html}</b>{etail}'
+    if tag == 'emphasis':  return f'<em>{escape_html(text)}{children_html}</em>{etail}'
+    if tag == 'strikethrough': return f'<s>{escape_html(text)}{children_html}</s>{etail}'
+    if tag == 'code':      return f'<code>{escape_html(text)}{children_html}</code>{etail}'
+    if tag == 'p':         return f'<p>{escape_html(text)}{children_html}</p>{etail}'
+    if tag == 'v':         return f'{escape_html(text)}{children_html}<br>{etail}'
+    if tag in ('subtitle',): return f'<h3>{escape_html(text)}{children_html}</h3>{etail}'
+    if tag == 'empty-line': return f'<br>{etail}'
     if tag == 'image':
         href = el.attrib.get('{http://www.w3.org/1999/xlink}href', '')
-        return f'<img src="{href[1:] if href.startswith("#") else href}" alt="">{tail}'
+        return f'<img src="{href[1:] if href.startswith("#") else href}" alt="">{etail}'
     # Unknown tags: just render content
-    return f'{escape_html(text)}{children_html}{tail}'
+    return f'{escape_html(text)}{children_html}{etail}'
 
 
 def section_to_html(section, depth: int = 0) -> tuple[str, str]:

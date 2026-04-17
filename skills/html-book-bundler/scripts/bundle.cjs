@@ -135,6 +135,8 @@ function bundleAssets(htmlContent, baseDir) {
     if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('#')) return null;
     // Never inline .html — inter-chapter navigation depends on bare filename hrefs
     if (/\.html?$/i.test(src)) return null;
+    // Never inline .css here — handled by inlineStylesheets() which produces <style> blocks
+    if (/\.css$/i.test(src)) return null;
     const abs = path.resolve(baseDir, src);
     if (fs.existsSync(abs)) {
       const ext = path.extname(abs).slice(1).toLowerCase();
@@ -158,6 +160,27 @@ function bundleAssets(htmlContent, baseDir) {
   });
 
   return content;
+}
+
+// Inline <link rel="stylesheet" href="local.css"> as <style> blocks.
+// data: URI CSS links are ignored by browsers; actual text inlining is required.
+function inlineStylesheets(htmlContent, baseDir) {
+  return htmlContent.replace(/<link([^>]*)\/?>(\s*<\/link>)?/gi, (match, attrs) => {
+    const relM  = /rel=["']([^"']+)["']/i.exec(attrs);
+    const hrefM = /href=["']([^"']+)["']/i.exec(attrs);
+    if (!relM || !relM[1].toLowerCase().includes('stylesheet')) return match;
+    if (!hrefM) return match;
+    const href = hrefM[1];
+    if (href.startsWith('http') || href.startsWith('data:') || href.startsWith('#')) return match;
+    const abs = path.resolve(baseDir, href);
+    if (!fs.existsSync(abs)) return match;
+    try {
+      const css = fs.readFileSync(abs, 'utf8');
+      return `<style>\n${css}\n</style>`;
+    } catch (e) {
+      return match;
+    }
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -217,6 +240,17 @@ let totalImageBytes = 0;
 files.forEach((file, idx) => {
   let content = fs.readFileSync(path.join(inputDirAbs, file), 'utf8');
 
+  // Title extraction and search index text must come from raw HTML — before bundleAssets
+  // injects base64 data URIs that would pollute the inverted search index with noise tokens.
+  let title = content.match(/<title>(.*?)<\/title>/i)?.[1] || '';
+  if (!title) {
+    const h1 = content.match(/<h1[^>]*>(.*?)<\/h1>/i)?.[1];
+    title = h1 ? h1.replace(/<[^>]+>/g, '').trim() : file.replace(/\.html$/, '');
+  }
+  globalTitles.push(title);
+
+  chapterTexts.push(content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+
   // Count image data before inlining (for warning)
   const imgMatches = content.match(/src=["'][^"']+["']/gi) || [];
   imgMatches.forEach(m => {
@@ -228,17 +262,7 @@ files.forEach((file, idx) => {
   });
 
   content = bundleAssets(content, inputDirAbs);
-
-  // Title extraction: <title> first, then <h1>, then filename
-  let title = content.match(/<title>(.*?)<\/title>/i)?.[1] || '';
-  if (!title) {
-    const h1 = content.match(/<h1[^>]*>(.*?)<\/h1>/i)?.[1];
-    title = h1 ? h1.replace(/<[^>]+>/g, '').trim() : file.replace(/\.html$/, '');
-  }
-  globalTitles.push(title);
-
-  // Plain text for search index (full text, not truncated)
-  chapterTexts.push(content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+  content = inlineStylesheets(content, inputDirAbs);
 
   // Prepare chapter HTML string (srcdoc-ready)
   chapters.push(prepareChapter(content, idx, title, files, globalCSS, bookTitle, skipInsights, langCode));
@@ -269,6 +293,7 @@ const replacements = {
   '{{BOOK_ID}}':        bookId,
   '{{BOOK_TITLE}}':     bookTitle,
   '{{LANG_CODE}}':      LANG.code || langCode,
+  '{{LANG_DIR}}':       LANG.dir || 'ltr',
   '{{LANG_JSON}}':      JSON.stringify(LANG),
   '{{GLOBAL_TITLES}}':  JSON.stringify(globalTitles),
   // Escape </script> so it never terminates the outer <script> block prematurely.

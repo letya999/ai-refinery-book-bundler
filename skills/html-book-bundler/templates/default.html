@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{LANG_CODE}}" data-theme="dark">
+<html lang="{{LANG_CODE}}" dir="{{LANG_DIR}}" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -261,12 +261,11 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   let searchFilter = '';
 
   // ── i18n helpers ─────────────────────────────────────────────────────────
-  document.getElementById('search').placeholder = LANG.search_placeholder;
+  searchEl.placeholder = LANG.search_placeholder;
   document.getElementById('prev-btn').textContent = LANG.prev;
   document.getElementById('next-btn').textContent = LANG.next;
   document.getElementById('bm-summary').textContent = LANG.bookmarks_title;
   document.getElementById('vol-info').textContent = LANG.total_chapters.replace('{n}', T.length);
-  document.documentElement.lang = LANG.code || 'ru';
 
   // ── Theme ─────────────────────────────────────────────────────────────────
   const themeBtn = document.getElementById('theme-btn');

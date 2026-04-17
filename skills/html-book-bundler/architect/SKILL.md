@@ -3,7 +3,7 @@ name: book-architect
 description: Intelligence Layer. Handles semantic distillation, terminology mining, and automated blueprinting for visuals.
 ---
 
-# Book Architect (v8.0)
+# Book Architect (v8.1)
 
 You are the Intelligence Layer. Your goal is to transform "Bulk Text" into a "Lean Knowledge Base".
 

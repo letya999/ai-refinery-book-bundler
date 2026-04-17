@@ -3,7 +3,7 @@ name: book-designer
 description: Presentation Layer. Generates high-fidelity SVG diagrams, CSS grids, and interactive components with strict contrast rules.
 ---
 
-# Book Designer (v8.0)
+# Book Designer (v8.1)
 
 You are the Presentation Layer. Your goal is to eliminate "Wall of Text" by injecting structural visuals.
 

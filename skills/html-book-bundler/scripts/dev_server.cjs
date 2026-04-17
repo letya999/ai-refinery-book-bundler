@@ -8,7 +8,15 @@ const inputDir = args[args.indexOf('--input') + 1] || './chapters';
 const outputFile = args[args.indexOf('--output') + 1] || './preview.html';
 const bundlerPath = path.join(__dirname, 'bundle.cjs');
 
-let port = args.includes('--port') ? parseInt(args[args.indexOf('--port') + 1]) : 3000;
+let port = 3000;
+if (args.includes('--port')) {
+  const portVal = parseInt(args[args.indexOf('--port') + 1]);
+  if (isNaN(portVal) || portVal < 1 || portVal > 65535) {
+    console.error('Error: --port requires a valid port number (1-65535)');
+    process.exit(1);
+  }
+  port = portVal;
+}
 let clients = [];
 
 function rebuild() {
