@@ -1,4 +1,4 @@
-# HTML Book Bundler v8.1
+# HTML Book Bundler v8.2
 
 Bundles book chapters into a single offline-first HTML reading app. No server, no internet, no dependencies — open the output file in any browser.
 
@@ -29,6 +29,13 @@ node scripts/bundle.cjs --input ./chapters --output book.html --title "My Book"
 ```bash
 python scripts/ingest.py --input book.fb2 --output ./chapters
 # then bundle as above
+```
+
+## Extract from PDF
+
+```bash
+python scripts/pdf_parser_general.py --input book.pdf --output ./chapters
+# uses PyMuPDF for style-aware extraction of text and tables
 ```
 
 ## Supported input formats
@@ -93,7 +100,7 @@ node scripts/dev_server.cjs --input ./chapters --output preview.html
 
 ```bash
 python scripts/lint_book.py --file book.html
-# Checks: CSP, sandbox, chapter count, sandbox escape patterns, external URLs
+# Checks: CSP, sandbox, chapter count, sandbox escape patterns, external URLs, viewBox, user-scalable, lang
 ```
 
 ## Architecture

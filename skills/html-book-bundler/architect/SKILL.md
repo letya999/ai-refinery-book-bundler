@@ -3,7 +3,7 @@ name: book-architect
 description: Intelligence Layer. Handles semantic distillation, terminology mining, and automated blueprinting for visuals.
 ---
 
-# Book Architect (v8.1)
+# Book Architect (v8.2)
 
 You are the Intelligence Layer. Your goal is to transform "Bulk Text" into a "Lean Knowledge Base".
 
@@ -22,6 +22,8 @@ You are the Intelligence Layer. Your goal is to transform "Bulk Text" into a "Le
 - For every chapter, plan 2-4 visual anchors.
 - **Rules:** When describing workflows (BPMN), structures (WBS), or hierarchies (Org Chart), blueprint them as SVG diagrams, not lists.
 - Pass the blueprint as `blueprint.json` in the working directory.
+
+> **Note:** `blueprint.json` is a design communication artifact for the Designer role. It is NOT read by `bundle.cjs` — it guides manual SVG creation in the next step.
 
 Minimal `blueprint.json` schema:
 ```json

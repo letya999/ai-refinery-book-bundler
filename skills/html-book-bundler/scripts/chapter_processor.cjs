@@ -138,11 +138,13 @@ function autoEnrichLists(html) {
  * @param {string} bookTitle     - book title for the kicker line (optional)
  * @param {boolean} skipInsights - whether to skip auto-injecting insights
  * @param {string} langCode      - UI language code (e.g., 'ru' or 'en')
+ * @param {string} chapterLabel  - Internationalized label for "Chapter" (optional)
  */
-function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitle = '', skipInsights = false, langCode = 'ru') {
+function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitle = '', skipInsights = false, langCode = 'ru', chapterLabel = null) {
   let content = html;
 
   const hasOwnStyles = /<style[\s\S]*?<\/style>/i.test(content);
+  const effectiveChapterLabel = chapterLabel || (langCode === 'en' ? 'Chapter' : 'Глава');
 
   // Inter-chapter navigation script.
   // The closing </script> tag is appended via concatenation so the template literal
@@ -220,10 +222,9 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
       if (h1Match) clean = clean.replace(h1Match[0], '');
       if (leadMatch) clean = clean.replace(leadMatch[0], '');
 
-      const chapterWord = langCode === 'en' ? 'Chapter' : 'Глава';
       const kicker = bookTitle
-        ? `${bookTitle} \u2022 ${chapterWord} ${index + 1}`
-        : `${chapterWord} ${index + 1}`;
+        ? `${bookTitle} \u2022 ${effectiveChapterLabel} ${index + 1}`
+        : `${effectiveChapterLabel} ${index + 1}`;
       bodyContent = `
 <main class="wrap">
   <section class="hero">

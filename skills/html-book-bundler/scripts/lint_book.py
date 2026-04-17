@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Master Linter for HTML Book Bundler (v8.0).
+Master Linter for HTML Book Bundler (v8.2).
 Combines Security, Design, and Structural audits into one tool.
 """
 import argparse
@@ -75,10 +75,32 @@ class BookLinter:
         # SVG Hex Color Check — catches both attribute and inline style forms
         svgs = re.findall(r'<svg[^>]*>.*?</svg>', html, re.I | re.S)
         for svg in svgs:
-            attr_hex = re.search(r'(?:fill|stroke)\s*=\s*["\']#[0-9a-fA-F]{3,6}["\']', svg, re.I)
-            style_hex = re.search(r'style\s*=\s*["\'][^"\']*(?:fill|stroke)\s*:\s*#[0-9a-fA-F]{3,6}', svg, re.I)
+            # Extended hex check (v8.2 audit fix)
+            attr_hex = re.search(
+                r'(?:fill|stroke|stop-color|flood-color|lighting-color)\s*=\s*["\']#[0-9a-fA-F]{3,6}["\']',
+                svg, re.I
+            )
+            style_hex = re.search(
+                r'style\s*=\s*["\'][^"\']*(?:fill|stroke|stop-color|flood-color|lighting-color)\s*:\s*#[0-9a-fA-F]{3,6}',
+                svg, re.I
+            )
             if attr_hex or style_hex:
                 self.errors.append(f"{label}: Hardcoded hex color in <svg>. Use CSS variables.")
+
+        # viewBox enforcement
+        for svg_match in re.finditer(r'<svg([^>]*)>', html, re.I):
+            attrs = svg_match.group(1)
+            if 'viewBox' not in attrs and 'viewbox' not in attrs.lower():
+                self.errors.append(f"{label}: <svg> missing viewBox attribute (required for mobile responsiveness)")
+                break  # one error per chapter is enough
+
+        # user-scalable=no check (WCAG 1.4.4)
+        if re.search(r'user-scalable\s*=\s*no', html, re.I):
+            self.errors.append(f"{label}: viewport meta has user-scalable=no (WCAG 1.4.4 violation)")
+
+        # lang attribute check
+        if re.search(r'<html(?![^>]*\blang\s*=)', html, re.I):
+            self.warnings.append(f"{label}: <html> element missing lang attribute (accessibility)")
 
         # Wall of Text Check
         visual_tags = r"""class=["'][^"']*\b(vis-diag|vis-stats|vis-grid|stats|stat|translator|grid|card|vis-timeline|tl-step|acc-item|badge|diag-node|matrix)\b[^"']*["']|<table>"""

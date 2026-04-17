@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Universal Book Ingester for HTML Book Bundler v8.0
+Universal Book Ingester for HTML Book Bundler v8.2
 Supports: FB2, EPUB, FB2.ZIP
 Outputs chapter1.html, chapter2.html, ... (compatible with bundle.cjs navScript)
 Zero stdlib-only dependencies for FB2/EPUB (python-docx needed for DOCX).
@@ -95,7 +95,7 @@ def section_to_html(section, depth: int = 0) -> tuple[str, str]:
     return title, '\n'.join(html_parts)
 
 
-def ingest_fb2(input_path: Path, out_dir: Path):
+def ingest_fb2(input_path: Path, out_dir: Path, lang: str = 'ru'):
     print(f"Parsing FB2: {input_path}")
 
     raw = input_path.read_bytes()
@@ -142,7 +142,7 @@ def ingest_fb2(input_path: Path, out_dir: Path):
             body_html = body_html.replace(f'src="{b_id}"', f'src="{path_str}"')
 
         html = (
-            f'<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n'
+            f'<!DOCTYPE html>\n<html lang="{lang}">\n<head>\n<meta charset="utf-8">\n'
             f'<title>{escape_html(chapter_title)}</title>\n</head>\n<body>\n'
             f'{body_html}\n</body>\n</html>'
         )
@@ -263,7 +263,7 @@ def ingest_epub(input_path: Path, out_dir: Path):
     print(f"Done. Extracted {chapter_idx - 1} chapters to {out_dir}")
 
 
-def ingest_docx(input_path: Path, out_dir: Path):
+def ingest_docx(input_path: Path, out_dir: Path, lang: str = 'ru'):
     """Requires: pip install python-docx"""
     try:
         from docx import Document
@@ -305,10 +305,14 @@ def ingest_docx(input_path: Path, out_dir: Path):
 
     if current_parts:
         chapters.append((current_title, current_parts))
+    
+    # Check for images
+    if len(doc.inline_shapes) > 0:
+        print(f"  Warning: {len(doc.inline_shapes)} inline image(s) detected in DOCX but not extracted (not supported).")
 
     for i, (title, parts) in enumerate(chapters, 1):
         html = (
-            f'<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n'
+            f'<!DOCTYPE html>\n<html lang="{lang}">\n<head>\n<meta charset="utf-8">\n'
             f'<title>{escape_html(title)}</title>\n</head>\n<body>\n'
             f'{"".join(parts)}\n</body>\n</html>'
         )
@@ -324,10 +328,12 @@ def main():
     p.add_argument('--input',  required=True, help='Path to source file (.fb2, .epub, .docx, .fb2.zip)')
     p.add_argument('--output', required=True, help='Output directory for chapter HTML files')
     p.add_argument('--force',  action='store_true', help='Overwrite output directory if it exists')
+    p.add_argument('--lang',   default='ru', help='Language code for generated HTML (default: ru)')
     args = p.parse_args()
 
     in_path = Path(args.input)
     out_dir = Path(args.output)
+    lang    = args.lang
 
     if not in_path.exists():
         print(f"Error: input file not found: {in_path}")
@@ -345,11 +351,14 @@ def main():
     name   = in_path.name.lower()
 
     if suffix == '.fb2' or name.endswith('.fb2.zip'):
-        ingest_fb2(in_path, out_dir)
+        ingest_fb2(in_path, out_dir, lang)
     elif suffix == '.epub':
         ingest_epub(in_path, out_dir)
-    elif suffix in ('.docx', '.doc'):
-        ingest_docx(in_path, out_dir)
+    elif suffix == '.docx':
+        ingest_docx(in_path, out_dir, lang)
+    elif suffix == '.doc':
+        print("Error: .doc (Word 97 binary) is not supported. Please save as .docx and retry.")
+        raise SystemExit(1)
     else:
         print(f"Error: unsupported format '{suffix}'. Supported: .fb2, .fb2.zip, .epub, .docx")
         raise SystemExit(1)

@@ -3,7 +3,7 @@ name: book-ingester
 description: Foundation Layer. Extracts raw text from PDF, EPUB, FB2. Cleans OCR artifacts and sets structural H1/H2 marks.
 ---
 
-# Book Ingester (v8.1)
+# Book Ingester (v8.2)
 
 You are the Foundation Layer. Your goal is to provide a clean, 100% complete text source for the Architect.
 
@@ -15,6 +15,7 @@ You are the Foundation Layer. Your goal is to provide a clean, 100% complete tex
 5. **Encoding:** Ensure UTF-8 output.
 
 ## Workflow:
-- Use `../scripts/ingest.py` for standard formats.
-- Use `../scripts/pdf_parser_general.py` for style-aware extraction.
+- Use `../scripts/ingest.py` for FB2, EPUB, and DOCX formats.
+- Use `../scripts/pdf_parser_general.py` for style-aware PDF extraction (supports tables and raster images).
+- Use `../scripts/extract_pdf_visuals.py` for dedicated visual extraction from PDF files.
 - Output: Raw HTML chapters in `chapter1.html`, `chapter2.html`, etc.

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' data:; img-src 'self' data: blob:; connect-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' data:; img-src 'self' data:; connect-src 'none'">
 <title>{{BOOK_TITLE}}</title>
 <style>
 /* ── Dark theme (default) ── */
@@ -454,6 +454,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
 
   // ── postMessage bridge (from iframe to shell) ─────────────────────────────
   window.addEventListener('message', e => {
+    if (e.source !== fr.contentWindow) return;
     if (e.data && e.data.action === 'bookGo') go(e.data.chapterIdx, e.data.anchorId);
   });
 

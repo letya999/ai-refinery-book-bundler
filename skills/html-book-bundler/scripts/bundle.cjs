@@ -11,7 +11,7 @@ const args = process.argv.slice(2);
 
 if (args.includes('--help') || args.length === 0) {
   console.log(`
-HTML Book Bundler v8.0
+HTML Book Bundler v8.2
 Bundles chapter HTML files into a single offline-first reading app.
 
 Usage:
@@ -189,10 +189,13 @@ function inlineStylesheets(htmlContent, baseDir) {
 const STOP_WORDS = new Set(
   ('и в на не с а но из к по за то как что так же это да уж вот ' +
    'он она оно они мы вы я ни ли бы до при про над под без через для ' +
+   'это который если когда такой всё было стало может нет есть один два три первый второй каждый всегда уже ещё тоже только после перед между через много других самый просто очень хотя чтобы потому поэтому когда всего лишь никто никогда ведь всем была были ' +
    'the a an of to in is it on at be by this that with from are was were ' +
-   'have has had will would can could should may might do does did not ')
+   'have has had will would can could should may might do does did not ' +
+   'you your we our they their its also just more some what when where which who how all any been but get got had has have here him his her into its just like me more most my no now one only our out own said she so some than their them then there these they this too up use was way were what when which who will with ')
   .split(/\s+/).filter(Boolean)
 );
+
 
 function tokenize(text) {
   return text
@@ -265,7 +268,7 @@ files.forEach((file, idx) => {
   content = inlineStylesheets(content, inputDirAbs);
 
   // Prepare chapter HTML string (srcdoc-ready)
-  chapters.push(prepareChapter(content, idx, title, files, globalCSS, bookTitle, skipInsights, langCode));
+  chapters.push(prepareChapter(content, idx, title, files, globalCSS, bookTitle, skipInsights, langCode, LANG.chapter));
 });
 
 // Warn about large image payloads

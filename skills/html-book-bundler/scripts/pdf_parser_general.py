@@ -156,11 +156,11 @@ class PDFParser:
 <html lang="{lang}">
 <head>
 <meta charset="UTF-8">
-<title>{title}</title>
+<title>{html_lib.escape(title)}</title>
 </head>
 <body>
 <section class="hero">
-  <h1>{title}</h1>
+  <h1>{html_lib.escape(title)}</h1>
 </section>
 <div class="content-body">
 {body_html}

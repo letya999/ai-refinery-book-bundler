@@ -54,6 +54,9 @@
   :root:not([data-theme="dark"]) body {
     background: radial-gradient(circle at 15% -20%, #c8dff0 0, #e4ecf5 42%, #f0f4f8 76%);
   }
+  :root:not([data-theme="dark"]) .hero {
+    background: rgba(176,200,224,.3);
+  }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
