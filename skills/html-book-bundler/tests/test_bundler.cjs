@@ -153,9 +153,13 @@ if (titleMatch) {
 console.log(`\n${'─'.repeat(40)}`);
 console.log(`Results: ${passed} passed, ${failed} failed`);
 
-// Cleanup
-fs.rmSync(testDir, { recursive: true });
-if (fs.existsSync(outputFile)) fs.rmSync(outputFile);
+// Cleanup — always runs even if tests throw
+try {
+  if (fs.existsSync(testDir)) fs.rmSync(testDir, { recursive: true });
+  if (fs.existsSync(outputFile)) fs.rmSync(outputFile);
+} catch (e) {
+  console.warn('Cleanup warning:', e.message);
+}
 
 if (failed > 0) {
   console.error('Some tests FAILED.');

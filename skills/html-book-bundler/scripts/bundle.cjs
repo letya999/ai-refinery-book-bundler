@@ -67,7 +67,7 @@ if (!fs.existsSync(inputDirAbs)) {
 
 const bookId    = path.basename(outputFileAbs, '.html');
 const bookTitle = getArg('--title', bookId.replace(/[-_]/g, ' '));
-const langCode  = getArg('--lang', 'ru');
+let langCode    = getArg('--lang', 'ru');
 
 const SUPPORTED_LANGS = ['ru', 'en'];
 if (!SUPPORTED_LANGS.includes(langCode)) {
@@ -133,6 +133,8 @@ function bundleAssets(htmlContent, baseDir) {
 
   const inline = (src) => {
     if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('#')) return null;
+    // Never inline .html — inter-chapter navigation depends on bare filename hrefs
+    if (/\.html?$/i.test(src)) return null;
     const abs = path.resolve(baseDir, src);
     if (fs.existsSync(abs)) {
       const ext = path.extname(abs).slice(1).toLowerCase();
@@ -197,8 +199,8 @@ const files = fs
   .readdirSync(inputDirAbs)
   .filter(f => f.endsWith('.html'))
   .sort((a, b) => {
-    if (a === 'glossary.html') return 1;
-    if (b === 'glossary.html') return -1;
+    if (a.toLowerCase() === 'glossary.html') return 1;
+    if (b.toLowerCase() === 'glossary.html') return -1;
     return a.localeCompare(b, undefined, { numeric: true });
   });
 
@@ -243,7 +245,7 @@ files.forEach((file, idx) => {
 });
 
 // Warn about large image payloads
-if (totalImageBytes > 500_000) {
+if (totalImageBytes > 5_000_000) {
   const mb = (totalImageBytes / 1_048_576).toFixed(1);
   console.warn(`Warning: ${mb}MB of images detected. Run with --optimize to compress, or output file may be large.`);
 }

@@ -8,7 +8,7 @@ const path = require('path');
 /** Wrap <p> blocks longer than LIMIT chars in a collapsible <details>. */
 function autoCollapseLongParas(html) {
   const LIMIT = 480;
-  return html.replace(/<p>([\s\S]*?)<\/p>/g, (match, inner) => {
+  return html.replace(/<p([^>]*)>([\s\S]*?)<\/p>/g, (match, attrs, inner) => {
     if (/<(?:div|details|blockquote|table)\b/.test(inner)) return match;
     const text = inner.replace(/<[^>]+>/g, '');
     if (text.length <= LIMIT) return match;
@@ -77,7 +77,7 @@ function styleFirstPara(html) {
  * Heuristic: if items are short and there's no nested markup.
  */
 function autoEnrichLists(html) {
-  return html.replace(/<(ul|ol)>([\s\S]*?)<\/\1>/g, (match, tag, inner) => {
+  return html.replace(/<(ul|ol)([^>]*)>([\s\S]*?)<\/\1>/g, (match, tag, _attrs, inner) => {
     const items = inner.match(/<li>([\s\S]*?)<\/li>/g);
     if (!items || items.length < 3 || items.length > 6) return match;
     

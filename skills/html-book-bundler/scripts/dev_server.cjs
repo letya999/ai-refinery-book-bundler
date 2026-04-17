@@ -78,7 +78,7 @@ function startServer(p) {
                     timeout = setTimeout(() => {
                         console.log(`Change detected in ${label}/${filename}.`);
                         rebuild();
-                    }, 150);
+                    }, 300);
                 }
             });
         }

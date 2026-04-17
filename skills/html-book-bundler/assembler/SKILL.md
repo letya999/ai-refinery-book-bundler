@@ -17,6 +17,9 @@ You are the Deployment Layer. Your goal is a 100% functional, single-file readin
 
 ## Workflow:
 ```bash
-node ../scripts/bundle.cjs --input ./chapters --output book_final.html --skip-insights
+# Russian book (default)
+node ../scripts/bundle.cjs --input ./chapters --output book_final.html --title "Book Title" --lang ru --skip-insights
+# English book
+node ../scripts/bundle.cjs --input ./chapters --output book_final.html --title "Book Title" --lang en --skip-insights
 python ../scripts/lint_book.py --file book_final.html
 ```

@@ -461,7 +461,12 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   // ── Wire up buttons ───────────────────────────────────────────────────────
   document.getElementById('prev-btn').onclick = () => go(cur - 1);
   document.getElementById('next-btn').onclick = () => go(cur + 1);
-  searchEl.oninput = e => buildList(e.target.value);
+  let searchDebounce;
+  searchEl.oninput = e => {
+    clearTimeout(searchDebounce);
+    const val = e.target.value;
+    searchDebounce = setTimeout(() => buildList(val), 300);
+  };
 
   // ── Initial render ────────────────────────────────────────────────────────
   buildBookmarkList();

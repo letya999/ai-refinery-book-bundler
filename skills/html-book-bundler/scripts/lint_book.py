@@ -72,10 +72,12 @@ class BookLinter:
     def _audit_chapter(self, idx: int, html: str):
         label = f"Chapter {idx}"
 
-        # SVG Hex Color Check
+        # SVG Hex Color Check — catches both attribute and inline style forms
         svgs = re.findall(r'<svg[^>]*>.*?</svg>', html, re.I | re.S)
         for svg in svgs:
-            if re.search(r'(?:fill|stroke)\s*=\s*["\']#[0-9a-fA-F]{3,6}["\']', svg, re.I):
+            attr_hex = re.search(r'(?:fill|stroke)\s*=\s*["\']#[0-9a-fA-F]{3,6}["\']', svg, re.I)
+            style_hex = re.search(r'style\s*=\s*["\'][^"\']*(?:fill|stroke)\s*:\s*#[0-9a-fA-F]{3,6}', svg, re.I)
+            if attr_hex or style_hex:
                 self.errors.append(f"{label}: Hardcoded hex color in <svg>. Use CSS variables.")
 
         # Wall of Text Check

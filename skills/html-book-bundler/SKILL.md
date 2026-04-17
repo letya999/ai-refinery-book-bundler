@@ -1,9 +1,9 @@
 ---
 name: html-book-bundler
-description: Master Skill Bundle (v8.0). A 4-role pipeline (Ingest, Architect, Design, Assemble) for creating offline-first interactive books.
+description: Master Skill Bundle (v8.1). A 4-role pipeline (Ingest, Architect, Design, Assemble) for creating offline-first interactive books.
 ---
 
-# HTML Book Bundler (Skill Bundle v8.0)
+# HTML Book Bundler (Skill Bundle v8.1)
 
 This is the umbrella skill for the book production toolchain. It manages 4 specialized sub-skills for each layer of production.
 
@@ -34,6 +34,16 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 - **`user-scalable=no` is WCAG 1.4.4 violation:** Never disable pinch-to-zoom; users with low vision need it.
 - **EPUB CSS via data URI href doesn't work:** Browsers ignore `<link href="data:text/css;base64,...">` as stylesheets. CSS must be inlined as `<style>` blocks.
 - **Non-existent files in README:** Always verify all referenced filenames exist before committing documentation.
+
+## Lessons Learned (2026-04-17, v8.1):
+- **`const` vs `let` for fallback vars:** Any variable that gets a default-fallback assignment (e.g. unsupported lang) must be declared `let`, not `const`. A `const` reassignment in strict mode throws TypeError silently during error handling.
+- **`bundleAssets` must skip `.html` files:** Inlining `<a href="chapter2.html">` as a base64 data URI breaks inter-chapter navigation — navScript bails early on `data:` hrefs. Only inline images/fonts/CSS.
+- **EPUB `<link>` attribute order:** HTML attribute order is arbitrary. Regex that assumes `rel=` before `href=` misses most real EPUB files. Match the whole `<link>` tag, then extract each attribute with a separate `re.search()`.
+- **Light mode rgba backgrounds:** `rgba(15,31,56,.4)` is invisible on dark but creates dark patches on light backgrounds. Always add `[data-theme="light"]` overrides for any element using hardcoded dark rgba values.
+- **Define helper functions outside loops:** Python functions redefined on every loop iteration cause confusing closure behavior (late binding). Move them above the loop with explicit parameters.
+
+## References:
+See `references/` directory for 8 architectural docs covering architecture, shell JS API, theming, security, search, i18n, and deployment.
 
 ## Usage:
 Refer to the individual SKILL.md in subdirectories for role-specific instructions.

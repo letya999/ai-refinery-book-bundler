@@ -153,9 +153,16 @@ def ingest_fb2(input_path: Path, out_dir: Path):
 
 
 def inline_epub_css(html: str, assets_dir: Path) -> str:
-    """Inline linked CSS files as <style> blocks (v8.0 Fix)."""
+    """Inline linked CSS <link> tags as <style> blocks. Attribute-order independent."""
     def replace_link(m):
-        href = m.group(1)
+        tag = m.group(0)
+        rel_m = re.search(r'rel=["\']([^"\']+)["\']', tag, re.I)
+        href_m = re.search(r'href=["\']([^"\']+)["\']', tag, re.I)
+        if not rel_m or 'stylesheet' not in rel_m.group(1).lower():
+            return tag
+        if not href_m:
+            return tag
+        href = href_m.group(1)
         if href.startswith('assets/'):
             css_path = assets_dir / href[len('assets/'):]
             if css_path.exists():
@@ -164,9 +171,8 @@ def inline_epub_css(html: str, assets_dir: Path) -> str:
                     return f'<style>{css_content}</style>'
                 except Exception:
                     pass
-        return m.group(0)
-    return re.sub(r'<link[^>]+rel=["\']stylesheet["\'][^>]+href=["\']([^"\']+)["\'][^>]*/?>',
-                  replace_link, html, flags=re.I)
+        return tag
+    return re.sub(r'<link[^>]*/?>',  replace_link, html, flags=re.I)
 
 
 def ingest_epub(input_path: Path, out_dir: Path):
@@ -208,10 +214,18 @@ def ingest_epub(input_path: Path, out_dir: Path):
                 except Exception:
                     pass
 
+        def fix_asset_path(src: str, chapter_href: str) -> str:
+            """Rewrite relative asset src to assets/ flat directory."""
+            if src.startswith('http') or src.startswith('data:') or src.startswith('#'):
+                return src
+            chapter_dir = posixpath.dirname(chapter_href)
+            resolved = posixpath.normpath(posixpath.join(chapter_dir, src))
+            safe = resolved.replace('/', '_').replace('..', '')
+            return f'assets/{safe}'
+
         # Process spine chapters
         chapter_idx = 1
         skip_types = {'application/x-dtbncx+xml'}
-        skip_props = {'nav'}
 
         for s_id in spine:
             if s_id not in manifest:
@@ -224,29 +238,19 @@ def ingest_epub(input_path: Path, out_dir: Path):
             full = posixpath.join(base_path, href) if base_path else href
             try:
                 raw_bytes = zf.read(full)
-                # Try UTF-8, fallback to latin-1
                 try:
                     html_data = raw_bytes.decode('utf-8')
                 except UnicodeDecodeError:
                     html_data = raw_bytes.decode('latin-1')
 
-                # Rewrite asset paths to use assets/ directory
-                def fix_asset_path(src: str) -> str:
-                    if src.startswith('http') or src.startswith('data:') or src.startswith('#'):
-                        return src
-                    # Resolve relative path from the chapter's location
-                    chapter_dir = posixpath.dirname(href)
-                    resolved = posixpath.normpath(posixpath.join(chapter_dir, src))
-                    safe = resolved.replace('/', '_').replace('..', '')
-                    return f'assets/{safe}'
+                # Rewrite asset paths to use assets/ flat directory
+                html_data = re.sub(
+                    r'(src|href)=["\']([^"\']+)["\']',
+                    lambda mo: f'{mo.group(1)}="{fix_asset_path(mo.group(2), href)}"',
+                    html_data
+                )
 
-                def replace_src(m):
-                    attr, val = m.group(1), m.group(2)
-                    return f'{attr}="{fix_asset_path(val)}"'
-
-                html_data = re.sub(r'(src|href)=["\']([^"\']+)["\']', replace_src, html_data)
-                
-                # Fix 8: Inline CSS assets
+                # Inline CSS assets
                 html_data = inline_epub_css(html_data, assets_dir)
 
                 out_file = out_dir / f'chapter{chapter_idx}.html'
