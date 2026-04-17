@@ -75,13 +75,13 @@ class BookLinter:
         # SVG Hex Color Check — catches both attribute and inline style forms
         svgs = re.findall(r'<svg[^>]*>.*?</svg>', html, re.I | re.S)
         for svg in svgs:
-            # Extended hex check (v8.2 audit fix)
+            # Extended hex check (v8.3 audit fix: catches 3, 4, 6, and 8-digit hex codes)
             attr_hex = re.search(
-                r'(?:fill|stroke|stop-color|flood-color|lighting-color)\s*=\s*["\']#[0-9a-fA-F]{3,6}["\']',
+                r'(?:fill|stroke|stop-color|flood-color|lighting-color)\s*=\s*["\']#[0-9a-fA-F]{3,8}["\']',
                 svg, re.I
             )
             style_hex = re.search(
-                r'style\s*=\s*["\'][^"\']*(?:fill|stroke|stop-color|flood-color|lighting-color)\s*:\s*#[0-9a-fA-F]{3,6}',
+                r'style\s*=\s*["\'][^"\']*(?:fill|stroke|stop-color|flood-color|lighting-color)\s*:\s*#[0-9a-fA-F]{3,8}',
                 svg, re.I
             )
             if attr_hex or style_hex:

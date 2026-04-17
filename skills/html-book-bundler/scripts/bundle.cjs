@@ -132,6 +132,8 @@ const globalCSS = fs.readFileSync(themePath, 'utf8');
 // ---------------------------------------------------------------------------
 // Asset inlining (images referenced in chapter HTML)
 // ---------------------------------------------------------------------------
+const ASSETS = {};
+
 function bundleAssets(htmlContent, baseDir) {
   const mimeMap = {
     png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
@@ -139,7 +141,7 @@ function bundleAssets(htmlContent, baseDir) {
     woff: 'font/woff', woff2: 'font/woff2',
   };
 
-  const inline = (src) => {
+  const processAsset = (src) => {
     if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('#')) return null;
     // Never inline .html — inter-chapter navigation depends on bare filename hrefs
     if (/\.html?$/i.test(src)) return null;
@@ -149,22 +151,42 @@ function bundleAssets(htmlContent, baseDir) {
     if (fs.existsSync(abs)) {
       const ext = path.extname(abs).slice(1).toLowerCase();
       const mime = mimeMap[ext] || 'application/octet-stream';
-      const data = fs.readFileSync(abs).toString('base64');
-      return `data:${mime};base64,${data}`;
+      const fileHash = crypto.createHash('md5').update(fs.readFileSync(abs)).digest('hex').slice(0, 10);
+      const assetKey = `asset_${fileHash}_${path.basename(src)}`;
+      
+      if (!ASSETS[assetKey]) {
+        const data = fs.readFileSync(abs).toString('base64');
+        ASSETS[assetKey] = `data:${mime};base64,${data}`;
+      }
+      return assetKey;
     }
     return null;
   };
 
-  // Replace attributes (src, href)
-  let content = htmlContent.replace(/(src|href)=["']([^"']+)["']/gi, (match, attr, src) => {
-    const dataUri = inline(src);
-    return dataUri ? `${attr}="${dataUri}"` : match;
+  // Replace attributes (src)
+  let content = htmlContent.replace(/src=["']([^"']+)["']/gi, (match, src) => {
+    const assetKey = processAsset(src);
+    // Use a tiny transparent 1x1 base64 GIF as placeholder, store actual key in data-src
+    return assetKey ? `src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${assetKey}"` : match;
+  });
+  
+  // Replace href for non-html assets (if any are linked directly)
+  content = content.replace(/href=["']([^"']+)["']/gi, (match, src) => {
+    const assetKey = processAsset(src);
+    return assetKey ? `href="#" data-href="${assetKey}"` : match;
   });
 
   // Replace CSS url(...)
   content = content.replace(/url\(["']?([^"'\)]+)["']?\)/gi, (match, src) => {
-    const dataUri = inline(src);
-    return dataUri ? `url("${dataUri}")` : match;
+    const assetKey = processAsset(src);
+    return assetKey ? `url("var(--${assetKey}, ${ASSETS[assetKey]})")` : match; // fallback to inline if var not set, but we will inject vars or handle it. Wait, CSS urls inside chapter styles. Better to just inline CSS urls since they are usually small (fonts, icons).
+  });
+
+  // Let's refine CSS url() replacement to just inline it as before, since lazy loading fonts/backgrounds is complex and they are usually small.
+  content = content.replace(/url\(["']?([^"'\)]+)["']?\)/gi, (match, src) => {
+    if (src.startsWith('var(')) return match; // Already a var
+    const assetKey = processAsset(src);
+    return assetKey ? `url("${ASSETS[assetKey]}")` : match;
   });
 
   return content;
@@ -194,18 +216,10 @@ function inlineStylesheets(htmlContent, baseDir) {
 // ---------------------------------------------------------------------------
 // Search index builder (inverted index, language-agnostic)
 // ---------------------------------------------------------------------------
-const STOP_WORDS = new Set(
-  ('и в на не с а но из к по за то как что так же это да уж вот ' +
-   'он она оно они мы вы я ни ли бы до при про над под без через для ' +
-   'это который если когда такой всё было стало может нет есть один два три первый второй каждый всегда уже ещё тоже только после перед между через много других самый просто очень хотя чтобы потому поэтому когда всего лишь никто никогда ведь всем была были ' +
-   'the a an of to in is it on at be by this that with from are was were ' +
-   'have has had will would can could should may might do does did not ' +
-   'you your we our they their its also just more some what when where which who how all any been but get got had has have here him his her into its just like me more most my no now one only our out own said she so some than their them then there these they this too up use was way were what when which who will with ')
-  .split(/\s+/).filter(Boolean)
-);
-
+const STOP_WORDS = new Set((LANG.stop_words || []).map(w => w.toLowerCase()));
 
 function tokenize(text) {
+
   return text
     .replace(/<[^>]+>/g, ' ')
     .toLowerCase()
@@ -310,6 +324,7 @@ const replacements = {
   // Escape </script> so it never terminates the outer <script> block prematurely.
   // In JSON, <\/ is parsed as </ by JS (the \/ escape = /) giving correct srcdoc HTML.
   '{{LOCAL_CHAPTERS}}': JSON.stringify(chapters).replace(/<\/script>/gi, '<\\/script>'),
+  '{{ASSETS}}':         JSON.stringify(ASSETS),
   '{{SEARCH_IDX}}':     JSON.stringify(searchIndex),
   '{{DEV_SCRIPT}}':     devScript,
 };

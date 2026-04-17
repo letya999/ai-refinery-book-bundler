@@ -25,6 +25,10 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 - **Base64 Bloat:** Limit image width to 1000px in `optimize_assets.py` to prevent mobile browser OOM crashes.
 - **EPUB Navigation:** Regex path rewriting must skip `.html` and `#` to preserve inter-chapter links.
 - **PDF Extraction:** Use dynamic font baseline calculation (`_calculate_baseline`) for relative heading detection (Pocket vs A4 formats).
+- **Data-URI Memory Management:** Injecting hundreds of megabytes of Base64 strings directly into the DOM crashes mobile Safari. Move assets to a JSON dictionary and lazy load them via `IntersectionObserver` in the guest script.
+- **Standard API over Browser Hacks:** Relying on `window.find()` creates inconsistent search UI and doesn't allow scrolling through multiple hits per chapter. Custom `TreeWalker` highlighting (`<mark>`) is the correct approach.
+- **Hardcoded Logic Breaks i18n:** Stop words for inverted indices should not be hardcoded in the bundler. They are language-specific and must be loaded dynamically from `lang/*.json` files.
+- **QA Linter Hex Expansion:** Linter checking SVGs for hardcoded hex codes must support 8-character codes (`#RRGGBBAA`) exported by Figma, not just 3 or 6 characters.
 
 ## Usage:
 Refer to the individual SKILL.md in subdirectories for role-specific instructions.

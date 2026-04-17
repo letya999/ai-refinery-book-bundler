@@ -175,8 +175,8 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
   const hasOwnStyles = /<style[\s\S]*?<\/style>/i.test(content);
   const effectiveChapterLabel = chapterLabel || (langCode === 'en' ? 'Chapter' : 'Глава');
 
-  // Inter-chapter navigation script.
-  const navScriptClose = '</' + 'script>';
+  // Guest Script: Handles navigation, lazy loading, theme, search highlighting, and scroll reporting via postMessage
+  const guestScriptClose = '</' + 'script>';
   const navScript = `
 <script>
 (function() {
@@ -184,15 +184,12 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
   const chapterMap = {};
   fileArray.forEach((f, i) => {
     chapterMap[f] = i;
-    chapterMap[f.toLowerCase()] = i;  // case-insensitive fallback
-    // Keep support for padded links
+    chapterMap[f.toLowerCase()] = i;
     const m = f.match(/chapter(\\d+)\\.html/);
-    if (m) {
-      const padded = String(m[1]).padStart(3, '0') + '.html';
-      chapterMap[padded] = i;
-    }
+    if (m) chapterMap[String(m[1]).padStart(3, '0') + '.html'] = i;
   });
 
+  // Link interception
   document.addEventListener('click', e => {
     const a = e.target.closest('a');
     if (!a) return;
@@ -217,8 +214,125 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   });
+
+  // Scroll reporting
+  window.addEventListener('scroll', () => {
+    const maxY = document.body.scrollHeight - window.innerHeight;
+    if (maxY > 10) {
+      window.parent.postMessage({ action: 'scrollReport', ratio: window.scrollY / maxY }, '*');
+    }
+  }, { passive: true });
+
+  // IntersectionObserver for lazy images
+  const lazyImages = document.querySelectorAll('img[data-src]');
+  if (lazyImages.length > 0) {
+    const imgObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          const assetKey = img.getAttribute('data-src');
+          if (assetKey) {
+            window.parent.postMessage({ action: 'requestAsset', key: assetKey }, '*');
+          }
+          obs.unobserve(img);
+        }
+      });
+    }, { rootMargin: '200px' });
+    lazyImages.forEach(img => imgObserver.observe(img));
+  }
+
+  // Handle messages from shell
+  window.addEventListener('message', e => {
+    const data = e.data;
+    if (!data) return;
+
+    if (data.action === 'setTheme') {
+      document.documentElement.setAttribute('data-theme', data.theme);
+    } 
+    else if (data.action === 'provideAsset') {
+      const imgs = document.querySelectorAll('img[data-src="' + data.key + '"]');
+      imgs.forEach(img => {
+        img.src = data.dataUri;
+        img.removeAttribute('data-src');
+      });
+    }
+    else if (data.action === 'setScrollRatio') {
+      const maxY = document.body.scrollHeight - window.innerHeight;
+      if (maxY > 0 && data.ratio > 0.005) {
+        window.scrollTo({ top: data.ratio * maxY, behavior: 'instant' });
+      }
+    }
+    else if (data.action === 'scrollToAnchor') {
+      const el = document.getElementById(data.anchorId);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    else if (data.action === 'highlightSearch') {
+      // Clear previous marks
+      const marks = document.querySelectorAll('mark.search-hit');
+      marks.forEach(m => {
+        const parent = m.parentNode;
+        parent.replaceChild(document.createTextNode(m.textContent), m);
+        parent.normalize();
+      });
+      window.searchHits = [];
+      window.currentSearchHit = -1;
+
+      if (!data.query) return;
+      const query = data.query.toLowerCase().replace(/[^\\p{L}\\p{N}]/gu, '');
+      if (query.length < 2) return;
+
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+      let node;
+      const nodes = [];
+      while ((node = walker.nextNode())) nodes.push(node);
+
+      nodes.forEach(n => {
+        const text = n.nodeValue;
+        const lower = text.toLowerCase();
+        const idx = lower.indexOf(query);
+        if (idx !== -1 && n.parentNode.nodeName !== 'MARK' && n.parentNode.nodeName !== 'SCRIPT' && n.parentNode.nodeName !== 'STYLE') {
+          const matchLen = query.length;
+          const before = text.slice(0, idx);
+          const matchText = text.slice(idx, idx + matchLen);
+          const after = text.slice(idx + matchLen);
+
+          const frag = document.createDocumentFragment();
+          if (before) frag.appendChild(document.createTextNode(before));
+          const mark = document.createElement('mark');
+          mark.className = 'search-hit';
+          mark.style.background = 'var(--acc)';
+          mark.style.color = 'var(--bg)';
+          mark.textContent = matchText;
+          frag.appendChild(mark);
+          if (after) frag.appendChild(document.createTextNode(after));
+
+          n.parentNode.replaceChild(frag, n);
+          window.searchHits.push(mark);
+        }
+      });
+
+      if (window.searchHits.length > 0) {
+        window.currentSearchHit = 0;
+        window.searchHits[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        window.parent.postMessage({ action: 'searchHitsFound', count: window.searchHits.length }, '*');
+      }
+    }
+    else if (data.action === 'nextSearchHit') {
+      if (!window.searchHits || window.searchHits.length === 0) return;
+      window.currentSearchHit = (window.currentSearchHit + 1) % window.searchHits.length;
+      window.searchHits[window.currentSearchHit].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    else if (data.action === 'prevSearchHit') {
+      if (!window.searchHits || window.searchHits.length === 0) return;
+      window.currentSearchHit = (window.currentSearchHit - 1 + window.searchHits.length) % window.searchHits.length;
+      window.searchHits[window.currentSearchHit].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+
+  // Ready signal
+  window.parent.postMessage({ action: 'guestReady' }, '*');
 })();
-` + navScriptClose;
+` + guestScriptClose;
 
   // Extract body content
   const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);

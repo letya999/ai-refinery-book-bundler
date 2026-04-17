@@ -192,7 +192,11 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
       <p id="vol-info"></p>
     </div>
     <div class="search-box">
-      <input type="search" id="search" autocomplete="off">
+      <div style="display:flex; gap:4px; align-items:center">
+        <input type="search" id="search" autocomplete="off">
+        <button id="search-prev" title="Previous match" style="display:none; padding:4px 8px; background:var(--panel2); border:1px solid var(--line); border-radius:4px; color:var(--txt); cursor:pointer;">↑</button>
+        <button id="search-next" title="Next match" style="display:none; padding:4px 8px; background:var(--panel2); border:1px solid var(--line); border-radius:4px; color:var(--txt); cursor:pointer;">↓</button>
+      </div>
     </div>
     <div class="bm-panel" id="bm-panel">
       <details id="bm-details">
@@ -214,7 +218,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
     </div>
     <div class="prog"><i id="bar"></i></div>
     <div class="frame">
-      <iframe id="fr" sandbox="allow-scripts allow-same-origin" title="Chapter content"></iframe>
+      <iframe id="fr" sandbox="allow-scripts" title="Chapter content"></iframe>
     </div>
   </main>
 </div>
@@ -231,6 +235,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   const T        = {{GLOBAL_TITLES}};
   const CHAPTERS = {{LOCAL_CHAPTERS}};
   const SIDX     = {{SEARCH_IDX}};
+  const ASSETS   = {{ASSETS}};
 
   // ── Helper to escape HTML for safe injection into innerHTML ───────────────
   function esc(s) {
@@ -252,6 +257,8 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   const side     = document.getElementById('side');
   const overlay  = document.getElementById('overlay');
   const searchEl = document.getElementById('search');
+  const searchPrev = document.getElementById('search-prev');
+  const searchNext = document.getElementById('search-next');
   const app      = document.getElementById('app');
   const bmBtn    = document.getElementById('bm-btn');
   const bmList   = document.getElementById('bm-list');
@@ -259,22 +266,25 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
 
   let cur = 0;
   let searchFilter = '';
+  let pendingAnchor = null;
 
   // ── i18n helpers ─────────────────────────────────────────────────────────
-  searchEl.placeholder = LANG.search_placeholder;
-  document.getElementById('prev-btn').textContent = LANG.prev;
-  document.getElementById('next-btn').textContent = LANG.next;
-  document.getElementById('bm-summary').textContent = LANG.bookmarks_title;
-  document.getElementById('vol-info').textContent = LANG.total_chapters.replace('{n}', T.length);
+  searchEl.placeholder = LANG.search_placeholder || 'Search...';
+  document.getElementById('prev-btn').textContent = LANG.prev || '<';
+  document.getElementById('next-btn').textContent = LANG.next || '>';
+  document.getElementById('bm-summary').textContent = LANG.bookmarks_title || 'Bookmarks';
+  document.getElementById('vol-info').textContent = (LANG.total_chapters || '{n} chapters').replace('{n}', T.length);
 
   // ── Theme ─────────────────────────────────────────────────────────────────
   const themeBtn = document.getElementById('theme-btn');
   function applyTheme(t) {
     document.documentElement.setAttribute('data-theme', t);
-    themeBtn.textContent = t === 'dark' ? LANG.theme_to_light : LANG.theme_to_dark;
+    themeBtn.textContent = t === 'dark' ? (LANG.theme_to_light || '☀') : (LANG.theme_to_dark || '☾');
     store.set('theme_' + BOOK_ID, t);
-    // Propagate to iframe if loaded
-    try { fr.contentDocument.documentElement.setAttribute('data-theme', t); } catch(e) {}
+    // Propagate to iframe via postMessage
+    if (fr.contentWindow) {
+      fr.contentWindow.postMessage({ action: 'setTheme', theme: t }, '*');
+    }
   }
   const savedTheme = store.get('theme_' + BOOK_ID)
     || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
@@ -300,19 +310,19 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   }
   function updateBookmarkBtn() {
     const bm = getBookmarks();
-    bmBtn.textContent = bm.includes(cur) ? LANG.bookmark_remove : LANG.bookmark_add;
+    bmBtn.textContent = bm.includes(cur) ? (LANG.bookmark_remove || '★') : (LANG.bookmark_add || '☆');
   }
   function buildBookmarkList() {
     const bm = getBookmarks();
     bmList.innerHTML = '';
     if (!bm.length) {
-      bmList.innerHTML = `<div class="bm-empty">${LANG.no_bookmarks}</div>`;
+      bmList.innerHTML = `<div class="bm-empty">${LANG.no_bookmarks || 'No bookmarks'}</div>`;
       return;
     }
     bm.forEach(i => {
       const btn = document.createElement('button');
       btn.className = 'bm-item';
-      btn.textContent = `${LANG.chapter} ${i + 1} — ${T[i] || ''}`;
+      btn.textContent = `${LANG.chapter || 'Chapter'} ${i + 1} — ${T[i] || ''}`;
       btn.onclick = () => { go(i); closeSidebarMobile(); };
       bmList.appendChild(btn);
     });
@@ -347,63 +357,15 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   function go(i, anchor = null) {
     if (i < 0 || i >= T.length) return;
     cur = i;
+    pendingAnchor = anchor;
+    searchPrev.style.display = 'none';
+    searchNext.style.display = 'none';
 
     const doSwitch = () => {
-      fr.onload = () => {
-        // Propagate theme to iframe
-        try { fr.contentDocument.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')); } catch(e) {}
-
-        // Restore scroll position only when not jumping to a specific anchor
-        if (!anchor) {
-          const savedRatio = parseFloat(store.get('sc_' + BOOK_ID + '_' + i) || '0');
-          if (savedRatio > 0.005) {
-            try {
-              const maxY = fr.contentDocument.body.scrollHeight - fr.clientHeight;
-              if (maxY > 0) fr.contentWindow.scrollTo({ top: savedRatio * maxY, behavior: 'instant' });
-            } catch(e) {}
-          }
-        }
-
-        // Navigate to anchor if specified — defer to let iframe layout settle first
-        if (anchor) {
-          setTimeout(() => {
-            try {
-              const el = fr.contentDocument.getElementById(anchor);
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } catch(e) {}
-          }, 80);
-        } else if (searchFilter) {
-          // Jump to first search keyword match
-          setTimeout(() => {
-            try {
-              const query = searchFilter.trim().split(/\\s+/)[0];
-              if (query && fr.contentWindow.find) {
-                // Clear selection and find
-                fr.contentWindow.getSelection().removeAllRanges();
-                fr.contentWindow.find(query, false, false, true, false, true, false);
-              }
-            } catch(e) {}
-          }, 80);
-        }
-
-        // Save scroll position on scroll
-        try {
-          fr.contentWindow.addEventListener('scroll', () => {
-            try {
-              const maxY = fr.contentDocument.body.scrollHeight - fr.clientHeight;
-              if (maxY > 10) {
-                const ratio = fr.contentWindow.scrollY / maxY;
-                store.set('sc_' + BOOK_ID + '_' + cur, ratio.toFixed(4));
-              }
-            } catch(e) {}
-          }, { passive: true });
-        } catch(e) {}
-      };
-
       fr.srcdoc = CHAPTERS[i];
 
       // Update UI
-      const chLabel = LANG.chapter_label.replace('{n}', i + 1);
+      const chLabel = (LANG.chapter_label || 'Chapter {n}').replace('{n}', i + 1);
       tt.innerHTML = `<i>${chLabel}</i> ${esc(T[i] || '')}`;
       bar.style.width = ((i + 1) / T.length * 100) + '%';
       document.querySelectorAll('.ch').forEach(el => el.classList.toggle('on', +el.dataset.i === i));
@@ -431,7 +393,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
       const btn = document.createElement('button');
       btn.className = 'ch' + (i === cur ? ' on' : '');
       btn.dataset.i = i;
-      const chLabel = LANG.chapter_label.replace('{n}', i + 1);
+      const chLabel = (LANG.chapter_label || 'Chapter {n}').replace('{n}', i + 1);
       btn.innerHTML = `<b>${chLabel}</b>${esc(t)}${bm.includes(i) ? '<span class="bm-star">★</span>' : ''}`;
       btn.onclick = () => { go(i); closeSidebarMobile(); };
       list.appendChild(btn);
@@ -467,8 +429,55 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   // ── postMessage bridge (from iframe to shell) ─────────────────────────────
   window.addEventListener('message', e => {
     if (e.source !== fr.contentWindow) return;
-    if (e.data && e.data.action === 'bookGo') go(e.data.chapterIdx, e.data.anchorId);
+    const data = e.data;
+    if (!data) return;
+
+    if (data.action === 'bookGo') {
+      go(data.chapterIdx, data.anchorId);
+    } 
+    else if (data.action === 'scrollReport') {
+      store.set('sc_' + BOOK_ID + '_' + cur, data.ratio.toFixed(4));
+    }
+    else if (data.action === 'requestAsset') {
+      const b64 = ASSETS[data.key];
+      if (b64) {
+        fr.contentWindow.postMessage({ action: 'provideAsset', key: data.key, dataUri: b64 }, '*');
+      }
+    }
+    else if (data.action === 'guestReady') {
+      // Send theme
+      fr.contentWindow.postMessage({ action: 'setTheme', theme: document.documentElement.getAttribute('data-theme') }, '*');
+      
+      // Handle position restoring
+      if (!pendingAnchor) {
+        const savedRatio = parseFloat(store.get('sc_' + BOOK_ID + '_' + cur) || '0');
+        if (savedRatio > 0.005) {
+          fr.contentWindow.postMessage({ action: 'setScrollRatio', ratio: savedRatio }, '*');
+        }
+      }
+
+      // Handle anchor or search
+      if (pendingAnchor) {
+        fr.contentWindow.postMessage({ action: 'scrollToAnchor', anchorId: pendingAnchor }, '*');
+        pendingAnchor = null;
+      } else if (searchFilter) {
+        fr.contentWindow.postMessage({ action: 'highlightSearch', query: searchFilter }, '*');
+      }
+    }
+    else if (data.action === 'searchHitsFound') {
+      if (data.count > 0) {
+        searchPrev.style.display = 'block';
+        searchNext.style.display = 'block';
+      }
+    }
   });
+
+  searchPrev.onclick = () => {
+    if (fr.contentWindow) fr.contentWindow.postMessage({ action: 'prevSearchHit' }, '*');
+  };
+  searchNext.onclick = () => {
+    if (fr.contentWindow) fr.contentWindow.postMessage({ action: 'nextSearchHit' }, '*');
+  };
 
   // ── Wire up buttons ───────────────────────────────────────────────────────
   document.getElementById('prev-btn').onclick = () => go(cur - 1);
@@ -477,7 +486,14 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   searchEl.oninput = e => {
     clearTimeout(searchDebounce);
     const val = e.target.value;
-    searchDebounce = setTimeout(() => buildList(val), 300);
+    searchDebounce = setTimeout(() => {
+      buildList(val);
+      if (fr.contentWindow) fr.contentWindow.postMessage({ action: 'highlightSearch', query: val }, '*');
+      if (!val) {
+        searchPrev.style.display = 'none';
+        searchNext.style.display = 'none';
+      }
+    }, 300);
   };
 
   // ── Initial render ────────────────────────────────────────────────────────

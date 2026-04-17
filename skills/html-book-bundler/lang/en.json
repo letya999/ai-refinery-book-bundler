@@ -12,5 +12,6 @@
   "no_bookmarks": "No bookmarks yet",
   "theme_to_light": "☀",
   "theme_to_dark": "☾",
-  "chapter_label": "Chapter {n}"
+  "chapter_label": "Chapter {n}",
+  "stop_words": ["the", "a", "an", "of", "to", "in", "is", "it", "on", "at", "be", "by", "this", "that", "with", "from", "are", "was", "were", "have", "has", "had", "will", "would", "can", "could", "should", "may", "might", "do", "does", "did", "not", "you", "your", "we", "our", "they", "their", "its", "also", "just", "more", "some", "what", "when", "where", "which", "who", "how", "all", "any", "been", "but", "get", "got", "here", "him", "his", "her", "into", "like", "me", "most", "my", "no", "now", "one", "only", "out", "own", "said", "she", "so", "than", "them", "then", "there", "these", "too", "up", "use", "way", "why"]
 }
