@@ -50,7 +50,10 @@ function processWithCheerio(html, skipInsights) {
       const preview = text.slice(0, 120).replace(/\s+\S*$/, '') + '\u2026';
       const $details = $('<details class="long-para"><summary></summary></details>');
       $details.find('summary').text(preview);
-      $p.wrap($details);
+      // replaceWith + append: positions <p> AFTER <summary> (as sibling), not inside it.
+      // wrap() uses "innermost child" which is <summary> — putting <p> inside summary.
+      $p.replaceWith($details);
+      $details.append($p);
     }
   });
 

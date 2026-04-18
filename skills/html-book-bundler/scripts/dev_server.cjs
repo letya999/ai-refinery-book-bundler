@@ -1,109 +1,83 @@
+#!/usr/bin/env node
+'use strict';
+/**
+ * Minimal SSE live-reload dev server for html-book-bundler.
+ *
+ * Usage:
+ *   1. Build the book with --dev flag:
+ *        node bundle.cjs --input ./chapters --output book.html --dev
+ *   2. Start this server:
+ *        node dev_server.cjs book.html [port]
+ *   3. Open http://localhost:3000 — the page reloads on every file save.
+ *
+ * The injected EventSource(/events) client (from --dev) connects here.
+ * Zero dependencies — uses only Node.js stdlib.
+ */
 const http = require('http');
-const fs = require('fs');
+const fs   = require('fs');
 const path = require('path');
-const { spawnSync } = require('child_process');
 
-const args = process.argv.slice(2);
-const inputDir = args[args.indexOf('--input') + 1] || './chapters';
-const outputFile = args[args.indexOf('--output') + 1] || './preview.html';
-const bundlerPath = path.join(__dirname, 'bundle.cjs');
+const filePath = path.resolve(process.argv[2] || 'book.html');
+const PORT     = parseInt(process.argv[3] || process.env.PORT || '3000', 10);
 
-let port = 3000;
-if (args.includes('--port')) {
-  const portVal = parseInt(args[args.indexOf('--port') + 1]);
-  if (isNaN(portVal) || portVal < 1 || portVal > 65535) {
-    console.error('Error: --port requires a valid port number (1-65535)');
-    process.exit(1);
-  }
-  port = portVal;
-}
-let clients = [];
-
-function rebuild() {
-    console.log('Rebuilding book...');
-    const result = spawnSync('node', [bundlerPath, '--input', inputDir, '--output', outputFile, '--dev'], { stdio: 'inherit' });
-    
-    if (result.status === 0) {
-        console.log('Rebuild successful. Notifying clients...');
-        clients.forEach(res => res.write('data: reload\n\n'));
-    } else {
-        console.error('Rebuild failed.');
-    }
+if (!fs.existsSync(filePath)) {
+  console.error(`Error: file not found: ${filePath}`);
+  console.error(`Usage: node dev_server.cjs <book.html> [port]`);
+  process.exit(1);
 }
 
-const server = http.createServer((req, res) => {
-    if (req.url === '/') {
-        if (!fs.existsSync(outputFile)) rebuild();
-        if (fs.existsSync(outputFile)) {
-            const content = fs.readFileSync(outputFile, 'utf8');
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(content);
-        } else {
-            res.writeHead(500);
-            res.end('Failed to build output file.');
-        }
-    } else if (req.url === '/events') {
-        res.writeHead(200, {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive'
-        });
-        clients.push(res);
-        req.on('close', () => {
-            clients = clients.filter(c => c !== res);
-        });
-    } else {
-        res.writeHead(404);
-        res.end('Not found');
+let clients  = [];
+let lastMtime = fs.statSync(filePath).mtimeMs;
+
+// ── Watch for file changes ────────────────────────────────────────────────────
+fs.watch(filePath, () => {
+  try {
+    const mtime = fs.statSync(filePath).mtimeMs;
+    if (mtime !== lastMtime) {
+      lastMtime = mtime;
+      console.log(`[dev] ${path.basename(filePath)} changed — reloading ${clients.length} client(s)`);
+      clients.forEach(res => {
+        try { res.write('data: reload\n\n'); } catch(e) {}
+      });
     }
+  } catch (e) { /* file may be mid-write; ignore */ }
 });
 
-function startServer(p) {
-    server.on('error', (err) => {
-        if (err.code === 'EADDRINUSE') {
-            console.error(`Error: port ${p} is already in use. Try a different port with --port <N>`);
-            process.exit(1);
-        }
-        throw err;
+// ── HTTP server ───────────────────────────────────────────────────────────────
+const server = http.createServer((req, res) => {
+  if (req.url === '/events') {
+    // Server-Sent Events endpoint — the --dev injected script connects here
+    res.writeHead(200, {
+      'Content-Type':  'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection':    'keep-alive',
+      'Access-Control-Allow-Origin': '*',
     });
-
-    const s = server.listen(p);
-    
-    s.on('listening', () => {
-        console.log(`Dev Server started on http://localhost:${p}`);
-        console.log(`Watching: chapters=${inputDir}, templates, lang`);
-
-        const WATCH_EXT = ['.html', '.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'];
-        let timeout;
-
-        function watchDir(dir, label) {
-            if (!fs.existsSync(dir)) return;
-            fs.watch(dir, { recursive: true }, (eventType, filename) => {
-                if (!filename) return;
-                const ext = path.extname(filename).toLowerCase();
-                if (WATCH_EXT.includes(ext)) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => {
-                        console.log(`Change detected in ${label}/${filename}.`);
-                        rebuild();
-                    }, 300);
-                }
-            });
-        }
-
-        if (!fs.existsSync(inputDir)) {
-            console.error(`Input directory not found: ${inputDir}.`);
-        } else {
-            watchDir(inputDir, 'chapters');
-        }
-
-        // Also watch templates and lang so changes there trigger rebuild
-        const skillRoot = path.join(__dirname, '..');
-        watchDir(path.join(skillRoot, 'templates'), 'templates');
-        watchDir(path.join(skillRoot, 'lang'), 'lang');
-
-        rebuild();
+    clients.push(res);
+    // Keep-alive ping every 25s (prevents proxy timeouts)
+    const keepAlive = setInterval(() => {
+      try { res.write(': ping\n\n'); } catch(e) { clearInterval(keepAlive); }
+    }, 25_000);
+    req.on('close', () => {
+      clearInterval(keepAlive);
+      clients = clients.filter(c => c !== res);
     });
-}
+    return;
+  }
 
-startServer(port);
+  // Serve the bundled HTML file for all other requests
+  try {
+    const html = fs.readFileSync(filePath, 'utf8');
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(html);
+  } catch(e) {
+    res.writeHead(500);
+    res.end('Error reading file');
+  }
+});
+
+server.listen(PORT, '127.0.0.1', () => {
+  console.log(`[dev] Serving  : ${filePath}`);
+  console.log(`[dev] Open     : http://localhost:${PORT}`);
+  console.log(`[dev] Watching : changes auto-reload the browser (Ctrl+C to stop)`);
+});

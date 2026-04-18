@@ -81,6 +81,20 @@ class BookLinter:
                 f"File size {self.stats['size_mb']:.1f} MB exceeds threshold {self.max_size_mb} MB"
             )
 
+        # 5a. SEARCH_IDX (SIDX) Validation
+        sidx_start = re.search(r'\bSIDX\s*=\s*(\{)', content)
+        if not sidx_start:
+            self.warnings.append("Data: SIDX (search index) not found — in-chapter search will be non-functional")
+        else:
+            try:
+                decoder = json.JSONDecoder()
+                sidx, _ = decoder.raw_decode(content, sidx_start.start(1))
+                self.stats['search_terms'] = len(sidx)
+                if not isinstance(sidx, dict):
+                    self.errors.append("Data: SIDX is not a JSON object")
+            except Exception as e:
+                self.errors.append(f"Data: Failed to parse SIDX search index: {e}")
+
         return len(self.errors) == 0
 
     def _audit_chapter(self, idx: int, html: str):
@@ -135,7 +149,7 @@ class BookLinter:
     def report(self):
         sep = '=' * 60
         print(f"\n{sep}\nMASTER LINT REPORT: {self.file_path.name}\n{sep}")
-        print(f"Size: {self.stats.get('size_mb', 0):.2f} MB | Chapters: {self.stats.get('chapters', 0)} | Assets: {self.stats.get('assets', 0)}")
+        print(f"Size: {self.stats.get('size_mb', 0):.2f} MB | Chapters: {self.stats.get('chapters', 0)} | Assets: {self.stats.get('assets', 0)} | Search terms: {self.stats.get('search_terms', 0)}")
         for e in self.errors:   print(f"  [ERROR] {e}")
         for w in self.warnings: print(f"  [WARN]  {w}")
         if not self.errors:

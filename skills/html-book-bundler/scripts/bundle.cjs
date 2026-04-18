@@ -304,14 +304,20 @@ files.forEach((file, idx) => {
 
   chapterTexts.push(content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
 
-  // Count image data before inlining (for warning)
-  const imgMatches = content.match(/src=["'][^"']+["']/gi) || [];
-  imgMatches.forEach(m => {
-    const src = m.slice(5, -1).replace(/^["']|["']$/g, '');
-    if (!src.startsWith('http') && !src.startsWith('data:')) {
-      const abs = path.resolve(inputDirAbs, src);
-      if (fs.existsSync(abs)) totalImageBytes += fs.statSync(abs).size;
-    }
+  // Count image bytes referenced via src= AND srcset=.
+  // Use a Set to avoid double-counting the same file appearing in both attributes.
+  const referencedImgs = new Set();
+  (content.match(/src=["'][^"']+["']/gi) || []).forEach(m => {
+    referencedImgs.add(m.slice(5, -1).replace(/^["']|["']$/g, ''));
+  });
+  (content.match(/srcset=["'][^"']+["']/gi) || []).forEach(m => {
+    const ss = m.slice(8, -1).replace(/^["']|["']$/g, '');
+    ss.split(',').forEach(entry => referencedImgs.add(entry.trim().split(/\s+/)[0]));
+  });
+  referencedImgs.forEach(src => {
+    if (!src || src.startsWith('http') || src.startsWith('data:')) return;
+    const abs = path.resolve(inputDirAbs, src);
+    if (fs.existsSync(abs)) totalImageBytes += fs.statSync(abs).size;
   });
 
   content = bundleAssets(content, inputDirAbs);

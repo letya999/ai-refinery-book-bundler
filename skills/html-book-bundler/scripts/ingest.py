@@ -183,7 +183,7 @@ def inline_epub_css(html: str, assets_dir: Path) -> str:
     return re.sub(r'<link[^>]*/?>',  replace_link, html, flags=re.I)
 
 
-def ingest_epub(input_path: Path, out_dir: Path):
+def ingest_epub(input_path: Path, out_dir: Path, lang: str = 'ru'):
     print(f"Parsing EPUB: {input_path}")
     assets_dir = out_dir / 'assets'
     assets_dir.mkdir(exist_ok=True)
@@ -275,6 +275,11 @@ def ingest_epub(input_path: Path, out_dir: Path):
 
                 # Inline CSS assets
                 html_data = inline_epub_css(html_data, assets_dir)
+
+                # Inject lang attribute if missing (EPUB source may not set it, or may use wrong lang)
+                if not re.search(r'<html[^>]+\blang\s*=', html_data[:500], re.I):
+                    html_data = re.sub(r'<html([^>]*)>', f'<html\\1 lang="{lang}">', html_data,
+                                       count=1, flags=re.I)
 
                 out_file = out_dir / f'chapter{chapter_idx}.html'
                 out_file.write_text(html_data, encoding='utf-8')
@@ -430,7 +435,7 @@ def main():
     if suffix == '.fb2' or name.endswith('.fb2.zip'):
         ingest_fb2(in_path, out_dir, lang)
     elif suffix == '.epub':
-        ingest_epub(in_path, out_dir)
+        ingest_epub(in_path, out_dir, lang)
     elif suffix == '.docx':
         ingest_docx(in_path, out_dir, lang)
     elif suffix == '.pdf':

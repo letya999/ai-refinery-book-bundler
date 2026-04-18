@@ -66,7 +66,11 @@ body {
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   background: radial-gradient(circle at 15% -20%, #2b5c9f 0, #152847 42%, #081423 76%);
   color: var(--txt);
-  font: 16px/1.6 "Trebuchet MS", "Segoe UI Variable", Tahoma, sans-serif;
+  /* Matches default.html shell font — always keep these in sync */
+  font: 16px/1.6 "Segoe UI Variable", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 [data-theme="light"] body {
   background: radial-gradient(circle at 15% -20%, #c8dff0 0, #e4ecf5 42%, #f0f4f8 76%);

@@ -206,8 +206,8 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
     <div class="search-box">
       <div style="display:flex; gap:4px; align-items:center">
         <input type="search" id="search" autocomplete="off">
-        <button id="search-prev" title="Previous match" style="display:none; padding:4px 8px; background:var(--panel2); border:1px solid var(--line); border-radius:4px; color:var(--txt); cursor:pointer;">↑</button>
-        <button id="search-next" title="Next match" style="display:none; padding:4px 8px; background:var(--panel2); border:1px solid var(--line); border-radius:4px; color:var(--txt); cursor:pointer;">↓</button>
+        <button id="search-prev" aria-label="Previous search match" title="Previous match" style="display:none; padding:4px 8px; background:var(--panel2); border:1px solid var(--line); border-radius:4px; color:var(--txt); cursor:pointer;">↑</button>
+        <button id="search-next" aria-label="Next search match" title="Next match" style="display:none; padding:4px 8px; background:var(--panel2); border:1px solid var(--line); border-radius:4px; color:var(--txt); cursor:pointer;">↓</button>
       </div>
     </div>
     <div class="bm-panel" id="bm-panel">
@@ -225,8 +225,9 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
       <button id="prev-btn" aria-label="Previous chapter"></button>
       <button id="next-btn" aria-label="Next chapter"></button>
       <div class="tt" id="tt"></div>
-      <button id="bm-btn" title="Bookmark" style="font-size:16px"></button>
-      <button id="theme-btn" title="Toggle theme" style="font-size:16px"></button>
+      <button id="bm-btn"    aria-label="Bookmark" title="Bookmark" style="font-size:16px"></button>
+      <button id="print-btn" aria-label="Print current chapter" title="Print chapter" style="font-size:16px">🖨</button>
+      <button id="theme-btn" aria-label="Toggle theme" title="Toggle theme" style="font-size:16px"></button>
     </div>
     <div class="prog"><i id="bar"></i></div>
     <div class="frame">
@@ -433,7 +434,12 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
 
   // ── Keyboard navigation ───────────────────────────────────────────────────
   document.addEventListener('keydown', e => {
-    if (e.target === searchEl) return;
+    // Allow Escape from search box to also close mobile sidebar
+    if (e.target === searchEl) {
+      if (e.key === 'Escape') { searchEl.blur(); closeSidebarMobile(); }
+      return;
+    }
+    if (e.key === 'Escape')    closeSidebarMobile();
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
     if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
   });
@@ -494,6 +500,23 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   // ── Wire up buttons ───────────────────────────────────────────────────────
   document.getElementById('prev-btn').onclick = () => go(cur - 1);
   document.getElementById('next-btn').onclick = () => go(cur + 1);
+
+  // ── Print chapter in new window (iframes don't render in browser print) ──────
+  // Restores lazy images from ASSETS dict before opening, so images print correctly.
+  document.getElementById('print-btn').onclick = () => {
+    const win = window.open('', '_blank', 'width=960,height=800');
+    if (!win) { alert('Allow popups for this page to print.'); return; }
+    // Restore lazy images: replace placeholder src + data-src with actual data-URI
+    let printHtml = CHAPTERS[cur]
+      .replace(/<script\b[\s\S]*?<\/script>/gi, '')  // strip navScript (no parent to message)
+      .replace(
+        /src="data:image\/gif;base64,[^"]*"\s+data-src="([^"]+)"/gi,
+        (_, key) => `src="${ASSETS[key] || ''}"`);
+    win.document.open();
+    win.document.write(printHtml);
+    win.document.close();
+    win.addEventListener('load', () => setTimeout(() => win.print(), 200));
+  };
   let searchDebounce;
   searchEl.oninput = e => {
     clearTimeout(searchDebounce);
