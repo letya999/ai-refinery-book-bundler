@@ -9,7 +9,7 @@ You are the Foundation Layer. Your goal is to provide a clean, 100% complete tex
 
 ## Directives:
 1. **Source Fidelity:** Extract all text without summarizing.
-2. **Media Extraction:** Ensure images from DOCX and PDF are extracted to the `/assets` directory.
+2. **Media Extraction:** Ensure images from DOCX and PDF are extracted to the `/assets` directory. Run `optimize_assets.py` to prevent mobile OOM crashes.
 3. **Noise Suppression:** Strip page numbers, running headers, and OCR artifacts.
 4. **Table Detection:** If a table is found, wrap it in `<!-- TABLE_START -->...<!-- TABLE_END -->` markers.
 5. **Unified Entry:** Always use `../scripts/ingest.py` as the primary tool. It now handles PDF and DOCX (with images) natively.

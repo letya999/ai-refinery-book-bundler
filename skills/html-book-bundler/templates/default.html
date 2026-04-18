@@ -347,7 +347,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   // ── Search (inverted index) ───────────────────────────────────────────────
   function searchChapters(query) {
     const words = query.toLowerCase()
-      .replace(/[^\p{L}\p{N}\s]/gu, '')
+      .replace(/[^\p{L}\p{N}\s]/gu, ' ')
       .split(/\s+/)
       .filter(w => w.length > 1);
     if (!words.length) return null; // null = show all
@@ -489,6 +489,11 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
         searchPrev.style.display = 'block';
         searchNext.style.display = 'block';
       }
+    }
+    else if (data.action === 'keypress') {
+      if (data.key === 'Escape') closeSidebarMobile();
+      if (data.key === 'ArrowRight' || data.key === 'ArrowDown') go(cur + 1);
+      if (data.key === 'ArrowLeft'  || data.key === 'ArrowUp') go(cur - 1);
     }
   });
 

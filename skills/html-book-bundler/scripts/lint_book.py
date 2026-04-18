@@ -31,6 +31,8 @@ class BookLinter:
             self.errors.append("Shell: Missing Content-Security-Policy meta tag")
         if 'sandbox' not in content.lower():
             self.errors.append("Shell: <iframe> missing sandbox attribute")
+        if 'allow-same-origin' in content.lower():
+            self.errors.append("Shell: <iframe> contains forbidden 'allow-same-origin' sandbox directive")
         if "prefers-reduced-motion" not in content:
             self.warnings.append("Shell: No prefers-reduced-motion media query found (a11y)")
         if "URL.createObjectURL" in content:

@@ -56,4 +56,4 @@ def _classify_para(para: str) -> str:
     # ... more classification (Story, Workbook, Excuse Title)
     return f'<p>{para_esc}</p>'
 
-# ... (refer to original convert_book.py for full implementation of infographics and building logic)
+# ... (Expand here with custom full implementation of infographics and building logic)

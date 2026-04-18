@@ -63,6 +63,7 @@ assert(out.includes('srcdoc'), 'srcdoc assignment present in shell JS');
 console.log('\n[Test 4] Security features');
 assert(out.includes('Content-Security-Policy'), 'CSP meta tag present');
 assert(out.includes('sandbox='), 'iframe sandbox attribute present');
+assert(!out.includes('allow-same-origin'), 'iframe sandbox DOES NOT contain allow-same-origin');
 
 // ── Test 5: i18n (English) ───────────────────────────────────────────────────
 console.log('\n[Test 5] i18n (English lang)');

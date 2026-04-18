@@ -34,6 +34,7 @@ python ../scripts/lint_book.py --file book_v8.html
 - **Print Functionality:** Iframes do not print correctly. We use a popup-based printing mechanism (`print-btn`) that restores lazy-loaded images first. Do not add `height: 100vh` to iframes in `@media print`.
 - **`--skip-insights` is Partial:** `--skip-insights` ONLY disables `autoInjectInsights` (pullquotes). It does NOT disable `autoCollapseLongParas`, `styleFirstPara`, or `autoEnrichLists`. If you want to suppress ALL auto-enrichment, you must process chapters manually before bundling.
 - **Base64 Bloat:** Always run `optimize_assets.py` before bundling if the source has images. The 1000px width cap is mandatory.
+- **XSS Escaping:** Always HTML-escape `.text()` values before interpolating into template literals using `escHtml()`.
 
 ## Security Warning:
 The shell uses a CSP and sandbox. If the linter reports "Potential sandbox escape", you MUST fix the JS in the chapter source before final delivery.
