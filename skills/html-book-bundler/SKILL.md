@@ -38,6 +38,7 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 - **Unified JSON Injection:** Use a dedicated `safeJsonInject` helper for all JSON blobs in the template. This centralizes `</script>` escaping and prevents breaking the output file with embedded code examples.
 - **Theme Variable Integrity:** Validate the presence of mandatory CSS variables (`--bg`, `--acc`, etc.) during bundling. This prevents a "broken UI" experience when a custom theme is incomplete.
 - **`guestReady` is the only safe sync point:** Never send `setTheme`, `setScrollRatio`, or `highlightSearch` from `iframe.onload`. The `onload` event fires before the guest script runs. Always wait for `{action:'guestReady'}` from the guest before sending any postMessage commands.
+- **Chapter Size Limit (Mobile OOM):** Mobile browsers (especially iOS Safari) crash when an `iframe.srcdoc` string exceeds ~2-3MB. **MANDATORY:** `bundle.cjs` must split any chapter exceeding 2,097,152 bytes (2MB) into multiple chunks (e.g., "Chapter 1.1", "Chapter 1.2"). This is handled at the bundling layer, not the ingestion layer.
 
 ## Critical Lessons (2026-04-18, second audit):
 - **CSS must stay synchronized between `default.html` and `theme.css`:** Both files define the same visual layer (shell sidebar and chapter iframe). Whenever you update `font-family`, antialiasing, or any global CSS in `default.html`, make the identical change in `theme.css`. The comment `/* Matches default.html shell font — always keep these in sync */` marks the critical line.
@@ -47,6 +48,12 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 - **`@media print` is fundamentally broken for iframes:** iframe content does not render in browser print layout. Replaced phantom print CSS with a `print-btn` that calls `window.open()` and restores lazy images from ASSETS before printing. The new popup prints correctly.
 - **`wrap()` in Cheerio uses the innermost child:** `$p.wrap($details)` inserted `$p` _inside_ `<summary>` (the only child of `$details`), not after it. Use `$p.replaceWith($details); $details.append($p)` to get the correct sibling structure.
 - **`dev_server.cjs` must exist if `--dev` is documented:** The `--dev` flag injects an SSE live-reload client. `dev_server.cjs` is the matching server. Added a minimal stdlib-only implementation in `scripts/dev_server.cjs`.
+
+## Critical Lessons (2026-04-18, final offline-first audit):
+- **Search Tokenization Parity:** Maintain exact parity in how punctuation is stripped between the build-time indexer (e.g. `bundle.cjs`) and the client read-time search. Replacing punctuation with spaces (vs empty strings) preserves multi-word matching for hyphenated compounds. Target independent words rather than single contiguous substrings.
+- **Iframe Event Isolation (Focus Trap):** The reader's focus naturally falls on the iframe. Keyboard events (`keydown`) are swallowed. You must explicitly listen for core navigation keys (`ArrowRight`, `ArrowLeft`, `Escape`) within the guest iframe and `postMessage` them back to the shell window.
+- **Cheerio First Child Trap:** When checking the structure of a DOM element using Cheerio, `.children()` ignores Text nodes. If a user types text before a `<b>` tag, `.children().first()` will jump straight to the `<b>`, creating false positives for structural matches. Always use `.contents()` to check the true first node.
+- **JSON Script Escaping Trick:** Escaping JSON inside an injected script by replacing `</script>` with `<\\/script>` is a legitimate and necessary pattern for single-file HTML apps. Do not refactor it away even if linters complain.
 
 ## Usage:
 Refer to the individual SKILL.md in subdirectories for role-specific instructions.

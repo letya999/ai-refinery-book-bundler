@@ -238,6 +238,9 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   </main>
 </div>
 
+<script id="book-assets" type="application/json">{{ASSETS}}</script>
+<script id="book-search" type="application/json">{{SEARCH_IDX}}</script>
+<script id="book-files" type="application/json">{{GLOBAL_FILES}}</script>
 {{DEV_SCRIPT}}
 
 <script>
@@ -249,8 +252,9 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
   const LANG     = {{LANG_JSON}};
   const T        = {{GLOBAL_TITLES}};
   const CHAPTERS = {{LOCAL_CHAPTERS}};
-  const SIDX     = {{SEARCH_IDX}};
-  const ASSETS   = {{ASSETS}};
+  const SIDX     = JSON.parse(document.getElementById('book-search').textContent);
+  const ASSETS   = JSON.parse(document.getElementById('book-assets').textContent);
+  const FILES    = JSON.parse(document.getElementById('book-files').textContent);
 
   // ── Helper to escape HTML for safe injection into innerHTML ───────────────
   function esc(s) {
@@ -453,7 +457,22 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
     if (!data) return;
 
     if (data.action === 'bookGo') {
-      go(data.chapterIdx, data.anchorId);
+      let targetIdx = -1;
+      if (data.filename) {
+        targetIdx = FILES.indexOf(data.filename.toLowerCase());
+        if (targetIdx === -1 && data.filename.includes('chapter')) {
+           const m = data.filename.match(/chapter(\d+)/i);
+           if (m) {
+             const idxHint = parseInt(m[1], 10) - 1;
+             targetIdx = idxHint < FILES.length ? idxHint : -1;
+           }
+        }
+      }
+      if (targetIdx === -1 && data.chapterIdx !== undefined) targetIdx = data.chapterIdx;
+      
+      if (targetIdx >= 0 && targetIdx < CHAPTERS.length) {
+        go(targetIdx, data.anchorId);
+      }
     } 
     else if (data.action === 'scrollReport') {
       store.set('sc_' + BOOK_ID + '_' + cur, data.ratio.toFixed(4));

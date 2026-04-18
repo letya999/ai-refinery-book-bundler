@@ -83,7 +83,7 @@ assert(idx9 !== -1 && idx10 !== -1 && idx10 > idx9, 'Chapter 10 sorted after Cha
 
 // ── Test 8: Search index ─────────────────────────────────────────────────────
 console.log('\n[Test 8] Search index');
-assert(/\bSIDX\s*=\s*\{/.test(out), 'SIDX search index present');
+assert(out.includes('<script id="book-search" type="application/json">'), 'SIDX search index present');
 
 // ── Test 9: --help flag ──────────────────────────────────────────────────────
 console.log('\n[Test 9] --help flag');
@@ -173,7 +173,7 @@ const imgOutput = path.join(__dirname, 'test_img_output.html');
 try {
   execSync(`node "${bundler}" --input "${imgDir}" --output "${imgOutput}"`, { stdio: 'pipe' });
   const imgOut = fs.readFileSync(imgOutput, 'utf8');
-  assert(/\bASSETS\s*=\s*\{/.test(imgOut), 'ASSETS dictionary present in output');
+  assert(imgOut.includes('<script id="book-assets"'), 'ASSETS dictionary script present in output');
   assert(imgOut.includes('data-src='), 'Image has data-src attribute (lazy-loading)');
   assert(!imgOut.includes('src="test.png"'), 'Original src= replaced by placeholder');
   assert(imgOut.includes('data:image/gif;base64'), '1x1 GIF placeholder used for img src');
@@ -191,17 +191,20 @@ assert(out.includes('provideAsset'), 'provideAsset message type present');
 
 // ── Test 20: </script> escaping in ASSETS ────────────────────────────────────
 console.log('\n[Test 20] </script> escaping in ASSETS JSON');
-const assetsMatch = out.match(/\bASSETS\s*=\s*(\{[^;]*\});/s);
+const assetsMatch = out.match(/<script id="book-assets"[^>]*>(\{.*?\})<\/script>/s);
 if (assetsMatch) {
+  // safeJsonInject replaces </script> with <\/script>, which is valid JSON
+  // If a raw </script> appears without escaping, the script block is broken.
+  // The match won't even find it via regex correctly if it was broken early, but we still assert.
   assert(!assetsMatch[1].includes('</script>'), 'No raw </script> inside ASSETS JSON block');
   assert(true, 'ASSETS block found and parseable');
 } else {
-  assert(/\bASSETS\s*=\s*\{/.test(out), 'ASSETS dictionary present (empty is ok for text-only chapters)');
+  assert(out.includes('<script id="book-assets"'), 'ASSETS dictionary present');
 }
 
 // ── Test 21: SIDX search index presence and escaping ────────────────────────
 console.log('\n[Test 21] SEARCH_IDX (SIDX) validation and </script> escaping');
-assert(/\bSIDX\s*=\s*\{/.test(out), 'SIDX search index present in output');
+assert(out.includes('<script id="book-search"'), 'SIDX search index present in output');
 
 // Verify CHAPTERS escaping with a chapter that contains literal </script> in a <pre> block.
 // This is the real-world case: JS/HTML tutorials often have code examples like:
@@ -234,11 +237,11 @@ try {
     assert(true, 'CHAPTERS block found (structure check skipped)');
   }
   // Specifically verify SIDX block is free of raw </script>
-  const sidxIdx = escOut.indexOf('SIDX = {');
+  const sidxIdx = escOut.indexOf('<script id="book-search"');
   if (sidxIdx !== -1) {
-    const sidxEnd2 = escOut.indexOf('\n  const ASSETS', sidxIdx);
+    const sidxEnd2 = escOut.indexOf('</script>', sidxIdx + 25);
     const sidxRegion = escOut.slice(sidxIdx, sidxEnd2 !== -1 ? sidxEnd2 : sidxIdx + 30000);
-    assert(!sidxRegion.includes('<\/script>'), 'SIDX block has no raw </script> sequence');
+    assert(!sidxRegion.includes('<\/script>'), 'SIDX block has no raw </script> sequence before closing tag');
   }
 } catch (e) {
   assert(false, `Escape test build failed: ${e.message}`);

@@ -16,15 +16,36 @@ function decodeHtmlEntities(str) {
     .replace(/&quot;/gi, '"')
     .replace(/&apos;/gi, "'")
     .replace(/&nbsp;/gi, ' ')
+    .replace(/&mdash;/gi, '—')
+    .replace(/&ndash;/gi, '–')
+    .replace(/&laquo;/gi, '«')
+    .replace(/&raquo;/gi, '»')
+    .replace(/&ldquo;/gi, '“')
+    .replace(/&rdquo;/gi, '”')
     .replace(/&#(\d+);/gi,      (_, n) => String.fromCharCode(+n))
     .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)));
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Safely injects JSON into a script tag by escaping </script>
+ */
+function safeJsonInject(obj) {
+  return JSON.stringify(obj).replace(/<\/script>/gi, '<\\/script>');
 }
 
 // ---------------------------------------------------------------------------
 // CLI argument parsing
 // ---------------------------------------------------------------------------
 const args = process.argv.slice(2);
-const VERSION = '8.4';
+const VERSION = '8.5';
 
 if (args.includes('--version') || args.includes('-v')) {
   console.log(`HTML Book Bundler v${VERSION}`);
@@ -45,18 +66,13 @@ Required:
 
 Options:
   --title    <string> Book title shown in sidebar and browser tab
-                      (default: output filename with hyphens replaced by spaces)
   --lang     <code>   UI language: ru | en  (default: ru)
   --template <file>   Custom HTML template (default: templates/default.html)
-  --dev               Inject live-reload script (for use with dev_server.cjs)
+  --dev               Inject live-reload script
   --optimize          Run optimize_assets.py on input dir before bundling
-  --skip-insights     Disable auto-generated pullquotes (use when you insert <blockquote class="insight"> manually)
+  --skip-insights     Disable auto-generated pullquotes
+  --split-limit <n>   Max chapter size in bytes before splitting (default: 2097152 / 2MB)
   --help              Show this help
-
-Examples:
-  node bundle.cjs --input ./chapters --output book.html --title "My Book"
-  node bundle.cjs --input ./chapters --output book.html --lang en
-  node bundle.cjs --input ./chapters --output preview.html --dev
 `);
   process.exit(0);
 }
@@ -73,23 +89,18 @@ function getArg(flag, fallback = null) {
 
 const inputDir  = getArg('--input');
 const outputFile = getArg('--output');
+const splitLimit = parseInt(getArg('--split-limit', '2097152'), 10);
 
 if (!inputDir || !outputFile) {
-  console.error('Error: --input and --output are required. Run with --help for usage.');
+  console.error('Error: --input and --output are required.');
   process.exit(1);
 }
 
 const inputDirAbs  = path.resolve(inputDir);
 const outputFileAbs = path.resolve(outputFile);
 
-if (!fs.existsSync(inputDirAbs)) {
-  console.error(`Error: input directory not found: ${inputDirAbs}`);
-  process.exit(1);
-}
-
 const fallbackTitle = path.basename(outputFileAbs, '.html').replace(/[-_]/g, ' ');
-const bookTitle = getArg('--title', fallbackTitle);
-const bookId    = 'book_' + crypto.createHash('md5').update(bookTitle).digest('hex').slice(0, 8);
+const bookTitle = escHtml(getArg('--title', fallbackTitle));
 let langCode    = getArg('--lang', 'ru');
 
 const langDir = path.join(__dirname, '../lang');
@@ -98,30 +109,20 @@ const SUPPORTED_LANGS = fs.existsSync(langDir)
   : ['ru', 'en'];
 
 if (!SUPPORTED_LANGS.includes(langCode)) {
-  console.warn(`Warning: unsupported --lang value "${langCode}". Falling back to "ru". Supported: ${SUPPORTED_LANGS.join(', ')}`);
   langCode = 'ru';
 }
 
 const devMode      = args.includes('--dev');
 const optimize     = args.includes('--optimize');
 const skipInsights = args.includes('--skip-insights');
+const templateFile = path.resolve(getArg('--template', path.join(__dirname, '../templates/default.html')));
 
-const templateFile = path.resolve(
-  args.includes('--template')
-    ? getArg('--template')
-    : path.join(__dirname, '../templates/default.html')
-);
-
-// Cross-platform Python resolver
 const pyCmd = (() => {
   const { spawnSync } = require('child_process');
   const r = spawnSync('python3', ['--version'], { stdio: 'pipe' });
   return r.status === 0 ? 'python3' : 'python';
 })();
 
-// ---------------------------------------------------------------------------
-// Load language strings
-// ---------------------------------------------------------------------------
 const langFile = path.join(__dirname, `../lang/${langCode}.json`);
 const LANG = fs.existsSync(langFile)
   ? JSON.parse(fs.readFileSync(langFile, 'utf8'))
@@ -132,30 +133,20 @@ const LANG = fs.existsSync(langFile)
 // ---------------------------------------------------------------------------
 if (optimize) {
   const optimizer = path.join(__dirname, 'optimize_assets.py');
-  if (!fs.existsSync(optimizer)) { // FIX: issue 8 (fails loudly)
-    console.error('Error: --optimize flag passed, but optimize_assets.py was not found.');
-    process.exit(1);
-  } else {
+  if (fs.existsSync(optimizer)) {
     console.log('Optimizing assets in-place...');
     const { spawnSync } = require('child_process');
-    const optResult = spawnSync(pyCmd, [optimizer, '--dir', inputDirAbs], { stdio: 'inherit' });
-    if (optResult.status !== 0) {
-      console.warn(`Warning: optimize_assets.py exited with status ${optResult.status}. Images may be unoptimized — mobile OOM risk.`);
-    }
+    spawnSync(pyCmd, [optimizer, '--dir', inputDirAbs], { stdio: 'inherit' });
   }
 }
 
-// ---------------------------------------------------------------------------
-// Theme / CSS loading
-// ---------------------------------------------------------------------------
 const localTheme   = path.join(inputDirAbs, 'theme.css');
 const defaultTheme = path.join(__dirname, '../assets/theme.css');
 const themePath    = fs.existsSync(localTheme) ? localTheme : defaultTheme;
-console.log(`Using theme: ${themePath}`);
 const globalCSS = fs.readFileSync(themePath, 'utf8');
 
 // ---------------------------------------------------------------------------
-// Asset inlining (images referenced in chapter HTML)
+// Asset inlining
 // ---------------------------------------------------------------------------
 const ASSETS = {};
 
@@ -168,52 +159,39 @@ function bundleAssets(htmlContent, baseDir) {
 
   const processAsset = (src) => {
     if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('#')) return null;
-    // Never inline .html — inter-chapter navigation depends on bare filename hrefs
-    if (/\.html?$/i.test(src)) return null;
-    // Never inline .css here — handled by inlineStylesheets() which produces <style> blocks
-    if (/\.css$/i.test(src)) return null;
+    if (/\.html?$/i.test(src) || /\.css$/i.test(src)) return null;
     const abs = path.resolve(baseDir, src);
     if (fs.existsSync(abs)) {
       const ext = path.extname(abs).slice(1).toLowerCase();
       const mime = mimeMap[ext] || 'application/octet-stream';
       const fileHash = crypto.createHash('md5').update(fs.readFileSync(abs)).digest('hex').slice(0, 10);
       const assetKey = `asset_${fileHash}_${path.basename(src)}`;
-      
       if (!ASSETS[assetKey]) {
-        const data = fs.readFileSync(abs).toString('base64');
-        ASSETS[assetKey] = `data:${mime};base64,${data}`;
+        ASSETS[assetKey] = `data:${mime};base64,${fs.readFileSync(abs).toString('base64')}`;
       }
       return assetKey;
     }
     return null;
   };
 
-  // Replace src= (images) with 1×1 GIF placeholder + data-src for lazy loading
   let content = htmlContent.replace(/src=["']([^"']+)["']/gi, (match, src) => {
     const assetKey = processAsset(src);
-    return assetKey
-      ? `src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${assetKey}"`
-      : match;
+    return assetKey ? `src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${assetKey}"` : match;
   });
 
-  // Replace srcset= — register all URLs in ASSETS dict and convert to data-srcset
-  // so browser doesn't bypass our lazy-loading system (which uses data-src).
   content = content.replace(/srcset=["']([^"']+)["']/gi, (match, srcset) => {
     srcset.split(',').forEach(entry => {
       const src = entry.trim().split(/\s+/)[0];
-      if (src) processAsset(src); // register in ASSETS dict; browser ignores data-srcset
+      if (src) processAsset(src);
     });
     return `data-srcset="${srcset}"`;
   });
 
-  // Replace href= for non-html assets linked directly via <a> (offer as download)
   content = content.replace(/<a\s+([^>]*?)href=["']([^"']+)["']/gi, (match, before, src) => {
     const assetKey = processAsset(src);
     return assetKey ? `<a ${before}href="#" data-href="${assetKey}"` : match;
   });
 
-  // Inline CSS url() references (fonts, backgrounds) as base64 data URIs.
-  // Fonts/icons are small and don't benefit from lazy loading.
   content = content.replace(/url\(["']?([^"'\)]+)["']?\)/gi, (match, src) => {
     const assetKey = processAsset(src);
     return assetKey ? `url("${ASSETS[assetKey]}")` : match;
@@ -222,40 +200,23 @@ function bundleAssets(htmlContent, baseDir) {
   return content;
 }
 
-// Inline <link rel="stylesheet" href="local.css"> as <style> blocks.
-// data: URI CSS links are ignored by browsers; actual text inlining is required.
 function inlineStylesheets(htmlContent, baseDir) {
   return htmlContent.replace(/<link([^>]*)\/?>(\s*<\/link>)?/gi, (match, attrs) => {
     const relM  = /rel=["']([^"']+)["']/i.exec(attrs);
     const hrefM = /href=["']([^"']+)["']/i.exec(attrs);
-    if (!relM || !relM[1].toLowerCase().includes('stylesheet')) return match;
-    if (!hrefM) return match;
-    const href = hrefM[1];
-    if (href.startsWith('http') || href.startsWith('data:') || href.startsWith('#')) return match;
-    const abs = path.resolve(baseDir, href);
+    if (!relM || !relM[1].toLowerCase().includes('stylesheet') || !hrefM) return match;
+    const abs = path.resolve(baseDir, hrefM[1]);
     if (!fs.existsSync(abs)) return match;
-    try {
-      const css = fs.readFileSync(abs, 'utf8');
-      return `<style>\n${css}\n</style>`;
-    } catch (e) {
-      return match;
-    }
+    return `<style>\n${fs.readFileSync(abs, 'utf8')}\n</style>`;
   });
 }
 
 // ---------------------------------------------------------------------------
-// Search index builder (inverted index, language-agnostic)
+// Search
 // ---------------------------------------------------------------------------
-const STOP_WORDS = new Set((LANG.stop_words || []).map(w => w.toLowerCase()));
-
 function tokenize(text) {
-
-  return text
-    .replace(/<[^>]+>/g, ' ')
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
-    .split(/\s+/)
-    .filter(w => w.length > 2 && !STOP_WORDS.has(w));
+  const STOP_WORDS = new Set((LANG.stop_words || []).map(w => w.toLowerCase()));
+  return text.replace(/<[^>]+>/g, ' ').toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
 }
 
 function buildSearchIndex(chapterTexts) {
@@ -263,107 +224,96 @@ function buildSearchIndex(chapterTexts) {
   chapterTexts.forEach((text, ci) => {
     const tokens = tokenize(text);
     const tf = {};
-    tokens.forEach(tok => {
-      tf[tok] = (tf[tok] || 0) + 1;
-    });
+    tokens.forEach(tok => tf[tok] = (tf[tok] || 0) + 1);
     Object.keys(tf).forEach(tok => {
       if (!idx[tok]) idx[tok] = [];
-      // Store chapter index and term frequency
       idx[tok].push([ci, tf[tok]]);
     });
   });
-  // Sort descending by frequency for basic relevance ranking
   for (const tok in idx) {
     idx[tok].sort((a, b) => b[1] - a[1]);
-    // Simplify back to just an array of chapter indices
     idx[tok] = idx[tok].map(entry => entry[0]);
   }
   return idx;
 }
 
 // ---------------------------------------------------------------------------
-// Process chapters
+// Split large chapters
 // ---------------------------------------------------------------------------
-const files = fs
-  .readdirSync(inputDirAbs)
-  .filter(f => f.endsWith('.html'))
-  .sort((a, b) => {
-    if (a.toLowerCase() === 'glossary.html') return 1;
-    if (b.toLowerCase() === 'glossary.html') return -1;
-    return a.localeCompare(b, undefined, { numeric: true });
-  });
-
-if (files.length === 0) {
-  console.error(`Error: no .html files found in ${inputDirAbs}`);
-  process.exit(1);
+function splitChapter(html, limit) {
+  if (Buffer.byteLength(html, 'utf8') <= limit) return [html];
+  
+  console.log(`  Splitting large chapter (${(Buffer.byteLength(html, 'utf8') / 1024 / 1024).toFixed(1)} MB)...`);
+  const parts = [];
+  const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  if (!bodyMatch) return [html];
+  
+  const head = html.split(/<body/i)[0] + '<body' + (html.match(/<body([^>]*)>/i)?.[1] || '') + '>';
+  const foot = '</body></html>';
+  const body = bodyMatch[1];
+  
+  // Naive split by paragraph/section/div tags to keep structure
+  const chunks = body.split(/(?=<p|<div|<section|<blockquote|<table|<h[1-6]|<details)/i);
+  let currentPart = '';
+  
+  for (const chunk of chunks) {
+    if (Buffer.byteLength(currentPart + chunk, 'utf8') > limit && currentPart) {
+      parts.push(head + currentPart + foot);
+      currentPart = chunk;
+    } else {
+      currentPart += chunk;
+    }
+  }
+  if (currentPart) parts.push(head + currentPart + foot);
+  return parts;
 }
 
-const globalTitles  = [];
-const chapterTexts  = []; // for search index
-const chapters      = []; // HTML strings for srcdoc
-let totalImageBytes = 0;
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+const files = fs.readdirSync(inputDirAbs).filter(f => f.endsWith('.html')).sort((a, b) => {
+  if (a.toLowerCase() === 'glossary.html') return 1;
+  if (b.toLowerCase() === 'glossary.html') return -1;
+  return a.localeCompare(b, undefined, { numeric: true });
+});
+
+if (files.length === 0) { console.error('No chapters found.'); process.exit(1); }
+
+const globalTitles = [];
+const globalFiles = [];
+const chapterTexts = [];
+const chapters = [];
 
 files.forEach((file, idx) => {
   let content = fs.readFileSync(path.join(inputDirAbs, file), 'utf8');
-
-  // Title extraction and search index text must come from raw HTML — before bundleAssets
-  // injects base64 data URIs that would pollute the inverted search index with noise tokens.
-  // decodeHtmlEntities ensures &amp; / &lt; etc. appear correctly in the sidebar.
-  let title = decodeHtmlEntities(content.match(/<title>(.*?)<\/title>/i)?.[1] || '');
+  let title = decodeHtmlEntities(content.match(/<title[^>]*>(.*?)<\/title>/i)?.[1] || '');
   if (!title) {
     const h1 = content.match(/<h1[^>]*>(.*?)<\/h1>/i)?.[1];
-    title = h1
-      ? decodeHtmlEntities(h1.replace(/<[^>]+>/g, '').trim())
-      : file.replace(/\.html$/, '');
+    title = h1 ? decodeHtmlEntities(h1.replace(/<[^>]+>/g, '').trim()) : file.replace(/\.html$/, '');
   }
-  globalTitles.push(title);
-
-  chapterTexts.push(content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
-
-  // Count image bytes referenced via src= AND srcset=.
-  // Use a Set to avoid double-counting the same file appearing in both attributes.
-  const referencedImgs = new Set();
-  (content.match(/src=["'][^"']+["']/gi) || []).forEach(m => {
-    referencedImgs.add(m.slice(5, -1).replace(/^["']|["']$/g, ''));
-  });
-  (content.match(/srcset=["'][^"']+["']/gi) || []).forEach(m => {
-    const ss = m.slice(8, -1).replace(/^["']|["']$/g, '');
-    ss.split(',').forEach(entry => referencedImgs.add(entry.trim().split(/\s+/)[0]));
-  });
-  referencedImgs.forEach(src => {
-    if (!src || src.startsWith('http') || src.startsWith('data:')) return;
-    const abs = path.resolve(inputDirAbs, src);
-    if (fs.existsSync(abs)) totalImageBytes += fs.statSync(abs).size;
-  });
 
   content = bundleAssets(content, inputDirAbs);
   content = inlineStylesheets(content, inputDirAbs);
-
-  // Prepare chapter HTML string (srcdoc-ready)
-  chapters.push(prepareChapter(content, idx, title, files, globalCSS, bookTitle, skipInsights, langCode, LANG.chapter, LANG.dir || 'ltr'));
+  
+  const rendered = prepareChapter(content, idx, title, files, globalCSS, bookTitle, skipInsights, langCode, LANG.chapter, LANG.dir || 'ltr');
+  const splitParts = splitChapter(rendered, splitLimit);
+  
+  splitParts.forEach((part, pIdx) => {
+    const partTitle = splitParts.length > 1 ? `${title} (${pIdx + 1}/${splitParts.length})` : title;
+    globalTitles.push(partTitle);
+    globalFiles.push(file.toLowerCase());
+    chapters.push(part);
+    // Use raw text for search
+    chapterTexts.push(part.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+  });
 });
 
-// Warn about large image payloads
-if (totalImageBytes > 5_000_000) {
-  const mb = (totalImageBytes / 1_048_576).toFixed(1);
-  console.warn(`Warning: ${mb}MB of images detected. Run with --optimize to compress, or output file may be large.`);
-}
-
 const searchIndex = buildSearchIndex(chapterTexts);
+const devScript = devMode ? `<script>new EventSource('/events').onmessage=function(){location.reload()}</script>` : '';
 
-// ---------------------------------------------------------------------------
-// Inject dev live-reload script if --dev
-// ---------------------------------------------------------------------------
-const devScript = devMode
-  ? `<script>new EventSource('/events').onmessage=function(){location.reload()}</script>`
-  : '';
+const bookId = 'book_' + crypto.createHash('md5').update(bookTitle + '_' + chapters.length).digest('hex').slice(0, 8);
 
-// ---------------------------------------------------------------------------
-// Assemble final HTML from template
-// ---------------------------------------------------------------------------
 let template = fs.readFileSync(templateFile, 'utf8');
-
-// Replace all placeholders
 const replacements = {
   '{{BOOK_ID}}':        bookId,
   '{{BOOK_TITLE}}':     bookTitle,
@@ -371,62 +321,16 @@ const replacements = {
   '{{LANG_DIR}}':       LANG.dir || 'ltr',
   '{{LANG_JSON}}':      safeJsonInject(LANG),
   '{{GLOBAL_TITLES}}':  safeJsonInject(globalTitles),
+  '{{GLOBAL_FILES}}':   safeJsonInject(globalFiles),
   '{{LOCAL_CHAPTERS}}': safeJsonInject(chapters),
   '{{ASSETS}}':         safeJsonInject(ASSETS),
   '{{SEARCH_IDX}}':     safeJsonInject(searchIndex),
   '{{DEV_SCRIPT}}':     devScript,
 };
 
-for (const [placeholder, value] of Object.entries(replacements)) {
-  // Use split/join for global replace without regex escaping issues
-  template = template.split(placeholder).join(value);
-}
-
-// Inject BUNDLER_VERSION
+for (const [p, v] of Object.entries(replacements)) template = template.split(p).join(v);
 template = template.replace('</head>', `  <meta name="generator" content="HTML Book Bundler v${VERSION}">\n</head>`);
 
-// Verify all placeholders are resolved
-const remaining = template.match(/\{\{[A-Z_]+\}\}/g);
-if (remaining) {
-  console.warn(`Warning: unresolved template placeholders: ${[...new Set(remaining)].join(', ')}`);
-}
-
 fs.mkdirSync(path.dirname(outputFileAbs), { recursive: true });
 fs.writeFileSync(outputFileAbs, template);
-
-const sizeMb = (fs.statSync(outputFileAbs).size / 1_048_576).toFixed(2);
-console.log(`Book assembled: ${outputFileAbs} (${sizeMb} MB, ${files.length} chapters)`);
-plate.match(/\{\{[A-Z_]+\}\}/g);
-if (remaining) {
-  console.warn(`Warning: unresolved template placeholders: ${[...new Set(remaining)].join(', ')}`);
-}
-
-fs.mkdirSync(path.dirname(outputFileAbs), { recursive: true });
-fs.writeFileSync(outputFileAbs, template);
-
-const sizeMb = (fs.statSync(outputFileAbs).size / 1_048_576).toFixed(2);
-console.log(`Book assembled: ${outputFileAbs} (${sizeMb} MB, ${files.length} chapters)`);
-ipt>'),
-  '{{SEARCH_IDX}}':     JSON.stringify(searchIndex).replace(/<\/script>/gi, '<\\/script>'), // ← MUST escape too!
-  '{{DEV_SCRIPT}}':     devScript,
-};
-
-for (const [placeholder, value] of Object.entries(replacements)) {
-  // Use split/join for global replace without regex escaping issues
-  template = template.split(placeholder).join(value);
-}
-
-// Inject BUNDLER_VERSION
-template = template.replace('</head>', `  <meta name="generator" content="HTML Book Bundler v${VERSION}">\n</head>`);
-
-// Verify all placeholders are resolved
-const remaining = template.match(/\{\{[A-Z_]+\}\}/g);
-if (remaining) {
-  console.warn(`Warning: unresolved template placeholders: ${[...new Set(remaining)].join(', ')}`);
-}
-
-fs.mkdirSync(path.dirname(outputFileAbs), { recursive: true });
-fs.writeFileSync(outputFileAbs, template);
-
-const sizeMb = (fs.statSync(outputFileAbs).size / 1_048_576).toFixed(2);
-console.log(`Book assembled: ${outputFileAbs} (${sizeMb} MB, ${files.length} chapters)`);
+console.log(`Book assembled: ${outputFileAbs} (${(fs.statSync(outputFileAbs).size / 1024 / 1024).toFixed(2)} MB, ${chapters.length} chunks)`);

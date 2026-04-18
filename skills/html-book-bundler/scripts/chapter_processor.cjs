@@ -194,15 +194,6 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
   const navScript = `
 <script>
 (function() {
-  const fileArray = ${JSON.stringify(filesArray)};
-  const chapterMap = {};
-  fileArray.forEach((f, i) => {
-    chapterMap[f] = i;
-    chapterMap[f.toLowerCase()] = i;
-    const m = f.match(/chapter(\\d+)\\.html/);
-    if (m) chapterMap[String(m[1]).padStart(3, '0') + '.html'] = i;
-  });
-
   // Link interception
   document.addEventListener('click', e => {
     const a = e.target.closest('a');
@@ -222,17 +213,11 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
 
     e.preventDefault();
     const parts = href.split('#');
-    const pathPart = parts[0].toLowerCase();
+    const pathPart = parts[0] ? parts[0].split('/').pop().toLowerCase() : '';
     const anchor = parts[1] || null;
 
-    let targetIdx = chapterMap[pathPart];
-    if (targetIdx === undefined && pathPart.includes('chapter')) {
-      const m = pathPart.match(/chapter(\\d+)/);
-      if (m) targetIdx = parseInt(m[1]) - 1;
-    }
-
-    if (targetIdx !== undefined) {
-      window.parent.postMessage({ action: 'bookGo', chapterIdx: targetIdx, anchorId: anchor }, '*');
+    if (pathPart) {
+      window.parent.postMessage({ action: 'bookGo', filename: pathPart, anchorId: anchor }, '*');
     } else if (anchor) {
       const el = document.getElementById(anchor);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
