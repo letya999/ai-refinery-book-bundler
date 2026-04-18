@@ -281,6 +281,7 @@ if (files.length === 0) { console.error('No chapters found.'); process.exit(1); 
 
 const globalTitles = [];
 const globalFiles = [];
+const globalAnchors = {};
 const chapterTexts = [];
 const chapters = [];
 
@@ -302,6 +303,12 @@ files.forEach((file, idx) => {
     const partTitle = splitParts.length > 1 ? `${title} (${pIdx + 1}/${splitParts.length})` : title;
     globalTitles.push(partTitle);
     globalFiles.push(file.toLowerCase());
+    
+    // Extract IDs mapping for global anchor resolution
+    for (const match of part.matchAll(/\sid=["']([^"']+)["']/gi)) {
+      globalAnchors[match[1]] = chapters.length;
+    }
+    
     chapters.push(part);
     // Use raw text for search
     chapterTexts.push(part.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
@@ -322,6 +329,7 @@ const replacements = {
   '{{LANG_JSON}}':      safeJsonInject(LANG),
   '{{GLOBAL_TITLES}}':  safeJsonInject(globalTitles),
   '{{GLOBAL_FILES}}':   safeJsonInject(globalFiles),
+  '{{GLOBAL_ANCHORS}}': safeJsonInject(globalAnchors),
   '{{LOCAL_CHAPTERS}}': safeJsonInject(chapters),
   '{{ASSETS}}':         safeJsonInject(ASSETS),
   '{{SEARCH_IDX}}':     safeJsonInject(searchIndex),

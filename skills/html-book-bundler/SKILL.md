@@ -54,6 +54,8 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 - **Iframe Event Isolation (Focus Trap):** The reader's focus naturally falls on the iframe. Keyboard events (`keydown`) are swallowed. You must explicitly listen for core navigation keys (`ArrowRight`, `ArrowLeft`, `Escape`) within the guest iframe and `postMessage` them back to the shell window.
 - **Cheerio First Child Trap:** When checking the structure of a DOM element using Cheerio, `.children()` ignores Text nodes. If a user types text before a `<b>` tag, `.children().first()` will jump straight to the `<b>`, creating false positives for structural matches. Always use `.contents()` to check the true first node.
 - **JSON Script Escaping Trick:** Escaping JSON inside an injected script by replacing `</script>` with `<\\/script>` is a legitimate and necessary pattern for single-file HTML apps. Do not refactor it away even if linters complain.
+- **Cross-Chunk Anchor Resolution:** Due to the 2MB split limit (Mobile OOM mitigation), `<a href="#footnote-1">` or `<a href="chapter3.html#conclusion">` breaks if the target `id` was split into a different chunk from the origin/shell target. **MANDATORY:** `splitChapter` must extract all IDs globally into `GLOBAL_ANCHORS` mapped to the chunk index. The shell must attempt `ANCHORS[anchorId]` *before* searching for a file index, routing directly to the exact chunk.
+- **Local Anchor Escalation:** In the `iframe` guest script, if `document.getElementById(anchor)` fails, the anchor might reside in a sibling chunk. The script must emit `postMessage({ action: 'bookGo', anchorId })` up to the shell instead of silently failing.
 
 ## Usage:
 Refer to the individual SKILL.md in subdirectories for role-specific instructions.

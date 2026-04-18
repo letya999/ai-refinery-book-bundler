@@ -221,6 +221,7 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
     } else if (anchor) {
       const el = document.getElementById(anchor);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
+      else window.parent.postMessage({ action: 'bookGo', anchorId: anchor }, '*');
     }
   });
 
