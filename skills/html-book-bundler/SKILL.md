@@ -7,6 +7,18 @@ description: Master Skill Bundle (v8.3). A 4-role pipeline (Ingest, Architect, D
 
 This is the umbrella skill for the book production toolchain. It manages 4 specialized sub-skills for each layer of production.
 
+## MANDATORY EXECUTION PROTOCOL (STRICT)
+You are an AI Agent. You MUST execute this pipeline sequentially. NEVER skip to Step 4 before doing Step 2 and 3.
+
+* **STEP 1: INGESTION.** Run `ingest.py`. Wait for it to finish.
+* **STEP 2: ARCHITECTURE (STOP & READ).** You MUST read the generated HTML chapters. Create `blueprint.json` and `terms.json`. **DO NOT run any bash commands in this step.**
+* **STEP 3: DESIGN (MUTATION).** You MUST physically modify the `chapter*.html` files. 
+   - Write scripts or use search/replace tools to inject `<svg>` from the blueprint.
+   - Wrap terms from `terms.json` in `<a href="glossary.html#term">`.
+   - Create a custom `chapters/theme.css` matching the book's vibe.
+* **STEP 4: ASSEMBLER (GATE).** Before running `bundle.cjs`, you MUST run `grep -E "vis-diag|vis-grid|vis-stats" chapters/*.html`. If the result is empty, YOU FAILED STEP 3. Go back and inject visuals. 
+* **STEP 5: QUALITY ASSURANCE.** You MUST run the test suite (`node tests/test_bundler.cjs` etc) to validate your environment. You MUST run `lint_book.py` on the final assembled HTML book. You MUST manually check ingested chapters for corruption.
+
 ## Components (Sub-skills):
 1. **book-ingester:** Unified extraction from PDF, EPUB, FB2, DOCX (including images).
 2. **book-architect:** Semantic distillation, `terms.json` mining, and visual blueprinting.
