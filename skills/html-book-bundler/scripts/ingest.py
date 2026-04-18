@@ -234,8 +234,14 @@ def ingest_epub(input_path: Path, out_dir: Path):
 
         # Process spine chapters
         chapter_idx = 1
-        skip_types = {'application/x-dtbncx+xml'}
-
+        # NCX navigation document (EPUB 2), SMIL media overlays (EPUB 3), and DTBook
+        # are non-content spine items that must be skipped.
+        skip_types = {
+            'application/x-dtbncx+xml',
+            'application/smil+xml',
+            'application/x-dtbook+xml',
+            'application/oebps-package+xml',
+        }
         for s_id in spine:
             if s_id not in manifest:
                 continue
@@ -295,6 +301,19 @@ def ingest_docx(input_path: Path, out_dir: Path, lang: str = 'ru'):
 
     HEADING_STYLES = {'Heading 1', 'Heading 2', 'Heading 3', 'Заголовок 1', 'Заголовок 2'}
 
+    def _is_heading(para):
+        """Detect headings by named style OR outline level (for custom-styled DOCX files)."""
+        style_name = para.style.name if para.style else ''
+        if style_name in HEADING_STYLES:
+            return True
+        # python-docx exposes outline level via paragraph format
+        try:
+            if para.paragraph_format.outline_level is not None and para.paragraph_format.outline_level < 3:
+                return True
+        except AttributeError:
+            pass
+        return False
+
     chapters: list[tuple[str, list[str]]] = []  # [(title, [html_parts])]
     current_title = 'Chapter 1'
     current_parts: list[str] = []
@@ -306,7 +325,7 @@ def ingest_docx(input_path: Path, out_dir: Path, lang: str = 'ru'):
         style_name = para.style.name if para.style else ''
         text = para.text.strip()
 
-        if style_name in HEADING_STYLES:
+        if _is_heading(para):
             if current_parts:
                 chapters.append((current_title, current_parts))
             current_title = text or current_title

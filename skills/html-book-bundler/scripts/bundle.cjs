@@ -6,6 +6,21 @@ const crypto = require('crypto');
 const { prepareChapter } = require('./chapter_processor.cjs');
 
 // ---------------------------------------------------------------------------
+// HTML entity decoder — used for sidebar titles extracted from <title>/<h1>
+// ---------------------------------------------------------------------------
+function decodeHtmlEntities(str) {
+  return String(str)
+    .replace(/&amp;/gi,  '&')
+    .replace(/&lt;/gi,   '<')
+    .replace(/&gt;/gi,   '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&apos;/gi, "'")
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&#(\d+);/gi,      (_, n) => String.fromCharCode(+n))
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)));
+}
+
+// ---------------------------------------------------------------------------
 // CLI argument parsing
 // ---------------------------------------------------------------------------
 const args = process.argv.slice(2);
@@ -113,10 +128,15 @@ const LANG = fs.existsSync(langFile)
 // ---------------------------------------------------------------------------
 if (optimize) {
   const optimizer = path.join(__dirname, 'optimize_assets.py');
-  if (fs.existsSync(optimizer)) {
+  if (!fs.existsSync(optimizer)) {
+    console.warn('Warning: optimize_assets.py not found — skipping image optimization.');
+  } else {
     console.log('Optimizing assets in-place...');
     const { spawnSync } = require('child_process');
-    spawnSync(pyCmd, [optimizer, '--dir', inputDirAbs], { stdio: 'inherit' });
+    const optResult = spawnSync(pyCmd, [optimizer, '--dir', inputDirAbs], { stdio: 'inherit' });
+    if (optResult.status !== 0) {
+      console.warn(`Warning: optimize_assets.py exited with status ${optResult.status}. Images may be unoptimized — mobile OOM risk.`);
+    }
   }
 }
 
@@ -163,14 +183,25 @@ function bundleAssets(htmlContent, baseDir) {
     return null;
   };
 
-  // Replace attributes (src)
+  // Replace src= (images) with 1×1 GIF placeholder + data-src for lazy loading
   let content = htmlContent.replace(/src=["']([^"']+)["']/gi, (match, src) => {
     const assetKey = processAsset(src);
-    // Use a tiny transparent 1x1 base64 GIF as placeholder, store actual key in data-src
-    return assetKey ? `src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${assetKey}"` : match;
+    return assetKey
+      ? `src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${assetKey}"`
+      : match;
   });
-  
-  // Replace href for non-html assets (if any are linked directly)
+
+  // Replace srcset= — register all URLs in ASSETS dict and convert to data-srcset
+  // so browser doesn't bypass our lazy-loading system (which uses data-src).
+  content = content.replace(/srcset=["']([^"']+)["']/gi, (match, srcset) => {
+    srcset.split(',').forEach(entry => {
+      const src = entry.trim().split(/\s+/)[0];
+      if (src) processAsset(src); // register in ASSETS dict; browser ignores data-srcset
+    });
+    return `data-srcset="${srcset}"`;
+  });
+
+  // Replace href= for non-html assets linked directly (offer as download)
   content = content.replace(/href=["']([^"']+)["']/gi, (match, src) => {
     const assetKey = processAsset(src);
     return assetKey ? `href="#" data-href="${assetKey}"` : match;
@@ -261,10 +292,13 @@ files.forEach((file, idx) => {
 
   // Title extraction and search index text must come from raw HTML — before bundleAssets
   // injects base64 data URIs that would pollute the inverted search index with noise tokens.
-  let title = content.match(/<title>(.*?)<\/title>/i)?.[1] || '';
+  // decodeHtmlEntities ensures &amp; / &lt; etc. appear correctly in the sidebar.
+  let title = decodeHtmlEntities(content.match(/<title>(.*?)<\/title>/i)?.[1] || '');
   if (!title) {
     const h1 = content.match(/<h1[^>]*>(.*?)<\/h1>/i)?.[1];
-    title = h1 ? h1.replace(/<[^>]+>/g, '').trim() : file.replace(/\.html$/, '');
+    title = h1
+      ? decodeHtmlEntities(h1.replace(/<[^>]+>/g, '').trim())
+      : file.replace(/\.html$/, '');
   }
   globalTitles.push(title);
 
@@ -284,7 +318,7 @@ files.forEach((file, idx) => {
   content = inlineStylesheets(content, inputDirAbs);
 
   // Prepare chapter HTML string (srcdoc-ready)
-  chapters.push(prepareChapter(content, idx, title, files, globalCSS, bookTitle, skipInsights, langCode, LANG.chapter));
+  chapters.push(prepareChapter(content, idx, title, files, globalCSS, bookTitle, skipInsights, langCode, LANG.chapter, LANG.dir || 'ltr'));
 });
 
 // Warn about large image payloads
@@ -315,11 +349,11 @@ const replacements = {
   '{{LANG_DIR}}':       LANG.dir || 'ltr',
   '{{LANG_JSON}}':      JSON.stringify(LANG),
   '{{GLOBAL_TITLES}}':  JSON.stringify(globalTitles),
-  // Escape </script> so it never terminates the outer <script> block prematurely.
+  // Escape </script> in ALL JSON blobs so they never prematurely close the outer <script> block.
   // In JSON, <\/ is parsed as </ by JS (the \/ escape = /) giving correct srcdoc HTML.
   '{{LOCAL_CHAPTERS}}': JSON.stringify(chapters).replace(/<\/script>/gi, '<\\/script>'),
   '{{ASSETS}}':         JSON.stringify(ASSETS).replace(/<\/script>/gi, '<\\/script>'),
-  '{{SEARCH_IDX}}':     JSON.stringify(searchIndex),
+  '{{SEARCH_IDX}}':     JSON.stringify(searchIndex).replace(/<\/script>/gi, '<\\/script>'), // ← MUST escape too!
   '{{DEV_SCRIPT}}':     devScript,
 };
 

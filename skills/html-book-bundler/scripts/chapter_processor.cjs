@@ -138,12 +138,13 @@ function processWithCheerio(html, skipInsights) {
     $items.each((i, li) => {
       const $li = $(li);
       const text = $li.text().trim();
-      // Check if starts with bold
       const $b = $li.find('b').first();
-      if ($b.length && $li.html().startsWith('<b>')) {
-        const title = $b.text();
-        const content = $li.html().replace(/<b>.*?<\/b>[:.\s]*/i, '');
-        $grid.append(`\n<div class="card"><b>${escHtml(title)}</b><p>${content}</p></div>`);
+      // Use Cheerio-proper first-child check — avoids brittle html().startsWith('<b>') hack
+      if ($b.length && $li.children().first().is('b')) {
+        const cardTitle = $b.text();
+        // Remove the leading <b>...</b> and optional punctuation from the copy
+        const bodyHtml = $li.html().replace(/<b[^>]*>.*?<\/b>\s*[:.\s]*/i, '');
+        $grid.append(`\n<div class="card"><b>${escHtml(cardTitle)}</b><p>${bodyHtml}</p></div>`);
       } else {
         $grid.append(`\n<div class="card"><p>${escHtml(text)}</p></div>`);
       }
@@ -163,17 +164,18 @@ function processWithCheerio(html, skipInsights) {
  * 3. Injects inter-chapter navigation script
  * 4. Returns final HTML as a UTF-8 string (not base64 — caller uses srcdoc)
  *
- * @param {string} html          - raw chapter HTML
- * @param {number} index         - 0-based chapter index
- * @param {string} title         - chapter title
- * @param {string[]} filesArray  - ordered array of chapter filenames (e.g. ['chapter1.html', ...])
- * @param {string} globalCSS     - CSS to inject as shared theme base
- * @param {string} bookTitle     - book title for the kicker line (optional)
- * @param {boolean} skipInsights - whether to skip auto-injecting insights
- * @param {string} langCode      - UI language code (e.g., 'ru' or 'en')
- * @param {string} chapterLabel  - Internationalized label for "Chapter" (optional)
+ * @param {string}  html          - raw chapter HTML
+ * @param {number}  index         - 0-based chapter index
+ * @param {string}  title         - chapter title
+ * @param {string[]} filesArray   - ordered array of chapter filenames
+ * @param {string}  globalCSS     - CSS to inject as shared theme base
+ * @param {string}  bookTitle     - book title for the kicker line (optional)
+ * @param {boolean} skipInsights  - whether to skip auto-injecting insights
+ * @param {string}  langCode      - UI language code (e.g., 'ru' or 'en')
+ * @param {string}  chapterLabel  - Internationalized label for “Chapter” (optional)
+ * @param {string}  langDir       - text direction: 'ltr' or 'rtl' (default 'ltr')
  */
-function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitle = '', skipInsights = false, langCode = 'ru', chapterLabel = null) {
+function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitle = '', skipInsights = false, langCode = 'ru', chapterLabel = null, langDir = 'ltr') {
   let content = html;
 
   const hasOwnStyles = /<style[\s\S]*?<\/style>/i.test(content);
@@ -229,12 +231,17 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
     }
   });
 
-  // Scroll reporting
+  // Scroll reporting (debounced 500 ms — prevents hundreds of localStorage writes per second
+  // on long chapters; the shell saves the ratio on each scrollReport message).
+  let _scrollTimer;
   window.addEventListener('scroll', () => {
-    const maxY = document.body.scrollHeight - window.innerHeight;
-    if (maxY > 10) {
-      window.parent.postMessage({ action: 'scrollReport', ratio: window.scrollY / maxY }, '*');
-    }
+    clearTimeout(_scrollTimer);
+    _scrollTimer = setTimeout(() => {
+      const maxY = document.body.scrollHeight - window.innerHeight;
+      if (maxY > 10) {
+        window.parent.postMessage({ action: 'scrollReport', ratio: window.scrollY / maxY }, '*');
+      }
+    }, 500);
   }, { passive: true });
 
   // IntersectionObserver for lazy images
@@ -417,7 +424,7 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
 
   const finalHtml = [
     '<!DOCTYPE html>',
-    `<html lang="${langCode}">`,
+    `<html lang="${langCode}" dir="${langDir}">`,
     '<head>',
     '<meta charset="UTF-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1.0">',

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' data:; img-src 'self' data:; connect-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' data:; img-src 'self' data:; object-src 'none'; connect-src 'none'">
 <title>{{BOOK_TITLE}}</title>
 <style>
 /* ── Dark theme (default) ── */
@@ -23,7 +23,10 @@ html, body {
   height: 100%;
   background: var(--bg);
   color: var(--txt);
-  font-family: "Trebuchet MS", "Segoe UI Variable", Tahoma, sans-serif;
+  font-family: "Segoe UI Variable", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow: hidden;
   transition: background .3s, color .3s;
 }
@@ -179,6 +182,15 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ── Print styles ── */
+@media print {
+  .side, .top, .prog, .stars { display: none !important; }
+  .app { display: block; }
+  .main { display: block; }
+  .frame { height: auto; }
+  iframe { height: 100vh; border: none; }
+}
 </style>
 </head>
 <body>
@@ -186,7 +198,7 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
 <div class="side-overlay" id="overlay"></div>
 
 <div class="app" id="app">
-  <aside class="side" id="side">
+  <aside class="side" id="side" aria-label="Chapter navigation">
     <div class="brand">
       <h1 id="book-title">{{BOOK_TITLE}}</h1>
       <p id="vol-info"></p>
@@ -209,9 +221,9 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
 
   <main class="main">
     <div class="top">
-      <button id="menu-btn" aria-label="Menu">☰</button>
-      <button id="prev-btn"></button>
-      <button id="next-btn"></button>
+      <button id="menu-btn" aria-label="Toggle sidebar">☰</button>
+      <button id="prev-btn" aria-label="Previous chapter"></button>
+      <button id="next-btn" aria-label="Next chapter"></button>
       <div class="tt" id="tt"></div>
       <button id="bm-btn" title="Bookmark" style="font-size:16px"></button>
       <button id="theme-btn" title="Toggle theme" style="font-size:16px"></button>

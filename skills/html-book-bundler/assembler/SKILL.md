@@ -26,7 +26,10 @@ python ../scripts/lint_book.py --file book_v8.html
 ```
 
 ## Critical Lessons:
-- **Sandbox Paradox:** The iframe uses `allow-scripts allow-same-origin`. This is a deliberate trade-off: `allow-same-origin` is required for theme propagation and scroll restoration. Removing it breaks the reader. Do NOT try to remove it — instead, ensure chapter JS never directly accesses `window.parent.document`.
+- **Sandbox Architecture (FINAL):** The iframe uses `allow-scripts` ONLY — `allow-same-origin` has been permanently removed. Theme propagation, scroll restoration, search, anchors, and asset loading are ALL done via `postMessage`. Never reintroduce `allow-same-origin`. Never call `window.parent.document` from chapter JS — that would be a sandbox escape.
+- **`guestReady` Is the Only Sync Point:** Do NOT wait for `iframe.onload` to send postMessage calls. Always wait for `{action:'guestReady'}` from the guest. `onload` fires before guest scripts execute, causing race conditions where setTheme/setScrollRatio messages are missed.
+- **`</script>` Escaping — All JSON Blobs:** CHAPTERS, ASSETS, and SEARCH_IDX must all have `</script>` escaped to `<\/script>`. Missed any one of them and JS code embedded in a book (e.g., a programming tutorial) will break the output HTML entirely.
+- **`--skip-insights` is Partial:** `--skip-insights` ONLY disables `autoInjectInsights` (pullquotes). It does NOT disable `autoCollapseLongParas`, `styleFirstPara`, or `autoEnrichLists`. If you want to suppress ALL auto-enrichment, you must process chapters manually before bundling.
 - **`</script>` Escaping:** All `</script>` in chapter HTML is escaped to `<\/script>` during JSON serialization in `bundle.cjs`. This is handled automatically — do not manually escape them.
 - **Base64 Bloat:** Always run `optimize_assets.py` before bundling if the source has images. The 1000px width cap is mandatory.
 

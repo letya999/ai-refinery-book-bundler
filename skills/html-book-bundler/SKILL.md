@@ -32,5 +32,12 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 - **Text-to-HTML XSS:** When converting list items to stat cards or grid cards, always HTML-escape `.text()` values before interpolating into template literals. Cheerio `.text()` decodes entities — re-injecting them raw creates broken HTML.
 - **Sub-skill SKILL.md must be self-contained:** Each role's SKILL.md is the full context for the AI agent executing that role. Never put critical lessons only in the umbrella SKILL.md — the sub-agent won't see it.
 
+## Critical Lessons (2026-04-18, audit session):
+- **`SEARCH_IDX` also needs `</script>` escaping:** CHAPTERS, ASSETS, AND SEARCH_IDX must ALL have `</script>` replaced with `<\/script>`. Omitting any one of them allows a book that contains JS code examples to silently break the output HTML. This is already the most common mistake — check it first on any bundler regression.
+- **`guestReady` is the only safe sync point:** Never send `setTheme`, `setScrollRatio`, or `highlightSearch` from `iframe.onload`. The `onload` event fires before the guest script runs. Always wait for `{action:'guestReady'}` from the guest before sending any postMessage commands.
+- **`srcdoc` breaks relative URLs:** A page loaded via `srcdoc` has no base URL. Any `src="image.jpg"` inside srcdoc resolves relative to the parent page (typically `about:blank` or `file://`), NOT relative to the chapter. This is why ALL assets must be routed through the ASSETS dict + postMessage. Do NOT write relative `src=` paths in chapter HTML after bundling — they will silently 404.
+- **Scroll save must be debounced (≥400ms):** Saving scroll position on every scroll event causes hundreds of `localStorage.setItem` calls per second on long chapters. Always debounce the scroll handler before posting `scrollReport`. The shell saves to localStorage on each received message.
+- **assembler/SKILL.md must stay in sync with default.html:** The assembler sub-skill is the agent that reviews and ships the final file. If assembler/SKILL.md describes a sandbox configuration that contradicts the actual template (e.g., mentioning `allow-same-origin` when it's already removed), the agent will reintroduce the vulnerability. Always update the sub-skill SKILL.md when the architecture changes.
+
 ## Usage:
 Refer to the individual SKILL.md in subdirectories for role-specific instructions.

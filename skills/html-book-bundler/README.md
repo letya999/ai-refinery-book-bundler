@@ -105,7 +105,7 @@ python scripts/lint_book.py --file book.html
 
 ## Architecture
 
-Chapters are stored as raw UTF-8 strings in the `CHAPTERS` JS array inside the output HTML. The shell loads chapters via `iframe.srcdoc` — no base64 overhead, no Blob URL lifecycle, same-origin for direct DOM access.
+Chapters are stored as raw UTF-8 strings in the `CHAPTERS` JS array inside the output HTML. The shell loads chapters via `iframe.srcdoc` with `sandbox="allow-scripts"` (no `allow-same-origin`). All shell↔chapter communication is done via `postMessage` (theme, scroll position, anchor navigation, search highlighting, asset delivery). No base64 overhead on the chapter strings themselves; assets are stored separately in the `ASSETS` dict and lazy-loaded via `IntersectionObserver`.
 
 Search uses a bundle-time inverted index (`SIDX`) with prefix matching and AND intersection. No external library, ~50 lines.
 
