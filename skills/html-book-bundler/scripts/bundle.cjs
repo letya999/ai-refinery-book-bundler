@@ -24,7 +24,7 @@ function decodeHtmlEntities(str) {
 // CLI argument parsing
 // ---------------------------------------------------------------------------
 const args = process.argv.slice(2);
-const VERSION = '8.3';
+const VERSION = '8.4';
 
 if (args.includes('--version') || args.includes('-v')) {
   console.log(`HTML Book Bundler v${VERSION}`);
@@ -353,8 +353,8 @@ const replacements = {
   '{{BOOK_TITLE}}':     bookTitle,
   '{{LANG_CODE}}':      LANG.code || langCode,
   '{{LANG_DIR}}':       LANG.dir || 'ltr',
-  '{{LANG_JSON}}':      JSON.stringify(LANG),
-  '{{GLOBAL_TITLES}}':  JSON.stringify(globalTitles),
+  '{{LANG_JSON}}':      JSON.stringify(LANG).replace(/<\/script>/gi, '<\\/script>'),
+  '{{GLOBAL_TITLES}}':  JSON.stringify(globalTitles).replace(/<\/script>/gi, '<\\/script>'),
   // Escape </script> in ALL JSON blobs so they never prematurely close the outer <script> block.
   // In JSON, <\/ is parsed as </ by JS (the \/ escape = /) giving correct srcdoc HTML.
   '{{LOCAL_CHAPTERS}}': JSON.stringify(chapters).replace(/<\/script>/gi, '<\\/script>'),

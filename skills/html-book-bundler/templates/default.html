@@ -184,12 +184,14 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
 }
 
 /* ── Print styles ── */
+/* Note: iframe content is NOT rendered by browser print.
+   Use the 🖨 button in the toolbar — it opens a printable popup with images restored. */
 @media print {
   .side, .top, .prog, .stars { display: none !important; }
   .app { display: block; }
   .main { display: block; }
   .frame { height: auto; }
-  iframe { height: 100vh; border: none; }
+  iframe { display: none; }
 }
 </style>
 </head>
@@ -515,7 +517,9 @@ iframe { width: 100%; height: 100%; border: none; background: transparent; displ
     win.document.open();
     win.document.write(printHtml);
     win.document.close();
-    win.addEventListener('load', () => setTimeout(() => win.print(), 200));
+    // Use setTimeout instead of win.load event: after document.write()+close(),
+    // the load event may have already fired before addEventListener() is called.
+    setTimeout(() => win.print(), 400);
   };
   let searchDebounce;
   searchEl.oninput = e => {

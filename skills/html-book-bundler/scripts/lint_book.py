@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Master Linter for HTML Book Bundler (v8.3).
+Master Linter for HTML Book Bundler (v8.4).
 Combines Security, Design, and Structural audits into one tool.
 """
 import argparse
