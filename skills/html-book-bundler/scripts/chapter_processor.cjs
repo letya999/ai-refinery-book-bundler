@@ -60,7 +60,8 @@ function processWithCheerio(html, skipInsights) {
   // 2. autoInjectInsights
   if (!skipInsights) {
     const candidates = [];
-    const $topParas = $('body > p, .content-body > p'); // Only top-level or main content paragraphs
+    // Only capture paragraphs not already nested inside other rich components
+    const $topParas = $('p').filter((_, el) => $(el).closest('blockquote, table, .card, details, .grid, .stats').length === 0);
     
     $topParas.each((_, el) => {
       if (candidates.length >= 2) return false;
@@ -119,7 +120,7 @@ function processWithCheerio(html, skipInsights) {
     let isStats = true;
     $items.each((i, li) => {
       const text = $(li).text().trim();
-      const m = text.match(/^([^:—]+)[:—]\s*(.+)$/);
+      const m = text.match(/^([^:—\\-–]+)[:—\\-–]\\s*(.+)$/);
       if (!m) { isStats = false; return false; }
       const label = m[1].trim();
       const val = m[2].trim();
@@ -142,10 +143,12 @@ function processWithCheerio(html, skipInsights) {
       const $li = $(li);
       const text = $li.text().trim();
       const $b = $li.find('b').first();
-      // Use Cheerio-proper first-child check — avoids brittle html().startsWith('<b>') hack
-      if ($b.length && $li.children().first().is('b')) {
+      const firstNode = $li.contents().filter((_, n) => n.type === 'tag' || (n.type === 'text' && n.data.trim().length > 0)).first();
+      if ($b.length && firstNode.is('b')) {
         const cardTitle = $b.text();
-        // Remove the leading <b>...</b> and optional punctuation from the copy
+        // Remove the leading <b>...</b> and optional punctuation from the copy.
+        // Note: We intentionally use .html() without escHtml() here to avoid double-escaping
+        // and to preserve intended nested formatting (e.g. <i>, <em>, <a>) from the source.
         const bodyHtml = $li.html().replace(/<b[^>]*>.*?<\/b>\s*[:.\s]*/i, '');
         $grid.append(`\n<div class="card"><b>${escHtml(cardTitle)}</b><p>${bodyHtml}</p></div>`);
       } else {
@@ -184,7 +187,9 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
   const hasOwnStyles = /<style[\s\S]*?<\/style>/i.test(content);
   const effectiveChapterLabel = chapterLabel || (langCode === 'en' ? 'Chapter' : 'Глава');
 
-  // Guest Script: Handles navigation, lazy loading, theme, search highlighting, and scroll reporting via postMessage
+  // Guest Script: Handles navigation, lazy loading, theme, search highlighting, and scroll reporting.
+  // Security Note: Communication uses postMessage(..., '*') because sandboxed iframes without 
+  // allow-same-origin run on a 'null' origin, making specific origin targeting impossible.
   const guestScriptClose = '</' + 'script>';
   const navScript = `
 <script>
@@ -231,6 +236,13 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
     } else if (anchor) {
       const el = document.getElementById(anchor);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Escape'].includes(e.key)) {
+      window.parent.postMessage({ action: 'keypress', key: e.key }, '*');
     }
   });
 
@@ -302,7 +314,7 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     else if (data.action === 'highlightSearch') {
-      // Clear previous marks
+      // 1. Clear previous marks and normalize
       const marks = document.querySelectorAll('mark.search-hit');
       marks.forEach(m => {
         const parent = m.parentNode;
@@ -313,38 +325,81 @@ function prepareChapter(html, index, title, filesArray, globalCSS = '', bookTitl
       window.currentSearchHit = -1;
 
       if (!data.query) return;
-      const query = data.query.toLowerCase().replace(/[^\\p{L}\\p{N}]/gu, '');
-      if (query.length < 2) return;
+      const queryWords = data.query.toLowerCase()
+        .replace(/[^\\p{L}\\p{N}\\s]/gu, ' ')
+        .split(/\\s+/)
+        .filter(w => w.length > 1);
+      if (queryWords.length === 0) return;
 
-      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-      let node;
-      const nodes = [];
-      while ((node = walker.nextNode())) nodes.push(node);
-
-      nodes.forEach(n => {
-        const pn = n.parentNode;
-        if (!pn || pn.nodeName === 'MARK' || pn.nodeName === 'SCRIPT' || pn.nodeName === 'STYLE') return;
-        const text = n.nodeValue;
-        const lower = text.toLowerCase();
-        if (lower.indexOf(query) === -1) return;
-
-        const frag = document.createDocumentFragment();
-        let pos = 0;
-        let i;
-        while ((i = lower.indexOf(query, pos)) !== -1) {
-          if (i > pos) frag.appendChild(document.createTextNode(text.slice(pos, i)));
-          const mark = document.createElement('mark');
-          mark.className = 'search-hit';
-          mark.style.background = 'var(--acc)';
-          mark.style.color = 'var(--bg)';
-          mark.textContent = text.slice(i, i + query.length);
-          frag.appendChild(mark);
-          window.searchHits.push(mark);
-          pos = i + query.length;
+      // 2. Build virtual text buffer with DOM mapping
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode: n => {
+          const p = n.parentNode;
+          if (p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE' || p.nodeName === 'MARK') return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
         }
-        if (pos < text.length) frag.appendChild(document.createTextNode(text.slice(pos)));
-        pn.replaceChild(frag, n);
       });
+
+      let fullText = '';
+      const mappings = []; // { start, end, node }
+      let node;
+      while ((node = walker.nextNode())) {
+        const val = node.nodeValue;
+        mappings.push({ start: fullText.length, end: fullText.length + val.length, node });
+        fullText += val;
+      }
+
+      // 3. Search in virtual buffer
+      const lower = fullText.toLowerCase();
+      const rangesToMark = [];
+      queryWords.forEach(query => {
+        let pos = 0;
+        while ((pos = lower.indexOf(query, pos)) !== -1) {
+          rangesToMark.push({ start: pos, end: pos + query.length });
+          pos += query.length;
+        }
+      });
+      
+      rangesToMark.sort((a, b) => a.start - b.start);
+      const merged = [];
+      for (const r of rangesToMark) {
+        if (!merged.length) {
+          merged.push(r);
+        } else {
+          const last = merged[merged.length - 1];
+          if (r.start <= last.end) {
+            last.end = Math.max(last.end, r.end);
+          } else {
+            merged.push(r);
+          }
+        }
+      }
+
+      // 4. Map ranges back to DOM and wrap in <mark>
+      // Process backwards to avoid offset shifting issues
+      for (let i = merged.length - 1; i >= 0; i--) {
+        const { start, end } = merged[i];
+        const matchNodes = mappings.filter(m => m.start < end && m.end > start);
+        if (!matchNodes.length) continue;
+
+        matchNodes.forEach(m => {
+          const nodeStart = Math.max(0, start - m.start);
+          const nodeEnd = Math.min(m.node.length, end - m.start);
+          if (nodeStart >= nodeEnd) return;
+
+          try {
+            const range = document.createRange();
+            range.setStart(m.node, nodeStart);
+            range.setEnd(m.node, nodeEnd);
+            const mark = document.createElement('mark');
+            mark.className = 'search-hit';
+            mark.style.background = 'var(--acc)';
+            mark.style.color = 'var(--bg)';
+            range.surroundContents(mark);
+            window.searchHits.unshift(mark);
+          } catch(e) {}
+        });
+      }
 
       if (window.searchHits.length > 0) {
         window.currentSearchHit = 0;

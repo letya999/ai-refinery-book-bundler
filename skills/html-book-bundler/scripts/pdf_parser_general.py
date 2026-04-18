@@ -34,6 +34,7 @@ class PDFParser:
     def _calculate_baseline(self):
         """Analyze the whole document to find the most common font size (body text)."""
         sizes = {}
+        total_text_len = 0
         print("Analyzing document font sizes...")
         for page in self.doc:
             for b in page.get_text("dict").get("blocks", []):
@@ -42,11 +43,18 @@ class PDFParser:
                         for span in line.get("spans", []):
                             txt = span["text"].strip()
                             if not txt: continue
+                            total_text_len += len(txt)
                             s = round(span["size"], 1)
                             sizes[s] = sizes.get(s, 0) + len(txt)
         
-        if not sizes:
-            return 11.0 # fallback
+        if total_text_len == 0:
+            print("\n" + "!" * 60)
+            print("CRITICAL WARNING: No text found in PDF!")
+            print("This PDF appears to be a scan or images without an OCR layer.")
+            print("The output chapters will be EMPTY. Please run OCR before ingesting.")
+            print("!" * 60 + "\n")
+            self.baseline_size = 11.0
+            return
 
         # Find the size with the most characters
         self.baseline_size = max(sizes.items(), key=lambda x: x[1])[0]

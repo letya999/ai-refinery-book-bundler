@@ -92,7 +92,11 @@ const bookTitle = getArg('--title', fallbackTitle);
 const bookId    = 'book_' + crypto.createHash('md5').update(bookTitle).digest('hex').slice(0, 8);
 let langCode    = getArg('--lang', 'ru');
 
-const SUPPORTED_LANGS = ['ru', 'en'];
+const langDir = path.join(__dirname, '../lang');
+const SUPPORTED_LANGS = fs.existsSync(langDir) 
+  ? fs.readdirSync(langDir).filter(f => f.endsWith('.json')).map(f => f.replace('.json', ''))
+  : ['ru', 'en'];
+
 if (!SUPPORTED_LANGS.includes(langCode)) {
   console.warn(`Warning: unsupported --lang value "${langCode}". Falling back to "ru". Supported: ${SUPPORTED_LANGS.join(', ')}`);
   langCode = 'ru';
@@ -128,8 +132,9 @@ const LANG = fs.existsSync(langFile)
 // ---------------------------------------------------------------------------
 if (optimize) {
   const optimizer = path.join(__dirname, 'optimize_assets.py');
-  if (!fs.existsSync(optimizer)) {
-    console.warn('Warning: optimize_assets.py not found — skipping image optimization.');
+  if (!fs.existsSync(optimizer)) { // FIX: issue 8 (fails loudly)
+    console.error('Error: --optimize flag passed, but optimize_assets.py was not found.');
+    process.exit(1);
   } else {
     console.log('Optimizing assets in-place...');
     const { spawnSync } = require('child_process');
@@ -201,10 +206,10 @@ function bundleAssets(htmlContent, baseDir) {
     return `data-srcset="${srcset}"`;
   });
 
-  // Replace href= for non-html assets linked directly (offer as download)
-  content = content.replace(/href=["']([^"']+)["']/gi, (match, src) => {
+  // Replace href= for non-html assets linked directly via <a> (offer as download)
+  content = content.replace(/<a\s+([^>]*?)href=["']([^"']+)["']/gi, (match, before, src) => {
     const assetKey = processAsset(src);
-    return assetKey ? `href="#" data-href="${assetKey}"` : match;
+    return assetKey ? `<a ${before}href="#" data-href="${assetKey}"` : match;
   });
 
   // Inline CSS url() references (fonts, backgrounds) as base64 data URIs.
@@ -256,12 +261,23 @@ function tokenize(text) {
 function buildSearchIndex(chapterTexts) {
   const idx = {};
   chapterTexts.forEach((text, ci) => {
-    const tokens = new Set(tokenize(text));
+    const tokens = tokenize(text);
+    const tf = {};
     tokens.forEach(tok => {
+      tf[tok] = (tf[tok] || 0) + 1;
+    });
+    Object.keys(tf).forEach(tok => {
       if (!idx[tok]) idx[tok] = [];
-      idx[tok].push(ci);
+      // Store chapter index and term frequency
+      idx[tok].push([ci, tf[tok]]);
     });
   });
+  // Sort descending by frequency for basic relevance ranking
+  for (const tok in idx) {
+    idx[tok].sort((a, b) => b[1] - a[1]);
+    // Simplify back to just an array of chapter indices
+    idx[tok] = idx[tok].map(entry => entry[0]);
+  }
   return idx;
 }
 
@@ -353,12 +369,44 @@ const replacements = {
   '{{BOOK_TITLE}}':     bookTitle,
   '{{LANG_CODE}}':      LANG.code || langCode,
   '{{LANG_DIR}}':       LANG.dir || 'ltr',
-  '{{LANG_JSON}}':      JSON.stringify(LANG).replace(/<\/script>/gi, '<\\/script>'),
-  '{{GLOBAL_TITLES}}':  JSON.stringify(globalTitles).replace(/<\/script>/gi, '<\\/script>'),
-  // Escape </script> in ALL JSON blobs so they never prematurely close the outer <script> block.
-  // In JSON, <\/ is parsed as </ by JS (the \/ escape = /) giving correct srcdoc HTML.
-  '{{LOCAL_CHAPTERS}}': JSON.stringify(chapters).replace(/<\/script>/gi, '<\\/script>'),
-  '{{ASSETS}}':         JSON.stringify(ASSETS).replace(/<\/script>/gi, '<\\/script>'),
+  '{{LANG_JSON}}':      safeJsonInject(LANG),
+  '{{GLOBAL_TITLES}}':  safeJsonInject(globalTitles),
+  '{{LOCAL_CHAPTERS}}': safeJsonInject(chapters),
+  '{{ASSETS}}':         safeJsonInject(ASSETS),
+  '{{SEARCH_IDX}}':     safeJsonInject(searchIndex),
+  '{{DEV_SCRIPT}}':     devScript,
+};
+
+for (const [placeholder, value] of Object.entries(replacements)) {
+  // Use split/join for global replace without regex escaping issues
+  template = template.split(placeholder).join(value);
+}
+
+// Inject BUNDLER_VERSION
+template = template.replace('</head>', `  <meta name="generator" content="HTML Book Bundler v${VERSION}">\n</head>`);
+
+// Verify all placeholders are resolved
+const remaining = template.match(/\{\{[A-Z_]+\}\}/g);
+if (remaining) {
+  console.warn(`Warning: unresolved template placeholders: ${[...new Set(remaining)].join(', ')}`);
+}
+
+fs.mkdirSync(path.dirname(outputFileAbs), { recursive: true });
+fs.writeFileSync(outputFileAbs, template);
+
+const sizeMb = (fs.statSync(outputFileAbs).size / 1_048_576).toFixed(2);
+console.log(`Book assembled: ${outputFileAbs} (${sizeMb} MB, ${files.length} chapters)`);
+plate.match(/\{\{[A-Z_]+\}\}/g);
+if (remaining) {
+  console.warn(`Warning: unresolved template placeholders: ${[...new Set(remaining)].join(', ')}`);
+}
+
+fs.mkdirSync(path.dirname(outputFileAbs), { recursive: true });
+fs.writeFileSync(outputFileAbs, template);
+
+const sizeMb = (fs.statSync(outputFileAbs).size / 1_048_576).toFixed(2);
+console.log(`Book assembled: ${outputFileAbs} (${sizeMb} MB, ${files.length} chapters)`);
+ipt>'),
   '{{SEARCH_IDX}}':     JSON.stringify(searchIndex).replace(/<\/script>/gi, '<\\/script>'), // ← MUST escape too!
   '{{DEV_SCRIPT}}':     devScript,
 };
@@ -367,6 +415,9 @@ for (const [placeholder, value] of Object.entries(replacements)) {
   // Use split/join for global replace without regex escaping issues
   template = template.split(placeholder).join(value);
 }
+
+// Inject BUNDLER_VERSION
+template = template.replace('</head>', `  <meta name="generator" content="HTML Book Bundler v${VERSION}">\n</head>`);
 
 // Verify all placeholders are resolved
 const remaining = template.match(/\{\{[A-Z_]+\}\}/g);
