@@ -216,7 +216,11 @@ function inlineStylesheets(htmlContent, baseDir) {
 // ---------------------------------------------------------------------------
 function tokenize(text) {
   const STOP_WORDS = new Set((LANG.stop_words || []).map(w => w.toLowerCase()));
-  return text.replace(/<[^>]+>/g, ' ').toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
+  const clean = text
+    .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ');
+  return clean.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
 }
 
 function buildSearchIndex(chapterTexts) {

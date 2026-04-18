@@ -57,5 +57,13 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 - **Cross-Chunk Anchor Resolution:** Due to the 2MB split limit (Mobile OOM mitigation), `<a href="#footnote-1">` or `<a href="chapter3.html#conclusion">` breaks if the target `id` was split into a different chunk from the origin/shell target. **MANDATORY:** `splitChapter` must extract all IDs globally into `GLOBAL_ANCHORS` mapped to the chunk index. The shell must attempt `ANCHORS[anchorId]` *before* searching for a file index, routing directly to the exact chunk.
 - **Local Anchor Escalation:** In the `iframe` guest script, if `document.getElementById(anchor)` fails, the anchor might reside in a sibling chunk. The script must emit `postMessage({ action: 'bookGo', anchorId })` up to the shell instead of silently failing.
 
+## Critical Lessons (2026-04-18, final high-stakes audit):
+- **DOM Hierarchy Preservation in Split:** `splitChapter` MUST track open tags via a stack to avoid breaking CSS/layout. When splitting at 2MB, explicitly close all open tags at the chunk boundary and re-open them at the start of the next chunk (e.g. `<main><div...>` -> `...</div></main>`).
+- **Parsing Freeze Mitigation (JSON Scripts):** Never inject large data (SIDX, CHAPTERS, ASSETS) as JS object literals. This triggers eager V8 AST parsing which freezes the main thread on mobile. Inject into `<script type="application/json">` and use `JSON.parse()` on demand — it's 2-5x faster and avoids thread blocking.
+- **Sidebar Rendering Performance:** Use `DocumentFragment` when building large chapter/search result lists. For books with >300 chunks, batching DOM insertions prevents layout thrashing and ensures smooth UI interaction.
+- **Tokenization Integrity:** `tokenize()` must explicitly strip `<script>` and `<style>` blocks before removing other tags. Otherwise, JS logic and CSS rules are indexed as book content, polluting search results with code snippets.
+- **Asset Key Integrity:** Include an MD5 hash of the asset content in the `asset_` key. This allows the guest script/shell to reliably identify duplicate assets across multiple chapters and reduces the total file size through deduplication.
+- **Iframe `srcdoc` Length Hazards:** While `srcdoc` is modern and safe, keep individual chunk sizes below 2MB. Some mobile engines silently fail to render or experience massive GC pauses when `srcdoc` receives a single contiguous string larger than 5MB. 2MB is the "Sweet Spot" for responsiveness.
+
 ## Usage:
 Refer to the individual SKILL.md in subdirectories for role-specific instructions.
