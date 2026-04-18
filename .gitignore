@@ -5,3 +5,5 @@ _cmp_crop.png
 tmp_gen_*.py
 # python cache
 __pycache__/
+# playwright MCP session artifacts
+.playwright-mcp/
