@@ -252,19 +252,46 @@ function splitChapter(html, limit) {
   const foot = '</body></html>';
   const body = bodyMatch[1];
   
-  // Naive split by paragraph/section/div tags to keep structure
   const chunks = body.split(/(?=<p|<div|<section|<blockquote|<table|<h[1-6]|<details)/i);
+  
+  const voidTags = new Set(['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr']);
+  function updateOpenTags(stack, htmlCode) {
+    const tagRegex = /<\/?([a-z0-9\-]+)[^>]*>/gi;
+    let match;
+    while ((match = tagRegex.exec(htmlCode)) !== null) {
+      const tagFull = match[0];
+      const tagName = match[1].toLowerCase();
+      if (tagFull.startsWith('</')) {
+        for (let i = stack.length - 1; i >= 0; i--) {
+           if (stack[i].name === tagName) { stack.splice(i, 1); break; }
+        }
+      } else if (!voidTags.has(tagName) && !tagFull.endsWith('/>')) {
+        stack.push({ name: tagName, full: tagFull });
+      }
+    }
+  }
+
   let currentPart = '';
+  let activeStack = [];
   
   for (const chunk of chunks) {
     if (Buffer.byteLength(currentPart + chunk, 'utf8') > limit && currentPart) {
-      parts.push(head + currentPart + foot);
-      currentPart = chunk;
+      const closeTags = activeStack.slice().reverse().map(t => '</' + t.name + '>').join('');
+      parts.push(head + currentPart + closeTags + foot);
+      
+      const openTags = activeStack.map(t => t.full).join('');
+      currentPart = openTags + chunk;
+      updateOpenTags(activeStack, chunk);
     } else {
       currentPart += chunk;
+      updateOpenTags(activeStack, chunk);
     }
   }
-  if (currentPart) parts.push(head + currentPart + foot);
+  
+  if (currentPart) {
+    const closeTags = activeStack.slice().reverse().map(t => '</' + t.name + '>').join('');
+    parts.push(head + currentPart + closeTags + foot);
+  }
   return parts;
 }
 
