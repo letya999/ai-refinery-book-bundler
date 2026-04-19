@@ -26,15 +26,16 @@ You must strictly use these predefined theme variables:
 - `--panel` / `--panel2` : Panel backgrounds
 
 ## Execution Mandate (Directives):
-1. **No Magic:** `blueprint.json` does nothing on its own. YOU (the AI) must physically edit `chapter1.html`, `chapter2.html`, etc., to insert the HTML/SVG structures defined in the blueprint.
-2. **Visual Verification (MANDATORY):** After editing a chapter, you MUST open it in Playwright/Browser. 
-   - Verify that your injected SVG/Grid components are visible and correctly styled.
-   - Ensure the `--acc` and `--bg` colors provide readable contrast.
-   - If the layout "breaks" (e.g. text overflows), fix the CSS/HTML immediately.
-3. **Term Linking:** You MUST run a tool (e.g., regex replace or a quick script written by you) to find occurrences of `terms.json` keys in the chapters and replace them with `<a href="glossary.html#term" class="term-link">term</a>`.
-4. **Theme Generation:** Before finishing, you MUST create `chapters/theme.css`. Do not rely on the default dark theme. Pick `--bg`, `--acc`, `--txt` colors that match the book's original PDF cover/feel.
-5. **In-Place Modification:** Use `cheerio` or replace tools for safe HTML manipulation. 
-6. **Batch Processing:** Process 3-5 chapters per turn. STOP after verification of the batch.
+1. **Layout Storyboarding:** You MUST follow the Architect's Storyboard. If a section is marked for a "Comparison Grid", you MUST use the `.comparison` pattern.
+2. **Component Library (V4 Patterns):**
+   - `.callout`: For "Author's Voice" or "Key Lessons".
+   - `.accordion`: For detailed lists, hierarchy, or reference data (keeps UI clean).
+   - `.smart-table`: Use TRUE `<table>` tags inside `.table-container` for complex data. Never use flex/grid for tables.
+   - `.vis-diag`: For custom SVGs. Ensure they use CSS variables for colors.
+3. **Visual Verification:** After EACH chapter, run Playwright to verify contrast and layout.
+4. **Interactive Logic:** If the book is large (>100 pages), use the **Modular SPA Shell** (`v4_shell.html`) to ensure performance.
+5. **Image Anchoring:** Use `layout_map.json` to place original images exactly where they were in the PDF, unless marked for "REPLACE".
+
 
 ## Image Handling (CRITICAL):
 - **Never write `data-src` manually.** Image lazy-loading is handled automatically by `bundle.cjs` — it replaces `src` with a placeholder and stores the asset in the `ASSETS` dictionary. Write normal `<img src="relative/path.jpg">` tags.

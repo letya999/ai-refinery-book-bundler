@@ -8,21 +8,13 @@ description: Deployment Layer. Bundles chapters into a single-file offline app. 
 You are the Deployment Layer. Your goal is a 100% functional, secure, single-file reading application.
 
 ## Directives:
-1. **FULL COVERAGE GATE (STRICT):** Before running `bundle.cjs`, you MUST run:
-   `grep -L -E "vis-|table" ./chapters/chapter*.html`
-   - If any file is returned (meaning it lacks visuals/tables), YOU ARE FORBIDDEN from bundling.
-   - Exception: Only small "TOC" or "Intro" files under 1KB can be skipped. 
-   - All standard chapters MUST have context-rich visuals.
-2. **PROOF OF WORK GATE (STRICT):** Before running `bundle.cjs`, you MUST prove you enriched the HTML. 
-   - Run tests: e.g. use `grep_search` to find `vis-` and `class="term-link"` in HTML chapters.
-   - If these return 0 matches, YOU ARE FORBIDDEN from running `bundle.cjs`. You must return to the Designer phase and physically edit the files.
-3. **Stable ID:** Ensure the `--title` matches previous builds to maintain user `localStorage` (bookmarks, progress). The `BOOK_ID` is a hash of the title.
-4. **Zero-Dependency:** Inline all CSS and assets using `bundle.cjs`.
-5. **QA Checks:** 
-   - You MUST run `../scripts/lint_book.py` on the final assembled HTML file. Fix any hex colors or sandbox escape risks.
-   - Verify search functionality jumps to matched words (Search UI Integration).
-   - Ensure tests are passing: run the suite inside `tests/` before final delivery.
-6. **Final Assembly:** Use `--skip-insights` ONLY if the Designer already inserted manual `<blockquote class="insight">` blocks. Without it, auto-enrichment runs and may duplicate insights.
+1. **FULL COVERAGE GATE:** Use `grep -L "callout|accordion|table"` to find unprocessed chapters.
+2. **MODULAR SHELL:** For large books, you MUST use `v4_shell.html`. 
+   - Inject the final chapters into the `BOOK_DATA` JSON block.
+   - All assets (WebP) must be indexed in the `ASSETS` block.
+3. **QA LINT:** Run `lint_book.py`. Ensure NO hex colors (use CSS vars) and that contrast is WCAG-compliant.
+4. **Offline First:** All scripts and CSS must be inlined into a single file (if requested) or a clean bundle.
+
 
 ## Workflow:
 # In-place optimization (max 1000px width — prevents mobile OOM)

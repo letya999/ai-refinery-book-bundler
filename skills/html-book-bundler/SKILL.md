@@ -7,20 +7,26 @@ description: Master Skill Bundle (v8.3). A 4-role pipeline (Ingest, Architect, D
 
 This is the umbrella skill for the book production toolchain. It manages 4 specialized sub-skills for each layer of production.
 
-## MANDATORY EXECUTION PROTOCOL (STRICT)
-You are an AI Agent. You MUST execute this pipeline sequentially. NEVER skip to Step 4 before doing Step 2 and 3.
+## MANDATORY EXECUTION PROTOCOL: THE DIRECTOR'S CUT (V9.0)
+You are an AI Architect and Book Director. Your goal is to transform a boring PDF into a high-fidelity, interactive learning experience.
 
-* **STEP 1: INGESTION.** Run `ingest.py`. Create `progress.json` in the chapters directory to track status.
-* **STEP 2: ARCHITECTURE (BATCH MODE).** Identify the next 3-5 unprocessed chapters from `progress.json`. Read them, create blueprints and terms.
-* **STEP 3: DESIGN & VERIFY (MUTATION).** Physically modify the chapters. After EACH chapter is modified, YOU MUST:
-   - Use Playwright or Browser tool to render the modified `chapterN.html`.
-   - Take a screenshot or inspect the DOM to ensure layout, contrast, and meaning are intact.
-   - Update `progress.json` only after successful visual verification.
-* **STEP 4: BATCH GATE.** After every batch, STOP and ask the user for "NEXT". Do NOT proceed to the next batch or Assembler without permission.
-* **STEP 5: ASSEMBLER (GATE).** Before running `bundle.cjs`, you MUST run `grep -L "vis-" chapters/*.html`. If ANY chapter is listed (except TOC), YOU FAILED. Go back.
+* **STEP 1: SMART INGEST.** Run `ingest.py` and `generate_layout_map.py`. You MUST understand the topology of the book (where images and tables were originally located).
+* **STEP 2: STORYBOARD & DIRECTOR'S NOTE.** For each batch (3-5 chapters), you MUST first write a "Director's Note" in the chat:
+   - What will be compressed (cut out "water").
+   - What will be transformed (e.g., "This table becomes an interactive grid").
+   - Which original images are kept vs replaced by Rich UI/SVG.
+   - Wait for user approval of the Storyboard.
+* **STEP 3: RICH DESIGN & VERIFY.** Physically modify the chapters using the Component Library (theme_v4.css).
+   - Inject Interactive SVGs for logic.
+   - Use Accordions for depth.
+   - Mandatory Playwright verification for EACH chapter.
+* **STEP 4: MODULAR ASSEMBLY.** Use `v4_shell.html` for a modular SPA experience. The book must be fast, responsive, and cross-linked.
 
-## ITERATIVE LOOP (Large Books)
-For books > 20 pages, you are FORBIDDEN from processing the whole book at once. Use 3-5 chapter batches. Memory and context focus MUST remain on the current batch.
+## CORE MANDATES:
+1. **70/30 Rule:** 70% of content MUST be structured (grids, lists, schemas, callouts). Only 30% can be plain text.
+2. **Semantic Linking:** Glossary links must be contextual and meaningful.
+3. **Zero Bloat:** If a 400-page book is requested, it MUST be modular (SPA Shell).
+
 
 ## Components (Sub-skills):
 1. **book-ingester:** Unified extraction from PDF, EPUB, FB2, DOCX (including images).

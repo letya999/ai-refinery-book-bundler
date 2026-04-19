@@ -9,22 +9,25 @@ You are the Intelligence Layer. Your goal is to transform "Bulk Text" into a "Le
 
 ## MANDATORY STEPS:
 
-### 1. Semantic Distillation (DESTRUCTIVE COMPRESSION)
-- **CRITICAL:** You have EXPLICIT PERMISSION to delete user text. The raw OCR is a "wall of text" and is unacceptable.
+### 1. DIRECTOR'S NOTE & STORYBOARD (NEW)
+- Before processing a batch (3-5 chapters), you MUST write a **Storyboard** in the chat.
+- It MUST include:
+  - **The Cut:** What text will be deleted/compressed.
+  - **Component Mapping:** Which parts become Callouts, Accordions, or Grids.
+  - **Original vs Synthetic:** Decide which images from `layout_map.json` to keep and which to replace with Rich UI (SVG/Graphs).
+- WAIT FOR USER APPROVAL before mutating files.
+
+### 2. Semantic Distillation (DESTRUCTIVE COMPRESSION)
+- **CRITICAL:** You have EXPLICIT PERMISSION to delete user text. The raw OCR is unacceptable.
 - You MUST condense verbose paragraphs by 50-70%. 
-- Replace long explanations with `smart-table` (Grid), bullet points, or `<details class="long-para">`. 
+- Use the **70/30 Rule:** 70% of the result must be structured components (Callouts, Tables, Grids, SVGs).
 - Extract the absolute essence. If a paragraph is just water, DELETE IT.
-- Identify specialized terms for the glossary.
 
-### 2. Terminology Tracking (`terms.json`)
-- Maintain a `terms.json` file to track terminology across chapters.
-- **Rule:** Every term referenced from main chapters MUST have an entry in `terms.json`.
-- After processing all chapters, generate `glossary.html` using the collected terms.
+### 3. Terminology & Linking
+- Extract 5-10 mission-critical terms per chapter. 
+- Ensure they are linked via `<a href="glossary.html#term" class="term-link">`.
+- Use contextual linking (don't link every word, only when it's central to the topic).
 
-### 3. Visual Blueprinting (`blueprint.json`)
-- Plan 2-4 visual anchors per chapter.
-- **Rules:** Blueprint complex flows, structures, or hierarchies as SVG diagrams, not lists.
-- **Insights:** Include "high-signal quotes" for each chapter in the blueprint. Designer will decide where to inject them.
 
 Full `blueprint.json` schema with all visual types the Designer understands:
 ```json
