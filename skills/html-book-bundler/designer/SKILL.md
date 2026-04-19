@@ -27,10 +27,14 @@ You must strictly use these predefined theme variables:
 
 ## Execution Mandate (Directives):
 1. **No Magic:** `blueprint.json` does nothing on its own. YOU (the AI) must physically edit `chapter1.html`, `chapter2.html`, etc., to insert the HTML/SVG structures defined in the blueprint.
-2. **Term Linking:** You MUST run a tool (e.g., regex replace or a quick script written by you) to find occurrences of `terms.json` keys in the chapters and replace them with `<a href="glossary.html#term" class="term-link">term</a>`.
-3. **Theme Generation:** Before finishing, you MUST create `chapters/theme.css`. Do not rely on the default dark theme. Pick `--bg`, `--acc`, `--txt` colors that match the book's original PDF cover/feel.
-4. **In-Place Modification:** Use `cheerio` or replace tools for safe HTML manipulation. 
-5. **Batch Processing:** Process 3-5 chapters per turn.
+2. **Visual Verification (MANDATORY):** After editing a chapter, you MUST open it in Playwright/Browser. 
+   - Verify that your injected SVG/Grid components are visible and correctly styled.
+   - Ensure the `--acc` and `--bg` colors provide readable contrast.
+   - If the layout "breaks" (e.g. text overflows), fix the CSS/HTML immediately.
+3. **Term Linking:** You MUST run a tool (e.g., regex replace or a quick script written by you) to find occurrences of `terms.json` keys in the chapters and replace them with `<a href="glossary.html#term" class="term-link">term</a>`.
+4. **Theme Generation:** Before finishing, you MUST create `chapters/theme.css`. Do not rely on the default dark theme. Pick `--bg`, `--acc`, `--txt` colors that match the book's original PDF cover/feel.
+5. **In-Place Modification:** Use `cheerio` or replace tools for safe HTML manipulation. 
+6. **Batch Processing:** Process 3-5 chapters per turn. STOP after verification of the batch.
 
 ## Image Handling (CRITICAL):
 - **Never write `data-src` manually.** Image lazy-loading is handled automatically by `bundle.cjs` — it replaces `src` with a placeholder and stores the asset in the `ASSETS` dictionary. Write normal `<img src="relative/path.jpg">` tags.

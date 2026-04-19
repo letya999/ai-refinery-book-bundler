@@ -8,16 +8,21 @@ description: Deployment Layer. Bundles chapters into a single-file offline app. 
 You are the Deployment Layer. Your goal is a 100% functional, secure, single-file reading application.
 
 ## Directives:
-1. **PROOF OF WORK GATE (STRICT):** Before running `bundle.cjs`, you MUST prove you enriched the HTML. 
+1. **FULL COVERAGE GATE (STRICT):** Before running `bundle.cjs`, you MUST run:
+   `grep -L -E "vis-|table" ./chapters/chapter*.html`
+   - If any file is returned (meaning it lacks visuals/tables), YOU ARE FORBIDDEN from bundling.
+   - Exception: Only small "TOC" or "Intro" files under 1KB can be skipped. 
+   - All standard chapters MUST have context-rich visuals.
+2. **PROOF OF WORK GATE (STRICT):** Before running `bundle.cjs`, you MUST prove you enriched the HTML. 
    - Run tests: e.g. use `grep_search` to find `vis-` and `class="term-link"` in HTML chapters.
    - If these return 0 matches, YOU ARE FORBIDDEN from running `bundle.cjs`. You must return to the Designer phase and physically edit the files.
-2. **Stable ID:** Ensure the `--title` matches previous builds to maintain user `localStorage` (bookmarks, progress). The `BOOK_ID` is a hash of the title.
-3. **Zero-Dependency:** Inline all CSS and assets using `bundle.cjs`.
-4. **QA Checks:** 
+3. **Stable ID:** Ensure the `--title` matches previous builds to maintain user `localStorage` (bookmarks, progress). The `BOOK_ID` is a hash of the title.
+4. **Zero-Dependency:** Inline all CSS and assets using `bundle.cjs`.
+5. **QA Checks:** 
    - You MUST run `../scripts/lint_book.py` on the final assembled HTML file. Fix any hex colors or sandbox escape risks.
    - Verify search functionality jumps to matched words (Search UI Integration).
    - Ensure tests are passing: run the suite inside `tests/` before final delivery.
-5. **Final Assembly:** Use `--skip-insights` ONLY if the Designer already inserted manual `<blockquote class="insight">` blocks. Without it, auto-enrichment runs and may duplicate insights.
+6. **Final Assembly:** Use `--skip-insights` ONLY if the Designer already inserted manual `<blockquote class="insight">` blocks. Without it, auto-enrichment runs and may duplicate insights.
 
 ## Workflow:
 # In-place optimization (max 1000px width — prevents mobile OOM)
