@@ -381,7 +381,8 @@ const replacements = {
   '{{GLOBAL_ANCHORS}}': safeJsonInject(globalAnchors),
   '{{LOCAL_CHAPTERS}}': safeJsonInject(chapters),
   '{{GLOSSARY_DATA}}':  safeJsonInject(glossaryData),
-  '{{ASSETS.theme_v4_css}}': globalCSS, // DIRECT INJECTION
+  '{{THEME_CSS}}':      globalCSS,
+  '{{ASSETS}}':         safeJsonInject(ASSETS),
   '{{SEARCH_IDX}}':     safeJsonInject(searchIndex),
   '{{DEV_SCRIPT}}':     devScript,
 };

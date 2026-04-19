@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{BOOK_TITLE}}</title>
     <style>
-        {{ASSETS.theme_v4_css}} /* Will be replaced with global theme */
+        {{THEME_CSS}}
         
         #app { display: flex; height: 100vh; width: 100vw; }
         
@@ -34,23 +34,23 @@
         .nav-item.active { background: white; color: var(--acc); border-left: 4px solid var(--acc); padding-left: calc(2rem - 4px); }
 
         #reader { flex: 1; overflow-y: auto; background: white; position: relative; }
-        #content-mount { transition: opacity 0.3s; padding: 2rem; max-width: 900px; margin: 0 auto; }
+        #content-mount { transition: opacity 0.2s; padding: 2rem; max-width: 900px; margin: 0 auto; }
         
         /* Overlay Glossary */
         #glossary-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 100;
+            background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000;
         }
         #glossary-overlay.open { display: flex; }
         #glossary-card {
             background: white; padding: 2rem; border-radius: 16px; max-width: 500px; width: 90%;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative;
         }
-        #glossary-card h2 { margin-top: 0; color: var(--acc); border: none; }
-        #glossary-close { position: absolute; top: 1rem; right: 1rem; cursor: pointer; font-size: 1.5rem; }
+        #glossary-card h2 { margin-top: 0; color: var(--acc); border: none; font-size: 1.5rem; }
+        #glossary-close { position: absolute; top: 1rem; right: 1rem; cursor: pointer; font-size: 1.5rem; line-height: 1; }
 
         @media (max-width: 800px) {
-            #sidebar { display: none; } /* Simplified for now */
+            #sidebar { display: none; }
         }
     </style>
 </head>
@@ -72,16 +72,18 @@
         <div id="glossary-card" onclick="event.stopPropagation()">
             <span id="glossary-close" onclick="closeGlossary()">&times;</span>
             <h2 id="glossary-title">Термин</h2>
+            <hr style="border:0; border-top:1px solid var(--border); margin: 1rem 0;">
             <div id="glossary-def">Определение...</div>
         </div>
     </div>
 
-    <script type="application/json" id="book-data">
+    <script id="book-data" type="application/json">
         {
           "chapters": {{LOCAL_CHAPTERS}},
           "glossary": {{GLOSSARY_DATA}},
           "titles":   {{GLOBAL_TITLES}},
-          "anchors":  {{GLOBAL_ANCHORS}}
+          "anchors":  {{GLOBAL_ANCHORS}},
+          "assets":   {{ASSETS}}
         }
     </script>
 
@@ -91,33 +93,44 @@
         const mount = document.getElementById('content-mount');
         const reader = document.getElementById('reader');
         
+        function hydrateImages(container) {
+            container.querySelectorAll('img[data-src]').forEach(img => {
+                const assetKey = img.getAttribute('data-src');
+                if (data.assets[assetKey]) {
+                    img.src = data.assets[assetKey];
+                    img.removeAttribute('data-src');
+                }
+            });
+        }
+
         function loadChapter(index) {
             mount.style.opacity = '0';
             setTimeout(() => {
                 mount.innerHTML = data.chapters[index];
+                hydrateImages(mount);
                 reader.scrollTop = 0;
                 mount.style.opacity = '1';
                 
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
                 const navItem = document.querySelector(`[data-idx="${index}"]`);
                 if (navItem) navItem.classList.add('active');
-            }, 150);
+            }, 100);
         }
 
-        // UNIVERSAL LINK INTERCEPTOR (The Fix!)
-        mount.addEventListener('click', (e) => {
-            // Find the closest link if nested
+        // DELEGATED CLICK HANDLER
+        document.addEventListener('click', (e) => {
             const link = e.target.closest('a');
             if (!link) return;
 
-            // 1. Glossary links
+            // 1. Term links
             if (link.classList.contains('term-link')) {
                 e.preventDefault();
+                e.stopPropagation();
                 showGlossary(link.dataset.term);
                 return;
             }
 
-            // 2. Internal anchor links (IDs)
+            // 2. Anchor links
             const href = link.getAttribute('href');
             if (href && href.startsWith('#')) {
                 const targetId = href.substring(1);
@@ -125,11 +138,10 @@
                 if (chapterIdx !== undefined) {
                     e.preventDefault();
                     loadChapter(chapterIdx);
-                    // Give it a moment to load then scroll to anchor
                     setTimeout(() => {
                         const target = document.getElementById(targetId);
                         if (target) target.scrollIntoView({ behavior: 'smooth' });
-                    }, 200);
+                    }, 250);
                 }
             }
         });
