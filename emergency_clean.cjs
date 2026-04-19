@@ -7,24 +7,23 @@ fs.readdirSync(dir).forEach(file => {
     const fullPath = path.join(dir, file);
     let content = fs.readFileSync(fullPath, 'utf8');
 
-    console.log(`Deep cleaning ${file}...`);
+    console.log(`Smart cleaning ${file}...`);
 
-    // 1. Remove recursive nested term-links (up to 5 levels)
-    for(let i=0; i<5; i++) {
+    // 1. Remove recursive nested term-links (Safety pass)
+    for(let i=0; i<3; i++) {
         content = content.replace(/<a[^>]*class="term-link"[^>]*>([\s\S]*?)<\/a>/gi, '$1');
     }
 
-    // 2. Remove numeric artifacts stuck to Russian letters
-    // Covers cases like "Спонсор432371", "ограничение142" etc.
-    content = content.replace(/([а-яА-ЯёЁ])\d{2,10}/g, '$1');
+    // 2. Remove numeric artifacts stuck to Russian or English letters 
+    // BUT only if NOT inside an attribute (using a simplified lookbehind-like check)
+    // We target numbers that appear in plain text
+    content = content.replace(/([а-яА-ЯёЁa-zA-Z])\d{3,15}(?![^<]*>)/g, '$1');
 
-    // 3. Remove numeric artifacts that might be wrapped in tags but are just noise
-    // e.g. ">432371<"
-    content = content.replace(/>\d{3,10}</g, '><');
+    // 3. Remove numeric artifacts stuck to closing tags (text nodes only)
+    content = content.replace(/(<\/a>|<\/span>|<\/h[1-6]>)\d{3,15}/g, '$1');
 
-    // 4. Clean up any broken tag fragments that might have resulted from previous failed replaces
-    content = content.replace(/<a[^>]*class="term-link"[^>]*>/gi, '');
-    content = content.replace(/<\/a>/gi, '');
+    // 4. Remove numeric artifacts that are just "floating" in tags
+    content = content.replace(/>\d{4,15}</g, '><');
 
     fs.writeFileSync(fullPath, content, 'utf8');
 });
