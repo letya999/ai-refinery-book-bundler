@@ -7,24 +7,24 @@ fs.readdirSync(dir).forEach(file => {
     const fullPath = path.join(dir, file);
     let content = fs.readFileSync(fullPath, 'utf8');
 
-    console.log(`Cleaning ${file}...`);
+    console.log(`Deep cleaning ${file}...`);
 
-    // 1. Remove ANY nested or simple term-link tags entirely, keeping ONLY the text inside
-    // We do this multiple times to catch nested structures
+    // 1. Remove recursive nested term-links (up to 5 levels)
     for(let i=0; i<5; i++) {
         content = content.replace(/<a[^>]*class="term-link"[^>]*>([\s\S]*?)<\/a>/gi, '$1');
     }
 
-    // 2. Remove any other stray HTML tags that might have been partially injected
-    // (Except for the core structure tags)
-    
-    // 3. Remove numeric artifacts stuck to Russian letters
-    content = content.replace(/([а-яА-ЯёЁ])\d+/g, '$1');
+    // 2. Remove numeric artifacts stuck to Russian letters
+    // Covers cases like "Спонсор432371", "ограничение142" etc.
+    content = content.replace(/([а-яА-ЯёЁ])\d{2,10}/g, '$1');
 
-    // 4. Remove duplicate nested text if it appeared
-    // e.g. "Тройственное ограничениеТройственное ограничение"
-    // (This is a heuristic, but safe for this specific book)
-    // content = content.replace(/(Тройственное ограничение)\1/g, '$1');
+    // 3. Remove numeric artifacts that might be wrapped in tags but are just noise
+    // e.g. ">432371<"
+    content = content.replace(/>\d{3,10}</g, '><');
+
+    // 4. Clean up any broken tag fragments that might have resulted from previous failed replaces
+    content = content.replace(/<a[^>]*class="term-link"[^>]*>/gi, '');
+    content = content.replace(/<\/a>/gi, '');
 
     fs.writeFileSync(fullPath, content, 'utf8');
 });
