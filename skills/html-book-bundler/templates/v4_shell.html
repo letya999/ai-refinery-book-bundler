@@ -61,23 +61,6 @@
 
         #content-mount { transition: opacity 0.2s; padding: 2rem; max-width: 850px; margin: 0 auto; width: 100%; }
         
-        /* Overlay Glossary */
-        #glossary-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000;
-            backdrop-filter: blur(4px);
-        }
-        #glossary-overlay.open { display: flex; }
-        #glossary-card {
-            background: white; padding: 2.5rem; border-radius: 20px; max-width: 500px; width: 90%;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative;
-            transform: translateY(20px); transition: transform 0.3s;
-        }
-        #glossary-overlay.open #glossary-card { transform: translateY(0); }
-        #glossary-card h2 { margin-top: 0; color: var(--acc); border: none; font-size: 1.6rem; font-weight: 800; }
-        #glossary-close { position: absolute; top: 1.25rem; right: 1.25rem; cursor: pointer; font-size: 1.8rem; line-height: 1; color: var(--muted); }
-        #glossary-close:hover { color: var(--acc); }
-
         @media (max-width: 800px) {
             #sidebar { position: absolute; height: 100%; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
             #sidebar.hidden { transform: translateX(-100%); }
@@ -104,15 +87,6 @@
             </div>
             <div id="content-mount" class="chapter-content"></div>
         </main>
-    </div>
-
-    <div id="glossary-overlay" onclick="closeGlossary()">
-        <div id="glossary-card" onclick="event.stopPropagation()">
-            <span id="glossary-close" onclick="closeGlossary()">&times;</span>
-            <h2 id="glossary-title">Термин</h2>
-            <hr style="border:0; border-top:1px solid var(--border); margin: 1.5rem 0;">
-            <div id="glossary-def" style="font-size: 1.1rem; color: #475569; line-height: 1.7;">Определение...</div>
-        </div>
     </div>
 
     <script id="book-data" type="application/json">
@@ -143,7 +117,7 @@
             });
         }
 
-        function loadChapter(index) {
+        function loadChapter(index, anchorId = null) {
             if (index < 0 || index >= data.chapters.length) return;
             currentIdx = index;
             mount.style.opacity = '0';
@@ -151,73 +125,49 @@
             setTimeout(() => {
                 mount.innerHTML = data.chapters[index];
                 hydrateImages(mount);
-                reader.scrollTop = 0;
                 mount.style.opacity = '1';
                 
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
                 const navItem = document.querySelector(`[data-idx="${index}"]`);
                 if (navItem) navItem.classList.add('active');
                 
-                // Update nav buttons
                 document.getElementById('btn-prev').disabled = (index === 0);
                 document.getElementById('btn-next').disabled = (index === data.chapters.length - 1);
                 
-                // Auto-hide sidebar on mobile after selection
+                if (anchorId) {
+                    const target = document.getElementById(anchorId);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                        target.style.backgroundColor = 'var(--acc-soft)';
+                        setTimeout(() => target.style.backgroundColor = 'transparent', 2000);
+                    }
+                } else {
+                    reader.scrollTop = 0;
+                }
+
                 if (window.innerWidth <= 800) sidebar.classList.add('hidden');
             }, 100);
         }
 
-        function navChapter(delta) {
-            loadChapter(currentIdx + delta);
-        }
+        function navChapter(delta) { loadChapter(currentIdx + delta); }
+        function toggleSidebar() { sidebar.classList.toggle('hidden'); }
 
-        function toggleSidebar() {
-            sidebar.classList.toggle('hidden');
-        }
-
-        // DELEGATED CLICK HANDLER
         document.addEventListener('click', (e) => {
             const link = e.target.closest('a');
             if (!link) return;
 
-            // 1. Term links -> OPEN GLOSSARY
-            if (link.classList.contains('term-link')) {
-                e.preventDefault();
-                e.stopPropagation();
-                showGlossary(link.dataset.term);
-                return;
-            }
-
-            // 2. Anchor links
             const href = link.getAttribute('href');
             if (href && href.startsWith('#')) {
                 const targetId = href.substring(1);
                 const chapterIdx = data.anchors[targetId];
                 if (chapterIdx !== undefined) {
                     e.preventDefault();
-                    loadChapter(chapterIdx);
-                    setTimeout(() => {
-                        const target = document.getElementById(targetId);
-                        if (target) target.scrollIntoView({ behavior: 'smooth' });
-                    }, 250);
+                    loadChapter(chapterIdx, targetId);
                 }
             }
         });
 
-        function showGlossary(termId) {
-            const term = data.glossary.find(t => t.id === termId);
-            if (term) {
-                document.getElementById('glossary-title').textContent = term.name;
-                document.getElementById('glossary-def').innerHTML = term.def;
-                document.getElementById('glossary-overlay').classList.add('open');
-            }
-        }
-
-        function closeGlossary() { 
-            document.getElementById('glossary-overlay').classList.remove('open'); 
-        }
-
-        // Render TOC - REMOVED NUMBERS
+        // Render TOC
         data.titles.forEach((title, index) => {
             const el = document.createElement('div');
             el.className = 'nav-item';
