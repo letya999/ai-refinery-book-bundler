@@ -1,0 +1,120 @@
+{
+  "pdf": "pm_book_ru.pdf",
+  "total_pages": 90,
+  "exported_pages": [
+    40,
+    41,
+    42,
+    59
+  ],
+  "page_renders": [
+    {
+      "page": 40,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\pages\\page_040.png"
+    },
+    {
+      "page": 41,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\pages\\page_041.png"
+    },
+    {
+      "page": 42,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\pages\\page_042.png"
+    },
+    {
+      "page": 59,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\pages\\page_059.png"
+    }
+  ],
+  "embedded_images": [
+    {
+      "page": 40,
+      "index": 1,
+      "xref": 92,
+      "width": 968,
+      "height": 346,
+      "colorspace": 3,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\images\\p040_i01.png"
+    },
+    {
+      "page": 40,
+      "index": 2,
+      "xref": 93,
+      "width": 671,
+      "height": 329,
+      "colorspace": 3,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\images\\p040_i02.png"
+    },
+    {
+      "page": 41,
+      "index": 1,
+      "xref": 96,
+      "width": 981,
+      "height": 371,
+      "colorspace": 3,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\images\\p041_i01.png"
+    },
+    {
+      "page": 42,
+      "index": 1,
+      "xref": 99,
+      "width": 986,
+      "height": 368,
+      "colorspace": 3,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\images\\p042_i01.png"
+    },
+    {
+      "page": 42,
+      "index": 2,
+      "xref": 100,
+      "width": 941,
+      "height": 408,
+      "colorspace": 3,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\images\\p042_i02.png"
+    },
+    {
+      "page": 59,
+      "index": 1,
+      "xref": 222,
+      "width": 8,
+      "height": 27,
+      "colorspace": 3,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\images\\p059_i01.png"
+    },
+    {
+      "page": 59,
+      "index": 2,
+      "xref": 219,
+      "width": 24,
+      "height": 38,
+      "colorspace": 3,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\images\\p059_i02.png"
+    },
+    {
+      "page": 59,
+      "index": 3,
+      "xref": 215,
+      "width": 10,
+      "height": 9,
+      "colorspace": 3,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\images\\p059_i03.png"
+    },
+    {
+      "page": 59,
+      "index": 4,
+      "xref": 223,
+      "width": 22,
+      "height": 15,
+      "colorspace": 3,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\images\\p059_i04.png"
+    },
+    {
+      "page": 59,
+      "index": 5,
+      "xref": 228,
+      "width": 19,
+      "height": 33,
+      "colorspace": 3,
+      "file": "outputs\\pm_book_ru\\chapters\\assets\\images\\p059_i05.png"
+    }
+  ]
+}

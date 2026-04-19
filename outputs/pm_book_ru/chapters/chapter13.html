@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Глава XIII. Выполнение и Контроль</title>
+    <link rel="stylesheet" href="theme_v4.css">
+</head>
+<body>
+<main class="wrap">
+  <div class="kicker">Управление ИТ-проектом • Глава 13</div>
+  <h1>Выполнение и Контроль</h1>
+  <p class="lead">Многие думают, что после написания плана ПМ-у остается только сидеть и ждать. Это опасное заблуждение. Здесь начинается настоящая работа.</p>
+
+  <h2>1. Цикл Контроля</h2>
+  <div class="figure">
+    <svg viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg" style="background: white; border-radius: 8px;">
+      <circle cx="100" cy="75" r="40" fill="var(--bg-deep)" stroke="var(--acc)" stroke-width="3"/>
+      <text x="100" y="80" text-anchor="middle" font-weight="bold" font-size="12">ПЛАН</text>
+      
+      <circle cx="400" cy="75" r="40" fill="var(--bg-deep)" stroke="var(--acc)" stroke-width="3"/>
+      <text x="400" y="80" text-anchor="middle" font-weight="bold" font-size="12">ФАКТ</text>
+      
+      <path d="M140 60 Q 250 20 360 60" fill="none" stroke="var(--acc)" stroke-width="2" marker-end="url(#arrow)"/>
+      <path d="M360 90 Q 250 130 140 90" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrow-red)"/>
+      
+      <text x="250" y="35" text-anchor="middle" font-size="12">Выполнение работ</text>
+      <text x="250" y="145" text-anchor="middle" font-size="12" fill="#ef4444">Сбор отклонений (Мониторинг)</text>
+      
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="var(--acc)"/></marker>
+        <marker id="arrow-red" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/></marker>
+      </defs>
+    </svg>
+    <div class="figcaption">Мониторинг — это постоянное сравнение Факта с Планом.</div>
+  </div>
+
+  <h2>2. Интегрированный контроль изменений</h2>
+  <div class="callout">
+    Любое изменение от заказчика (даже "всего одна кнопочка") должно пройти через фильтр <a href="#" class="term-link" data-term="term-triple">Тройственного ограничения</a>. Бесплатных изменений не бывает.
+  </div>
+  
+  <div class="grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2rem 0;">
+    <div class="card" style="border-top: 4px solid var(--acc);"><b>Шаг 1: Запрос</b> <p>Получить формальный запрос (Зафиксировать).</p></div>
+    <div class="card" style="border-top: 4px solid var(--acc);"><b>Шаг 2: Оценка</b> <p>Как это повлияет на сроки, бюджет и риски?</p></div>
+    <div class="card" style="border-top: 4px solid var(--acc);"><b>Шаг 3: Решение</b> <p>Утвердить у <a href="#" class="term-link" data-term="term-sponsor">Спонсора</a> или отклонить.</p></div>
+  </div>
+
+  <h2>3. Закрытие проекта</h2>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr><th>Для Клиента</th><th>Для ПМ-а</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Подписанный Акт сдачи-приемки. Передача в поддержку.</td>
+          <td>Высвобождение команды. Сбор "Извлеченных уроков" (Lessons Learned). Обновление шаблонов.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>

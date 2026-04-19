@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Глава IV. Начинаем управлять – Инициация</title>
+    <link rel="stylesheet" href="theme_v4.css">
+</head>
+<body>
+<main class="wrap">
+  <div class="kicker">Управление ИТ-проектом • Глава 4</div>
+  <h1>Инициация: Рождение проекта</h1>
+  <p class="lead">Инициация — это фаза, на которой организация официально признает, что проект существует, и наделяет менеджера полномочиями.</p>
+
+  <div class="callout">
+    <b>Инсайт:</b> Если вы начали работать над проектом, но <a href="#" class="term-link" data-term="term-charter">Устава</a> нет — вы не менеджер, вы волонтер. У вас нет официальной власти.
+  </div>
+
+  <h2>1. Бизнес-кейс: Зачем мы это делаем?</h2>
+  <p>Проект не рождается из ниоткуда. В основе всегда лежит бизнес-потребность:</p>
+  <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0;">
+    <div class="card" style="border-top: 4px solid var(--acc);">
+      <b>Рыночный спрос</b>
+      <p>Например, выпуск нового мобильного банка.</p>
+    </div>
+    <div class="card" style="border-top: 4px solid var(--acc);">
+      <b>Запрос клиента</b>
+      <p>Конкретный контракт на разработку ПО.</p>
+    </div>
+    <div class="card" style="border-top: 4px solid var(--acc);">
+      <b>Тех. прогресс</b>
+      <p>Переход на микросервисную архитектуру.</p>
+    </div>
+  </div>
+
+  <h2>2. <a href="#" class="term-link" data-term="term-sponsor">Спонсор</a> проекта</h2>
+  <div class="comparison">
+    <div class="comp-side comp-good">
+      <div class="comp-head">КТО ЭТО?</div>
+      <p>Топ-менеджер или владелец продукта, который обеспечивает ресурсы и защищает проект.</p>
+    </div>
+    <div class="comp-side comp-good">
+      <div class="comp-head">ЕГО ЗАДАЧА</div>
+      <p>Подписать <a href="#" class="term-link" data-term="term-charter">Устав</a> и утвердить высокоуровневые цели (границы треугольника).</p>
+    </div>
+  </div>
+
+  <h2>3. <a href="#" class="term-link" data-term="term-charter">Устав проекта</a> (Charter)</h2>
+  <p>Это «Конституция» вашего проекта. Она должна содержать:</p>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Раздел</th>
+          <th>Что там должно быть</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Назначение</b></td>
+          <td>Бизнес-цели и критерии успеха (SMART).</td>
+        </tr>
+        <tr>
+          <td><b>Границы</b></td>
+          <td>Что мы делаем, а что точно НЕ делаем.</td>
+        </tr>
+        <tr>
+          <td><b>Менеджер</b></td>
+          <td>Ваше имя и уровень полномочий (кто ваш босс).</td>
+        </tr>
+        <tr>
+          <td><b><a href="#" class="term-link" data-term="term-sponsor">Спонсор</a></b></td>
+          <td>Кто платит и принимает финальные решения.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>4. Механика запуска</h2>
+  <div class="figure">
+    <svg viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg" style="background: white; border-radius: 12px; box-shadow: var(--shadow);">
+      <rect x="20" y="35" width="120" height="50" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+      <text x="80" y="65" text-anchor="middle" font-size="12" font-weight="bold">Бизнес-кейс</text>
+      
+      <path d="M140 60 L180 60" stroke="var(--acc)" stroke-width="2" marker-end="url(#arrowhead)"/>
+      
+      <rect x="180" y="35" width="120" height="50" rx="8" fill="var(--acc-soft)" stroke="var(--acc)"/>
+      <text x="240" y="65" text-anchor="middle" font-size="12" font-weight="bold" fill="var(--acc)">УСТАВ</text>
+      
+      <path d="M300 60 L340 60" stroke="var(--acc)" stroke-width="2" marker-end="url(#arrowhead)"/>
+      
+      <rect x="340" y="35" width="240" height="50" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+      <text x="460" y="65" text-anchor="middle" font-size="12" font-weight="bold">ПОЛНОМОЧИЯ МЕНЕДЖЕРА</text>
+      
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="var(--acc)" />
+        </marker>
+      </defs>
+    </svg>
+    <div class="figcaption">Процесс легитимизации власти ПМ.</div>
+  </div>
+
+  <blockquote class="insight" style="background: #fffbeb; border-left-color: #f59e0b;">
+    <b>Совет:</b> Пишите <a href="#" class="term-link" data-term="term-charter">Устав</a> сами, а <a href="#" class="term-link" data-term="term-sponsor">Спонсору</a> несите на подпись. Это ваш шанс зафиксировать правила игры под себя.
+  </blockquote>
+</main>
+</body>
+</html>

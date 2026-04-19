@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Глава IX. Управление стоимостью</title>
+    <link rel="stylesheet" href="theme_v4.css">
+</head>
+<body>
+<main class="wrap">
+  <div class="kicker">Управление ИТ-проектом • Глава 9</div>
+  <h1>Стоимость: Бюджет и Контроль</h1>
+  <p class="lead">ПМ не просто «тратит деньги» — он управляет финансовым риском. Если вы вышли за бюджет без согласования — это провал.</p>
+
+  <h2>1. Из чего состоит цена проекта?</h2>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Статья</th>
+          <th>Что входит</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Прямые затраты</b></td>
+          <td>Зарплата разработчиков, лицензии, «железо».</td>
+        </tr>
+        <tr>
+          <td><b>Косвенные затраты</b></td>
+          <td>Аренда офиса, работа HR, бухгалтерии, кофе.</td>
+        </tr>
+        <tr>
+          <td><b>Резервы</b></td>
+          <td>Деньги на риски и непредвиденные изменения.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>2. Базовый план (Cost Baseline)</h2>
+  <div class="callout">
+    Базовый план по стоимости — это распределенный во времени бюджет. Его обычно рисуют в виде <b>S-кривой</b>. В начале проекта тратим мало, в середине — пик, в конце — хвост.
+  </div>
+
+  <div class="figure">
+    <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="background: white; border-radius: 8px;">
+      <!-- S-Curve Graph -->
+      <path d="M50 150 Q 150 150, 200 100 T 350 50" fill="none" stroke="var(--acc)" stroke-width="3"/>
+      <line x1="50" y1="150" x2="350" y2="150" stroke="#cbd5e1" stroke-width="2"/>
+      <line x1="50" y1="150" x2="50" y2="30" stroke="#cbd5e1" stroke-width="2"/>
+      <text x="350" y="170" text-anchor="middle" font-size="10">ВРЕМЯ</text>
+      <text x="30" y="30" text-anchor="middle" font-size="10" transform="rotate(-90 30 30)">ДЕНЬГИ</text>
+    </svg>
+    <div class="figcaption">S-кривая: накопленные затраты проекта.</div>
+  </div>
+
+  <h2>3. Контроль: Освоенный объем (EVM)</h2>
+  <p>Краткая суть: ПМ должен знать не сколько он <i>потратил</i>, а какую <i>ценность</i> он создал на эти деньги.</p>
+  <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="card"><b>CPI > 1</b> <p>Экономим. Работаем эффективнее, чем планировали.</p></div>
+    <div class="card"><b>CPI < 1</b> <p>Тратим лишнее. Нужно искать «дыры» в процессах.</p></div>
+  </div>
+</main>
+</body>
+</html>

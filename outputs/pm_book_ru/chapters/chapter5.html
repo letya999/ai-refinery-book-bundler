@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Глава V. Приступаем к планированию</title>
+    <link rel="stylesheet" href="theme_v4.css">
+</head>
+<body>
+<main class="wrap">
+  <div class="kicker">Управление ИТ-проектом • Глава 5</div>
+  <h1>Приступаем к планированию</h1>
+  <p class="lead">Планирование — это не создание документа, а процесс обдумывания будущего. План нужен, чтобы знать, когда мы сбились с пути.</p>
+
+  <h2>1. Философия планирования</h2>
+  <div class="comparison">
+    <div class="comp-side">
+      <div class="comp-head">ОШИБКА</div>
+      <p>План — это клятва. Мы должны выполнить его любой ценой, иначе мы плохие менеджеры.</p>
+    </div>
+    <div class="comp-side comp-good">
+      <div class="comp-head">ПРАВДА</div>
+      <p>План — это прогноз. Он будет меняться. ПМ управляет отклонениями от этого прогноза.</p>
+    </div>
+  </div>
+
+  <h2>2. Алгоритм планирования (Поток)</h2>
+  <p>Планирование идет строго последовательно. Вы не можете оценить сроки, пока не знаете объем работ.</p>
+  
+  <div class="accordion-group">
+    <details class="accordion" open>
+      <summary class="accordion-summary">Шаг 1. Содержание (Scope)</summary>
+      <div class="accordion-content">Что именно мы делаем? Декомпозиция до пакетов работ (<a href="#" class="term-link" data-term="term-wbs">WBS</a>).</div>
+    </details>
+    <details class="accordion">
+      <summary class="accordion-summary">Шаг 2. Ресурсы (Resources)</summary>
+      <div class="accordion-content">Кто это будет делать? Внутренняя команда или аутсорс?</div>
+    </details>
+    <details class="accordion">
+      <summary class="accordion-summary">Шаг 3. Время и Стоимость (Schedule & Cost)</summary>
+      <div class="accordion-content">Оценка трудозатрат, <a href="#" class="term-link" data-term="term-pert">PERT</a> и критический путь.</div>
+    </details>
+    <details class="accordion">
+      <summary class="accordion-summary">Шаг 4. Риски и Качество (Risk & Quality)</summary>
+      <div class="accordion-content">Что может пойти не так и как мы это проверим?</div>
+    </details>
+  </div>
+
+  <h2>3. Метод набегающей волны (Rolling Wave)</h2>
+  <div class="callout">
+    В ИТ невозможно спланировать всё сразу на год вперед. Мы планируем ближайший этап (2-4 недели) детально, а остальное — крупными мазками. По мере приближения к этапу мы "раскрываем" его детали.
+  </div>
+
+  <div class="figure">
+    <svg viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="50" width="100" height="40" fill="var(--acc)" rx="5"/>
+      <text x="60" y="75" text-anchor="middle" fill="white" font-size="10">ДЕТАЛЬНО</text>
+      
+      <rect x="120" y="50" width="150" height="40" fill="var(--acc-soft)" stroke="var(--acc)" stroke-dasharray="5,5" rx="5"/>
+      <text x="195" y="75" text-anchor="middle" fill="var(--acc)" font-size="10">ВЕХИ (MILESTONES)</text>
+      
+      <rect x="280" y="50" width="200" height="40" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="10,5" rx="5"/>
+      <text x="380" y="75" text-anchor="middle" fill="#64748b" font-size="10">ОЦЕНКА "СВЕРХУ"</text>
+      
+      <path d="M10 110 L490 110" stroke="var(--border)" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <text x="250" y="135" text-anchor="middle" font-size="12" fill="var(--muted)">ВРЕМЯ</text>
+    </svg>
+    <div class="figcaption">Суть метода набегающей волны: точность падает при удалении от текущего момента.</div>
+  </div>
+</main>
+</body>
+</html>

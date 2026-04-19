@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Глава VIII. Управление сроками</title>
+    <link rel="stylesheet" href="theme_v4.css">
+</head>
+<body>
+<main class="wrap">
+  <div class="kicker">Управление ИТ-проектом • Глава 8</div>
+  <h1>Сроки: Математика прогнозов</h1>
+  <p class="lead">Главная беда ИТ — «оптимизм разработчика». Мы учимся считать сроки так, чтобы попадать в них в 90% случаев.</p>
+
+  <h2>1. Оценка по трем точкам (<a href="#" class="term-link" data-term="term-pert">PERT</a>)</h2>
+  <div class="callout">
+    Если задача уникальна и вы не знаете точно, сколько она займет — используйте <a href="#" class="term-link" data-term="term-pert">PERT</a>. Это взвешенное среднее, которое «наказывает» за излишний оптимизм.
+  </div>
+
+  <div class="figure">
+    <svg viewBox="0 0 500 120" xmlns="http://www.w3.org/2000/svg" style="background: white; border-radius: 12px; box-shadow: var(--shadow);">
+      <rect x="20" y="20" width="460" height="80" rx="10" fill="var(--bg-deep)" stroke="var(--border)"/>
+      <text x="250" y="65" text-anchor="middle" font-size="28" font-weight="900" fill="var(--acc)">
+        (P + 4M + O) / 6
+      </text>
+      <text x="50" y="90" font-size="10" fill="#64748b">P: Pessimistic</text>
+      <text x="235" y="90" font-size="10" fill="#64748b">M: Most Likely</text>
+      <text x="400" y="90" font-size="10" fill="#64748b">O: Optimistic</text>
+    </svg>
+    <div class="figcaption">Среднеожидаемая длительность (EAD). Обратите внимание на вес «вероятной» оценки — он в 4 раза выше.</div>
+  </div>
+
+  <h2>2. Критический путь (CPM)</h2>
+  <p>Проект заканчивается тогда, когда закончена самая длинная цепочка задач. Это и есть Критический Путь.</p>
+  
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Тип задачи</th>
+          <th>Свойства</th>
+          <th>Действие ПМ-а</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>На КП</b></td>
+          <td>Резерв времени = 0. Любая задержка = задержка всего проекта.</td>
+          <td>Жесткий контроль, приоритет ресурсов.</td>
+        </tr>
+        <tr>
+          <td><b>Вне КП</b></td>
+          <td>Есть «люфт» (float). Можно задержать без вреда для дедлайна.</td>
+          <td>Источник ресурсов для задач на КП.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>3. Диаграмма Ганта</h2>
+  <div class="figure">
+    <img src="assets/images/p041_i01.png" alt="Диаграмма Ганта" style="max-width: 600px; width: 100%;">
+    <div class="figcaption">Пример из книги: визуализация зависимостей и критического пути.</div>
+  </div>
+
+  <blockquote class="insight">
+    <b>Закон Селиховкина:</b> ПМ управляет не задачами, а «запасом прочности» на критическом пути.
+  </blockquote>
+</main>
+</body>
+</html>

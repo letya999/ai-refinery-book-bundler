@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Глава XI. Риски</title>
+    <link rel="stylesheet" href="theme_v4.css">
+    <style>
+      .risk-grid { display: grid; grid-template-columns: 60px repeat(3, 1fr); gap: 4px; margin: 2rem 0; }
+      .risk-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: white; border-radius: 4px; text-align: center; padding: 4px; }
+      .risk-label { display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #64748b; }
+      .low { background: #10b981; } .med { background: #f59e0b; } .high { background: #ef4444; }
+    </style>
+</head>
+<body>
+<main class="wrap">
+  <div class="kicker">Управление ИТ-проектом • Глава 11</div>
+  <h1>Управление рисками: План Б</h1>
+  <p class="lead">Риск — это не проблема. Проблема — это риск, который уже произошел. ПМ работает с будущим, чтобы оно не ударило по настоящему.</p>
+
+  <h2>1. Матрица рисков (Heatmap)</h2>
+  <p>Мы оцениваем риски по двум осям: как сильно он ударит и насколько он вероятен.</p>
+  
+  <div class="risk-grid">
+    <div></div><div class="risk-label">Малое</div><div class="risk-label">Среднее</div><div class="risk-label">Сильное</div>
+    <div class="risk-label">Высок.</div><div class="risk-cell med">Мониторинг</div><div class="risk-cell high">План А!</div><div class="risk-cell high">КРИТИЧНО</div>
+    <div class="risk-label">Средн.</div><div class="risk-cell low">Забить</div><div class="risk-cell med">Контроль</div><div class="risk-cell high">План Б</div>
+    <div class="risk-label">Низк.</div><div class="risk-cell low">Игнор</div><div class="risk-cell low">Игнор</div><div class="risk-cell med">Резерв</div>
+  </div>
+
+  <h2>2. Стратегии реагирования</h2>
+  <div class="accordion-group">
+    <details class="accordion">
+      <summary class="accordion-summary">Уклонение (Avoid)</summary>
+      <div class="accordion-content">Мы меняем план, чтобы риск стал невозможен. <i>Пример: Отказ от использования нестабильной библиотеки.</i></div>
+    </details>
+    <details class="accordion">
+      <summary class="accordion-summary">Минимизация (Mitigate)</summary>
+      <div class="accordion-content">Снижаем вероятность или влияние. <i>Пример: Проведение обучения для команды перед внедрением новой технологии.</i></div>
+    </details>
+    <details class="accordion">
+      <summary class="accordion-summary">Перенос (Transfer)</summary>
+      <div class="accordion-content">Отдаем риск кому-то другому. <i>Пример: Аутсорс разработки сложного модуля с фиксированной ценой (Fixed Price).</i></div>
+    </details>
+    <details class="accordion">
+      <summary class="accordion-summary">Принятие (Accept)</summary>
+      <div class="accordion-content">Мы согласны на риск, но создаем денежный резерв. <i>Пример: «Если сервер упадет — мы купим новый из резервного фонда».</i></div>
+    </details>
+  </div>
+
+  <h2>3. Резервы</h2>
+  <div class="comparison">
+    <div class="comp-side">
+      <div class="comp-head">ТЕХНИЧЕСКИЙ (Contingency)</div>
+      <p>Для "известных неизвестных". Входит в базовый план. Распоряжается ПМ.</p>
+    </div>
+    <div class="comp-side comp-good">
+      <div class="comp-head">УПРАВЛЕНЧЕСКИЙ (Management)</div>
+      <p>Для форс-мажоров. НЕ входит в план ПМ-а. Распоряжается <a href="#" class="term-link" data-term="term-sponsor">Спонсор</a>.</p>
+    </div>
+  </div>
+
+  <blockquote class="insight">
+    <b>Инсайт:</b> Профессиональный ПМ на вопрос «Когда закончите?» всегда дает две даты: оптимистичную и дату с учетом рисков.
+  </blockquote>
+</main>
+</body>
+</html>
