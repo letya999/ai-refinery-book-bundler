@@ -4,7 +4,7 @@ const path = require('path');
 const glossary = {
     'term-sponsor': /Спонсор[ауе]?/g,
     'term-customer': /Заказчик[ауе]?/g,
-    'term-pm': /\bПМ(?:-[ауе])?\b/g, // use non-capturing groups
+    'term-pm': /\bПМ(?:-[ауе])?\b/g,
     'term-charter': /Устав(?:а|е|ом)? проекта|Устав(?:а|е|ом)?/g,
     'term-wbs': /ИСР|WBS/g,
     'term-triple': /Тройственн(?:ое|ому|ого) ограничени(?:е|я|ю)/g,
@@ -28,11 +28,17 @@ fs.readdirSync(dir).forEach(file => {
             const before = string.slice(0, offset);
             const after = string.slice(offset + match.length);
             
-            // basic check for inside tags
+            // 1. Skip if inside ANY tag (especially H1-H6)
             const openIdx = before.lastIndexOf('<');
             const closeIdx = before.lastIndexOf('>');
             if (openIdx > closeIdx) return match; 
             
+            // 2. EXTRA: Skip if inside a header block entirely
+            // Look for the closest opening tag and check if it's h1-h6
+            const tagMatch = before.match(/<([a-zA-Z1-6]+)[^>]*>$/);
+            if (tagMatch && /h[1-6]/i.test(tagMatch[1])) return match;
+
+            // 3. Skip if already linked
             if (before.match(/<a[^>]*>$/) && after.match(/^[^<]*<\/a>/)) return match;
             
             modified = true;

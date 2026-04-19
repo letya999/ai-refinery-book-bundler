@@ -315,13 +315,31 @@ const globalFiles = [];
 const globalAnchors = {};
 const chapterTexts = [];
 const chapters = [];
+const glossaryData = [];
 
 files.forEach((file, idx) => {
   let content = fs.readFileSync(path.join(inputDirAbs, file), 'utf8');
-  let title = decodeHtmlEntities(content.match(/<title[^>]*>(.*?)<\/title>/i)?.[1] || '');
-  if (!title) {
-    const h1 = content.match(/<h1[^>]*>(.*?)<\/h1>/i)?.[1];
-    title = h1 ? decodeHtmlEntities(h1.replace(/<[^>]+>/g, '').trim()) : file.replace(/\.html$/, '');
+  
+  // 1. Extract clean title for TOC
+  let title = '';
+  const titleMatch = content.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  const h1Match = content.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+  if (h1Match) {
+    title = decodeHtmlEntities(h1Match[1].replace(/<[^>]+>/g, '').trim());
+  } else if (titleMatch) {
+    title = decodeHtmlEntities(titleMatch[1].trim());
+  } else {
+    title = file.replace(/\.html$/, '');
+  }
+
+  // 2. If this is the glossary, extract term data for the Shell
+  if (file.toLowerCase() === 'chapter16.html' || file.toLowerCase() === 'glossary.html') {
+     // Regex to find: <td id="term-id"><b>Name</b></td> <td>Def</td>
+     const termRegex = /<td id="([^"]+)"><b>(.*?)<\/b><\/td>\s*<td>(.*?)<\/td>/gs;
+     let m;
+     while ((m = termRegex.exec(content)) !== null) {
+       glossaryData.push({ id: m[1], name: m[2], def: m[3] });
+     }
   }
 
   content = bundleAssets(content, inputDirAbs);
@@ -362,7 +380,8 @@ const replacements = {
   '{{GLOBAL_FILES}}':   safeJsonInject(globalFiles),
   '{{GLOBAL_ANCHORS}}': safeJsonInject(globalAnchors),
   '{{LOCAL_CHAPTERS}}': safeJsonInject(chapters),
-  '{{ASSETS}}':         safeJsonInject(ASSETS),
+  '{{GLOSSARY_DATA}}':  safeJsonInject(glossaryData),
+  '{{ASSETS.theme_v4_css}}': globalCSS, // DIRECT INJECTION
   '{{SEARCH_IDX}}':     safeJsonInject(searchIndex),
   '{{DEV_SCRIPT}}':     devScript,
 };

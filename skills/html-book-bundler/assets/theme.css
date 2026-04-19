@@ -1,236 +1,46 @@
-/*
-  HTML Book Bundler v8.3 — Ultimate Theme
-  Shared Styles for all chapters.
-*/
-
-/* ── Dark theme (default) ── */
+/* === V4 UNIVERSAL HIGH-CONTRAST THEME === */
 :root {
-  --bg:    #081423;
-  --bg2:   #0c1b35;
-  --panel: #0f1f38;
-  --panel2:#163056;
-  --line:  #395f9d;
-  --txt:   #eef5ff;
-  --muted: #adc2e1;
-  --acc:   #72d8ff;
-  --acc2:  #87efc9;
-  --warn:  #ffd18a;
-  --bad:   #ff8f8f;
-  --fg:    #eef5ff;
+  --bg: #ffffff;
+  --bg-deep: #f8fafc;
+  --txt: #0f172a;
+  --acc: #1d4ed8;
+  --acc-soft: #eff6ff;
+  --border: #cbd5e1;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --muted: #64748b;
+  --sidebar-w: 300px;
 }
 
-/* ── Light theme ── */
-[data-theme="light"] {
-  --bg:    #f0f4f8;
-  --bg2:   #e8eef5;
-  --panel: #dce8f2;
-  --panel2:#ccdeed;
-  --line:  #b0c8e0;
-  --txt:   #1a2535;
-  --muted: #4a6580;
-  --acc:   #1a7fc4;
-  --acc2:  #158060;
-  --warn:  #a06800;
-  --bad:   #c03030;
-  --fg:    #1a2535;
+* { box-sizing: border-box; }
+
+body { 
+  font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+  color: var(--txt); 
+  background: var(--bg); 
+  line-height: 1.6; 
+  margin: 0; 
+  overflow: hidden; /* App mode */
 }
 
-/* ── OS Preference Fallback ── */
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg:    #f0f4f8;
-    --bg2:   #e8eef5;
-    --panel: #dce8f2;
-    --panel2:#ccdeed;
-    --line:  #b0c8e0;
-    --txt:   #1a2535;
-    --muted: #4a6580;
-    --acc:   #1a7fc4;
-    --acc2:  #158060;
-    --warn:  #a06800;
-    --bad:   #c03030;
-    --fg:    #1a2535;
-  }
-  :root:not([data-theme="dark"]) body {
-    background: radial-gradient(circle at 15% -20%, #c8dff0 0, #e4ecf5 42%, #f0f4f8 76%);
-  }
-  :root:not([data-theme="dark"]) .hero {
-    background: rgba(176,200,224,.3);
-  }
-}
+/* Typography inherited by chapters */
+.chapter-content h1 { font-size: 2.5rem; font-weight: 900; color: #0f172a; margin-bottom: 1rem; }
+.chapter-content h2 { font-size: 1.75rem; font-weight: 800; margin-top: 2.5rem; border-bottom: 2px solid var(--acc-soft); padding-bottom: 0.5rem; }
+.chapter-content .lead { font-size: 1.25rem; color: var(--muted); margin-bottom: 2rem; }
+.chapter-content .kicker { font-weight: 800; text-transform: uppercase; color: var(--acc); font-size: 0.8rem; margin-bottom: 0.5rem; }
 
-*, *::before, *::after { box-sizing: border-box; }
+/* Components */
+.callout { background: var(--acc-soft); border-left: 6px solid var(--acc); padding: 1.5rem; margin: 2rem 0; border-radius: 0 12px 12px 0; }
+.table-container { margin: 2rem 0; border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; background: white; }
+table { width: 100%; border-collapse: collapse; }
+th { background: var(--bg-deep); padding: 1rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; }
+td { padding: 1rem; border-top: 1px solid var(--border); }
 
-body {
-  margin: 0;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  background: radial-gradient(circle at 15% -20%, #2b5c9f 0, #152847 42%, #081423 76%);
-  color: var(--txt);
-  /* Matches default.html shell font — always keep these in sync */
-  font: 16px/1.6 "Segoe UI Variable", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-[data-theme="light"] body {
-  background: radial-gradient(circle at 15% -20%, #c8dff0 0, #e4ecf5 42%, #f0f4f8 76%);
-}
+.accordion { border: 1px solid var(--border); border-radius: 10px; margin: 0.5rem 0; }
+.accordion-summary { padding: 1rem; cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; }
+.accordion-summary::after { content: "+"; color: var(--acc); }
+.accordion[open] .accordion-summary::after { content: "−"; }
 
-/* ── Layout ── */
-.wrap {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 26px 20px 80px;
-}
+.term-link { color: var(--acc); text-decoration: none; font-weight: 700; border-bottom: 2px solid var(--acc-soft); cursor: pointer; }
+.term-link:hover { background: var(--acc-soft); }
 
-/* ── Hero ── */
-.hero {
-  padding: 40px 28px;
-  border-bottom: 1px solid var(--line);
-  background: rgba(15,31,56,.4);
-  margin-bottom: 32px;
-  text-align: center;
-}
-[data-theme="light"] .hero {
-  background: rgba(176,200,224,.3);
-}
-.kicker { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--acc); margin-bottom: 8px; font-weight: 700; }
-h1 { margin: 8px 0 0; font-size: clamp(24px, 5vw, 42px); line-height: 1.2; color: var(--txt); }
-
-/* ── Typography ── */
-p { margin-bottom: 1.2em; max-width: 75ch; }
-p.lead { font-size: 1.15rem; color: var(--muted); margin-top: 12px; }
-h2 { color: var(--acc); margin-top: 40px; }
-h3 { color: var(--acc2); margin-top: 30px; }
-
-/* ── Glossary Links ── */
-.term-link {
-  color: var(--acc);
-  text-decoration: none;
-  border-bottom: 1px dashed rgba(114,216,255,.4);
-  transition: .2s;
-}
-.term-link:hover { border-bottom-style: solid; background: rgba(114,216,255,.1); }
-
-/* ── SVG Diagrams ── */
-.vis-diag, .vis-network {
-  margin: 32px auto;
-  padding: 24px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  max-width: 640px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-.vis-diag svg, .vis-network svg { width: 100%; height: auto; display: block; }
-.caption { font-size: 12px; color: var(--muted); font-style: italic; text-align: center; }
-
-.diag-node { fill: var(--panel); stroke: var(--acc); stroke-width: 2; }
-.diag-text { fill: var(--txt); font-size: 12px; font-weight: 600; text-anchor: middle; dominant-baseline: middle; }
-.diag-link { stroke: var(--line); stroke-width: 2; fill: none; }
-.diag-highlight { stroke: var(--bad); stroke-width: 3; }
-
-/* ── Table (RACI etc) ── */
-.matrix {
-  overflow-x: auto;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  margin: 24px 0;
-}
-table { width: 100%; border-collapse: collapse; background: rgba(15,31,56,.6); }
-[data-theme="light"] table { background: rgba(220,232,242,.5); }
-th, td { padding: 12px 15px; border: 1px solid var(--line); text-align: left; }
-th { background: var(--panel2); color: var(--acc); font-size: 12px; text-transform: uppercase; }
-
-/* ── Stats ── */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
-  margin: 24px 0;
-}
-.stat { padding: 16px; border: 1px solid var(--line); border-radius: 12px; text-align: center; background: rgba(15,31,56,.4); }
-[data-theme="light"] .stat { background: rgba(220,232,242,.5); }
-.stat-num { display: block; font-size: 24px; font-weight: 900; color: var(--acc); }
-.stat-label { font-size: 11px; text-transform: uppercase; color: var(--muted); }
-
-/* ── Translator / Concept Map ── */
-.translator {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  overflow: hidden;
-  margin: 24px 0;
-}
-.translator-from,
-.translator-to {
-  padding: 16px 20px;
-}
-.translator-from {
-  background: rgba(15,31,56,.5);
-  border-right: 1px solid var(--line);
-}
-[data-theme="light"] .translator-from { background: rgba(176,200,224,.25); }
-.translator-to {
-  background: rgba(114,216,255,.06);
-}
-[data-theme="light"] .translator-to { background: rgba(26,127,196,.06); }
-.translator-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  color: var(--muted);
-  margin-bottom: 8px;
-  font-weight: 700;
-}
-
-/* ── Cards ── */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-  margin: 24px 0;
-}
-.card { padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.03); }
-[data-theme="light"] .card { background: rgba(220,232,242,.4); }
-.card b { display: block; color: var(--acc); margin-bottom: 8px; font-size: 14px; text-transform: uppercase; }
-
-/* ── Accordion ── */
-details.acc-item { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-summary.acc-head { padding: 14px 18px; cursor: pointer; font-weight: 700; color: var(--acc); list-style: none; display: flex; justify-content: space-between; }
-summary.acc-head::after { content: '+'; }
-details.acc-item[open] summary.acc-head { border-bottom: 1px solid var(--line); background: rgba(114,216,255,.05); }
-details.acc-item[open] summary.acc-head::after { content: '−'; }
-.acc-body { padding: 18px; }
-
-/* ── Long Paragraph Collapsible ── */
-details.long-para { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 1.2em; overflow: hidden; }
-details.long-para summary { padding: 10px 14px; cursor: pointer; color: var(--muted); list-style: none; font-style: italic; }
-details.long-para[open] summary { border-bottom: 1px solid var(--line); }
-details.long-para p { padding: 14px; margin: 0; max-width: none; }
-
-/* ── Timeline ── */
-.vis-timeline { margin: 32px 0; border-left: 2px solid var(--line); padding-left: 24px; position: relative; }
-.tl-step { position: relative; margin-bottom: 24px; }
-.tl-num { position: absolute; left: -33px; top: 0; width: 18px; height: 18px; background: var(--acc); color: var(--bg); border-radius: 50%; font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
-
-/* ── Insights ── */
-blockquote.insight {
-  margin: 32px 0;
-  padding: 20px 24px;
-  border-left: 4px solid var(--acc);
-  background: rgba(114,216,255,.05);
-  font-style: italic;
-  font-size: 1.1rem;
-}
-[data-theme="light"] blockquote.insight { background: rgba(26,127,196,.06); }
-
-/* ── Badges ── */
-.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: 1px solid var(--line); margin-right: 4px; }
-.badge.warn { border-color: var(--warn); color: var(--warn); }
-.badge.bad { border-color: var(--bad); color: var(--bad); }
+svg text { fill: #0f172a !important; font-weight: 700; }
