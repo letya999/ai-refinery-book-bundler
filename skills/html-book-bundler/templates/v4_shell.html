@@ -7,7 +7,7 @@
     <style>
         {{THEME_CSS}}
         
-        #app { display: flex; height: 100vh; width: 100vw; }
+        #app { display: flex; height: 100vh; width: 100vw; position: relative; }
         
         #sidebar { 
             width: var(--sidebar-w); 
@@ -16,41 +16,72 @@
             display: flex; 
             flex-direction: column;
             overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 50;
         }
         
-        #sidebar-header { padding: 2rem; border-bottom: 1px solid var(--border); }
-        #sidebar-header h1 { font-size: 1.1rem; margin: 0; font-weight: 800; color: var(--acc); }
+        #sidebar.hidden { transform: translateX(-100%); position: absolute; height: 100%; }
+
+        #sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        #sidebar-header h1 { font-size: 1rem; margin: 0; font-weight: 800; color: var(--acc); line-height: 1.2; }
 
         #toc { flex: 1; padding: 1rem 0; }
         .nav-item { 
-            padding: 0.75rem 2rem; 
+            padding: 0.75rem 1.5rem; 
             cursor: pointer; 
             font-size: 0.9rem; 
             font-weight: 600; 
             color: var(--muted);
             transition: all 0.2s;
+            border-left: 4px solid transparent;
         }
         .nav-item:hover { background: white; color: var(--acc); }
-        .nav-item.active { background: white; color: var(--acc); border-left: 4px solid var(--acc); padding-left: calc(2rem - 4px); }
+        .nav-item.active { background: white; color: var(--acc); border-left-color: var(--acc); }
 
-        #reader { flex: 1; overflow-y: auto; background: white; position: relative; }
-        #content-mount { transition: opacity 0.2s; padding: 2rem; max-width: 900px; margin: 0 auto; }
+        #reader { flex: 1; overflow-y: auto; background: white; position: relative; display: flex; flex-direction: column; }
+        
+        #toolbar { 
+            padding: 0.75rem 1.5rem; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            align-items: center; 
+            gap: 1rem; 
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(8px);
+            position: sticky; top: 0; z-index: 40;
+        }
+        
+        .btn-icon { 
+            background: var(--bg-deep); border: 1px solid var(--border); 
+            border-radius: 8px; padding: 0.5rem; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center;
+            color: var(--txt); transition: 0.2s;
+        }
+        .btn-icon:hover { border-color: var(--acc); color: var(--acc); }
+
+        #content-mount { transition: opacity 0.2s; padding: 2rem; max-width: 850px; margin: 0 auto; width: 100%; }
         
         /* Overlay Glossary */
         #glossary-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000;
+            background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000;
+            backdrop-filter: blur(4px);
         }
         #glossary-overlay.open { display: flex; }
         #glossary-card {
-            background: white; padding: 2rem; border-radius: 16px; max-width: 500px; width: 90%;
+            background: white; padding: 2.5rem; border-radius: 20px; max-width: 500px; width: 90%;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative;
+            transform: translateY(20px); transition: transform 0.3s;
         }
-        #glossary-card h2 { margin-top: 0; color: var(--acc); border: none; font-size: 1.5rem; }
-        #glossary-close { position: absolute; top: 1rem; right: 1rem; cursor: pointer; font-size: 1.5rem; line-height: 1; }
+        #glossary-overlay.open #glossary-card { transform: translateY(0); }
+        #glossary-card h2 { margin-top: 0; color: var(--acc); border: none; font-size: 1.6rem; font-weight: 800; }
+        #glossary-close { position: absolute; top: 1.25rem; right: 1.25rem; cursor: pointer; font-size: 1.8rem; line-height: 1; color: var(--muted); }
+        #glossary-close:hover { color: var(--acc); }
 
         @media (max-width: 800px) {
-            #sidebar { display: none; }
+            #sidebar { position: absolute; height: 100%; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+            #sidebar.hidden { transform: translateX(-100%); }
+            #sidebar:not(.hidden) { transform: translateX(0); }
         }
     </style>
 </head>
@@ -59,11 +90,18 @@
         <aside id="sidebar">
             <div id="sidebar-header">
                 <h1>{{BOOK_TITLE}}</h1>
+                <button class="btn-icon" onclick="toggleSidebar()" title="Close Sidebar">✕</button>
             </div>
             <nav id="toc"></nav>
         </aside>
         
         <main id="reader">
+            <div id="toolbar">
+                <button class="btn-icon" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+                <div style="flex:1"></div>
+                <button class="btn-icon" id="btn-prev" onclick="navChapter(-1)" title="Previous Chapter">←</button>
+                <button class="btn-icon" id="btn-next" onclick="navChapter(1)" title="Next Chapter">→</button>
+            </div>
             <div id="content-mount" class="chapter-content"></div>
         </main>
     </div>
@@ -72,8 +110,8 @@
         <div id="glossary-card" onclick="event.stopPropagation()">
             <span id="glossary-close" onclick="closeGlossary()">&times;</span>
             <h2 id="glossary-title">Термин</h2>
-            <hr style="border:0; border-top:1px solid var(--border); margin: 1rem 0;">
-            <div id="glossary-def">Определение...</div>
+            <hr style="border:0; border-top:1px solid var(--border); margin: 1.5rem 0;">
+            <div id="glossary-def" style="font-size: 1.1rem; color: #475569; line-height: 1.7;">Определение...</div>
         </div>
     </div>
 
@@ -92,6 +130,8 @@
         const toc = document.getElementById('toc');
         const mount = document.getElementById('content-mount');
         const reader = document.getElementById('reader');
+        const sidebar = document.getElementById('sidebar');
+        let currentIdx = 0;
         
         function hydrateImages(container) {
             container.querySelectorAll('img[data-src]').forEach(img => {
@@ -104,7 +144,10 @@
         }
 
         function loadChapter(index) {
+            if (index < 0 || index >= data.chapters.length) return;
+            currentIdx = index;
             mount.style.opacity = '0';
+            
             setTimeout(() => {
                 mount.innerHTML = data.chapters[index];
                 hydrateImages(mount);
@@ -114,7 +157,22 @@
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
                 const navItem = document.querySelector(`[data-idx="${index}"]`);
                 if (navItem) navItem.classList.add('active');
+                
+                // Update nav buttons
+                document.getElementById('btn-prev').disabled = (index === 0);
+                document.getElementById('btn-next').disabled = (index === data.chapters.length - 1);
+                
+                // Auto-hide sidebar on mobile after selection
+                if (window.innerWidth <= 800) sidebar.classList.add('hidden');
             }, 100);
+        }
+
+        function navChapter(delta) {
+            loadChapter(currentIdx + delta);
+        }
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('hidden');
         }
 
         // DELEGATED CLICK HANDLER
@@ -122,7 +180,7 @@
             const link = e.target.closest('a');
             if (!link) return;
 
-            // 1. Term links
+            // 1. Term links -> OPEN GLOSSARY
             if (link.classList.contains('term-link')) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -159,12 +217,12 @@
             document.getElementById('glossary-overlay').classList.remove('open'); 
         }
 
-        // Render TOC
+        // Render TOC - REMOVED NUMBERS
         data.titles.forEach((title, index) => {
             const el = document.createElement('div');
             el.className = 'nav-item';
             el.dataset.idx = index;
-            el.textContent = `${index + 1}. ${title}`;
+            el.textContent = title; 
             el.onclick = () => loadChapter(index);
             toc.appendChild(el);
         });
