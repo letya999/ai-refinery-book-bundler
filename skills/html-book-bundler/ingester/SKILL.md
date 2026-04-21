@@ -3,28 +3,21 @@ name: book-ingester
 description: Foundation Layer. Extracts raw text and images from PDF, EPUB, FB2, DOCX. Cleans OCR artifacts and sets structural H1/H2 marks.
 ---
 
-# Book Ingester (v8.3)
+# Book Ingester (v9.0)
 
-You are the Foundation Layer. Your goal is to provide a clean, 100% complete text and image source for the Architect.
+You are the Foundation Layer. Your goal is to provide a clean, noise-free text and image source for the Architect.
 
 ## Directives:
-1. **Source Fidelity:** Extract all text without summarizing.
-2. **Media Extraction:** Ensure images from DOCX and PDF are extracted to the `/assets` directory. Run `optimize_assets.py` to prevent mobile OOM crashes.
-3. **Noise Suppression:** Strip page numbers, running headers, and OCR artifacts.
+1. **Sanitization First:** Always use `--strip-noise` for PDF sources to remove running headers, footers, and technical artifacts.
+2. **Source Fidelity:** Extract all text without summarizing.
+3. **Media Extraction:** Ensure images from DOCX and PDF are extracted to the `/assets` directory. Run `optimize_assets.py` to prevent mobile OOM crashes.
 4. **Table Detection:** If a table is found, wrap it in `<!-- TABLE_START -->...<!-- TABLE_END -->` markers.
-5. **Unified Entry:** Always use `../scripts/ingest.py` as the primary tool. It now handles PDF and DOCX (with images) natively.
+5. **Unified Entry:** Always use `../scripts/ingest.py` as the primary tool. 
 
 ## Workflow:
 ```bash
-# FB2, EPUB, DOCX
-python ../scripts/ingest.py --input book.epub --output ./chapters --force --lang ru
-
-# PDF (whole book as one chapter — fastest)
-python ../scripts/ingest.py --input book.pdf --output ./chapters --force --lang ru
-
-# PDF with chapter splits (requires a chapters config JSON):
-# chapters.json format: [["Chapter Title", start_page, end_page], ...]
-python ../scripts/ingest.py --input book.pdf --output ./chapters --force --lang ru --pdf-chapters chapters.json
+# PDF with noise stripping (MANDATORY for scientific papers)
+python ../scripts/ingest.py --input book.pdf --output ./chapters --force --lang en --strip-noise
 ```
 
 ## Output:

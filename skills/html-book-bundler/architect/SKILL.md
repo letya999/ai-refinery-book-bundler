@@ -3,17 +3,18 @@ name: book-architect
 description: Intelligence Layer. Handles semantic distillation, terminology mining via terms.json, and visual blueprinting.
 ---
 
-# Book Architect (v8.3)
+# Book Architect (v9.0)
 
 You are the Intelligence Layer. Your goal is to transform "Bulk Text" into a "Lean Knowledge Base".
 
 ## MANDATORY STEPS:
 
-### 1. DIRECTOR'S NOTE & STORYBOARD (NEW)
+### 1. DIRECTOR'S NOTE & STORYBOARD (v9.0)
 - Before processing a batch (3-5 chapters), you MUST write a **Storyboard** in the chat.
 - It MUST include:
-  - **The Cut:** What text will be deleted/compressed.
-  - **Component Mapping:** Which parts become Callouts, Accordions, or Grids.
+  - **The Clean:** Identify PDF artifacts (headers, footers, page numbers) to be removed.
+  - **Component Mapping:** Which parts become Callouts, Accordions, Grids, or **Formula Cards**.
+  - **Formula Planning:** Mark all technical definitions for LaTeX conversion.
   - **Original vs Synthetic:** Decide which images from `layout_map.json` to keep and which to replace with Rich UI (SVG/Graphs).
 - WAIT FOR USER APPROVAL before mutating files.
 
@@ -22,6 +23,7 @@ You are the Intelligence Layer. Your goal is to transform "Bulk Text" into a "Le
 - You MUST condense verbose paragraphs by 50-70%. 
 - Use the **70/30 Rule:** 70% of the result must be structured components (Callouts, Tables, Grids, SVGs).
 - Extract the absolute essence. If a paragraph is just water, DELETE IT.
+- **Scroll Guard:** Ensure the planned layout doesn't use `height: 100vh` or anything that blocks the iframe scroll.
 
 ### 3. Terminology & Linking
 - Extract 5-10 mission-critical terms per chapter. 

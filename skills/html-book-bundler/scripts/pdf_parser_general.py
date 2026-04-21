@@ -27,6 +27,20 @@ class PDFParser:
         text = text.strip()
         if not text: return True
         if re.match(r'^\d{1,3}$', text): return True
+        
+        # Strip running noise if flag is set
+        if self.config.get("strip_noise"):
+            # Typical noise patterns: Page numbers, Journal names, Dates
+            noise_patterns = [
+                r'^Communications of the ACM.*',
+                r'^Volume \d+ / Number \d+ / .*',
+                r'^\d{3}\s+Communications of the ACM',
+                r'^http[s]?://.*',
+                r'^\d+\s*$', # Just a number
+            ]
+            for p in noise_patterns:
+                if re.match(p, text, re.I): return True
+
         for pattern in self.ignore_patterns:
             if pattern.match(text): return True
         return False

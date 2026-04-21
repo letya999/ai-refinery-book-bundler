@@ -386,13 +386,13 @@ def ingest_docx(input_path: Path, out_dir: Path, lang: str = 'ru'):
     print(f"Done. Extracted {len(chapters)} chapters to {out_dir}")
 
 
-def ingest_pdf(input_path: Path, out_dir: Path, lang: str = 'ru', chapters_config: list | None = None):
+def ingest_pdf(input_path: Path, out_dir: Path, lang: str = 'ru', chapters_config: list | None = None, strip_noise: bool = False):
     if not HAS_PDF:
         print("Error: fitz (PyMuPDF) not found. PDF support disabled.")
         print("Install it with: pip install pymupdf")
         return
     print(f"Parsing PDF: {input_path}")
-    config: dict = {"lang": lang}
+    config: dict = {"lang": lang, "strip_noise": strip_noise}
     if chapters_config:
         config["chapters"] = chapters_config
     processor = PDFParser(str(input_path), config)
@@ -411,6 +411,7 @@ def main():
                    help='PDF only: JSON file defining chapter splits. '
                         'Format: [["Title", start_page, end_page], ...]. '
                         'Without this flag, the whole PDF becomes one chapter.')
+    p.add_argument('--strip-noise',    action='store_true', help='PDF only: Strip running headers, footers and typical PDF artifacts.')
     args = p.parse_args()
 
     in_path = Path(args.input)
@@ -448,7 +449,7 @@ def main():
             except Exception as e:
                 print(f"Error: could not read --pdf-chapters file: {e}")
                 raise SystemExit(1)
-        ingest_pdf(in_path, out_dir, lang, chapters_config)
+        ingest_pdf(in_path, out_dir, lang, chapters_config, args.strip_noise)
     elif suffix == '.doc':
         print("Error: .doc (Word 97 binary) is not supported. Please save as .docx and retry.")
         raise SystemExit(1)

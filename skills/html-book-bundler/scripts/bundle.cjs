@@ -345,7 +345,17 @@ files.forEach((file, idx) => {
   content = bundleAssets(content, inputDirAbs);
   content = inlineStylesheets(content, inputDirAbs);
   
+  // SCROLL GUARD: Force scrollability and remove hidden overflows
+  content = content.replace(/overflow\s*:\s*hidden/gi, 'overflow: auto')
+                  .replace(/height\s*:\s*100vh/gi, 'min-height: 100vh');
+
   const rendered = prepareChapter(content, idx, title, files, globalCSS, bookTitle, skipInsights, langCode, LANG.chapter, LANG.dir || 'ltr');
+  
+  // VISUAL LINTER: Warn if chapter is just a wall of text
+  if (!/<img|<svg|<table|<div class=["']card|formula-card/i.test(rendered)) {
+    console.warn(`[Semantic Warning] Chapter ${idx + 1} ("${title}") is a "wall of text" with no visual components.`);
+  }
+
   const splitParts = splitChapter(rendered, splitLimit);
   
   splitParts.forEach((part, pIdx) => {

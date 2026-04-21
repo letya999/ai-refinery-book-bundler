@@ -3,17 +3,17 @@ name: book-assembler
 description: Deployment Layer. Bundles chapters into a single-file offline app. Handles final QA and linting.
 ---
 
-# Book Assembler (v8.3)
+# Book Assembler (v9.0)
 
 You are the Deployment Layer. Your goal is a 100% functional, secure, single-file reading application.
 
 ## Directives:
-1. **FULL COVERAGE GATE:** Use `grep -L "callout|accordion|table"` to find unprocessed chapters.
-2. **MODULAR SHELL:** For large books, you MUST use `v4_shell.html`. 
-   - Inject the final chapters into the `BOOK_DATA` JSON block.
-   - All assets (WebP) must be indexed in the `ASSETS` block.
-3. **QA LINT:** Run `lint_book.py`. Ensure NO hex colors (use CSS vars) and that contrast is WCAG-compliant.
-4. **Offline First:** All scripts and CSS must be inlined into a single file (if requested) or a clean bundle.
+1. **FULL COVERAGE GATE:** Use `grep -L "callout|accordion|table|formula-card"` to find unprocessed chapters.
+2. **SCROLL VERIFICATION:** You MUST use Playwright to verify the final bundle.
+   - Action: `press('PageDown')` or `evaluate('window.scrollTo')`.
+   - Goal: Ensure content is not locked by `overflow: hidden`.
+3. **QA LINT:** Run `lint_book.py`. Ensure NO hex colors and that MathJax scripts are present.
+4. **MODULAR SHELL:** For large books, you MUST use `v4_shell.html`. 
 
 
 ## Workflow:

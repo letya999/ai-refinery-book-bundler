@@ -1,31 +1,37 @@
 ---
 name: html-book-bundler
-description: Master Skill Bundle (v8.3). A 4-role pipeline (Ingest, Architect, Design, Assemble) for creating offline-first interactive books.
+description: Master Skill Bundle (v9.0). A 4-role pipeline (Ingest, Architect, Design, Assemble) for creating offline-first interactive books with high-fidelity UI.
 ---
 
-# HTML Book Bundler (Skill Bundle v8.3)
+# HTML Book Bundler (Skill Bundle v9.0)
 
 This is the umbrella skill for the book production toolchain. It manages 4 specialized sub-skills for each layer of production.
 
 ## MANDATORY EXECUTION PROTOCOL: THE DIRECTOR'S CUT (V9.0)
 You are an AI Architect and Book Director. Your goal is to transform a boring PDF into a high-fidelity, interactive learning experience.
 
-* **STEP 1: SMART INGEST.** Run `ingest.py` and `generate_layout_map.py`. You MUST understand the topology of the book (where images and tables were originally located).
+* **STEP 1: SMART INGEST & CLEAN.** Run `ingest.py --strip-noise` and `generate_layout_map.py`. You MUST strip PDF artifacts (headers, footers) and understand the topology.
 * **STEP 2: STORYBOARD & DIRECTOR'S NOTE.** For each batch (3-5 chapters), you MUST first write a "Director's Note" in the chat:
-   - What will be compressed (cut out "water").
-   - What will be transformed (e.g., "This table becomes an interactive grid").
-   - Which original images are kept vs replaced by Rich UI/SVG.
+   - **Sanitization Plan:** What noise will be removed.
+   - **Visual Transformation:** Which text blocks become `.card`, `.formula-card`, or `.vis-diag`.
+   - **Interactive Elements:** Plan for SVGs and Accordions.
    - Wait for user approval of the Storyboard.
-* **STEP 3: RICH DESIGN & VERIFY.** Physically modify the chapters using the Component Library (theme_v4.css).
-   - Inject Interactive SVGs for logic.
-   - Use Accordions for depth.
-   - Mandatory Playwright verification for EACH chapter.
-* **STEP 4: MODULAR ASSEMBLY.** Use `v4_shell.html` for a modular SPA experience. The book must be fast, responsive, and cross-linked.
+* **STEP 3: RICH DESIGN & VERIFY.** Physically modify chapters using the Component Library.
+   - **Formula Cards:** Wrap ALL technical definitions in `.formula-card`.
+   - **SVG Primitives:** Use SVG schemes for logic flows.
+   - **Scroll Guard:** Ensure `body` has `overflow-y: auto !important`.
+* **STEP 4: MODULAR ASSEMBLY & AUDIT.** Use `v4_shell.html`. Bundle, then verify with Playwright.
 
 ## CORE MANDATES:
-1. **70/30 Rule:** 70% of content MUST be structured (grids, lists, schemas, callouts). Only 30% can be plain text.
-2. **Semantic Linking:** Glossary links must be contextual and meaningful.
-3. **Zero Bloat:** If a 400-page book is requested, it MUST be modular (SPA Shell).
+1. **Visual Literacy:** If a chapter has >500 words without a visual component (SVG, Card, Table), it is a FAILURE.
+2. **Formula Priority:** Technical works MUST use MathJax/LaTeX.
+3. **Zero Hex Colors:** All components must be theme-adaptive.
+
+## Critical Lessons (v9.0 Additions):
+- **Scroll Guard:** The `srcdoc` iframe environment requires explicit `overflow: auto` on the chapter `body`. Never use `overflow: hidden`.
+- **Unicode LaTeX:** In Python enrichment scripts, always use raw strings (`r""`) and double-escape backslashes (`\\\\`) to avoid `SyntaxError`.
+- **Sanitization Priority:** Raw parsing is never enough. Removing headers and footers is as important as extracting text.
+- **MathJax Integration:** The `v4_shell.html` now includes MathJax by default. Chapters just need to provide `\( ... \)` or `$$ ... $$`.
 
 
 ## Components (Sub-skills):
