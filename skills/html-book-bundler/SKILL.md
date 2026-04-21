@@ -11,10 +11,13 @@ This is the umbrella skill for the book production toolchain. It manages 4 speci
 You are an AI Architect and Book Director. Your goal is to transform a boring PDF into a high-fidelity, interactive learning experience.
 
 * **STEP 1: SMART INGEST & CLEAN.** Run `ingest.py --strip-noise` and `generate_layout_map.py`. You MUST strip PDF artifacts (headers, footers) and understand the topology.
+  - If ingest prints `[NOTICE] PDF is a scan. Pages exported to assets/raw_scans/.`, switch to **Visual OCR Mode**: read pages from `assets/raw_scans/` (via media-reading tools) and recover structure + visuals, not plain text only.
 * **STEP 2: STORYBOARD & DIRECTOR'S NOTE.** For each batch (3-5 chapters), you MUST first write a "Director's Note" in the chat:
    - **Sanitization Plan:** What noise will be removed.
+   - **Style Proposal:** Book-specific palette and vibe (colors, typography tone, spacing rhythm) based on the first pages/cover analysis.
    - **Visual Transformation:** Which text blocks become `.card`, `.formula-card`, or `.vis-diag`.
    - **Interactive Elements:** Plan for SVGs and Accordions.
+   - **Per-Chapter Pattern Map:** For each chapter in the batch, specify the pattern from `references/visual-bank.md` (for example: Translator, Gauge, Timeline).
    - Wait for user approval of the Storyboard.
 * **STEP 3: RICH DESIGN & VERIFY.** Physically modify chapters using the Component Library.
    - **Formula Cards:** Wrap ALL technical definitions in `.formula-card`.
@@ -24,8 +27,12 @@ You are an AI Architect and Book Director. Your goal is to transform a boring PD
 
 ## CORE MANDATES:
 1. **Visual Literacy:** If a chapter has >500 words without a visual component (SVG, Card, Table), it is a FAILURE.
-2. **Formula Priority:** Technical works MUST use MathJax/LaTeX.
-3. **Zero Hex Colors:** All components must be theme-adaptive.
+2. **Rule 70/30 (Acceptance Gate):** At least 70% of chapter flow must be structured/visual components and up to 30% plain prose. A wall-of-text chapter fails internal QA.
+3. **Component Source Constraint:** Do not create new visual-spec files. Reuse `references/visual-bank.md` and existing `examples/` as the pattern source.
+4. **Architect Style Duty:** Before choosing colors, analyze first pages (or cover image via media-reading tool) and derive a book-specific style system.
+5. **Designer Rule:** "Inherit the base, create the unique." Start from `assets/theme.css` variables and override the variable block at the top of chapter/theme styles for the target genre.
+6. **Formula Priority:** Technical works MUST use MathJax/LaTeX.
+7. **Zero Hex Colors:** All components must be theme-adaptive.
 
 ## Critical Lessons (v9.0 Additions):
 - **Scroll Guard:** The `srcdoc` iframe environment requires explicit `overflow: auto` on the chapter `body`. Never use `overflow: hidden`.

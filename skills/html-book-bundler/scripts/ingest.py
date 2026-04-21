@@ -23,6 +23,8 @@ try:
 except ImportError:
     HAS_PDF = False
 
+SCAN_TEXT_THRESHOLD = 500
+
 
 def strip_ns(tag: str) -> str:
     return tag.split('}')[-1]
@@ -396,6 +398,15 @@ def ingest_pdf(input_path: Path, out_dir: Path, lang: str = 'ru', chapters_confi
     if chapters_config:
         config["chapters"] = chapters_config
     processor = PDFParser(str(input_path), config)
+    text_chars = sum(len(page.get_text("text").strip()) for page in processor.doc)
+    if text_chars < SCAN_TEXT_THRESHOLD:
+        raw_scans_dir = out_dir / "assets" / "raw_scans"
+        raw_scans_dir.mkdir(parents=True, exist_ok=True)
+        for idx, page in enumerate(processor.doc, 1):
+            scan_path = raw_scans_dir / f"page_{idx:04d}.png"
+            page.get_pixmap(alpha=False).save(str(scan_path))
+        print("[NOTICE] PDF is a scan. Pages exported to assets/raw_scans/.")
+        return
     processor.run(str(out_dir))
 
 

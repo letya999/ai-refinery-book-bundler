@@ -83,6 +83,9 @@ class BookLinter:
                 f"File size {self.stats['size_mb']:.1f} MB exceeds threshold {self.max_size_mb} MB"
             )
 
+        # 5b. Theme contrast validation
+        self._audit_theme_contrast(content)
+
         # 5a. SEARCH_IDX (SIDX) Validation
         sidx_start = re.search(r'\bSIDX\s*=\s*(\{)', content)
         if not sidx_start:
@@ -147,6 +150,93 @@ class BookLinter:
         ext = re.findall(r'(?:src|href)\s*=\s*["\']https?://[^"\']+["\']', safe, re.I)
         if ext:
             self.errors.append(f"{label}: External network dependency (not 100% offline): {ext[0]}")
+
+    def _parse_css_variables(self, content: str) -> dict[str, str]:
+        var_map: dict[str, str] = {}
+        for name, value in re.findall(r'(--[A-Za-z0-9_-]+)\s*:\s*([^;}{]+);', content):
+            var_map[name.strip()] = value.strip()
+        return var_map
+
+    def _resolve_var(self, value: str, var_map: dict[str, str], depth: int = 0) -> str | None:
+        if depth > 8:
+            return None
+        m = re.match(r'var\(\s*(--[A-Za-z0-9_-]+)', value.strip())
+        if not m:
+            return value.strip()
+        target = m.group(1)
+        target_value = var_map.get(target)
+        if not target_value:
+            return None
+        return self._resolve_var(target_value, var_map, depth + 1)
+
+    def _parse_color(self, raw: str, var_map: dict[str, str]) -> tuple[int, int, int] | None:
+        value = self._resolve_var(raw, var_map)
+        if not value:
+            return None
+        value = value.strip().lower()
+
+        hex_m = re.fullmatch(r'#([0-9a-f]{3}|[0-9a-f]{6})', value)
+        if hex_m:
+            hex_raw = hex_m.group(1)
+            if len(hex_raw) == 3:
+                hex_raw = ''.join(c * 2 for c in hex_raw)
+            return tuple(int(hex_raw[i:i + 2], 16) for i in (0, 2, 4))
+
+        rgb_m = re.fullmatch(r'rgba?\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})(?:\s*,\s*[\d.]+\s*)?\)', value)
+        if rgb_m:
+            r, g, b = (int(rgb_m.group(i)) for i in (1, 2, 3))
+            if any(c > 255 for c in (r, g, b)):
+                return None
+            return r, g, b
+
+        return None
+
+    def _contrast_ratio(self, fg: tuple[int, int, int], bg: tuple[int, int, int]) -> float:
+        def linearize(channel: int) -> float:
+            c = channel / 255.0
+            if c <= 0.03928:
+                return c / 12.92
+            return ((c + 0.055) / 1.055) ** 2.4
+
+        def luminance(rgb: tuple[int, int, int]) -> float:
+            r, g, b = rgb
+            return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b)
+
+        l1 = luminance(fg)
+        l2 = luminance(bg)
+        lighter = max(l1, l2)
+        darker = min(l1, l2)
+        return (lighter + 0.05) / (darker + 0.05)
+
+    def _audit_theme_contrast(self, content: str):
+        var_map = self._parse_css_variables(content)
+        if not var_map:
+            return
+
+        bg_candidates = ['--bg', '--background', '--surface', '--panel']
+        txt_candidates = ['--txt', '--fg', '--text', '--color-text']
+
+        bg_name = next((k for k in bg_candidates if k in var_map), None)
+        txt_name = next((k for k in txt_candidates if k in var_map), None)
+
+        if not bg_name or not txt_name:
+            self.warnings.append("Theme: Could not find --bg/--txt (or equivalent) variables for contrast check")
+            return
+
+        bg_rgb = self._parse_color(var_map[bg_name], var_map)
+        txt_rgb = self._parse_color(var_map[txt_name], var_map)
+        if not bg_rgb or not txt_rgb:
+            self.warnings.append(
+                f"Theme: Unable to parse color values for contrast check ({bg_name}={var_map[bg_name]!r}, {txt_name}={var_map[txt_name]!r})"
+            )
+            return
+
+        ratio = self._contrast_ratio(txt_rgb, bg_rgb)
+        self.stats['theme_contrast'] = round(ratio, 2)
+        if ratio < 4.5:
+            self.errors.append(
+                f"Theme: Low contrast between {txt_name} and {bg_name} (ratio {ratio:.2f}:1, minimum 4.5:1)"
+            )
 
     def report(self):
         sep = '=' * 60
