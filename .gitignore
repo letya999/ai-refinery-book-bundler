@@ -7,3 +7,4 @@ tmp_gen_*.py
 __pycache__/
 # playwright MCP session artifacts
 .playwright-mcp/
+outputs/
