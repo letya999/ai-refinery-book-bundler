@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id18"><div class="title2">
+<p class="p1">Глава 10. ВСТАВКА ОДНОГО ЗАПРОСА ВНУТРЬ ДРУГОГО</p>
+</div><p class="empty-line"/><p class="p">В КОНЕЦ ГЛАВЫ 9, МЫ ГОВОРИЛИ ЧТО ЗАПРОСЫ могут управлять другими запросами. В этой главе, вы узнаете как это делается (большей частью), помещая запрос внутрь предиката другого запроса, и используя вывод внутреннего запроса в верном или неверном условии предиката. Вы сможете выяснить какие виды операторов могут использовать подзапросы и посмотреть как подзапросы работают со средствами SQL, такими как DISTINCT, с составными функциями и выводимыми выражения. Вы узнаете как использовать подзапросы с предложением HAVING и получите некоторые наставления как правильно использовать подзапросы.</p><p class="empty-line"/><p class="subtitle">КАК РАБОТАЕТ ПОДЗАПРОС?</p><p class="p">С помощью SQL вы можете вкладывать запросы внутрь друга друга. Обычно, внутренний запрос генерирует значение которое проверяется в предикате внешнего запроса, определяющего верно оно или нет. Например, предположим что мы знаем имя продавца: Motika, но не знаем значение его поля snum, и хотим извлечь все порядки из таблицы Порядков. Имеется один способ чтобы сделать это( вывод показывается в Таблице 10.1 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">WHERE snum=</p><p class="p">( SELECT snum</p><p class="p">FROM Salespeople</p><p class="p">WHERE sname='Motika');</p><p class="empty-line"/><p class="p">Чтобы оценить внешний( основной ) запрос, SQL сначала должен оценить внутренний запрос (или подзапрос ) внутри предложения WHERE. Он делает это так как и должен делать запрос имеющий единственную цель отыскать через таблицу Продавцов все строки, где поле sname равно значению Motika, и затем извлечь значения поля snum этих строк.</p><p class="p">Единственной найденной строкой естественно будет snum=1004. Однако SQL, не просто выдает это значение, а помещает его в предикат основного запроса вместо самого подзапроса, так чтобы предиката прочитал что</p><p class="empty-line"/><p class="p">WHERE snum=1004</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Orders WHERE snum=</p><p class="p">(SELECT snum FROM Salespeople WHERE sname='Motika');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 10.1: Использование подзапроса</p><p class="p">Основной запрос затем выполняется как обычно с вышеупомянутыми результатами. Конечно же, подзапрос должен выбрать один и только один столбец, а тип данных этого столбца должен совпадать с тем значением с которым он будет сравниваться в предикате. Часто, как показано выше, выбранное поле и его значение будут иметь одинаковые имена(в этом случае, snum), но это необязательно.</p><p class="p">Конечно, если бы мы уже знали номер продавца Motika, мы могли бы просто напечатать</p><p class="p">WHERE snum=1004</p><p class="p">и выполнять далее с подзапросом в целом, но это было бы не так универсально. Это будет продолжать работать даже если номер Motika изменился, а, с помощью простого изменения имени в подзапросе, вы можете использовать его для чего угодно.</p><p class="empty-line"/><p class="subtitle">ЗНАЧЕНИЯ, КОТОРЫЕ МОГУТ ВЫДАВАТЬ ПОДЗАПРОСЫ</p><p class="p">Скорее всего было бы удобнее, чтобы наш подзапрос в предыдущем примере возвращал одно и только одно значение.</p><p class="p">Имея выбранным поле snum " WHERE city="London" вместо "WHERE sname='Motika", можно получить несколько различных значений. Это может сделать уравнение в предикате основного запроса невозможным для оценки верности или неверности, и команда выдаст ошибку.</p><p class="p">При использовании подзапросов в предикатах основанных на реляционных операторах (уравнениях или неравенствах, как объяснено в Главе 4 ), вы должны убедиться что использовали подзапрос который будет выдавать одну и только одну строку вывода. Если вы используете подзапрос который не выводит никаких значений вообще, команда не потерпит неудачи; но основной запрос не выведет никаких значений. Подзапросы которые не производят никакого вывода (или нулевой вывод) вынуждают рассматривать предикат ни как верный ни как неверный, а как неизвестный. Однако, неизвестный предикат имеет тот же самый эффект что и неверный: никакие строки не выбираются основным запросом (смотри Главу 5 для подробной информации о неизвестном предикате ).</p><p class="p">Это плохая стратегия, чтобы делать что-нибудь подобное следующему:</p><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">WHERE snum=</p><p class="p">( SELECT snum</p><p class="p">FROM Salespeople</p><p class="p">WHERE city=Barcelona );</p><p class="p">Поскольку мы имеем только одного продавца в Barcelona - Rifkin, то подзапрос будет выбирать одиночное значение snum и следовательно будет принят. Но это - только в данном случае. Большинство SQL баз данных имеют многочисленых пользователей, и если другой пользователь добавит нового продавца из Barcelona в таблицу, подзапрос выберет два значения, и ваша команда потерпит неудачу.</p><p class="empty-line"/><p class="subtitle">DISTINCT С ПОДЗАПРОСАМИ</p><p class="p">Вы можете, в некоторых случаях, использовать DISTINCT чтобы вынудить подзапрос генерировать одиночное значение. Предположим что мы хотим найти все порядки кредитований для тех продавцов которые обслуживают Hoffmanа (cnum=2001). Имеется один способ чтобы сделать это (вывод показывается в Таблице 10.2 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">WHERE snum=</p><p class="p">( SELECT DISTINCT snum</p><p class="p">FROM Orders</p><p class="p">WHERE cnum=2001 );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Orders WHERE snum=</p><p class="p">(SELECT DISTINCT snum FROM Orders Where cnum=2001);</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3003</p></td>
+<td class="td"><p class="p">767.19</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 10.2: Использование DISTINCT чтобы вынудить получение одного значения из подзапроса</p><p class="p">Подзапрос установил что значение поля snum совпало с Hoffman - 1001, и затем основной запрос выделил все порядки с этим значением snum из таблицы Порядков( не разбирая, относятся они к Hoffman или нет). Так как каждый заказчик назначен к одному и только этому продавцу, мы знаем что каждая строка в таблице Порядков с данным значением cnum должна иметь такое же значение snum. Однако так как там может быть любое число таких строк, подзапрос мог бы вывести много (хотя и идентичных ) значений snum для данного поля cnum. Аргумент DISTINCT предотвращает это. Если наш подзапрос возвратит более одного значения, это будет указывать на ошибку в наших данных - хорошая вещь для знающих об этом.</p><p class="p">Альтернативный подход должен быть чтобы ссылаться к таблице Заказчиков а не к таблице Порядков в подзапросе. Так как поле cnum - это первичный ключ таблицы Заказчика, запрос выбирающий его должен произвести только одно значение. Это рационально только если вы как пользователь имеете доступ к таблице Порядков но не к таблице Заказчиков. В этом случае, вы можете использовать решение которое мы показали выше. (SQL имеет механизмы которые определяют - кто имеет привилегии чтобы делать что-то в определенной таблице. Это будет объясняться в Главе 22.) Пожалуйста учтите, что методика используемая в предшествующем примере применима только когда вы знаете, что два различных поля в таблице должны всегда совпадать, как в нашем случае. Эта ситуация не является типичной в реляционных базах данных, она являеться исключением из правил.</p><p class="subtitle">ПРЕДИКАТЫ С ПОДЗАПРОСАМИ ЯВЛЯЮТСЯ НЕОБРАТИМЫМИ</p><p class="p">Вы должны обратить внимание что предикаты включающие подзапросы, используют выражение</p><p class="empty-line"/><p class="p">&lt; скалярная форма &gt; &lt; оператор &gt; &lt; подзапрос &gt;, а не</p><p class="p">&lt; подзапрос &gt; &lt; оператор &gt; &lt; скалярное выражение &gt; или,</p><p class="p">&lt; подзапрос &gt; &lt; оператор &gt; &lt; подзапрос &gt;.</p><p class="empty-line"/><p class="p">Другими словами, вы не должны записывать предыдущий пример так:</p><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">WHERE (SELECT DISTINCT snum</p><p class="p">FROM Orders</p><p class="p">WHERE cnum=2001 )</p><p class="p">=snum;</p><p class="p">В строгой ANSI реализации, это приведет к неудаче, хотя некоторые программы и позволяют делать такие вещи. ANSI также предохраняет вас от появления обеих значений при сравнении, которые нужно вывести с помощью подзапроса.</p><p class="subtitle">ИСПОЛЬЗОВАНИЕ АГРЕГАТНЫХ ФУНКЦИЙ В ПОДЗАПРОСАХ</p><p class="p">Один тип функций, который автоматически может производить одиночное значение для любого числа строк, конечно же, - агрегатная функция.</p><p class="p">Любой запрос использующий одиночную функцию агрегата без предложения GROUP BY будет выбирать одиночное значение для использования в основном предикате. Например, вы хотите увидеть все порядки имеющие сумму приобретений выше средней на 4-е Октября (вывод показан в Таблице 10.3 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">WHERE amt &gt;</p><p class="p">( SELECT AVG (amt)</p><p class="p">FROM Orders</p><p class="p">WHERE odate=10/04/1990 );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Orders WHERE amt &gt;</p><p class="p">(SELECT AVG (amt) FROM Orders</p><p class="p">WHERE odate=01/04/1990 );</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3005</p></td>
+<td class="td"><p class="p">2345.45</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.19</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">1713.23</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">1309.95</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 10.3: Выбор всех сумм со значением выше средней на 10/04/1990</p><p class="p">Средняя сумма приобретений на 4 Октября - 1788.98 (1713.23 + 75.75) делится пополам, что в целом равняется =894.49. Все строки со значением в поле amt выше этого - являются выбраными.</p><p class="p">Имейте ввиду что сгруппированные агрегатные функции, которые являются агрегатными функциями определенными в терминах предложения GROUP BY, могут производить многочисленые значения. Они, следовательно, не позволительны в подзапросах такого характера. Даже если GROUP BY и HAVING используются таким способом, что только одна группа выводится с помощью подзапроса, команда будет отклонена в принципе. Вы должны использовать одиночную агрегатную функцию с предложением WHERE что устранит нежелательные группы. Например, следующий запрос который должен найти среднее значение комиссионных продавца в Лондоне -</p><p class="empty-line"/><p class="p">SELECT AVG (comm)</p><p class="p">FROM Salespeople</p><p class="p">GROUP BY city</p><p class="p">HAVlNG city="London";</p><p class="empty-line"/><p class="p">не может использоваться в подзапросе! Во всяком случае это не лучший способ формировать запрос. Другим способом может быть -</p><p class="empty-line"/><p class="p">SELECT AVG (comm)</p><p class="p">FROM Salespeople</p><p class="p">WHERE city="London";</p><p class="subtitle">ИСПОЛЬЗОВАНИЕ ПОДЗАПРОСОВ КОТОРЫЕ ВЫДАЮТ МНОГО СТРОК С ПОМОЩЬЮ ОПЕРАТОРА IN</p><p class="p">Вы можете использовать подзапросы которые производят любое число строк если вы используете специальный оператор IN (операторы BETWEEN, LIKE, и IS NULL не могут использоваться с подзапросами). Как вы помните, IN определяет набор значений, одно из которых должно совпадать с другим термином уравнения предиката в порядке, чтобы предикат был верным. Когда вы используете IN с подзапросом, SQL просто формирует этот набор из вывода подзапроса. Мы можем, следовательно, использовать IN чтобы выполнить такой же подзапрос который не будет работать с реляционным оператором, и найти все атрибуты таблицы Порядков для продавца в Лондоне (вывод показывается в Таблице 10.4 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">WHERE snum IN</p><p class="p">( SELECT snum</p><p class="p">FROM Salespeople</p><p class="p">WHERE city="LONDON" );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Orders WHERE snum IN</p><p class="p">(SELECT snum FROM Salespeople WHERE city='London');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3003</p></td>
+<td class="td"><p class="p">767.19</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.19</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 10. 4: Использование подзапроса с IN</p><p class="p">В ситуации подобно этой, подзапрос - более прост для пользователя чтобы понимать его и более прост для компьютера чтобы его выполнить, чем если бы Вы использовали обьединение:</p><p class="empty-line"/><p class="p">SELECT onum, amt, odate, cnum, Orders.snum</p><p class="p">FROM Orders, Salespeople</p><p class="p">WHERE Orders.snum=Salespeople.snum</p><p class="p">AND Salespeople.city="London";</p><p class="empty-line"/><p class="p">Хотя это и произведет тот же самый вывод что и в примере с подзапросом, SQL должен будет просмотреть каждую возможную комбинацию строк из двух таблиц и проверить их снова по составному предикату. Проще и эффективнее извлекать из таблицы Продавцов значения поля snum где city="London", и затем искать эти значения в таблице Порядков, как это делается в варианте с подзапросом. Внутренний запрос дает нам snums=1001 и snum=1004. Внешний запрос, затем, дает нам строки из таблицы Поряд ков где эти поля snum найдены.</p><p class="p">Строго говоря, быстрее или нет работает вариант подзапроса, практически зависит от реализации - в какой программе вы это используете.</p><p class="p">Эта часть вашей программы называемой - оптимизатор, пытается найти наиболее эффективный способ выполнения ваших запросов.</p><p class="p">Хороший оптимизатор во всяком случае преобразует вариант обьединения в подзапрос, но нет достаточно простого способа для вас чтобы выяснить выполнено это или нет. Лучше сохранить ваши запросы в памяти чем полагаться полностью на оптимизатор.</p><p class="p">Конечно вы можете также использовать оператор IN, даже когда вы уверены что подзапрос произведет одиночное значение. В любой ситуации где вы можете использовать реляционный оператор сравнения (=), вы можете использовать IN. В отличие от реляционных операторов, IN не может заставить команду потерпеть неудачу если больше чем одно значение выбрано подзапросом. Это может быть или преимуществом или недостатком. Вы не увидите непосредственно вывода из подзапросов; если вы полагаете что подзапрос собирается произвести только одно значение, а он производит различные. Вы не сможете объяснить различия в выводе основного запроса. Например, рассмотрим команду, которая похожа на предыдущую:</p><p class="empty-line"/><p class="p">SELECT onum, amt, odate</p><p class="p">FROM Orders</p><p class="p">WHERE snum=</p><p class="p">( SELECT snum</p><p class="p">FROM Orders</p><p class="p">WHERE cnum=2001 );</p><p class="empty-line"/><p class="p">Вы можете устранить потребность в DISTINCT используя IN вместо (=),</p><p class="p">подобно этому:</p><p class="empty-line"/><p class="p">SELECT onum, amt, odate</p><p class="p">FROM Orders</p><p class="p">WHERE snum IN</p><p class="p">( SELECT snum</p><p class="p">FROM Orders</p><p class="p">WHERE cnum=2001 );</p><p class="empty-line"/><p class="p">Что случится если есть ошибка и один из порядков был акредитован к различным продавцам? Версия использующая IN будет давать вам все порядки для обоих продавцов. Нет никакого очевидного способа наблюдения за ошибкой, и поэтому сгенерированные отчеты или решения сделанные на основе этого запроса не будут содержать ошибки. Вариант использующий (=), просто потерпит неудачу.</p><p class="p">Это, по крайней мере, позволило вам узнать что имеется такая проблема. Вы должны затем выполнять поиск неисправности, выполнив этот подзапрос отдельно и наблюдая значения которые он производит.</p><p class="p">В принципе, если вы знаете что подзапрос должен( по логике) вывести только одно значение, вы должны использовать =. IN является подходящим, если запрос может ограниченно производить одно или более значений, независимо от того ожидаете вы их или нет. Предположим, мы хотим знать комиссионные всех продавцов обслуживающих заказчиков в Лондоне:</p><p class="empty-line"/><p class="p">SELECT comm</p><p class="p">FROM Salespeople</p><p class="p">WHERE snum IN</p><p class="p">( SELECT snum</p><p class="p">FROM Customers</p><p class="p">WHERE city="London" );</p><p class="empty-line"/><p class="p">Выводимыми для этого запроса, показанного в Таблице 10.5, являются значения комиссионных продавца Peel (snum =1001 ), который имеет обоих заказчиков в Лондоне. Это - только для данного случая. Нет никакой причины чтобы некоторые заказчики в Лондоне не могли быть назначеными к кому-то еще. Следовательно, IN - это наиболее логичная форма чтобы использовать ее в запросе.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT comm FROM Salespeople WHERE snum IN</p><p class="p">(SELECT snum FROM Customers WHERE city='London');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 10.5 Использование IN с подзапросом для вывода одного значения</p><p class="p">Между прочим, префикс таблицы для поля city необязателен в предыдущем примере, несмотря на возможную неоднозначность между полями city таблицы Заказчика и таблицы Продавцов.</p><p class="p">SQL всегда ищет первое поле в таблице обозначенной в предложении FROM текущего подзапроса. Если поле с данным именем там не найдено, проверяются внешние запросы. В вышеупомянутом примере, "city" в предложении WHERE означает что имеется ссылка к Customer.city( поле city таблицы Заказчиков). Так как таблица Заказчиков указана в предложении FROM текущего запроса, SQL предполагает что это - правильно. Это предположение может быть отменено полным именем таблицы или префиксом псевдонима, о которых мы поговорим позже когда будем говорить об соотнесенных подзапросах. Если возможен беспорядок, конечно же, лучше всего использовать префиксы.</p><p class="subtitle">ПОДЗАПРОСЫ ВЫБИРАЮТ ОДИНОЧНЫЕ СТОЛБЦЫ</p><p class="p">Смысл всех подзапросов обсужденных в этой главе тот, что все они выбирают одиночный столбец. Это обязательно, поскольку выбранный вывод сравнивается с одиночным значением. Подтверждением этому то, что SELECT * не может использоваться в подзапросе. Имеется исключение из этого, когда подзапросы используются с оператором EXISTS, который мы будем представлять в Главе 12.</p><p class="subtitle">ИСПОЛЬЗОВАНИЕ ВЫРАЖЕНИЙ В ПОДЗАПРОСАХ</p><p class="p">Вы можете использовать выражение основанное на столбце, а не просто сам столбец, в предложении SELECT подзапроса. Это может быть выполнено или с помощью реляционных операторов или с IN. Например, следующий запрос использует реляционный оператор =( вывод показывается в Таблице 10.6 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE cnum=</p><p class="p">( SELECT snum + 1000</p><p class="p">FROM Salespeople</p><p class="p">WHERE sname=Serres );</p><p class="empty-line"/><p class="p">Он находит всех заказчиков чье значение поля cnum равное 1000, выше поля snum Serres. Мы предполагаем что столбец sname не имеет никаких двойных значений (это может быть предписано или UNIQUE INDEX, обсуждаемым в Главе 17, или ограничением UNIQUE, обсуждаемым в Главе 18 );иначе</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Customers WHERE cnum=</p><p class="p">(SELECT snum + 1000 WHERE Salespeople</p><p class="p">WHERE sname='Serres'</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">200</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 10.6: Использование подзапроса с выражением</p><p class="empty-line"/><p class="p">подзапрос может произвести многочисленые значения. Когда поля snum и сnum не имеют такого простого функционального значения как например первичный ключ, что не всегда хорошо, запрос типа вышеупомянутого невероятно полезен.</p><p class="subtitle">ПОДЗАПРОСЫ В ПРЕДЛОЖЕНИИ HAVING</p><p class="p">Вы можете также использовать подзапросы внутри предложения HAVING.</p><p class="p">Эти подзапросы могут использовать свои собственные агрегатные функции если они не производят многочисленых значений или использовать GROUP BY или HAVING. Следующий запрос является этому примером (вывод пока зывается в Таблице 10.7 ):</p><p class="empty-line"/><p class="p">SELECT rating, COUNT (DISTINCT cnum )</p><p class="p">FROM Customers</p><p class="p">GROUP BY rating</p><p class="p">HAVING rating &gt;</p><p class="p">( SELECT AVG (rating)</p><p class="p">FROM Customers</p><p class="p">WHERE city=" San Jose';</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT rating,count (DISTINCT cnum) FROM Customers</p><p class="p">GROUP BY rating HAVING rating &gt;</p><p class="p">(SELECT AVG (rating)snum + 1000 FROM Custimers</p><p class="p">WHERE city='San Jose'</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="p">200</p></td>
+<td class="td"><p class="p">2</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 10.7: Нахождение заказчиков с оценкой выше среднего в San Jose</p><p class="p">Эта команда подсчитывает заказчиков с оценками выше среднего в San Jose. Так как имеются другие оценки отличные от 300, они должны быть выведены с числом номеров заказчиков которые имели эту оценку.</p><p class="subtitle">РЕЗЮМЕ</p><p class="p">Теперь вы используете запросы в иерархической манере. Вы видели, что использование результата одного запроса для управления другим, расширяет возможности позволяющие выполнить большее количество функций. Вы теперь понимаете как использовать подзапросы с реляционными операторами также как и со специальным оператором IN, или в предложении WHERE или в предложении HAVING внешнего запроса.</p><p class="p">В следующих главах, мы будем разрабатывать подзапросы. Сначала в Главе 11, мы обсудим другой вид подзапроса, который выполняется отдельно для каждой строки таблицы вызываемой во внешнем запросе. Затем, в Главе 12 и 13, мы представим вас нескольким специальным операторам которые функционируют на всех подзапросах, как это делает IN, за исключением когда эти операторы могут использоваться только в подзапросах.</p><p class="subtitle">РАБОТА С SQL</p><p class="p">* Напишите запрос, который бы использовал подзапрос для получениявсех порядков для заказчика с именем Cisneros. Предположим, что вы не знаете номера этого заказчика, указываемого в поле cnum.</p><p class="p">* Напишите запрос который вывел бы имена и оценки всех заказчиков которые имеют усредненые порядки.</p><p class="p">* Напишите запрос который бы выбрал общую сумму всех приобретений в порядках для каждого продавца, у которого эта общая сумма больше чем сумма наибольшего порядка в таблице.</p></span></span>
+</body>
+</html>

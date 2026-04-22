@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Мастер-класс: Фильтрация и Сортировка данных</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-deep: #1e293b;
+      --bg-card: var(--bg-deep);
+      --txt: #f1f5f9;
+      --acc: #38bdf8;
+      --acc-soft: rgba(56, 189, 248, 0.1);
+      --border: var(--acc);
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      --muted: #94a3b8;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--txt);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 2rem;
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 100vh !important;
+      padding-bottom: 5rem !important;
+    }
+
+    .wrap { max-width: 900px; margin: 0 auto; }
+    
+    h1 { font-size: 2.5rem; font-weight: 800; color: var(--acc); margin-bottom: 0.5rem; }
+    .lead { font-size: 1.25rem; color: var(--muted) !important; margin-bottom: 3rem; font-style: italic; border-left: 4px solid var(--acc); padding-left: 1.5rem; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2rem 0; }
+    
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .formula-card { 
+      background: #020617 !important; 
+      color: var(--acc) !important; 
+      border: 1px solid var(--border) !important;
+      border-top: 4px solid var(--acc) !important; 
+      position: relative; 
+    }
+    
+    pre, code, .formula-card code { 
+      display: block; 
+      background: #020617 !important; 
+      padding: 1rem; 
+      border-radius: 6px; 
+      color: var(--acc) !important; 
+      border: 1px solid var(--border) !important;
+      margin-top: 1rem; 
+      font-size: 0.95rem; 
+    }
+    
+    code { display: inline; padding: 0.2rem 0.4rem; margin-top: 0; }
+
+    .vis-diag {
+      background: var(--bg-deep) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      margin: 2.5rem 0;
+    }
+
+    .badge-list { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+    .badge {
+      background: var(--acc-soft);
+      color: var(--acc);
+      border: 1px solid var(--acc);
+      padding: 0.4rem 1rem;
+      border-radius: 99px;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    .comparison h3 { color: var(--acc); margin-top: 0; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+    th { text-align: left; color: var(--muted); padding: 0.5rem; border-bottom: 2px solid var(--border); }
+    td { padding: 0.5rem; border-bottom: 1px solid var(--border); }
+    
+    strong { color: var(--acc); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Фильтрация и Сортировка</h1>
+    <p class="lead">Точность данных — это не просто отсутствие ошибок, это умение отсекать лишнее. В SQL мастерство владения предложением WHERE определяет разницу между хаотичным дампом данных и хирургически точным отчетом.</p>
+
+    <section id="basics">
+      <h2>Базовая фильтрация: WHERE</h2>
+      <p>Предложение <code>WHERE</code> позволяет устанавливать предикаты — логические условия, которые должны быть истинными для включения строки в результат.</p>
+      
+      <div class="card formula-card">
+        <strong>Синтаксис выбора:</strong>
+        <code>SELECT column1, column2 FROM table_name WHERE condition;</code>
+      </div>
+    </section>
+
+    <section id="comparison">
+      <h2>Сравнение инструментов: IN vs BETWEEN</h2>
+      <p>Выбор правильного оператора повышает читаемость кода и производительность запроса.</p>
+      
+      <div class="grid">
+        <div class="card comparison">
+          <h3>Оператор IN</h3>
+          <p>Идеален для поиска совпадений в дискретном наборе значений (списке).</p>
+          <code>WHERE city IN ('London', 'Barcelona', 'Rome')</code>
+        </div>
+        <div class="card comparison">
+          <h3>Оператор BETWEEN</h3>
+          <p>Определяет непрерывный диапазон (включая границы).</p>
+          <code>WHERE amt BETWEEN 1000 AND 5000</code>
+        </div>
+      </div>
+    </section>
+
+    <section id="null-logic">
+      <h2>Логика NULL: Территория неизвестного</h2>
+      <p>В SQL <code>NULL</code> — это не ноль и не пробел. Это отсутствие данных. Любое сравнение с NULL (кроме специальных операторов) дает результат <strong>UNKNOWN</strong>.</p>
+      
+      <div class="vis-diag">
+        <div style="font-size: 1.5rem; margin-bottom: 1rem;">Value ↔ NULL comparison</div>
+        <div style="display: flex; justify-content: space-around; align-items: center;">
+          <div class="card" style="width: 150px; background: var(--bg-deep);">WHERE col = NULL<br><span style="color: #ef4444;">❌ FALSE</span></div>
+          <div style="font-size: 2rem;">➔</div>
+          <div class="card" style="width: 150px; border-color: var(--acc); background: var(--bg-deep);">WHERE col IS NULL<br><span style="color: var(--acc);">✅ TRUE</span></div>
+        </div>
+        <p style="margin-top: 1.5rem; color: var(--muted);">Всегда используйте <strong>IS NULL</strong> или <strong>IS NOT NULL</strong>.</p>
+      </div>
+    </section>
+
+    <section id="wildcards">
+      <h2>Маски и шаблоны: LIKE</h2>
+      <p>Для поиска по неполным данным используются спецсимволы подстановки:</p>
+      
+      <div class="badge-list">
+        <span class="badge">% — любая последовательность (0+ символов)</span>
+        <span class="badge">_ — ровно один любой символ</span>
+      </div>
+
+      <div class="card formula-card">
+        <strong>Пример поиска по шаблону:</strong>
+        <p>Найти всех заказчиков, чьи имена начинаются на 'C' и содержат 's':</p>
+        <code>SELECT * FROM Customers WHERE cname LIKE 'C%s%';</code>
+      </div>
+    </section>
+
+    <section id="summary">
+      <h2>Краткий справочник операторов</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Оператор</th>
+            <th>Назначение</th>
+            <th>Пример</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>=, &lt;&gt;, &gt;, &lt;</strong></td>
+            <td>Базовое сравнение</td>
+            <td><code>rating >= 200</code></td>
+          </tr>
+          <tr>
+            <td><strong>AND, OR, NOT</strong></td>
+            <td>Логические связки</td>
+            <td><code>city='London' AND rating>100</code></td>
+          </tr>
+          <tr>
+            <td><strong>IN</strong></td>
+            <td>Проверка по списку</td>
+            <td><code>snum IN (1001, 1002, 1007)</code></td>
+          </tr>
+          <tr>
+            <td><strong>BETWEEN</strong></td>
+            <td>Диапазон значений</td>
+            <td><code>comm BETWEEN 0.10 AND 0.15</code></td>
+          </tr>
+          <tr>
+            <td><strong>LIKE</strong></td>
+            <td>Поиск по шаблону</td>
+            <td><code>sname LIKE 'P_e%'</code></td>
+          </tr>
+          <tr>
+            <td><strong>IS NULL</strong></td>
+            <td>Проверка на пустоту</td>
+            <td><code>amt IS NULL</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="sorting" style="margin-top: 3rem;">
+      <h2>Сортировка: ORDER BY</h2>
+      <p>Упорядочивание вывода — финальный штрих профессионального отчета.</p>
+      <div class="card formula-card">
+        <code>SELECT * FROM Orders ORDER BY amt DESC, odate ASC;</code>
+        <p style="font-size: 0.85rem; margin-top: 0.5rem; color: var(--muted);">DESC — по убыванию, ASC — по возрастанию (по умолчанию).</p>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id32"><div class="title2">
+<p class="p1">Глава 24. КАК ДАННЫЕ SQL СОДЕРЖАТСЯ В УПОРЯДОЧЕННОМ ВИДЕ</p>
+</div><p class="empty-line"/><p class="p">В ЭТОЙ ГЛАВЕ, ВЫ УЗНАЕТЕ КАК ТИПОВАЯ SQL БАЗА данных сохраняет самоорганизованность. Не удивительно, что самоорганизованность обеспечива ется реляционной базой данных, создаваемой и поддерживаемой с помощью программы. Вы можете обращаться к этим таблицам самостоятельно для по лучения информации о привилегиях, таблицах, индексах, и так далее. Эта глава покажет вам некоторые типы содержащиеся в такой базе данных.</p><p class="subtitle">КАТАЛОГ СИСТЕМЫ</p><p class="p">Чтобы функционировать как SQL база данных, ваша компьютерная система должна следить за многими различными вещями: таблицами, представлениями, индексами, синонимами, привилегиями, пользователями, и так далее.</p><p class="p">Имеются различные способы делать это, но ясно, что наиболее логичный, эффективный, и согласованный способ делать это в реляционной среде состоит в том, чтобы сохранять эту информацию в таблицах. Это дает возможность компьютеру размещать и управлять информацией в которой он нуждается, используя те же самые процедуры которые он использует чтобы размещать и управлять данными которые он хранит для вас. Хотя это - вопрос конкретной программы, а не часть стандарта ANSI, большинство SQL баз данных, используют набор SQL таблиц хранящих служебную информацию для своих внутренних потребностей. Этот набор называется в различных публикациях как - системный каталог, словарь данных, или просто системные таблицы (Термин "словарь данных" может также относится к общему архиву данных, включая информацию о физических параметрах базы данных которые хранятся вне SQL. Следовательно, имеются программы баз данных, которые имеют и системный каталог и словарь данных. )</p><p class="p">Таблицы системного каталога - напоминают обычные SQL таблицы: те же строки и столбцы данных. Например, одна таблица каталога обычно содержит информацию о таблицах существующих в базе данных, по одной строке на каждую таблицу базы данных; другая содержит информацию о различных столбцах таблиц, по одной строке на столбец, и так далее. Таблицы каталога создаются и присваиваются с помощью самой базы данных, и идентифицируются с помощью специальных имен, таких например как SYSTEM.</p><p class="p">База данных создает эти таблицы и модифицирует их автоматически; таблицы каталога не могут быть непосредственно подвергнуты действию команды модификации.</p><p class="p">Если это случится, это значительно запутает всю систему и сделает ее неработоспособной. Однако, в большинстве систем, каталог может быть запрошен пользователем. Это очень полезно, потому что это дает вам возможность узнать кое-что о базе данных, которую вы используете. Конечно, вся информация не всегда доступна всем пользователям. Подобно другим таблицам, доступ к каталогу ограничен для пользователей без соответствующих привилегий. Так как каталог принадлежит самой системе, имеется некоторая неясность относительно того, кто имеет привилегии и кто может предоставить привилегии в этом каталоге. Обычно, привилегии каталога предоставляет суперпользователь, например, администратор системы, зарегистрированый как SYSTEM или DBA. Кроме того, некоторые привилегии могут предоставляться пользователям автоматически.</p><p class="subtitle">ТИПИЧНЫЙ СИСТЕМНЫЙ КАТАЛОГ</p><p class="p">Давайте рассмотрим некоторые таблицы которые мы могли бы найти в типовом каталоге системы:</p><p class="p">----------------------------------------------------------------------</p><p class="p">Таблицы Содержание</p><p class="p">----------------------------------------------------------------------</p><p class="p">SYSTEMCATALOG Таблицы (базовые и представления)</p><p class="p">SYSTEMCOLUMNS Столбцы таблицы</p><p class="p">SYSTEMTABLES Каталог Представления в SYSTEMCATALOG</p><p class="p">SYSTEMINDEXES Индексы в таблице</p><p class="p">SYSTEMUSERAUTH Пользователи базы данных</p><p class="p">SYSTEMTABAUTH Объектные привилегии пользователей</p><p class="p">SYSTEMCOLAUTH Столбцовые привилегии пользователей</p><p class="p">SYSTEMSYNONS Синонимы для таблиц</p><p class="empty-line"/><p class="p">Теперь, если наш DBA предоставит пользователю Stephen право просматривать SYSTEMCATALOG такой командой,</p><p class="empty-line"/><p class="p">GRANT SELECT ON SYSTEMCATALOG TO Stephen;</p><p class="empty-line"/><p class="p">то Stephen сможет увидеть некоторую информацию обо всех таблицах в базе данных (мы имеем здесь пользователя DBA, пользователя Chris, владельца трех наших типовых таблиц, а также Adrian владельца представления Londoncust ).</p><p class="empty-line"/><p class="p">SELECT tname, owner, numcolumns, type, CO</p><p class="p">FROM SYSTEMCATALOG;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT tname, owner, numcolumns, type, CO</p><p class="p">FROM SYSTEMCATALOG;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>tname</strong></p></td>
+<td class="td"><p class="p"><strong>owner</strong></p></td>
+<td class="td"><p class="p"><strong>numcolumns</strong></p></td>
+<td class="td"><p class="p"><strong>type</strong></p></td>
+<td class="td"><p class="p"><strong> CO</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">SYSTEMCATALOG</p></td>
+<td class="td"><p class="p">SYSTEM</p></td>
+<td class="td"><p class="p">4</p></td>
+<td class="td"><p class="p">B</p></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Salespeople</p></td>
+<td class="td"><p class="p">Chris</p></td>
+<td class="td"><p class="p">4</p></td>
+<td class="td"><p class="p">B</p></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">Chris</p></td>
+<td class="td"><p class="p">5</p></td>
+<td class="td"><p class="p">B</p></td>
+<td class="td"><p class="p">Y</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Londoncust</p></td>
+<td class="td"><p class="p">Adrian</p></td>
+<td class="td"><p class="p">5</p></td>
+<td class="td"><p class="p">V</p></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Orders</p></td>
+<td class="td"><p class="p">Chris</p></td>
+<td class="td"><p class="p">5</p></td>
+<td class="td"><p class="p">B</p></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 24.1: Содержание таблицы SYSTEMCATALOG</p><p class="p">Как вы можете видеть, каждая строка описывает свою таблицу. Первый столбец - имя; второй - имя пользователя который владеет ею; третий - число столбцов которые содержит таблица; и четвертый - код из одного символа, это или B (для базовой таблицы ) или V (для представления). Последний столбец имеет пустые(NULL) значения, если его тип не равен V; и этот столбец указывает, определена или нет возможность проверки. Обратите внимание что SYSTEMCATALOG(СЧИСТЕМНЫЙ КАТАЛОГ) представлен как одна из таблиц в вышеуказаном списке. Для простоты, мы исключили остальные каталоги системы из вывода. Таблицы системного каталога обычно показываются в SYSTEMCATALOG.</p><p class="subtitle">ИСПОЛЬЗОВАНИЕ ПРЕДСТАВЛЕНИЙ В ТАБЛИЦАХ КАТАЛОГА</p><p class="p">Поскольку SYSTEMCATALOG - это таблица, вы можете использовать ее в представлении. Фактически можно считать, что имеется такое представление с именем SYSTEMTABLES. Это представление SYSTEMCATALOG содержит только те таблицы, которые входят в системный каталог; это обычно таблицы базы данных, типа таблицы Продавцов, которые показаны в SYSTEMCATALOG, но не в SYSTEMTABLES. Давайте предположим, что только таблицы каталога являются собственностью пользователя SYSTEM. Если вы захотите, вы можете определить другое представление, которое бы специально исключало таблицы каталога из вывода:</p><p class="empty-line"/><p class="p">CREATE VIEW Datatables</p><p class="p">AS SELECT *</p><p class="p">FROM SYSTEMCATALOG</p><p class="p">WHERE owner &lt; &gt; 'SYSTEM';</p><p class="empty-line"/><p class="p">РАЗРЕШИТЬ ПОЛЬЗОВАТЕЛЯМ ВИДЕТЬ (ТОЛЬКО) ИХ СОБСТВЕННЫЕ ОБЪЕКТЫ</p><p class="p">Кроме того, имеются другое использование представлений каталога.</p><p class="p">Предположим вам нужно чтобы каждый пользователь был способен сделать запрос каталога, для получения информации только из таблиц которыми он владеет. Пока значение USER, в команде SQL постоянно для ID доступа пользователя выдающего команду, оно может всегда быть использоваться, чтобы давать доступ пользователям только к их собственным таблицам. Вы можете, для начала создать следующее представление:</p><p class="empty-line"/><p class="p">CREATE VIEW Owntables</p><p class="p">AS SELECT *</p><p class="p">FROM SYSTEMCATALOG</p><p class="p">WHERE Owner=USER;</p><p class="empty-line"/><p class="p">Теперь вы можете предоставить всем пользователям доступ к этому представлению:</p><p class="empty-line"/><p class="p">GRANT SELECT ON Owntables TO PUBLIC;</p><p class="empty-line"/><p class="p">Каждый пользователь теперь, способен выбирать (SELECT) только те строки из SYSTEMCATALOG, владельцем которых он сам является.</p><p class="p">ПРЕДСТАВЛЕНИЕ SYSTEMCOLUMNS</p><p class="p">Одно небольшое добавление к этому, позволит каждому пользователю просматривать таблицу SYSTEMCOLUMNS для столбцов из его собственных таблиц. Сначала, давайте рассмотрим ту часть таблицы SYSTEMCOLUMNS, которая описывает наши типовые таблицы( другими словами, исключим сам каталог):</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>tname</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>datatype</strong></p></td>
+<td class="td"><p class="p"><strong>cnumber</strong></p></td>
+<td class="td"><p class="p"><strong>tabowner</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Salespeople</p></td>
+<td class="td"><p class="p">snum</p></td>
+<td class="td"><p class="p">integer</p></td>
+<td class="td"><p class="p">1</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Salespeople</p></td>
+<td class="td"><p class="p">sname</p></td>
+<td class="td"><p class="p">char</p></td>
+<td class="td"><p class="p">2</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Salespeople</p></td>
+<td class="td"><p class="p">city</p></td>
+<td class="td"><p class="p">char</p></td>
+<td class="td"><p class="p">3</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Salespeople</p></td>
+<td class="td"><p class="p">comm</p></td>
+<td class="td"><p class="p">decimal</p></td>
+<td class="td"><p class="p">4</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">cnum</p></td>
+<td class="td"><p class="p">integer</p></td>
+<td class="td"><p class="p">1</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">cname</p></td>
+<td class="td"><p class="p">char</p></td>
+<td class="td"><p class="p">2</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">city</p></td>
+<td class="td"><p class="p">char</p></td>
+<td class="td"><p class="p">3</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">rating</p></td>
+<td class="td"><p class="p">integer</p></td>
+<td class="td"><p class="p">4</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">snum</p></td>
+<td class="td"><p class="p">integer</p></td>
+<td class="td"><p class="p">5</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Orders</p></td>
+<td class="td"><p class="p">onum</p></td>
+<td class="td"><p class="p">integer</p></td>
+<td class="td"><p class="p">1</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Orders</p></td>
+<td class="td"><p class="p">odate</p></td>
+<td class="td"><p class="p">date</p></td>
+<td class="td"><p class="p">2</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Orders</p></td>
+<td class="td"><p class="p">amt</p></td>
+<td class="td"><p class="p">decimal</p></td>
+<td class="td"><p class="p">3</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Orders</p></td>
+<td class="td"><p class="p">cnum</p></td>
+<td class="td"><p class="p">integer</p></td>
+<td class="td"><p class="p">4</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Orders</p></td>
+<td class="td"><p class="p">snum</p></td>
+<td class="td"><p class="p">integer</p></td>
+<td class="td"><p class="p">5</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Как вы можете видеть, каждая строка этой таблицы показывает столбец таблицы в базе данных. Все столбцы данной таблицы должны иметь разные имена, также как каждая таблица должна иметь данного пользователя, и наконец все комбинации пользователей, таблиц, и имен столбцов должны различаться между собой.</p><p class="p">Следовательно табличные столбцы: tname (имя таблицы ), tabowner (владелец таблицы ), и cname (имя столбца ), вместе составляют первичный ключ этой таблицы. Столбец datatype( тип данных ) говорит сам за себя. Столбец cnumber (номер столбца ) указывает на местоположении этого столбца внутри таблицы. Для упрощения, мы опустили параметры длины столбца, точности, и масштаба.</p><p class="p">Для справки, показана строка из SYSTFMCATALOG которая ссылается к этой таблице:</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>tname</strong></p></td>
+<td class="td"><p class="p"><strong>owner</strong></p></td>
+<td class="td"><p class="p"><strong>numcolumns</strong></p></td>
+<td class="td"><p class="p"><strong>type</strong></p></td>
+<td class="td"><p class="p"><strong>CO</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">SYSTEMCOLUMNS</p></td>
+<td class="td"><p class="p">System</p></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+<td class="td"><p class="p">8</p></td>
+<td class="td"><p class="p">B</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Некоторые SQL реализации, будут обеспечивать вас большим количеством данных чем показано в этих столбцах, но показанное являются основой для любый реализаций.</p><p class="p">Для иллюстрации процедуры предложенной в начале этого раздела, имеется способ, позволяющий каждому пользователю видеть информацию SYSTEMCOLUMNS только для принадлежащих ему таблиц:</p><p class="empty-line"/><p class="p">CREATE VIEW Owncolumns</p><p class="p">AS SELECT *</p><p class="p">FROM SYSTEMCOLUMNS</p><p class="p">WHERE tabowner=USER;</p><p class="empty-line"/><p class="p">GRANT SELECT ON Owncolumns TO PUBLIC;</p><p class="empty-line"/><p class="subtitle">КОММЕНТАРИЙ В СОДЕРЖАНИИ КАТАЛОГА</p><p class="p">Большинство версий SQL, позволяют вам помещать комментарии(ремарки) в специальные столбцы пояснений таблиц каталогов SYSTEMCATALOG и SYSTEMCOLUMNS, что удобно, так как эти таблицы не всегда могут объяснить свое содержание. Для простоты, мы пока исключали этот столбец из наших иллюстраций.</p><p class="p">Можно использовать команду COMMENT ON со строкой текста, чтобы пояснить любую строку в одной из этих таблиц. Состояние - TABLE, для комментирования в SYSTEMCATALOG, и текст - COLUMN, для SYSTEMCOLUMNS.</p><p class="p">Например:</p><p class="empty-line"/><p class="p">COMMENT ON TABLE Chris.Orders</p><p class="p">IS 'Current Customer Orders';</p><p class="empty-line"/><p class="p">Текст будет помещен в столбец пояснений SYSTEMCATALOG. Обычно, максимальная длина таких пояснений - 254 символов.</p><p class="p">Сам комментарий, указывается для конкретной строки, одна с tname=Orders, а другая owner=Chris. Мы увидим этот комментарий в строке для таблицы Порядков в SYSTEMCATALOG:</p><p class="empty-line"/><p class="p">SELECT tname, remarks</p><p class="p">FROM SYSTEMCATALOG</p><p class="p">WHERE tname='Orders'</p><p class="p">AND owner='Chris';</p><p class="empty-line"/><p class="p">Вывод для этого запроса показывается в Таблица 24.2.</p><p class="p">SYSTEMCOLUMNS работает точно так же. Сначала, мы создаем комментарий</p><p class="empty-line"/><p class="p">COMMENT ON COLUMN Orders.onum</p><p class="p">IS 'Order #';</p><p class="empty-line"/><p class="p">затем выбираем эту строку из SYSTEMCOLUMNS:</p><p class="empty-line"/><p class="p">SELECT cnumber, datatype, cname, remarks</p><p class="p">FROM SYSTEMCOLUMNS</p><p class="p">WHERE tname='Orders'</p><p class="p">AND tabowner='Chris'</p><p class="p">AND cname=onum;</p><p class="empty-line"/><p class="p">Вывод для этого запроса показывается в Таблице 24.3.</p><p class="p">Чтобы изменить комментарий, вы можете просто ввести новую команду COMMENT ON для той же строки. Новый комментарий будет записан поверх старого. Если вы хотите удалить комментарий, напишите поверх него пустой комментарий, подобно следующему:</p><p class="empty-line"/><p class="p">COMMENT ON COLUMN Orders.onum</p><p class="p">IS ";</p><p class="empty-line"/><p class="p">и этот пустой комментарий затрет предыдущий.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT tname, remarks FROM SYSTEMCATALOG</p><p class="p">WHERE tname='Orders' AND owner='Chris'</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>tname</strong></p></td>
+<td class="td"><p class="p"><strong>remarks</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Orders</p></td>
+<td class="td"><p class="p">Current Customers Orders</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 24.2: Коментарий в SYSTEMCATALOG</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT cnumber, datatype, cname, remarks</p><p class="p">FROM SYSTEMCOLUMNS WHERE tname='Orders' AND tabowner='Chris'</p><p class="p">AND cname='onum'</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnumber</strong></p></td>
+<td class="td"><p class="p"><strong>datatype</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>remarks</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1</p></td>
+<td class="td"><p class="p">integer</p></td>
+<td class="td"><p class="p">onum</p></td>
+<td class="td"><p class="p">Orders #</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 24.3: Коментарий в SYSTEMCOLUMNS</p><p class="subtitle">ОСТАЛЬНОЕ ИЗ КАТАЛОГА</p><p class="p">Здесь показаны оставшиеся из ващих системных таблиц определения, с типовым запросом для каждого:</p><p class="empty-line"/><p class="p">SYSTEMINDEXES - ИНДЕКСАЦИЯ В БАЗЕ ДАННЫХ</p><p class="empty-line"/><p class="p">Имена столбцов в таблице SYSTEMINDEXES и их описания - следующие:</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>СТОЛБЦЫ</strong></p></td>
+<td class="td"><p class="p"><strong>ОПИСАНИЕ</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">iname</p></td>
+<td class="td"><p class="p">Имя индекса (используемого для его исключения )</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">iowner</p></td>
+<td class="td"><p class="p">Имя пользователя который создал индекс</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">tname</p></td>
+<td class="td"><p class="p">Имя таблицы которая содержит индекс</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">cnumber</p></td>
+<td class="td"><p class="p">Номер столбца в таблице</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">tabowner</p></td>
+<td class="td"><p class="p">Пользователь который владеет таблицей содержащей индекс</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">numcolumns</p></td>
+<td class="td"><p class="p">Число столбцов в индексе</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">cposition</p></td>
+<td class="td"><p class="p">Позиция текущего столбца среди набора индексов</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">isunique</p></td>
+<td class="td"><p class="p">Уникален ли индекс (Y или N )</p></td>
+</tr>
+</table><p class="empty-line"/><p class="subtitle">ТИПОВОЙ ЗАПРОС</p><p class="p">Индекс считается неуникальным, если он вызывает продавца, в snum столбце таблицы Заказчиков:</p><p class="empty-line"/><p class="p">SELECT iname, iowner, tname, cnumber, isunique</p><p class="p">FROM SYSTEMINDEXES</p><p class="p">WHERE iname='salesperson';</p><p class="empty-line"/><p class="p">Вывод для этого запроса показывается в Таблице 24.4.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT iname, iowner, tname, cnumber, isunique</p><p class="p">FROM SYSTEMINDEXES WHERE iname='salespeople';</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>iname</strong></p></td>
+<td class="td"><p class="p"><strong>iowner</strong></p></td>
+<td class="td"><p class="p"><strong>tname</strong></p></td>
+<td class="td"><p class="p"><strong>cnumber</strong></p></td>
+<td class="td"><p class="p"><strong>isunique</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">salesperson</p></td>
+<td class="td"><p class="p">Stephan</p></td>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">5</p></td>
+<td class="td"><p class="p">N</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 24.4: Строка из таблицы SYSTEMINDEXES</p><p class="p">SYSTEMUSERAUTH - ПОЛЬЗОВАТЕЛЬСКИЕ И СИСТЕМНЫЕ ПРИВИЛЕГИИ В БАЗЕ ДАННЫХ</p><p class="p">Имена столбцов для SYSTEMUSERAUTH и их описание, следующее:</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p">Столбцы</p></td>
+<td class="td"><p class="p">Описание</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">username</p></td>
+<td class="td"><p class="p">Идентификатор (ID ) доступа пользователя</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">password</p></td>
+<td class="td"><p class="p">Пароль пользователя вводимый при регистрации</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">resource</p></td>
+<td class="td"><p class="p">Где пользователь имеет права RESOURCE</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">dba</p></td>
+<td class="td"><p class="p">Где пользователь имеет права DBA</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Мы будем использовать простую схему системных привилегий, которая представлена в Главе 22, где были представлены три системных привилегии - CONNECT( ПОДКЛЮЧИТЬ ), RESOURCE( РЕСУРСЫ ) и DBA. Все пользователи получают CONNECT по умолчанию при регистрации, поэтому он не описан в таблице выше. Возможные состояния столбцов resource и dba могут быть - Y (Да, пользователь имеет привилегии) или - No (Нет, пользователь не имеет привилегий).</p><p class="p">Пароли (password) доступны только высоко привилегированным пользователям, если они существуют. Следовательно запрос этой таблицы можно вообще делать только для информации относительно привилегий системы и пользователей.</p><p class="p">ТИПОВОЙ ЗАПРОС Чтобы найти всех пользователей которые имеют привилегию RESOURCE, и увидеть какие из них - DBA, вы можете ввести следующее условие:</p><p class="empty-line"/><p class="p">SELECT username, dba</p><p class="p">FROM SYSTEMUSERAUTH</p><p class="p">WHERE resource='Y';</p><p class="empty-line"/><p class="p">Вывод для этого запроса показывается в Таблице 24.5.</p><p class="empty-line"/><p class="p">SYSTEMTABAUTH - ПРИВИЛЕГИИ ОБЪЕКТА ОТОРЫЕ НЕ ОПРЕДЕЛЯЮТ СТОЛБЦЫ</p><p class="p">Здесь показаны имена столбцов в таблице SYSTEMTABAUTH и их описание:</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>COLUMN</strong></p></td>
+<td class="td"><p class="p"><strong>ОПИСАНИЕ</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+</table><p class="p">username Пользователь который имеет привилегии grantor Пользователь который передает привилегии по имени пользователя tname Имя таблицы в которой существуют привилегии owner Владелец tname selauth Имеет ли пользователь привилегию SELECT insauth Имеет ли пользователь привилегию INSERT delauth Имеет ли пользователь привилегию DELETE</p><p class="p">Возможные значения для каждой из перечисленных привилегий объекта (имена столбцов которых окончиваются на auth ) - Y, N, и G. G указывает что пользователь имеет привилегию с возможностью передачи привилегий.</p><p class="p">В каждой строке, по крайней мере один из этих столбцов должен иметь состояние отличное от N (другими словами, иметь хоть какую-то привилегию).</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT username, dba FROM SYSTEMUSERAUTH</p><p class="p">WHERE resource='Y' ;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>username</strong></p></td>
+<td class="td"><p class="p"><strong>dba</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Diane</p></td>
+<td class="td"><p class="p">N</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Adrian</p></td>
+<td class="td"><p class="p">Y</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 24 .5: Пользователи которые имеют привилегию RESOURCE</p><p class="p">Первые четыре столбца этой таблицы составляют первичный ключ. Это означает что каждая комбинация из tname, владелец-пользователь (не забудьте, что две различные таблицы с различными владельцами могут иметь одно и тоже имя ), пользователь и пользователь передающий права(гарантор ), должна быть уникальной. Каждая строка этой таблицы содержит все привилегии (которые не являются определенным столбцом ), предоставляются одним определенным пользователем другому определенному пользователю в конкретном объекте. UPDATE и REFERENCES, являются привилегиями, которые могут быть определенными столбцами, и находиться в различных таблицах каталога. Если пользователь получает привилегии в таблице от более чем одного пользователя, такие привилегии могут быть отдельными строками созданными в этой таблице. Это необходимо для каскадного отслеживания при вызове привилегий.</p><p class="p">ТИПОВОЙ ЗАПРОС. Чтобы найти все привелегии SELECT, INSERT, и DELETE, которые Adrian предоставляет пользователям в таблице Заказчиков, вы можете ввести следующее (вывод показан в Таблице 24.6 ):</p><p class="empty-line"/><p class="p">SELECT username, selauth, insauth, delauth</p><p class="p">FROM SYSTEMTABAUTH</p><p class="p">WHERE grantor='Adrian'</p><p class="p">ANDtname='Customers';</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT username, selauth, insauth, delauth</p><p class="p">FROM SYSTEMTABAUTH WHERE grantor='Adrian'</p><p class="p">AND tname='Customers';</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>username</strong></p></td>
+<td class="td"><p class="p"><strong>selauth</strong></p></td>
+<td class="td"><p class="p"><strong>insauth</strong></p></td>
+<td class="td"><p class="p"><strong>delauth</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Claire</p></td>
+<td class="td"><p class="p">G</p></td>
+<td class="td"><p class="p">Y</p></td>
+<td class="td"><p class="p">N</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Norman</p></td>
+<td class="td"><p class="p">Y</p></td>
+<td class="td"><p class="p">Y</p></td>
+<td class="td"><p class="p">Y</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 24. 6: Пользователи получившие привилегии от Adrian</p><p class="empty-line"/><p class="p">Выше показано, что Adrian предоставил Claire привилегии INSERT и SELECT в таблице Заказчиков, позднее предоставив ей права на передачу привилегий. Пользователю Norman, он предоставил привелегии SELECT, INSERT, и DELETE, но не дал возможность передачи привилегий ни в одной из них. Если Claire имела привилегию DELETE в таблице Заказчиков от какого-то другого источника, в этом запросе это показано не будет.</p><p class="p">SYSTEMCOLAUTH</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>СТОЛБЦЫ</strong></p></td>
+<td class="td"><p class="p"><strong>ОПИСАНИЕ</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+</tr>
+</table><p class="p">username Пользователь который имеет привилегии grantor Пользователь который предоставляет привилегии другому пользователю tname Имя таблицы в которой существуют привилегии cname Имя столбца в котором существуют привилегии owner Владелец tname updauth Имеет ли пользователь привилегию UPDATE в этом столбце refauth Имеет ли пользователь привилегию REFERENCES в этом столбце</p><p class="p">Столбцы updauth и refauth могут быть в состоянии Y, N, или G; но не могут быть одновременно в состоянии N для одной и той же строки. Это - первые пять столбцов таблицы, которы не составляют первичный ключ. Он отличается от первичного ключа SYSTEMTABAUTH в котором содержится поле cname, указывающее на определенный столбец обсуждаемой таблицы для которой применяются одна или обе привилегии. Отдельная строка в этой таблице может существовать для каждого столбца в любой данной таблицы в которой одному пользователю передаются превилегии определенного столбца с помощью другого пользователя. Как и в случае с SYSTEMTABAUTH та же привилегия может быть описана в более чем одной строке этой таблицы если она была передана более чем одним пользователем.</p><p class="p">ТИПОВОЙ ЗАПРОС. Чтобы выяснить, в каких столбцах какой таблицы вы имеете привилегию REFERENCES, вы можете ввести следующий запрос (вывод показывается в Таблице 24.7 )</p><p class="empty-line"/><p class="p">SELECT owner, tname, cname</p><p class="p">FROM SYSTEMCOLAUTH</p><p class="p">WHERE refauth IN ('Y', 'G')</p><p class="p">AND username=USER</p><p class="p">ORDER BY 1, 2;</p><p class="empty-line"/><p class="p">который показывает, что эти две таблицы, которые имеют различных владельцев, но одинаковые имя, в действительности, совершенно разные таблицы (т.е. это не как два синонима для одной таблицы ).</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT OWNER, TNAME, CNAME FROM SYSTEMCOLAUTH</p><p class="p">WHERE refaulth IN ('Y', 'G' ) AND username=USER</p><p class="p">ORDER BY 1, 2;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>owner</strong></p></td>
+<td class="td"><p class="p"><strong>tname</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Diane</p></td>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">cnum</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Diane</p></td>
+<td class="td"><p class="p">Salespeople</p></td>
+<td class="td"><p class="p">sname</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Diane</p></td>
+<td class="td"><p class="p">Salespeople</p></td>
+<td class="td"><p class="p">sname</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Gillan</p></td>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">cnum</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 24. 7: Столбцы в пользователь имеет привилегию INSERT</p><p class="subtitle">SYSTEMSYNONS - СИНОНИМЫ ДЛЯ ТАБЛИЦ В БАЗЕ ДАННЫХ</p><p class="p">Это - имена столбцов в таблице SYSTEMSYNONS и их описание:</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>СТОЛБЕЦ</strong></p></td>
+<td class="td"><p class="p"><strong>ОПИСАНИЕ</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">synonym</p></td>
+<td class="td"><p class="p">Имя синонима</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">synowner</p></td>
+<td class="td"><p class="p">Пользователь, который является владельцем синонима (может быть PUBLIC (ОБЩИЙ))</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">tname</p></td>
+<td class="td"><p class="p">Имя таблицы используемой владельцем</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">tabowner</p></td>
+<td class="td"><p class="p">Имя пользователя который является владельцем таблицы</p></td>
+</tr>
+</table><p class="p">ТИПОВОЙ ЗАПРОС. Предположим, что Adrian имеет синоним Clients для таблицы Заказчиков принадлежащей Diane, и что имеется общий синоним Customers для этой же таблицы. Вы делаете запрос таблицы для всех синонимов в таблице Заказчиков (вывод показывается в Таблице 24.8 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM SYSTEMSYNONS</p><p class="p">WHERE tname='Customers'</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM SYSTEMSYNONS</p><p class="p">WHERE tname='Customers';</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>synonym</strong></p></td>
+<td class="td"><p class="p"><strong>synowner</strong></p></td>
+<td class="td"><p class="p"><strong>tname</strong></p></td>
+<td class="td"><p class="p"><strong>tabowner</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Clients</p></td>
+<td class="td"><p class="p">Adrian</p></td>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">PUBLIC</p></td>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">Diane</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 24.8: Синонимы для таблицы Заказчиков</p><p class="subtitle">ДРУГОЕ ИСПОЛЬЗОВАНИЕ КАТАЛОГА</p><p class="p">Конечно, вы можете выполнять более сложные запросы в системном каталоге. Обьединения, например, могут быть очень удобны. Эта команда позволит вам увидеть столбцы таблиц и базовые индексы установленые для каждого, (вывод показывается в Таблице 24.9 ):</p><p class="empty-line"/><p class="p">SELECT a.tname, a.cname, iname, cposition</p><p class="p">FROM SYSTEMCOLUMNS a, SYSTEMINDEXES b</p><p class="p">WHERE a.tabowner=b. tabowner</p><p class="p">AND a.tname=b.tname</p><p class="p">AND a.cnumber=b.cnumber</p><p class="p">ORDER BY 3 DESC, 2;</p><p class="empty-line"/><p class="p">Она показывает два индекса, один для таблицы Заказчиков и один для таблицы Продавцов. Последний из них - это одностолбцовый индекс с именем salesno в поле snum; он был помещен первым из-за сортировки по убыванию (в обратном алфавитном порядке ) в столбце iname. Другой индекс, custsale, используется продавцами чтобы отыскивать своих заказчиков. Он основывается на комбинации полей snum и cnum внутри таблицы Заказчиков, с полем snum приходящим в индексе первым, как это и показано с помощью поля cposition.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT a.tname, a.cname, iname, cposition</p><p class="p">FROM SYSTEMCOLUMNS a, SYSTEMINDEXES b</p><p class="p">WHERE a.tabowner=b.tabowner</p><p class="p">AND a.tname=b.tname</p><p class="p">AND a.cnumber=b.cnumber</p><p class="p">ORDER BY 3 DESC, 2;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>tname</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>iname</strong></p></td>
+<td class="td"><p class="p"><strong>cposition</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Salespeople</p></td>
+<td class="td"><p class="p">sname</p></td>
+<td class="td"><p class="p">salesno</p></td>
+<td class="td"><p class="p">1</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">cnum</p></td>
+<td class="td"><p class="p">custsale</p></td>
+<td class="td"><p class="p">2</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Customers</p></td>
+<td class="td"><p class="p">snum</p></td>
+<td class="td"><p class="p">custsale</p></td>
+<td class="td"><p class="p">1</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 24.9 Столбцы и их индексы</p><p class="empty-line"/><p class="p">Подзапросы также могут быть использованы. Имеется способ увидеть данные столбца только для столбцов из таблиц каталога:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM SYSTEMCOLUMNS</p><p class="p">WHERE tname IN</p><p class="p">( SELECT tname</p><p class="p">FROM SYSTEMCATALOG);</p><p class="empty-line"/><p class="p">Для простоты, мы не будем показывать вывод этой команды, которая состоит из одного входа для каждого столбца каждой таблицы каталога.</p><p class="p">Вы могли бы поместить этот запрос в представление, назвав его, например, SYSTEMTABCOLS, для представления SYSTEMTABLES.</p><p class="subtitle">РЕЗЮМЕ</p><p class="p">Итак, система SQL использует набор таблиц, называемый ситемным каталогом в структуре базы данных. Эти таблицы могут запрашиваться но модифицироваться. Кроме того, вы можете добавлять комментарии столбцов в (и удалять их из) таблицы SYSTEMCATALOG и SYSTEMCOLUMNS.</p><p class="p">Создание представлений в этих таблицах - превосходный способ точно определить, какая пользовательская информация может быть доступной.</p><p class="p">Теперь, когда вы узнали о каталоге, вы завершили ваше обучение SQL в диалоговом режиме. Следующая глава этой книги расскажет вам как SQL используется в программах которые написаны прежде всего на других языках но которые способны извлечь пользу из возможностей SQL, взаимодействуя с его таблицами базы данных.</p><p class="subtitle">РАБОТА С SQL</p><p class="p">* Сделайте запрос каталога чтобы вывести, для каждой таблицы имеющей более чем четыре столбца, имя таблицы, имя владелеца, а также имя столбцов и тип данных этих столбцов.</p><p class="p">* Сделайте запрос каталога чтобы выяснить, сколько синонимов существует для каждой таблицы в базе данных. Не забудьте, что один и тот же синоним принадлежащий двум различным пользователям - это фактически два разных синонима.</p><p class="p">* Выясните сколько таблиц имеют индексы в более чем пятьдесяти процентов их столбцов.</p></span></span>
+</body>
+</html>

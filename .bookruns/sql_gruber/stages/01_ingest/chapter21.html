@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id28"><div class="title2">
+<p class="p1">Глава 20. ВВЕДЕНИЕ: ПРЕДСТАВЛЕНИЯ</p>
+</div><p class="empty-line"/><p class="p">ПРЕДСТАВЛЕНИЕ (VIEW) - ОБЪЕКТ ДАННЫХ КОТОРЫЙ не содержит никаких данных его владельца. Это - тип таблицы, чье содержание выбирается из других таблиц с помощью выполнения запроса. Поскольку значения в этих таблицах меняются, то автоматически, их значения могут быть показаны представлением.</p><p class="p">В этой главе, вы узнаете что такое представления, как они создаются, и немного об их возможностях и ограничениях. Использование представлений основанных на улучшеных средствах запросов, таких как обьединение и подзапрос, разработаных очень тщательно, в некоторых случаях даст больший выиигрыш по сравнениию с запросами.</p><p class="subtitle">ЧТО ТАКОЕ ПРЕДСТАВЛЕНИЕ?</p><p class="p">Типы таблиц, с которыми вы имели дело до сих пор, назывались - базовыми таблицами. Это - таблицы, которые содержат данные. Однако имеется другой вид таблиц: - представления. Представления - это таблицы чье содержание выбирается или получается из других таблиц. Они работают в запросах и операторах DML точно также как и основные таблицы, но не содержат никаких собственных данных. Представления - подобны окнам, через которые вы просматриваете информацию( как она есть, или в другой форме, как вы потом увидите ), которая фактически хранится в базовой таблице. Представление - это фактически запрос, который выполняется всякий раз, когда представление становится темой команды. Вывод запроса при этом в каждый момент становится содержанием представления.</p><p class="subtitle">КОМАНДА CREATE VIEW</p><p class="p">Вы создаете представление командой CREATE VIEW. Она состоит из слов CREATE VIEW (СОЗДАТЬ ПРЕДСТАВЛЕНИЕ), имени представления которое нужно создать, слова AS (КАК), и далее запроса, как в следующем примере:</p><p class="empty-line"/><p class="p">CREATE VIEW Londonstaff</p><p class="p">AS SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE city='London';</p><p class="empty-line"/><p class="p">Теперь Вы имеете представление, называемое Londonstaff. Вы можете использовать это представление точно так же как и любую другую таблицу. Она может быть запрошена, модифицирована, вставлена в, удалена из, и соединена с, другими таблицами и представлениями. Давайте сделаем запрос такого представления (вывод показан в Таблице 20.1):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Londonstaff;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Londonstaff;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.1200</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.1100</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 20.1: Представление Londonstaff</p><p class="p">Когда вы приказываете SQL выбрать(SELECT) все строки (* ) из представления, он выполняет запрос содержащий в определении - Loncfonstaff, и возвращает все из его вывода. Имея предикат в запросе представления, можно вывести только те строки из представления, которые будут удовлетворять этому предикату. Вы могли бы вспомнить, что в Главе 15, вы имели таблицу, называемую Londonstaff, в которую вы вставляли это же самое содержание (конечно, мы понимаем что таблица - не слишком велика. Если это так, вы будете должны выбрать другое имя для вашего представления). Преимущество использования представления, по сравнению с основной таблицы, в том, что представление будет модифицировано автоматически всякий раз, когда таблица лежащая в его основе изменяется.</p><p class="p">Содержание представления не фиксировано, и переназначается каждый раз когда вы ссылаетесь на представление в команде. Если вы добавите завтра другого, живущего в Лондоне продавца, он автоматически появится в представлении.</p><p class="p">Представления значительно расширяют управление вашими данными. Это - превосходный способ дать публичный доступ к некоторой, но не всей информации в таблице. Если вы хотите чтобы ваш продавец был показан в таблице Продавцов, но при этом не были показаны комиссии других продавцов, вы могли бы создать представление с использованием следующего оператора (вывод показан в Таблице 20.2 )</p><p class="empty-line"/><p class="p">CREATE VIEW Salesown</p><p class="p">AS SELECT snum, sname, city</p><p class="p">FROM Salespeople:</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Salesown;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">New York</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 20.2: Представление Salesown</p><p class="empty-line"/><p class="p">Другими словами, это представление - такое же как для таблицы Продавцов, за исключением того, что поле comm, не упоминалось в запросе, и следовательно не было включено в представление.</p><p class="subtitle">МОДИФИЦИРОВАНИЕ ПРЕДСТАВЛЕНИЙ</p><p class="p">Представление может теперь изменяться командами модификации DML, но модификация не будет воздействовать на само представление. Команды будут на самом деле перенаправлены к базовой таблице:</p><p class="empty-line"/><p class="p">UPDATE Salesown</p><p class="p">SET city='Palo Alto'</p><p class="p">WHERE snum=1004;</p><p class="empty-line"/><p class="p">Его действие идентично выполнению той же команды в таблице Продавцов. Однако, если значение комиссионных продавца будет обработано командой UPDATE</p><p class="empty-line"/><p class="p">UPDATE Salesown</p><p class="p">SET comm=.20</p><p class="p">WHERE snum=1004;</p><p class="empty-line"/><p class="p">она будет отвергнута, так как поле comm отсутствует в представлении Salesown. Это важное замечание, показывающее что не все представления могут быть модифицированы. Мы будем исследовать проблемы модификации представлений в Главе 21.</p><p class="subtitle">ИМЕНОВАНИЕ СТОЛБЦОВ</p><p class="p">В нашем примере, поля наших представлений имеют свои имена, полученые прямо из имен полей основной таблицы. Это удобно. Однако, иногда вам нужно снабжать ваши столбцы новыми именами:</p><p class="p">* когда некоторые столбцы являются выводимыми, и проэтому не имеющими имен.</p><p class="p">* когда два или более столбцов в объединении, имеют те же имена что в их базовой таблице.</p><p class="empty-line"/><p class="p">Имена, которые могут стать именами полей, даются в круглых скобках, после имени таблиц. Они не будут запрошены, если совпадают с именами полей запрашиваемой таблицы. Тип данных и размер этих полей будут отличаются от запрашиваемых полей которые "передаются" в них. Обычно вы не указываете новых имен полей, но если вы все таки сделали это, вы должны делать это для каждого поля в представлении.</p><p class="subtitle">КОМБИНИРОВАНИЕ ПРЕДИКАТОВ ПРЕДСТАВЛЕНИЙ И ОСНОВНЫХ ЗАПРОСОВ В ПРЕДСТАВЛЕНИЯХ</p><p class="p">Когда вы делаете запрос представления, вы собственно, запрашиваете запрос. Основной способ для SQL обойти это, - объединить предикаты двух запросов в один. Давайте посмотрим еще раз на наше представление с именем Londonstaff :</p><p class="empty-line"/><p class="p">CREATE VIEW Londonstaff</p><p class="p">AS SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE city='London';</p><p class="empty-line"/><p class="p">Если мы выполняем следующий запрос в этом представлении</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Londonstaff</p><p class="p">WHERE comm &gt; .12;</p><p class="empty-line"/><p class="p">он такой же как если бы мы выполнили следующее в таблице Продавцов:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE city='London'</p><p class="p">AND comm &gt; .12;</p><p class="empty-line"/><p class="p">Это прекрасно, за исключением того, что появляется возможная проблема с представлением. Имеется возможность комбинации из двух полностью допустимых предикатов и получения предиката который не будет работать. Например, предположим что мы создаем (CREATE) следующее представление:</p><p class="empty-line"/><p class="p">CREATE VIEW Ratingcount (rating, number)</p><p class="p">AS SELECT rating, COUNT (*)</p><p class="p">FROM Customers</p><p class="p">GROUP BY rating;</p><p class="empty-line"/><p class="p">Это дает нам число заказчиков которые мы имеем для каждого уровня оценки(rating). Вы можете затем сделать запрос этого представления чтобы выяснить, имеется ли какая-нибудь оценка, в настоящее время назначенная для трех заказчиков:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Ratingcount</p><p class="p">WHERE number=3;</p><p class="empty-line"/><p class="p">Посмотрим что случится если мы скомбинируем два предиката:</p><p class="empty-line"/><p class="p">SELECT rating, COUNT (*)</p><p class="p">FROM Customers</p><p class="p">WHERE COUNT (*)=3</p><p class="p">GROUP BY rating;</p><p class="empty-line"/><p class="p">Это недопустимый запрос. Агрегатные функции, такие как COUNT (СЧЕТ), не могут использоваться в предикате. Првильным способом при формировании вышеупомянутого запроса, конечно же будет следующий:</p><p class="empty-line"/><p class="p">SELECT rating, COUNT (*)</p><p class="p">FROM Customers</p><p class="p">GROUP BY rating;</p><p class="p">HAVING COUNT (*)=3;</p><p class="empty-line"/><p class="p">Но SQL может не выполнить превращения. Может ли равноценный запрос вместо запроса Ratingcount потерпеть неудачу? Да может! Это - неоднозначная область SQL, где методика использования представлений может дать хорошие результаты. Самое лучшее что можно сделать в случае, когда об этом ничего не сказано в вашей системной документации, так это попытка в ней разобраться. Если команда допустима, вы можете использовать представления чтобы установить некоторые ограничения SQL в синтаксисе запроса.</p><p class="subtitle">ГРУППОВЫЕ ПРЕДСТАВЛЕНИЯ</p><p class="p">Групповные представления - это представления, наподобии запроса Ratingcount в предыдущем примере, который содержит предложение GROUP BY, или который основывается на других групповных представлениях.</p><p class="p">Групповые представления могут стать превосходным способом обрабатывать полученную информацию непрерывно. Предположим, что каждый день вы должны следить за порядком номеров заказчиков, номерами продавцов принимающих порядки, номерами порядков, средним от порядков, и общей суммой приобретений в порядках.</p><p class="p">Чем конструировать каждый раз сложный запрос, вы можете просто создать следующее представление:</p><p class="empty-line"/><p class="p">CREATE VIEW Totalforday</p><p class="p">AS SELECT odate, COUNT (DISTINCT cnum), COUNT</p><p class="p">(DISTINCT snum), COUNT (onum), AVG</p><p class="p">(amt), SUM (amt)</p><p class="p">FROM Orders</p><p class="p">GROUP BY odate;</p><p class="empty-line"/><p class="p">Теперь вы сможете увидеть всю эту информацию с помощью простого запроса:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Totalforday;</p><p class="empty-line"/><p class="p">Как мы видели, SQL запросы могут дать вам полный комплекс возможностей, так что представления обеспечивают вас чрезвычайно гибким и мощным инструментом чтобы определить точно, как ваши данные могут быть использованы. Они могут также делать вашу работу более простой, переформатируя данные удобным для вас способом и исключив двойную работу.</p><p class="subtitle">ПРЕДСТАВЛЕНИЯ И ОБЬЕДИНЕНИЯ</p><p class="p">Представления не требуют чтобы их вывод осуществлялся из одной базовой таблицы. Так как почти любой допустимый запрос SQL может быть использован в представлении, он может выводить информацию из любого числа базовых таблиц, или из других представлений. Мы можем, например, создать представление которое показывало бы, порядки продавца и заказчика по имени:</p><p class="empty-line"/><p class="p">CREATE VIEW Nameorders</p><p class="p">AS SELECT onum, amt, a.snum, sname, cname</p><p class="p">FROM Orders a, Customers b, Salespeople c</p><p class="p">WHERE a.cnum=b.cnum</p><p class="p">AND a.snum=c.snum;</p><p class="empty-line"/><p class="p">Теперь вы можете выбрать (SELECT) все порядки заказчика или продавца (* ), или можете увидеть эту информацию для любого порядка. Например, чтобы увидеть все порядки продавца Rifkin, вы должны ввести следующий запрос (вывод показан в Таблице 20.3 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Nameorders</p><p class="p">WHERE sname='Rifkin';</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Nameorders WHERE sname='Rifkin';</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3001</p></td>
+<td class="td"><p class="p">18.69</p></td>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.16</p></td>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 20.3: Порядки Rifkin показаные в Nameorders</p><p class="empty-line"/><p class="p">Вы можете также объединять представления с другими таблицами, или базовыми таблицами или представлениями, поэтому вы можете увидеть все порядки Axelrodа и значения его комиссиионных в каждом порядке:</p><p class="empty-line"/><p class="p">SELECT a.sname, cname, amt comm</p><p class="p">FROM Nameorders a, Salespeople b</p><p class="p">WHERE a.sname='Axelrod'</p><p class="p">AND b.snum=a.snum;</p><p class="empty-line"/><p class="p">Вывод для этого запроса показывается в Таблице 20.4.</p><p class="empty-line"/><p class="p">В предикате, мы могли бы написать - " WHERE a.sname=|Axelrod' AND b.sname=|Axelrod| ", но предикат который мы использовали здесь более общеупотребительный. Кроме того поле snum - это первичный ключ таблицы Продавцов, и следовательно должен по определению быть уникальным.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT a.sname, cname, amt * comm FROM Nameorders a, Salespeople b</p><p class="p">WHERE a.sname='Axelrod' AND b.snum=a.snum;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3001</p></td>
+<td class="td"><p class="p">18.69</p></td>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.16</p></td>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 20. 4: Обьединение основной таблицы с представлением</p><p class="empty-line"/><p class="p">Если бы там например было два Axelrodf, вариант с именем, будет обединять вместе их данные. Более предпочтительный вариант - использовать поле snum чтобы хранить его отдельно.</p><p class="subtitle">ПРЕДСТАВЛЕНИЯ И ПОДЗАПРОСЫ</p><p class="p">Представления могут также использовать и подзапросы, включая соотнесенные подзапросы. Предположим ваша компания предусматривает премию для тех продавцов которые имеют заказчика с самым высоким порядком для любой указанной даты. Вы можете проследить эту информацию с помощью представления:</p><p class="empty-line"/><p class="p">CREATE VIEW Elitesalesforce</p><p class="p">AS SELECT b.odate, a.snum, a.sname,</p><p class="p">FROM Salespeople a, Orders b</p><p class="p">WHERE a.snum=b.snum</p><p class="p">AND b.amt=</p><p class="p">(SELECT MAX (amt)</p><p class="p">FROM Orders c</p><p class="p">WHERE c.odate=b.odate);</p><p class="empty-line"/><p class="p">Если, с другой стороны, премия будет назначаться только продавцу который имел самый высокий порядок за последние десять лет, вам необходимо будет проследить их в другом представлении основанном на первом:</p><p class="empty-line"/><p class="p">CREATE VIEW Bonus</p><p class="p">AS SELECT DISTINCT snum, sname</p><p class="p">FROM Elitesalesforce a</p><p class="p">WHERE 10 &lt;=</p><p class="p">(SELECT COUNT (*)</p><p class="p">FROM Elitesalestorce b</p><p class="p">WHERE a.snum=b.snum);</p><p class="empty-line"/><p class="p">Извлечение из этой таблицы продавца, который будет получать премию - выпоняется простым вопросом:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Bonus;</p><p class="empty-line"/><p class="p">Теперь мы видим истинную мощность SQL. Извлечение той же полученной информации программами RPG или COBOL будет более длительной процедурой. В SQL, это - только вопрос из двух комплексных команд, сохраненных, как представление совместно с простым запросом. При самостоятельном запросе - мы должны заботится об этом каждый день, потому что информация которую извлекает запрос, непрерывно меняется чтобы отражать текущее состояние базы данных.</p><p class="subtitle">ЧТО НЕ МОГУТ ДЕЛАТЬ ПРЕДСТАВЛЕНИЯ</p><p class="p">Имеются большое количество типов представлений (включая многие из наших примеров в этой главе ) которые являются доступными только для чтения. Это означает, что их можно запрашивать, но они не могут подвергаться действиям команд модификации. (Мы будем рассматривать эту тему в Главе 21.)</p><p class="p">Имеются также некоторые виды запросов, которые не допустимы в определениях представлений. Одиночное представление должно основываться на одиночном запросе; ОБЪЕДИНЕНИЕ (UNION) и ОБЪЕДИНЕНИЕ ВСЕГО (UNIOM ALL) не разрешаются. УПОРЯДОЧЕНИЕ ПО(ORDER BY) никогда не используется в определении представлений. Вывод запроса формирует содержание представления, которое напоминает базовую таблицу и является - по определению - неупорядоченным.</p><p class="subtitle">УДАЛЕНИЕ ПРЕДСТАВЛЕНИЙ</p><p class="p">Синтаксис удаления представления из базы данных подобен синтаксису удаления базовых таблиц:</p><p class="empty-line"/><p class="p">DROP VIEW &lt; view name &gt;</p><p class="empty-line"/><p class="p">В этом нет необходимости, однако, сначала надо удалить все содержание как это делается с базовой таблицей, потому что содержание представления не является созданым и сохраняется в течении определеной команды. Базовая таблица из которой представление выводится, не эффективна когда представление удалено. Помните, вы должны являться владельцем представления чтобы иметь возможность удалить его.</p><p class="subtitle">РЕЗЮМЕ</p><p class="p">Теперь, когда вы можете использовать представления, ваша способность отслеживать и обрабатывать содержание вашей базы данных, значительно расширилась. Любые вещи которые вы можете создать с запросом, вы всегда сможете определить как представление. Запросы этих представлений, фактически, запрос запроса. Использование представлений и для удобства и для защиты, также удобно как и многие возможности представлений для форматирования и получения значений из постоянно меняющегося содержания вашей базы данных. Имеется один главный вывод относительно представлений, это способность к модификации, которую мы выбрали в отличии от Главы 21. Как показано, вы можете модифицировать представления также как и базовую таблицу, с помощью изменений применяемых к таблице из которой получается представление, но это не всегда возможно.</p><p class="subtitle">РАБОТА С SQL</p><p class="p">* Создайте представление которое бы показывало всех заказчиков которые имеют самые высокие оценки.</p><p class="p">* Создайте представление которое бы показывало номер продавца в каждом городе.</p><p class="p">* Создайте представление которое бы показывало усредненый и общий порядки для каждого продавца после его имени. Предполагается, что все имена - уникальны.</p><p class="p">* Создайте представление которое бы показывало каждого продавца с многочислеными заказчиками.</p></span></span>
+</body>
+</html>

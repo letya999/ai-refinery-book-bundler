@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id17"><div class="title2">
+<p class="p1">Глава 9. ОБЪЕДИНЕНИЕ ТАБЛИЦЫ С СОБОЙ</p>
+</div><p class="empty-line"/><p class="p">В ГЛАВЕ 8, МЫ ПОКАЗАЛИ ВАМ КАК ОБЪЕДИНЯТЬ ДВЕ или более таблиц вместе.</p><p class="p">Достаточно интересно то, что та же самая методика может использоваться чтобы объединять вместе две копии одиночной таблицы. В этой главе, мы будем исследовать этот процесс. Как вы видете, объединение таблицы с самой собой, далеко не простая вещь, и может быть очень полезным способом определять определенные виды связей между пунктами данных в конкретной таблице.</p><p class="empty-line"/><p class="subtitle">КАК ДЕЛАТЬ ОБЪЕДИНЕНИЕ ТАБЛИЦЫ С СОБОЙ?</p><p class="p">Для объединения таблицы с собой, вы можете сделать каждую строку таблицы, одновременно, и комбинацией ее с собой и комбинацией с каждой другой строкой таблицы. Вы затем оцениваете каждую комбинацию в терминах предиката, также как в обьединениях мультитаблиц. Это позволит вам легко создавать определенные виды связей между различными позициями внутри одиночной таблицы - с помощью обнаружения пар строк со значением поля, например.</p><p class="p">Вы можете изобразить обьединение таблицы с собой, как обьединение двух копий одной и той же таблицы. Таблица на самом деле не копируется, но SQL выполняет команду так, как если бы это было сделано. Другими словами, это обьединение - такое же, как и любое другое обьединение между двумя таблицами, за исключением того, что в данном случае обе таблицы идентичны.</p><p class="subtitle">ПСЕВДОНИМЫ</p><p class="p">Синтаксис команды для объединения таблицы с собой, тот же что и для объединения многочисленых таблиц, в одном экземпляре. Когда вы объединяете таблицу с собой, все повторяемые имена столбца, заполняются префиксами имени таблицы. Чтобы ссылаться к этим столбцам внутри запроса, вы должны иметь два различных имени для этой таблицы.</p><p class="p">Вы можете сделать это с помощью определения временных имен называемых переменными диапазона, переменными корреляции или просто - псевдонимами. Вы определяете их в предложении FROM запроса. Это очень просто: вы набираете имя таблицы, оставляете пробел, и затем набираете псевдоним для нее. Имеется пример который находит все пары заказчиков имеющих один и тот же самый рейтинг (вывод показывается в Таблице 9.1):</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT first.cname, second.cname, first.rating</p><p class="p">FROM Customers first, Customers second</p><p class="p">WHERE first.rating=second.rating;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">200</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">200</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">200</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">200</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">300</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">300</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">100</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">100</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">100</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">300</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">300</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">100</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">100</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">100</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 9.1: Объединение таблицы с собой</p><p class="empty-line"/><p class="p">(обратите внимание что в Таблице 9.1, как и в некоторых дальнейших примерах, полный запрос не может уместиться в окне вывода, и следовательно будет усекаться.)</p><p class="p">В вышеупомянутой команде, SQL ведет себя так, как если бы он соединял две таблицы называемые 'первая' и 'вторая'. Обе они - фактически, таблицы Заказчика, но псевдонимы разрешают им быть обработаными независимо. Псевдонимы первый и второй были установлены в предложении FROM запроса, сразу после имени копии таблицы. Обратите внимание что псевдонимы могут использоваться в предложении SELECT, даже если они не определены в предложении FROM.</p><p class="p">Это - очень хорошо. SQL будет сначала допускать любые такие псевдонимы на веру, но будет отклонять команду если они не определены далее в предложении FROM запроса.</p><p class="p">Псевдоним существует - только пока команда выполняется ! Когда запрос заканчивается, псевдонимы используемые в нем больше не имеют никакого значения.</p><p class="p">Теперь, когда имеются две копии таблицы Заказчиков, чтобы работать с ними, SQL может обрабатывать эту операцию точно также как и любое другое обьединение - берет каждую строку из одного псевдонима и сравнивает ее с каждой строкой из другого псевдонима.</p><p class="subtitle">УСТРАНЕНИЕ ИЗБЫТОЧНОСТИ</p><p class="p">Обратите внимание что наш вывод имеет два значение для каждой комбинации, причем второй раз в обратном порядке. Это потому, что каждое значение показано первый раз в каждом псевдониме, и второй раз( симметрично) в предикате. Следовательно, значение A в псевдониме сначала выбирается в комбинации со значением B во втором псевдониме, а затем значение A во втором псевдониме выбирается в комбинации со значением B в первом псевдониме. В нашем примере, Hoffman выбрался вместе с Clemens, а затем Clemens выбрался вместе с Hoffman. Тот же самый случай с Cisneros и Grass, Liu и Giovanni, и так далее. Кроме того каждая строка была сравнена сама с собой, чтобы вывести строки такие как - Liu и Liu. Простой способ избежать этого состoит в том, чтобы налагать порядок на два значения, так чтобы один мог быть меньше чем другой или предшествовал ему в алфавитном порядке. Это делает предикат ассиметричным, поэтому те же самые значения в обратном порядке не будут выбраны снова, например:</p><p class="empty-line"/><p class="p">SELECT tirst.cname, second.cname, first.rating</p><p class="p">FROM Customers first, Customers second</p><p class="p">WHERE first.rating=second.rating</p><p class="p">AND first.cname &lt; second.cname;</p><p class="empty-line"/><p class="p">Вывод этого запроса показывается в Таблице 9.2.</p><p class="empty-line"/><p class="p">Hoffman предшествует Periera в алфавитном порядке, поэтому комбинация удовлетворяет обеим условиям предиката и появляется в выводе. Когда та же самая комбинация появляется в обратном порядке - когда Periera в псевдониме первой таблицы сравнтвается с Hoffman во второй таблице псевдонима - второе условие не встречается. Аналогично Hoffman не выбирается при наличии того же рейтинга что и он сам потому что его имя не предшествует ему самому в алфавитном порядке. Если бы вы захотели</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT first.cname, second.cname, first.rating FROM Customers first, Customers second</p><p class="p">WHERE first.rating=second.rating</p><p class="p">AND first.cname &lt; second.cname</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">100</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">200</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">100</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">100</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Gisneros</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">300</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 9.2: Устранение избыточности вывода в обьединении с собой.</p><p class="empty-line"/><p class="p">включить сравнение строк с ними же в запросах подобно этому, вы</p><p class="p">могли бы просто использовать &lt;=вместо &lt;.</p><p class="subtitle">ПРОВЕРКА ОШИБОК</p><p class="p">Таким образом мы можем использовать эту особенность SQL для проверки определенных видов ошибок. При просмотре таблицы Порядков, вы можете видеть что поля cnum и snum должны иметь постоянную связь. Так как каждый заказчик должен быть назначен к одному и только одному продавцу, каждый раз когда определенный номер заказчика появляется в таблице Порядков, он должен совпадать с таким же номером продавца. Следующая команда будет определять любые несогласованности в этой области:</p><p class="empty-line"/><p class="p">SELECT first.onum, tirst.cnum, first.snum,</p><p class="p">second.onum, second.cnum,second.snum</p><p class="p">FROM Orders first, Orders second</p><p class="p">WHERE first.cnum=second.cnum</p><p class="p">AND first.snum &lt; &gt; second.snum;</p><p class="empty-line"/><p class="p">Хотя это выглядит сложно, логика этой команды достаточно проста. Она будет брать первую строку таблицы Порядков, запоминать ее под первым псевдонимом, и проверять ее в комбинации с каждой строкой таблицы Порядков под вторым псевдонимом, одну за другой. Если комбинация строк удовлетворяет предикату, она выбирается для вывода. В этом случае предикат будет рассматривать эту строку, найдет строку где поле cnum=2008 а поле snum=1007, и затем рассмотрит каждую следующую строку с тем же самым значением поля cnum. Если он находит что какая -то из их имеет значение отличное от значения поля snum, предикат будет верен, и выведет выбранные поля из текущей комбинации строк. Если же значение snum с данным значением cnum в наш таблице совпадает, эта команда не произведет никакого вывода.</p><p class="subtitle">БОЛЬШЕ ПСЕВДОНИМОВ</p><p class="p">Хотя обьединение таблицы с собой - это первая ситуация когда понятно что псевдонимы необходимы, вы не ограничены в их использовании что бы только отличать копию одлной таблицы от ее оригинала. Вы можете использовать псевдонимы в любое время когда вы хотите создать альтернативные имена для ваших таблиц в команде. Например, если ваши таблицы имеют очень длинные и сложные имена, вы могли бы определить простые односимвольные псевдонимы, типа a и b, и использовать их вместо имен таблицы в предложении SELECT и предикате. Они будут также использоваться с соотнесенными подзапросами(обсуждаемыми в Главе 11).</p><p class="subtitle">ЕЩЕ БОЛЬШЕ КОМПЛЕКСНЫХ ОБЪЕДИНЕНИЙ</p><p class="p">Вы можете использовать любое число псевдонимов для одной таблицы в запросе, хотя использование более двух в данном предложении SELECT * будет излишеством. Предположим что вы еще не назначили ваших заказчиков к вашему продавцу. Компании должна назначить каждому продавцу первоначально трех заказчиков, по одному для каждого рейтингового значения. Вы лично можете решить какого заказчика какому продавцу назначить, но следующий запрос вы используете чтобы увидеть все возможные комбинации заказчиков которых вы можете назначать. (Вывод показывается в Таблице 9.3 ):</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT a.cnum, b.cnum, c.cnum</p><p class="p">FROM Customers a, Customers b, Customers c</p><p class="p">WHERE a.rating=100</p><p class="p">AND b.rating=200</p><p class="p">AND c.rating=300;</p><p class="p">AND c.rating=300;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">2004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">2008</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">2004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">2008</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">2004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">2008</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">2004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">2008</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">2004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">2008</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">2004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">2008</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 9.3 Комбинация пользователей с различными значениями рейтинга</p><p class="p">Как вы можете видеть, этот запрос находит все комбинации заказчиков с тремя значениями оценки, поэтому первый столбец состоит из заказчиков с оценкой 100, второй с 200, и последний с оценкой 300. Они повторяются во всех возможных комбинациях. Это - сортировка группировки которая не может быть выполнена с GROUP BY или ORDER BY, поскольку они сравнивают значения только в одном столбце вывода.</p><p class="p">Вы должны также понимать, что не всегда обязательно использовать каждый псевдоним или таблицу которые упомянуты в предложении FROM запроса, в предложении SELECT. Иногда, предложение или таблица становятся запрашиваемыми исключительно потому что они могут вызываться в предикате запроса. Например, следующий запрос находит всех заказчиков размещенных в городах где продавец Serres (snum 1002 ) имеет заказиков (вывод показывается в Таблице 9.4 ):</p><p class="empty-line"/><p class="p">SELECT b.cnum, b.cname</p><p class="p">FROM Customers a, Customers b</p><p class="p">WHERE a.snum=1002</p><p class="p">AND b.city=a.city;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT b.cnum, b.cname</p><p class="p">FROM Customers a, Customers b</p><p class="p">WHERE a.snum=1002 AND b.city=a.city;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">Liu</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">Grass</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 9.4 Нахождение заказчиков в городах относящихся к Serres.</p><p class="p">Псевдоним a будет делать предикат неверным за исключением случая когда его значение столбца snum= 1002. Таким образом псевдоним опускает все, кроме заказчиков продавца Serres. Псевдоним b будет верным для всех строк с тем же самым значением города что и текущее значение города для a; в ходе запроса, строка псевдонима b будет верна один раз когда значение города представлено в a. Нахождение этих строк псевдонима b - единственая цель псевдонима a, поэтоиму мы не выбираем все столбцы подряд. Как вы можете видеть, собственные заказчики Serres вы бираются при нахождении их в том же самом городе что и он сам, поэтому выбор их из псевдонима a необязателен. Короче говоря, псевдоним назходит строки заказчиков Serres, Liu и Grass. Псевдоним b находит всех заказчиков размещенных в любом из их городов (San Jose и Berlin соответственно ) включая, конечно, самих - Liu и Grass.</p><p class="p">Вы можете также создать обьединение которое включает и различные таблицы и псевдонимы одиночной таблицы. Следующий запрос объединяет таблицу Пользователей с собой: чтобы найти все пары заказчиков обслуживаемых одним продавцом. В то же самое время, этот запрос объединяетзаказчика с таблицей Продавцов с именем этого продавца (вывод показан в Таблице 9.5 ):</p><p class="empty-line"/><p class="p">SELECT sname, Salespeople.snum, first.cname</p><p class="p">second.cname</p><p class="p">FROM Customers first, Customers second, Salespeople</p><p class="p">WHERE first.snum=second.snum</p><p class="p">AND Salespeople.snum=first.snum</p><p class="p">AND first.cnum &lt; second.cnum;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT cname, Salespeople.snum, first.cname second.cname</p><p class="p">FROM Customers first, Customers second, Salespeople</p><p class="p">WHERE first.snum=second.snum AND Salespeople.snum=first.snum</p><p class="p">AND first.cnum &lt; second.cnum;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">Grass</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 9.5: Объединение таблицы с собой и с другой таблицей</p><p class="subtitle">РЕЗЮМЕ</p><p class="p">Теперь Вы понимаете возможности объединения и можете использовать их для ограничения связей с таблицей, между различными таблицами, или в обоих случаях. Вы могли видеть некоторые возможности объединения при использовании его способностей. Вы теперь познакомились с терминами порядковые переменные, корреляционные переменные и предложения (эта терминология будет меняться от изделия к изделию, так что мы предлагаем Вам познакомится со всеми тремя терминами). Кроме того Вы поняли, немного, как в действительности работают запросы.</p><p class="p">Следующим шагом после комбинации многочисленых таблиц или многочисленых копий одной таблицы в запросе, будет комбинация многочисленных запросов, где один запрос будет производить вывод который будет затем управлять работой другого запроса. Это другое мощное средство SQL, о котором мы расскажем в Главе 10 и более тщательно в последующих главах.</p><p class="empty-line"/><p class="subtitle">РАБОТА С SQL</p><p class="p">* Напишите запрос который бы вывел все пары продавцов живущих в одном и том же городе. Исключите комбинации продавцов с ними же, а также дубликаты строк выводимых в обратным порядке.</p><p class="p">* Напишите запрос который вывел бы все пары порядков по данным заказчикам, именам этих заказчиков, и исключал дубликаты из вывода, как в предыдущем вопросе.</p><p class="p">* Напишите запрос который вывел бы имена(cname) и города(city) всех заказчиков с такой же оценкой(rating) как у Hoffmanа. Напишите запрос использующий поле cnum Hoffmanа а не его оценку, так чтобы оно могло быть использовано если его оценка вдруг изменится.</p></span></span>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>SQL: Объединение таблиц (JOIN)</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-deep: #1e293b;
+      --card-bg: var(--bg-deep);
+      --text: #f8fafc;
+      --acc: #38bdf8;
+      --accent: var(--acc);
+      --secondary: #bb86fc;
+      --border: var(--acc);
+      --muted: #94a3b8;
+      --acc2: #ef4444;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.6;
+      padding: 2rem;
+      margin: 0;
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 100vh !important;
+      padding-bottom: 5rem !important;
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .module-title { color: var(--accent); border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+    
+    .formula-card, pre, code {
+      background: #020617 !important;
+      color: var(--accent) !important;
+      border: 1px solid var(--border) !important;
+    }
+
+    .formula-card {
+      border-left: 4px solid var(--accent) !important;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      border-radius: 4px;
+    }
+    
+    code { padding: 2px 4px; border-radius: 3px; }
+
+    .vis-diag {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: var(--bg-deep) !important;
+      border: 1px solid var(--border) !important;
+      padding: 2rem;
+      border-radius: 12px;
+      margin: 2rem 0;
+    }
+    .venn-container { text-align: center; }
+    .venn-container svg { width: 150px; height: 100px; }
+    .matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .matrix-item {
+      background: var(--card-bg);
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .matrix-item h3 { margin-top: 0; color: var(--secondary); }
+    .complexity { font-weight: bold; color: var(--acc2); }
+    .lead { color: var(--muted) !important; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 class="module-title">Модуль 4: Связи и JOINs</h1>
+    
+    <p class="lead">Реляционные БД хранят данные в разных таблицах. JOIN — это механизм их временного сшивания по ключу.</p>
+
+    <div class="vis-diag">
+      <div class="venn-container">
+        <h3>INNER JOIN</h3>
+        <svg viewBox="0 0 100 60">
+          <circle cx="35" cy="30" r="25" fill="none" stroke="var(--muted)" stroke-width="2" />
+          <circle cx="65" cy="30" r="25" fill="none" stroke="var(--muted)" stroke-width="2" />
+          <clipPath id="inner">
+            <circle cx="65" cy="30" r="25" />
+          </clipPath>
+          <circle cx="35" cy="30" r="25" fill="var(--accent)" clip-path="url(#inner)" />
+        </svg>
+        <p><small>Только пересечение</small></p>
+      </div>
+      <div class="venn-container">
+        <h3>LEFT JOIN</h3>
+        <svg viewBox="0 0 100 60">
+          <circle cx="35" cy="30" r="25" fill="var(--secondary)" />
+          <circle cx="65" cy="30" r="25" fill="none" stroke="var(--muted)" stroke-width="2" />
+          <clipPath id="left">
+            <circle cx="65" cy="30" r="25" />
+          </clipPath>
+          <circle cx="35" cy="30" r="25" fill="var(--secondary)" />
+          <circle cx="65" cy="30" r="25" fill="var(--bg-deep)" clip-path="url(#left)" />
+          <circle cx="65" cy="30" r="25" fill="none" stroke="var(--muted)" stroke-width="2" />
+        </svg>
+        <p><small>Все левые + совпадения</small></p>
+      </div>
+    </div>
+
+    <div class="formula-card">
+      SELECT c.cname, o.amt<br>
+      FROM Customers c<br>
+      INNER JOIN Orders o ON c.cnum = o.cnum;
+    </div>
+
+    <h2>Матрица сложности и типов</h2>
+    <div class="matrix">
+      <div class="matrix-item">
+        <h3>Self-Join</h3>
+        <p>Таблица связывается сама с собой через алиасы. Полезно для иерархий.</p>
+        <span class="complexity">Сложность: Low</span>
+      </div>
+      <div class="matrix-item">
+        <h3>Cross Join</h3>
+        <p>Декартово произведение (каждый с каждым). Редко нужно, вешает БД на больших данных.</p>
+        <span class="complexity">Сложность: High (Load)</span>
+      </div>
+      <div class="matrix-item">
+        <h3>Equi-Join</h3>
+        <p>Связь по строгому равенству <code>=</code>. Самый частый тип связи.</p>
+        <span class="complexity">Сложность: Normal</span>
+      </div>
+      <div class="matrix-item">
+        <h3>Non-Equi Join</h3>
+        <p>Связь по диапазонам <code>BETWEEN</code> или <code>&lt; / &gt;</code>. Поиск в интервалах.</p>
+        <span class="complexity">Сложность: Normal</span>
+      </div>
+    </div>
+
+    <h2>Золотые правила</h2>
+    <ul>
+      <li>Всегда проверяйте <code>ON</code>-условие. Забытый ключ превращает JOIN в CROSS JOIN.</li>
+      <li>Используйте краткие алиасы (<code>c</code> для Customers, <code>o</code> для Orders).</li>
+      <li>LEFT JOIN возвращает <code>NULL</code> для правой таблицы, если совпадений нет.</li>
+    </ul>
+  </div>
+</body>
+</html>

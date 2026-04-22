@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id15"><div class="title2">
+<p class="p1">Глава 7. ФОРМИРОВАНИЕ ВЫВОДОВ ЗАПРОСОВ</p>
+</div><p class="empty-line"/><p class="p">ЭТА ГЛАВА РАСШИРИТ ВАШИ ВОЗМОЖНОСТИ в работе с выводом который производит запрос. Вы узнаете как вставлять текст и константы между выбранных полей, как использовать выбранные поля в математических выражениях, чьи результаты затем становятся выводом, и как сделать чтобы ваши значения выводились в определенном порядке. Эта последняя особенность включена, чтобы упорядочивать ваш вывод по любым столбцам, любым полученным значениям этого столбца, или по обеим.</p><p class="subtitle">СТРОКИ И ВЫРАЖЕНИЯ</p><p class="p">Большинство основанных на SQL баз данных предоставляют специальные средства позволяющие Вам совершенствовать вывод ваших запросов. Конечно, они претерпевают значительные изменения от программы к программе, и их обсуждение здесь не входит в наши задачи, однако, имеются пять особенностей созданых в стандарте SQL которые позволяют вам делать больше чем просто вывод значений полей и агрегатных данных.</p><p class="subtitle">СКАЛЯРНОЕ ВЫРАЖЕНИЕ С ПОМОЩЬЮ ВЫБРАННЫХ ПОЛЕЙ</p><p class="p">Предположим что вы хотите выполнять простые числовые вычисления данных чтобы затем помещать их в форму больше соответствующую вашим потребностям. SQL позволяет вам помещать скалярные выражения и константы среди выбраных полей. Эти выражения могут дополнять или замещать поля в предложениях SELECT, и могут включать в себя одно или более выбранных полей. Например, вы можете пожелать, представить комиссионные вашего продавца в процентном отношении а не как десятичные числа. Просто достаточно:</p><p class="empty-line"/><p class="p">SELECT snum, sname, city, comm * 100</p><p class="p">FROM Salespeople;</p><p class="empty-line"/><p class="p">Вывод из этого запроса показывается в Таблице 7.1.</p><p class="subtitle">СТОЛБЦЫ ВЫВОДА</p><p class="p">Последний столбец предшествующего примера непомечен( т.е. без наименования), потому что это - столбец вывода. Столбцы вывода - это столбцы данных созданные запросом способом, иным чем просто извлечение их из таблицы. Вы создаете их всякий раз, когда вы используете агрегатные</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT snum, sname, city, comm * 100 FROM Salespeople;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">12.000000</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">13.000000</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">11.000000</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+<td class="td"><p class="p">15.000000</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">10.000000</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 7.1: Помещение выражения в вашем запросе функции, константы, или выражения в предложении SELECT запроса. Так как имя столбца - один из атрибутов таблицы, столбцы которые приходят не из таблиц не имеют никаких имен. Другими словами непомеченные, столбцы вывода могут обрабатываться также как и столбцы извлеченные из таблиц, почти во всех ситуациях.</p><p class="subtitle">ПОМЕЩЕНИЕ ТЕКСТА В ВАШЕМ ВЫВОДЕ ЗАПРОСА</p><p class="p">Символ 'A', когда ничего не значит сам по себе, - является констан той, такой например как число 1. Вы можете вставлять константы в предложение SELECT запроса, включая и текст. Однако символьные константы, в отличие от числовых констант, не могут использоваться в выражениях.</p><p class="p">Вы можете иметь выражение 1 + 2 в вашем предложении SELECT, но вы не можете использовать выражение типа 'A' + 'B'; это приемлемо только если мы имеем в виду что 'A' и 'B' это просто буквы, а не переменные и не символы.</p><p class="p">Тем ни менее, возможность вставлять текст в вывод ваших запросов очень удобная штука.</p><p class="p">Вы можете усовершенствовать предыдущий пример представив комиссионные как проценты со знаком процента (%). Это даст вам возможность помещать в вывод такие единицы как символы и комментарии, как например в следующем примере (вывод показывается в Таблице 7.2 )</p><p class="empty-line"/><p class="p">SELECT snum, sname, city, ' % ', comm * 100</p><p class="p">FROM Salespeople;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT snum, sname, city, '%' comm * 100</p><p class="p">FROM Salespeople;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">%</p></td>
+<td class="td"><p class="p">12.000000</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">%</p></td>
+<td class="td"><p class="p">13.000000</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">%</p></td>
+<td class="td"><p class="p">11.000000</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+<td class="td"><p class="p">%</p></td>
+<td class="td"><p class="p">15.000000</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">%</p></td>
+<td class="td"><p class="p">10.000000</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 7.2: Вставка символов в ваш вывод</p><p class="p">Обратите внимание что пробел перед процентом вставляется как часть строки. Эта же самая особенность может использоваться чтобы маркировать вывод вместе с вставляемыми комментариями. Вы должны помнить, что этот же самый комментарий будет напечатан в каждой строке вывода, а не просто один раз для всей таблицы. Предположим что вы генерируете вывод для отчета который бы указывал число порядков получаемых в течение каждого дня. Вы можете промаркировать ваш вывод (см. Таблицу 7.3 ) сформировав запрос следующим образом:</p><p class="empty-line"/><p class="p">SELECT ' For ', odate, ', there are ',</p><p class="p">COUNT (DISTINCT onum ), 'orders.'</p><p class="p">FROM Orders</p><p class="p">GROUP BY odate;</p><p class="empty-line"/><p class="p">Грамматической некорректности вывода, на 5 Октября, невозможно избежать не создав запроса, еще более сложного чем этот. (Вы будете должны использовать два запроса с UNION, который</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT 'For', odate, ', ' there are ' ,</p><p class="p">COUNT (DISTINCT onum), ' orders '</p><p class="p">FROM Orders GROUP BY odate;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/></td>
+<td class="td"><p class="empty-line"/><p class="empty-line"/></td>
+</tr>
+<tr>
+<td class="td"><p class="p">For</p></td>
+<td class="td"><p class="p">10/03/1990 ,</p></td>
+<td class="td"><p class="p">there are</p></td>
+<td class="td"><p class="p">5</p></td>
+<td class="td"><p class="p">orders.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">For</p></td>
+<td class="td"><p class="p">10/04/1990 ,</p></td>
+<td class="td"><p class="p">there are</p></td>
+<td class="td"><p class="p">2</p></td>
+<td class="td"><p class="p">orders.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">For</p></td>
+<td class="td"><p class="p">10/05/1990 ,</p></td>
+<td class="td"><p class="p">there are</p></td>
+<td class="td"><p class="p">1</p></td>
+<td class="td"><p class="p">orders.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">For</p></td>
+<td class="td"><p class="p">10/06/1990 ,</p></td>
+<td class="td"><p class="p">there are</p></td>
+<td class="td"><p class="p">2</p></td>
+<td class="td"><p class="p">orders.</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 7.3: Комбинация текста, значений поля, и агрегатов</p><p class="empty-line"/><p class="p">мы будем описывать в Главе 14. ) Как вы можете видеть, одиночный неизменный комментарий для каждой строки таблицы может быть очень полезен, но имеет ограничения. Иногда изящнее и полезнее, произвести один ком ментарий для всего вывода в целом, или производить свой собственный комментарии для каждой строки.</p><p class="p">Различные программы использующие SQL часто обеспечивают специальные средства типа генератора отчетов( например Report Writer), которые разработаны чтобы форматировать и совершенствовать вывод. Вложенный SQL может также эксплуатировать возможности того языка в который он вложен. SQL сам по себе интересен прежде всего при операциях с данными. Вывод, по существу, это информация, и программа использующая SQL может часто использовать эту информацию и помещать ее в более привлекательную форму. Это, однако, вне сферы самой SQL.</p><p class="empty-line"/><p class="subtitle">УПОРЯДОЧЕНИЕ ВЫВОДА ПОЛЕЙ</p><p class="p">Как мы подчеркивали, таблицы - это неупорядоченные наборы данных, и данные которе выходят из их, не обязательно появляются в какой-то определенной последовательности. SQL использует команду ORDER BY чтобы позволять вам упорядочивать ваш вывод. Эта команда упорядочивает вывод запроса согласно значениям в том или ином количестве выбранных столбцов. Многочисленые столбцы упорядочиваются один внутри другого, также как с GROUP BY, и вы можете определять возрастание (ASC ) или убывание (DESC ) для каждого столбца. По умолчанию установлено - возростание. Давайте рассмотрим нашу таблицу порядка приводимую в порядок с помощью номера заказчика (обратите внимание на значения в cnum столбце):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">ORDER BY cnum DESC;</p><p class="empty-line"/><p class="p">Вывод показывается в Рисунке 7.4.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Orders ORDER BY cnum DESC;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3001</p></td>
+<td class="td"><p class="p">18.69</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.16</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3007</p></td>
+<td class="td"><p class="p">75.75</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">1309.95</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3005</p></td>
+<td class="td"><p class="p">5160.45</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">1713.23</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3003</p></td>
+<td class="td"><p class="p">767.19</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 7. 4: Упорядочение вывода с помощью убывания поля</p><p class="subtitle">УПОРЯДОЧЕНИЕ С ПОМОЩЬЮ МНОГОЧИСЛЕНЫХ СТОЛБЦОВ</p><p class="p">Мы можем также упорядочивать таблицу с помощью другого столбца, например с помощью поля amt, внутри упорядочения поля cnum. (вывод показан в Таблице 7.5 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">ORDER BY cnum DESC, amt DESC;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Orders</p><p class="p">ORDER BY cnum DESC, amt DESC;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.16</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3001</p></td>
+<td class="td"><p class="p">18.69</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">1309.95</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3007</p></td>
+<td class="td"><p class="p">75.75</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3005</p></td>
+<td class="td"><p class="p">5160.45</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">1713.23</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3003</p></td>
+<td class="td"><p class="p">767.19</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 7.5: Упорядочение вывода с помощью многочисленых полей</p><p class="empty-line"/><p class="p">Вы можете использовать ORDER BY таким же способом сразу с любым числом столбцов. Обратите внимание что, во всех случаях, столбцы которые упорядочиваются должны быть указаны в выборе SELECT. Это - требование ANSI которые в большинстве, но не всегда, предписано системе. Следующая команда, например, будет запрещена:</p><p class="empty-line"/><p class="p">SELECT cname, city</p><p class="p">FROM Customers</p><p class="p">GROUP BY cnum;</p><p class="empty-line"/><p class="p">Так как поле cnum не было выбранным полем, GROUP BY не cможет найти его чтобы использовать для упорядочения вывода. Даже если ваша система позволяет это, смысл упорядочения не будет понятен из вывода, так что включение (в предложение SELECT) всех столбцов, используемых в предложении ORDER BY, в принципе желательно.</p><p class="subtitle">УПОРЯДОЧЕНИЕ АГРЕГАТНЫХ ГРУПП</p><p class="p">ORDER BY может кроме того, использоваться с GROUP BY для упорядочения групп. Если это так, то ORDER BY всегда приходит последним. Вот - пример из последней главы с добавлением предложения ORDER BY. Перед сгруппированием вывода, порядок групп был произвольным; и мы, теперь, заставим группы размещаться в последовательности:</p><p class="empty-line"/><p class="p">SELECT snum, odate, MAX (amt)</p><p class="p">FROM Orders</p><p class="p">GROUP BY snum, odate</p><p class="p">GROUP BY snum;</p><p class="empty-line"/><p class="p">Вывод показывается в Таблице 7.6.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT snum, odate, MAX (amt) FROM Orders</p><p class="p">GROUP BY snum, odate ORDER BY snum ;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">767.19</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">5160.45</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">75.75</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">1309.95</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">1713.23</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">1098.16</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 7.6: Упорядочение с помощью группы</p><p class="p">Так как мы не указывали на возрастание или убывание порядка, возрастание используется по умолчанию.</p><p class="subtitle">УПОРЯДОЧЕНИЕ ВЫВОДА ПО НОМЕРУ СТОЛБЦА</p><p class="p">Вместо имен столбца, вы можете использовать их порядковые номера для указания поля используемого в упорядочении вывода. Эти номера могут ссылаться не на порядок столбцов в таблице, а на их порядок в выводе.</p><p class="p">Другими словами, поле упомянутое в предложении SELECT первым, для ORDER BY - это поле 1, независимо от того каким по порядку оно стоит в таблице. Например, вы можете использовать следующую команду чтобы увидеть определенные поля таблицы Продавцов, упорядоченными в порядке убывания к наименьшему значению комиссионных (вывод показывается в Таблице7.7 ):</p><p class="empty-line"/><p class="p">SELECT sname, comm</p><p class="p">FROM Salespeople</p><p class="p">GROUP BY 2 DESC;</p><p class="empty-line"/><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT sname, comm FROM Salespeople</p><p class="p">ORDER BY 2 DESC;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">0.17</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">0.13</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">0.15</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 7. 7: Упорядочение использующее номера</p><p class="p">Одна из основных целей этой возможности ORDER BY - дать вам возможность использовать GROUP BY со столбцами вывода также как и со столбцами таблицы. Столбцы производимые агрегатной функцией, константы, или выражения в предложении SELECT запроса, абсолютнопригодны для использования с GROUP BY, если они ссылаются к ним с помощью номера. Например, давайте сосчитаем порядки каждого из наших продавцов, и выведем результаты в убывающем порядке, как показано в Таблице 7.8:</p><p class="p">SELECT snum, COUNT (DISTINCT onum )</p><p class="p">FROM Orders</p><p class="p">GROUP BY snum</p><p class="p">ORDER BY 2 DESC;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT snum, odate, MAX (amt) FROM Orders</p><p class="p">GROUP BY snum ORDER BY 2 DESC;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">3</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">3</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">2</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">1</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">1</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 7.8: Упорядочение с помощью столбца вывода</p><p class="p">В этом случае, вы должны использовать номер столбца, так как столбец вывода не имеет имени; и вы не должны использовать саму агрегатную функцию. Строго говоря по правилам ANSI SQL, следующее не будет работать, хотя некоторые системы и пренебрегают этим требованием:</p><p class="empty-line"/><p class="p">SELECT snum, COUNT (DISTINCT onum )</p><p class="p">FROM Orders</p><p class="p">GROUP BY snum</p><p class="p">GROUP BY COUNTОМ (DISTINCT onum ) DESC;</p><p class="empty-line"/><p class="p">Это будет отклонено большинством систем!</p><p class="p">УПОРЯДОЧЕНИЕ С ПОМОЩЬЮ ОПРЕТОРА NULL</p><p class="p">Если имеются пустые значения (NULL) в поле которое вы используете для упорядочивания вашего вывода, они могутут или следовать или предшествовать каждому другому значению в поле. Это - возможность которую ANSI оставил для индивидуальных программ. Данная программа использует ту или иную форму.</p><p class="subtitle">РЕЗЮМЕ</p><p class="p">В этой главе, вы изучили как заставить ваши запросы делать больше, чем просто выводить значения полей или объединять функциональные данные таблиц. Вы можете использовать поля в выражениях: например, вы можете умножить числовое поле на 10 или даже умножить его на другое числовое поле. Кроме того, вы можете помещать константы, включая и символы, в ваш вывод, что позволяет вам помещать текст непосредственно в запрос и получать его в выводе вместе с данными таблицы.</p><p class="p">Это дает вам возможность помечать или объяснять ваш вывод различными способами.</p><p class="p">Вы также изучили как упорядочивать ваш вывод. Даже если таблица сама по себе остается неупорядоченной, предложение ORDER BY дает вам возможность управлять порядком вывода строк данного запроса. Вывод запроса может быть в порядке возрастания или убывания, и столбцы могут быть вложенными один внутрь другого.</p><p class="p">Понятие выводимых столбцов объяснялось в этой главе. Вы теперь знаете что выводимые столбцы можно использовать чтобы упорядочивать вывод запроса, но эти столбцы - без имени, и следовательно должны опреде ляться их порядковым номером в предложении ORDER BY.</p><p class="p">Теперь, когда вы увидели что можно делать с выводом запроса основанного на одиночной таблице, настало время чтобы перейти к возможностям улучшенного запроса и узнать как сделать запрос любого числа таблиц в одной команде, определив связи между ними как вы это обычно делали.</p><p class="p">Это будет темой Главы 8.</p><p class="subtitle">РАБОТА С SQL</p><p class="p">* Предположим что каждый продавец имеет 12% комиссионных. Напишите запрос к таблице Порядков который мог бы вывести номер порядка, номер продавца, и сумму комиссионных продавца для этого порядка.</p><p class="p">* Напишите запрос к таблице Заказчиков который мог бы найти высшуюоценку в каждом городе. Вывод должен быть в такой форме: For the city (city), the highest rating is: (rating).</p><p class="p">* Напишите запрос который выводил бы список заказчиков в нисходящемпорядке. Вывод поля оценки( rating ) должден сопровождаться именем закзчика и его номером.</p><p class="p">* Напишите запрос который бы выводил общие порядки на каждый день и помещал результаты в нисходящем порядке.</p></span><span id="id16"><div class="title2">
+<p class="p1">Глава 8. ЗАПРАШИВАНИЕ МНОГОЧИСЛЕНЫХ ТАБЛИЦ ТАКЖЕ КАК ОДНОЙ</p>
+</div><p class="empty-line"/><p class="p">ДО ЭТОГО, КАЖДЫЙ ЗАПРОС КОТОРЫЙ МЫ ИССЛЕДОВАЛИ основывался на одиночной таблице. В этой главе, вы узнаете как сделать запрос любого числа таблиц с помощью одной команды. Это - чрезвычайно мощное средство потому что оно не только объединяет вывод из многочисленых таблиц, но и определяет связи между ними. Вы обучитесь различным формам которые могут использовать эти связи, а также устанавливать и использовать их чтобы удовлетворять возможным специальным требованиям.</p><p class="subtitle">ОБЪЕДИНЕНИЕ ТАБЛИЦ</p><p class="p">Одна из наиболее важных особенностей запросов SQL - это их способность определять связи между многочислеными таблицами и выводить информацию из них в терминах этих связей, всю внутри одной команды. Этот вид операции называется - объединением, которое является одним из видов операций в реляционных базах данных. Как установлено в Главе 1, главное в реляционном подходе это связи которые можно создавать между позициями данных в таблицах. Используя обьединения, мы непосредственно связываем информацию с любым номером таблицы, и таким образом способныоздавать связи между сравнимыми фрагментами данных. При обьединении, таблицы представленые списком в предложении FROM запроса, отделяются запятыми. Предикат запроса может ссылаться к любому столбцу любой связанной таблицы и, следовательно, может использоваться для связи между ими. Обычно, предикат сравнивает значения в столбцах различных таблиц чтобы определить, удовлетворяет ли WHERE установленному условию.</p><p class="subtitle">ИМЕНА ТАБЛИЦ И СТОЛБЦОВ</p><p class="p">Полное имя столбца таблицы фактически состоит из имени таблицы, сопровождаемого точкой и затем именем столбца. Имеются несколько примеров имен:</p><p class="p">Salespeople.snum</p><p class="p">Salespeople.city</p><p class="p">Orders.odate</p><p class="empty-line"/><p class="p">До этого, вы могли опускать имена таблиц потому что вы запрашивали только одну таблицу одновременно, а SQL достаточно интелектуален чтобы присвоить соответствующий префикс, имени таблицы. Даже когда вы делаете запрос многочисленых таблиц, вы еще можете опускать имена таблиц, если все ее столбцы имеют различные имена. Но это не всегда так бывает. Например, мы имеем две типовые таблицы со столбцами называемыми city.</p><p class="p">Если мы должны связать эти столбцы( кратковременно ), мы будем должны указать их с именами Salespeople.city или Customers.city, чтобы SQL мог их различать.</p><p class="subtitle">СОЗДАНИЕ ОБЬЕДИНЕНИЯ</p><p class="p">Предположим что вы хотите поставить в соответствии вашему продавцу ваших заказчиков в городе в котором они живут, поэтому вы увидите все комбинации продавцов и заказчиков для этого города. Вы будете должны брать каждого продавца и искать в таблице Заказчиков всех заказчиков того же самого города. Вы могли бы сделать это, введя следующую команду (вывод показывается в Таблице 8.1 ):</p><p class="empty-line"/><p class="p">SELECT Customers.cname, Salespeople.sname,</p><p class="p">Salespeople.city</p><p class="p">FROM Salespeople, Customers</p><p class="p">WHERE Salespeople.city=Customers.city;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT Customers.cname, Salespeople.sname, Salespeople.city</p><p class="p">FROM Salespeople, Customers WHERE Salespeople.city=Customers.city</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 8.1: Объединение двух таблиц</p><p class="p">Так как это поле city имеется и в таблице Продавцов и таблице Заказчиков, имена таблиц должны использоваться как префиксы. Хотя это необходимо только когда два или более полей имеют одно и то же имя, в любом случае это хорошая идея включать имя таблицы в обьединение для лучшего понимания и непротиворечивости. Несмотря на это, мы будем, в наших примерах далее, использовать имена таблицы только когда необходимо, так что будет ясно, когда они необходимы а когда нет.</p><p class="p">Что SQL в основном делает в обьединении - так это исследует каждую комбинацию строк двух или более возможных таблиц, и проверяет эти комбинации по их предикатам. В предыдущем примере, требовалась строка продавца Peel из таблицы Продавцов и объединение ее с каждой строкой таблицы Пользователей, по одной в каждый момент времени. Если комбинация производит значение которое делает предикат верным, и если поле city из строк таблиц Заказчика равно London, то Peel - это то запрашиваемое значение которое комбинация выберет для вывода. То же самое будет затем выполнено для каждого продавца в таблице Продавцов (у некоторых из которых небыло никаких заказчиков в этих городах).</p><p class="subtitle">ОБЪЕДИНЕНИЕ ТАБЛИЦ ЧЕРЕЗ СПРАВОЧНУЮ ЦЕЛОСТНОСТЬ</p><p class="p">Эта особенность часто используется просто для эксплуатации связей встроенных в базу данных. В предыдущем примере, мы установили связь между двумя таблицами в обьединении. Это прекрасно. Но эти таблицы, уже были соединены через snum поле. Эта связь называется состоянием справочной целостности, как мы уже говорили в Главе 1. Используя обьединение можно извлекать данные в терминах этой связи. Например, чтобы показать имена всех заказчиков соответствующих продавцам которые их обслуживают, мы будем использовать такой запрос:</p><p class="p">SELECT Customers.cname, Salespeople.sname</p><p class="p">FROM Customers, Salespeople</p><p class="p">WHERE Salespeople.snum=Customers.snum;</p><p class="p">Вывод этого запроса показывается в Таблица 8.2.</p><p class="p">Это - пример обьединения, в котором столбцы используются для определения предиката запроса, и в этом случае, snum столбцы из обеих таблиц, удалены из вывода. И это прекрасно. Вывод показывает какие заказчики каким продавцом обслуживаются; значения поля snum которые устанавливают связь - отсутствуют. Однако если вы введете их в вывод, то вы должны или удостовериться что вывод понятен сам по себе или обеспечить коментарий к данным при выводе.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT Customers.cname, Salespeople.sname,</p><p class="p">FROM Salespeople, Customers</p><p class="p">WHERE Salespeople.snum=Customers.snum</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">Peel</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">Serres</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Serres</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">Peel</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Motika</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 8.2: Объединение продавцов с их заказчикам</p><p class="subtitle">ОБЪЕДИНЕНИЯ ТАБЛИЦ ПО РАВЕНСТВУ ЗНАЧЕНИЙ В СТОЛБЦАХ И ДРУГИЕ ВИДЫ ОБЪЕДИНЕНИЙ</p><p class="p">Обьединения которые используют предикаты основанные на равенствах называются - объединениями по равенству. Все наши примеры в этой главе до настоящего времени, относились именно к этой категории, потому что все условия в предложениях WHERE базировались на математических выражениях использующих знак равно (=). Строки 'city='London' и 'Salespeople.snum=Orders.snum ' - примеры таких типов равенств найденных в предикатах. Объединения по равенству - это вероятно наиболее общий вид объединения, но имеются и другие. Вы можете, фактически, использовать любой из реляционных операторов в обьединении. Здесь показан пример другого вида объединения (вывод показывается в Таблице 8.3):</p><p class="empty-line"/><p class="p">SELECT sname, cname</p><p class="p">FROM Salespeople, Customers</p><p class="p">WHERE sname &lt; cname</p><p class="p">AND rating &lt; 200;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT sname, cname FROM Salespeople, Customers</p><p class="p">WHERE sname &lt; cname AND rating &lt; 200;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 8.3: Обьединение основанное на неравенстве</p><p class="p">Эта команда не часто бывает полезна. Она воспроизводит все комбинации имени продавца и имени заказчика так, что первый предшествует последнему в алфавитном порядке, а последний имеет оценку меньше чем 200.</p><p class="p">Обычно, вы не создаете сложных связей подобно этой, и, по этой причине, вы вероятно будете строить наиболее общие объединения по равенству, но вы должны хорошо знать и другие возможности.</p><p class="subtitle">ОБЪЕДИНЕНИЕ БОЛЕЕ ДВУХ ТАБЛИЦ</p><p class="p">Вы можете также создавать запросы объединяющие более двух таблиц.</p><p class="p">Предположим что мы хотим найти все порядки заказчиков не находящихся в тех городах где находятся их продавцы.Для этого необходимо связать все три наши типовые таблицы (вывод показывается в Таблице 8.4 ):</p><p class="empty-line"/><p class="p">SELECT onum, cname, Orders.cnum, Orders.snum</p><p class="p">FROM Salespeople, Customers,Orders</p><p class="p">WHERE Customers.city &lt; &gt; Salespeople.city</p><p class="p">AND Orders.cnum=Customers.cnum</p><p class="p">AND Orders.snum=Salespeople.snum;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT onum, cname, Orders.cnum, Orders.snum</p><p class="p">FROM Salespeople, Customers, Orders</p><p class="p">WHERE Customers.city &lt; &gt; Salespeople.city</p><p class="p">AND Orders.cnum=Customers.cnum</p><p class="p">AND Orders.snum=Salespeople.snum;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3001</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3007</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 8. 4: Объединение трех таблиц</p><p class="p">Хотя эта команда выглядит скорее как комплексная, вы можете следовать за логикой, просто проверяя - что заказчики не размещены в тех городах где размещены их продавцы (совпадение двух snum полей ), и что перечисленные порядки - выполнены с помощью этих заказчиков( совпадение порядков с полями cnum и snum в таблице Порядков ).</p><p class="subtitle">РЕЗЮМЕ</p><p class="p">Теперь вы больше не ограничиваетесь просмотром одной таблицы в каждый момент времени. Кроме того, вы можете делать сложные сравнения между любыми полями любого числа таблиц и использовать полученные результаты чтобы решать какую информацию вы бы хотели видеть. Фактически, эта методика настолько полезна для построения связей, что она часто используется для создания их внутри одиночной таблицы. Это будет правильным: вы сможете объединить таблицу с собой, а это очень удобная вещь.</p><p class="p">Это будет темой Главы 9.</p><p class="subtitle">РАБОТА С SQL</p><p class="p">* Напишите запрос который бы вывел список номеров порядков сопровождающихся именем заказчика который создавал эти порядки.</p><p class="p">* Напишите запрос который бы выдавал имена продавца и заказчика для каждого порядка после номера порядков.</p><p class="p">* Напишите запрос который бы выводил всех заказчиков обслуживаемых продавцом с комиссионными выше 12% . Выведите имя заказчика, имя продавца, и ставку комиссионных продавца.</p><p class="p">* Напишите запрос который вычислил бы сумму комиссионных продавца для каждого порядка заказчика с оценкой выше 100.</p></span></span>
+</body>
+</html>

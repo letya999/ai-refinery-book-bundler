@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id22"><div class="title2">
+<p class="p1">Глава 14. ИСПОЛЬЗОВАНИЕ ПРЕДЛОЖЕНИЯ UNION</p>
+</div><p class="empty-line"/><p class="p">В ПРЕДШЕСТВУЮЩИХ ГЛАВАХ, МЫ ОБСУЖДАЛИ различные способы которыми запросы могут помещаться один внутрь другого. Имеется другой способ объединения многочисленых запросов - то-есть формирование их в объединение. В этой главе, вы научитесь использованию предложения UNION в SQL. UNION отличается от подзапросов тем что в нем ни один из двух (или больше ) запросов не управляются другим запросом. Все запросы выполняются независимо друг от друга, а уже вывод их - обьединяется.</p><p class="subtitle">ОБЪЕДИНЕНИЕ МНОГОЧИСЛЕННЫХ ЗАПРОСОВ В ОДИН</p><p class="p">Вы можете поместить многочисленые запросы вместе и объединить их вывод используя предложение UNION. Предложение UNION обьединяет вывод двух или более SQL запросов в единый набор строк и столбцов. Например чтобы получить всех продавцов и заказчиков размещенных в Лондоне и вывести их как единое целое вы могли бы ввести:</p><p class="empty-line"/><p class="p">SELECT snum, sname</p><p class="p">FROM Salespeople</p><p class="p">WHERE city='London'</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">SELECT cnum, cname</p><p class="p">FROM Customers</p><p class="p">WHERE city='London';</p><p class="empty-line"/><p class="p">и получить вывод показанный в Таблице 14.1.</p><p class="empty-line"/><p class="p">Как вы можете видеть, столбцы выбранные двумя командами выведены так как если она была одна. Заголовки столбца исключены, потому что ни один из столбцов выведенных объединением, не был извлечен непосредственно из только одной таблицы. Следовательно все эти столбцы вывода не имеют никаких имен (смотрите Главу 7 обсуждающую вывод столбцов ).</p><p class="p">Кроме того обратите внимание, что только последний запрос заканчивается точкой с запятой. Отсутствие точки с запятой дает понять SQL, что имеется еще одно или более запросов.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT snum, sname FROM Salespeople WHERE city='London'</p><p class="p">UNION SELECT cnum, cname FROM Customers</p><p class="p">WHERE city='London';</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">Climens</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 14.1: Формирование объединения из двух запросов</p><p class="p">КОГДА ВЫ МОЖЕТЕ ДЕЛАТЬ ОБЪЕДИНЕНИЕ МЕЖДУ ЗАПРОСАМИ?</p><p class="p">Когда два (или более ) запроса подвергаются объединению, их столбцы вывода должны быть совместимы для объединения. Это означает, что каждый запрос должен указывать одинаковое число столбцов и в том же порядке что и первый, второй, третий, и так далее, и каждый должен иметь тип, совместимый с каждым. Значение совместимости типов - меняется.</p><p class="p">ANSI следит за этим очень строго и поэтому числовые поля должны иметь одинаковый числовой тип и размер, хотя некоторые имена испрользуемые ANSI для этих типов являются - синонимами. (Смотрите Приложение B для подробностей об ANSI числовых типах. ) Кроме того, символьные поля должны иметь одинаковое число символов (значение предначначенного номера, не обязательно такое же как используемый номер). Хорошо, что некоторые SQL программы обладают большей гибкостью чем это определяется ANSI. Типы не определенные ANSI, такие как DATA и BINARY, обычнодолжны совпадать с другими столбцами такого же нестандартного типа.</p><p class="p">Длина строки также может стать проблемой. Большинство программ разрешают поля переменной длины, но они не обязательно будут использоваться с UNION. С другой стороны, некоторые программы (и ANSI тоже) требуют чтобы символьные поля были точно равной длины. В этих вопросах вы должны проконсультироваться с документацией вашей собственной программы.</p><p class="p">Другое ограничение на совместимость - это когда пустые значения(NULL) запрещены в любом столбце объединения, причем эти значения необходимо запретить и для всех соответствующих столбцов в других запросах объединения. Пустые значения(NULL) запрещены с ограничением NOT NULL, которое будет обсуждаться в Главе 18. Кроме того, вы не можете использовать UNION в подзапросах, а также не можете использовать агрегатные функции в предложениии SELECT запроса в объединении. (Большинство программ пренебрегают этими ограничениями. )</p><p class="p">UNION И УСТРАНЕНИЕ ДУБЛИКАТОВ</p><p class="p">UNION будет автоматически исключать дубликаты строк из вывода. Это нечто несвойственное для SQL, так как одиночные запросы обычно содержат DISTINCT чтобы устранять дубликаты. Например запрос, чей вывод показывается в Таблице 14.2,</p><p class="empty-line"/><p class="p">SELECT snum, city</p><p class="p">FROM Customers;</p><p class="empty-line"/><p class="p">имеет двойную комбинацию значений (snum=1001, city=London ), потомучто мы не указали, чтобы SQL устранил дубликаты. Однако, если мы используем</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT snum, city FROM Customers;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Rome</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Rome</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 14.2: Одиночный запрос с дублированным выводом</p><p class="p">UNION в комбинации этого запроса с ему подобным в таблице Продавцов, то эта избыточная комбинация будет устранена. Таблица 14.3 показывает вывод следующего запроса.</p><p class="empty-line"/><p class="p">SELECT snum, city</p><p class="p">FROM Customers</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">SELECT snum, city</p><p class="p">FROM Salespeople.;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">FROM Customers UNION SELECT snum, sity</p><p class="p">FROM Salespeople;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">New York</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Rome</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Rome</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 14.3: UNION устраняет двойной вывод</p><p class="empty-line"/><p class="p">Вы можете получить нечто похожее (в некоторых программах SQL, используя UNION ALL вместо просто UNION, наподобии этого:</p><p class="empty-line"/><p class="p">SELECT snum, city</p><p class="p">FROM Customers</p><p class="empty-line"/><p class="p">UNION ALL</p><p class="empty-line"/><p class="p">SELECT snum, city</p><p class="p">FROM Salespeople;</p><p class="empty-line"/><p class="p">ИСПОЛЬЗОВАНИЕ СТРОК И ВЫРАЖЕНИЙ С UNION</p><p class="p">Иногда, вы можете вставлять константы и выражения в предложения SELECT используемые с UNION. Это не следует строго указаниям ANSI, но это полезная и необычно используемая возможность. Константы и выражения которые вы используете, должны встречать совместимые стандарты которые мы выделяли ранее. Эта свойство полезно, например, чтобы устанавливать комментарии указывающие какой запрос вывел данную строку.</p><p class="p">Предположим что вы должны сделать отчет о том, какие продавцы производят наибольшие и наименьшие порядки по датам. Мы можем объединить два запроса, вставив туда текст чтобы различать вывод для каждого из них.</p><p class="empty-line"/><p class="p">SELECT a.snum, sname, onum, 'Highest on', odate</p><p class="p">FROM (Salespeople a, Orders b</p><p class="p">WHERE a.snum=b.snum</p><p class="p">AND b.amt=</p><p class="p">( SELECT MAX (amt)</p><p class="p">FROM Orders c</p><p class="p">WHERE c.odate=b.odate )</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">SELECT a.snum, (sname, (onum ' Lowest on', odate</p><p class="p">FROM (Salespeople a, Orders b</p><p class="p">WHERE a.snum=b.snum</p><p class="p">AND b.amt=</p><p class="p">( SELECT MIN (amt)</p><p class="p">FROM Orders c</p><p class="p">WHERE c.odate=b.odate );</p><p class="empty-line"/><p class="p">Вывод из этой команды показывается в Таблице 14.4.</p><p class="empty-line"/><p class="p">Мы должны были добавить дополнительный пробел в строку 'Lowest on', чтобы сделать ее совпадающей по длине со строкой 'Highest on'. Обратите внимание что Peel выбран при наличии и самого высокого и самого низкого (фактически он единственый ) порядка на 5 Октября. Так как вставляемые строки двух этих запросов различны, строки не будут устранены как дубликаты.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">AND b.amt=( SELECT min (amt) FROM Orders c</p><p class="p">WHERE c.odate=b.odate)</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">Highest on</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">Lowest on</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">Highest on</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">3005</p></td>
+<td class="td"><p class="p">Highest on</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">3007</p></td>
+<td class="td"><p class="p">Lowest on</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">Lowest on</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">Highest on</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">3001</p></td>
+<td class="td"><p class="p">Lowest on</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 14.4: Выбор наивысших и наинизших порядков, определяемых с помощью строк</p><p class="empty-line"/><p class="subtitle">ИСПОЛЬЗОВАНИЕ UNION С ORDER BY</p><p class="p">До сих пор, мы не оговаривали что данные многочисленых запросов будут выводиться в каком то особом порядке. Мы просто показывали вывод сначала из одного запроса а затем из другого. Конечно, вы не можете полагаться на вывод приходящий в произвольном порядке. Мы как раз сделаем так чтобы этот способ для выполнения примеров был более простым.</p><p class="p">Вы можете, использовать предложение ORDER BY чтобы упорядочить вывод из объединения, точно так же как это делается в индивидуальных запросах. Давайте пересмотрим наш последний пример чтобы упорядочить имена с помощью их порядковых номеров. Это может внести противоречие, такое как повторение имени Peel в последней команде, как вы сможете увидеть из вывода показанного в Таблице 14.5.</p><p class="empty-line"/><p class="p">SELECT a.snum, sname, onum, 'Highest on', odate</p><p class="p">FROM Salespeople a, Orders b</p><p class="p">WHERE a.snum=b.snum</p><p class="p">AND b.amt=</p><p class="p">( SELECT MAX (amt)</p><p class="p">FROM Orders c</p><p class="p">WHERE c.odate=b.odate )</p><p class="empty-line"/><p class="p">UNION</p><p class="p">SELECT a.snum, (sname, (onum, 'Lowest on', odat</p><p class="p">FROM Salespeople a, Orders b</p><p class="p">WHEREa.snum=b.snum</p><p class="p">AND b.amt=</p><p class="p">( SELECT MIN (amt)</p><p class="p">FROM Orders c</p><p class="p">WHERE c.odate=b.odate )</p><p class="empty-line"/><p class="p">ORDER BY 3;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT min (amt) FROM Orders c</p><p class="p">WHERE c.odate=b.odate) ORDER BY 3;</p><table class="table">
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">3001</p></td>
+<td class="td"><p class="p">Lowest on</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">3005</p></td>
+<td class="td"><p class="p">Highest on</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">3007</p></td>
+<td class="td"><p class="p">Lowest on</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">Highest on</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">Lowest on</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">Highest on</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">Lowest on</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">Highest on</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 14.5: Формирование объединения с использованием ORDER BY</p><p class="p">Пока ORDER BY используется по умолчанию, мы не должны его указывать.</p><p class="p">Мы можем упорядочить наш вывод с помощью нескольких полей, одно внутри другого и указать ASC или DESC для каждого, точно также как мы делали это для одиночных запросов. Заметьте, что номер 3 в предложении ORDER BY указывает какой столбец из предложения SELECT будет упорядочен. Так как столбцы объединения - это столбцы вывода, они не имеют имен, и следовательно, должны определяться по номеру. Этот номер указывает на их место среди других столбцов вывода. (Смотрите Главу 7, обсуждающую столбцы вывода.)</p><p class="subtitle">ВНЕШНЕЕ ОБЪЕДИНЕНИЕ</p><p class="p">Операция которая бывает часто полезна - это объединение из двух запросов в котором второй запрос выбирает строки, исключенные первым. Наиболее часто, вы будете делать это, так чтобы не исключать строки которые не удовлетворили предикату при объединении таблиц. Это называется - внешним обьединением. Предположим что некоторые из ваших заказчиков еще не были назначены к продавцам. Вы можете захотеть увидеть имена и города всех ваших заказчиков, с именами их продавцов, не учитывая тех кто еще не был назначен. Вы можете достичь этого, формируя объединение из двух запросов, один из которых выполняет обьединение, а другой выбирает заказчиков с пустыми(NULL) значениями поля snum. Этот последний запрос должен вставлять пробелы в поля соответствующие полю sname в первом запросе. Как и раньше, вы можете вставлять текстовые строки в ваш вывод чтобы идентифицировать запрос который вывел данную строку. Использование этой методики во внешнем обьединении, дает возможность использовать предикаты для классификации, а не для исключения.</p><p class="p">Мы использовали пример нахождения продавцов с заказчиками размещенными в их городах и раньше. Однако вместо просто выбора только этих строк, вы возможно захотите чтобы ваш вывод перечислял всех продавцов, и указывал тех, кто не имел заказчиков в их городах, и кто имел. Следующий запрос, чей вывод показывается в Таблице 14.6, выполнит это:</p><p class="empty-line"/><p class="p">SELECT Salespeople.snum, sname, cname, comm</p><p class="p">FROM (Salespeople, Customers</p><p class="p">WHERE Salespeople.city=Customers.city.</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">SELECT snum, sname, ' NO MATCH ', comm</p><p class="p">FROM (Salespeople</p><p class="p">WHERE NOT city=ANY</p><p class="p">( SELECT city</p><p class="p">FROM Customers )</p><p class="empty-line"/><p class="p">ORDER BY 2 DESC;</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">FROM Salespeople WHERE NOT city=ANYate)</p><p class="p">( SELECT city FROM Customers) ORDER BY 2 DESC;</p><table class="table">
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">0.1300</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">0.1300</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">NO MATCH</p></td>
+<td class="td"><p class="p">0.1500</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">0.1200</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">0.1200</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">0.1100</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">0.1100</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">NO MATCH</p></td>
+<td class="td"><p class="p">0.1000</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 14. 6: Внешнее обьединение</p><p class="empty-line"/><p class="p">Строка 'NO MATCH' была дополнена пробелами, чтобы получить совпадение поля cname по длине (это не обязательно во всех реализациях SQL). Второй запрос выбирает даже те строки которые исключил первый. Вы можете также добавить комментарий или выражение к вашему запросу, ввиде дополнительного поля. Если вы сделаете это, вы будете должны добавить некоторый дополнительный комментарий или выражение, в той же самой позиции среди выбранных полей, для каждого запроса в операции объединения. Совместимость UNION предотвращает вас от добавления дополнительного поля для первого запроса, но не для второго. Имеется запрос который добавляет строки к выбранным полям, и указывает совпадает ли данный продавец с его заказчиком в его городе:</p><p class="empty-line"/><p class="p">SELECT a.snum, sname, a.city, ' MATCHED '</p><p class="p">FROM Salespeople a, Customers b</p><p class="p">WHERE a.city=b.city</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">SELECT snum, sname, city, 'NO MATCH'</p><p class="p">FROM Salespeople</p><p class="p">WHERE NOT city=ANY</p><p class="p">( SELECT city</p><p class="p">FROM Customers )</p><p class="empty-line"/><p class="p">ORDER BY 2 DESC;</p><p class="empty-line"/><p class="p">Таблица 14,7 показывает вывод этого запроса.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">WHERE a.city=b.city UNION SELECT snum,sname,city, 'NO MATCH'</p><p class="p">FROM Salespeople WHERE NOT city=ANYate)</p><p class="p">( SELECT city FROM Customers) ORDER BY 2 DESC;</p><table class="table">
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">MATCHED</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Barselona</p></td>
+<td class="td"><p class="p">NO MATCH</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">MATCHED</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">MATCHED</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">NO MATCH</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 14. 7: Внешнее обьединение с полем коментария</p><p class="p">Это не полное внешнее объединение, так как оно включает только несовпадающие поля одной из объединяемых таблиц. Полное внешнеее объединение должно включать всех заказчиков имеющих и не имеющих продавцов в их городах. Такое условие будет более полным, как вы это сможете увидеть (вывод следующего запроса показан в Таблице 14,8) :</p><p class="empty-line"/><p class="p">SELECT snum, city, 'SALESPERSON - MATCH'</p><p class="p">FROM Salespeople</p><p class="p">WHERE NOT city=ANY</p><p class="p">(SELECT city</p><p class="p">FROM Customers)</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">SELECT snum, city, 'SALESPERSON - NO MATCH'</p><p class="p">FROM Salespeople</p><p class="p">WHERE NOT city=ANY</p><p class="p">(SELECT city</p><p class="p">FROM Customers))</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">(SELECT cnum, city, 'CUSTOMER - MATCHED'</p><p class="p">FROM Customers</p><p class="p">WHERE city=ANY</p><p class="p">(SELECT city</p><p class="p">FROM Salespeople)</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">SELECT cnum, city, 'CUSTOMER - NO MATCH'</p><p class="p">FROM Customers</p><p class="p">WHERE NOT city=ANY</p><p class="p">(SELECT city</p><p class="p">FROM Salespeople))</p><p class="empty-line"/><p class="p">ORDER BY 2 DESC;</p><p class="empty-line"/><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">FROM Salespeople) ORDER BY 2 DESC;</p><table class="table">
+<tr>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">CUSTOMER - MATCHED</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">CUSTOMER - MATCHED</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">CUSTOMER - NO MATCH</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">CUSTOMER - NO MATCH</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">SALESPERSON - MATCHED</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">SALESPERSON - NO MATCH</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">CUSTOMER - MATCHED</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">CUSTOMER - MATCHED</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+<td class="td"><p class="p">CUSTOMER - NO MATCH</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+<td class="td"><p class="p">SALESPERSON - MATCHED</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+<td class="td"><p class="p">SALESPERSON - NO MATCH</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 1.8: Полное внешнее обьединение</p><p class="p">( Понятно, что эта формула использующая ANY - эквивалентна обьединению в предыдущем примере. )</p><p class="p">Сокращенное внешнее обьединение с которого мы начинали, используется чаще чем этот последний пример. Этот пример, однако, имеет другой смысл. Всякий раз, когда вы выполняете объединение более чем двух запросов, вы можете использовать круглые скобки чтобы определить порядок оценки. Другими словами, вместо просто -</p><p class="empty-line"/><p class="p">query X UNION query Y UNION query Z;</p><p class="empty-line"/><p class="p">вы должны указать, или</p><p class="empty-line"/><p class="p">( query X UNION query Y )UNION query Z;</p><p class="empty-line"/><p class="p">или</p><p class="p">query X UNION (query Y UNION query Z );</p><p class="empty-line"/><p class="p">Это потому, что UNION и UNION ALL могут быть скомбинированны, чтобы удалять одни дубликаты, не удаляя других. Предложение -</p><p class="empty-line"/><p class="p">( query X UNION ALL query Y )UNION query Z;</p><p class="empty-line"/><p class="p">не обязательно воспроизведет те же результаты что предложение -</p><p class="empty-line"/><p class="p">query X UNION ALL( query Y UNION query Z );</p><p class="empty-line"/><p class="p">если двойные строки в нем, будут удалены.</p><p class="empty-line"/><p class="subtitle">РЕЗЮМЕ</p><p class="p">Теперь вы знаете как использовать предложение UNION, которое дает возможность объединять любое число запросов в единое тело вывода. Если вы имеете ряд подобных таблиц - таблиц, содержащих похожую информацию, но принадлежащую разным пользователям и охватывающую различные особенности, возможно - что объединение сможет обеспечить простой способ для слияния и упорядочивания вывода. Аналогично, внешние обьединения дают вам новый способ использования условий, не для исключения вывода, а для его маркировки или обработки его частей, когда встречается условие отличающееся от того, которое не выполняется.</p><p class="p">Этим заканчиваются наши главы о запросах. Вы теперь имеете довольно полное представление о поиске данных в SQL. Следующий шаг должен включать то, как значения вводятся в таблицы и как таблицы создаются с самого начала. Как вы увидете, запросы иногда используются внутри других типов команд, также хорошо как и сами по себе.</p><p class="subtitle">РАБОТА С SQL</p><p class="p">* Создайте объединение из двух запросов которое показало бы имена, города, и оценки всех заказчиков. Те из них которые имеют поле rating=200 и более, должны кроме того иметь слова - "Высокий Рейтинг", а остальные должны иметь слова " Низкий Рейтинг ".</p><p class="p">* Напишите команду которая бы вывела имена и номера каждого продавц и каждого заказчика которые имеют больше чем один текущий порядок. Результат представьте в алфавитном порядке.</p><p class="p">* Сформируйте объединение из трех запросов. Первый выбирает поля snum всех продавцов в San Jose; второй, поля cnum всех заказчиков в San Jose; и третий поля onum всех порядков на 3 Октября. Сохраните дубликаты между последними двумя запросами, но устраните любую избыточность вывода между каждым из их и самым первым. (Примечание: в данных типовых таблицах, не содержится никакой избыточности. Это только пример.)</p></span></span>
+</body>
+</html>

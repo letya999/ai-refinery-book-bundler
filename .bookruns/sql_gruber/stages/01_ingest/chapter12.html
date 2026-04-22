@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id19"><div class="title2">
+<p class="p1">Глава 11. СООТНЕСЕННЫЕ ПОДЗАПРОСЫ</p>
+</div><p class="empty-line"/><p class="p">В ЭТОЙ ГЛАВЕ, МЫ ПРЕДСТАВИМ ВАС ТИПУ подзапроса о котором мы не говорили в Главе 10 - посвященной соотнесенному подзапросу. Вы узнаете как использовать соотнесенные подзапросы в предложениях запросов WHERE и HAVING. Сходства и различия между соотнесенными подзапросами и обьединениями будут обсуждаться далее, и вы сможете повысить ваше знание псевдонимов и префиксов имени таблицы - когда они необходимы и как их использовать.</p><p class="empty-line"/><p class="subtitle">КАК СФОРМИРОВАТЬ СООТНЕСЕННЫЙ ПОДЗАПРОС</p><p class="p">Когда вы используете подзапросы в SQL, вы можете обратиться к внутреннему запросу таблицы в предложении внешнего запроса FROM, сформировав - соотнесенный подзапрос. Когда вы делаете это, подзапрос выполняется неоднократно, по одному разу для каждой строки таблицы основного запроса. Соотнесенный подзапрос - один из большого количества тонких понятий в SQL из-за сложности в его оценке. Если вы сумеете овладеть им, вы найдете что он очень мощный, потому что может выполнять сложные функции с помощью очень лаконичных указаний.</p><p class="p">Например, имеется один способ найти всех заказчиков в порядках на 3-е Октября (вывод показывается в Таблице 11.1):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers outer</p><p class="p">WHERE 10/03/1990 IN</p><p class="p">( SELECT odate</p><p class="p">FROM Orders inner</p><p class="p">WHERE outer.cnum=inner.cnum );</p><p class="subtitle">КАК РАБОТАЕТ СООТНЕСЕННЫЙ ПОДЗАПРОС</p><p class="p">В вышеупомянутом примере, "внутренний"(inner) и "внешний"(outer), это псевдонимы, подобно обсужденным в Главе 9. Мы выбрали эти имена для большей ясности; они отсылают к значениям внутренних и внешних запросов, соответственно. Так как значение в поле cnum внешнего запроса меняется, внутренний запрос должен выполняться отдельно для каждой строки внешнего запроса. Строка внешнего запроса для которого внутренний</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Customers outer WHERE 10/03/1990 IN</p><p class="p">(SELECT odate FROM Orders inner WHERE outer.cnum=inner.cnum);</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">200</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 11.1: Использование соотнесенного подзапроса</p><p class="p">запрос каждый раз будет выполнен, называется - текущей строкой-кандидатом. Следовательно, процедура оценки выполняемой соотнесенным подзапросом - это:</p><p class="p">* Выбрать строку из таблицы именованной в внешнем запросе. Это будет текущая строка-кандидат.</p><p class="p">* Сохранить значения из этой строки-кандидата в псевдониме с именем в предложении FROM внешнего запроса.</p><p class="p">* Выполнить подзапрос. Везде, где псевдоним данный для внешнего запроса найден (в этом случае "внешний" ), использовать значение для текущей строки-кандидата. Использование значения из строки-кандидата внешнего запроса в подзапросе называется - внешней ссылкой.</p><p class="p">* Оценить предикат внешнего запроса на основе результатов подзапроса выполняемого в шаге 3. Он определяеть - выбирается ли строка-кандидат для вывода.</p><p class="p">* Повторить процедуру для следующей строки-кандидата таблицы, и так далее пока все строки таблицы не будут проверены.</p><p class="empty-line"/><p class="p">В вышеупомянутом примере, SQL осуществляет следующую процедуру:</p><p class="p">* Он выбирает строку Hoffman из таблицы Заказчиков.</p><p class="p">* Сохраняет эту строку как текущую строку-кандидат под псевдонимом - "внешним".</p><p class="p">* Затем он выполняет подзапрос. Подзапрос просматривает всю таблицу Порядков чтобы найти строки где значение cnum поле - такое же как значение outer.cnum, которое в настоящее время равно 2001, - поле cnum строки Hoffmanа. Затем он извлекает поле odate из каждой строки таблицы Порядков для которой это верно, и формирует набор значений поля odate.</p><p class="p">* Получив набор всех значений поля odate, для поля cnum=2001, он проверяет предикат основного запроса чтобы видеть имеется ли значение на 3 Октября в этом наборе. Если это так(а это так), то он выбирает строку Hoffmanа для вывода ее из основного запроса.</p><p class="p">* Он повторяет всю процедуру, используя строку Giovanni как строку-кандидата, и затем сохраняет повторно пока каждая строка таблицы Заказчиков не будет проверена.</p><p class="empty-line"/><p class="p">Как вы можете видеть, вычисления которые SQL выполняет с помощью этих простых инструкций - это полный комплекс. Конечно, вы могли бы решить ту же самую проблему используя обьединение, следующего вида (вывод для этого запроса показывается в Таблице 11.2):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers first, Orders second</p><p class="p">WHERE first.cnum=second.cnum</p><p class="p">AND second.odate=10/03/1990;</p><p class="empty-line"/><p class="p">Обратите внимание что Cisneros был выбран дважды, по одному разу для каждого порядка который он имел для данной даты. Мы могли бы устранить это используя SELECT DISTINCT вместо просто SELECT. Но это необязательно в варианте подзапроса. Оператор IN, используемый в варианте подзапроса, не делает никакого различия между значениями которые выбираются подзапросом один раз и значениями которые выбираются неоднократно. Следовательно DISTINCT необязателен.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Customers first, Orders second</p><p class="p">WHERE first.cnum=second.cnum (SELECT COUNT (*)</p><p class="p">FROM Customers WHERE snum=main.snum;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 11. 2 Использование обьединения вместо соотнесенного подзапроса</p><p class="p">Предположим что мы хотим видеть имена и номера всех продавцов которые имеют более одного заказчика. Следующий запрос выполнит это для вас (вывод показывается в Таблица 11.3 ):</p><p class="empty-line"/><p class="p">SELECT snum, sname</p><p class="p">FROM Salespeople main</p><p class="p">WHERE 1 &lt;</p><p class="p">( SELECT COUNT (*)</p><p class="p">FROM Customers</p><p class="p">WHERE snum=main.snum );</p><p class="empty-line"/><p class="p">Обратите внимание что предложение FROM подзапроса в этом примере не использует псевдоним. При отсутствии имени таблицы или префикса псевдонима, SQL может для начала принять, что любое поле выводится из таблицы с именем указанным в предложении FROM текущего запроса. Если поле с этим именем отсутствует( в нашем случае - snum ) в той таблице, SQL будет проверять внешние запросы. Именно поэтому, префикс имени таблицы обычно необходим в соотнесенных подзапросах - для отмены этого предположения. Псевдонимы также часто запрашиваются чтобы давать вам возможность ссылаться к той же самой таблице во внутреннем и внешнем запросе без какой-либо неоднозначности.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT snum sname FROM Salespeople main</p><p class="p">WHERE 1 &lt; AND second.odate=10/03/1990;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">200</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 11.3: Нахождение продавцов с многочислеными заказчиками</p><p class="subtitle">ИСПОЛЬЗОВАНИЕ СООТНЕСЕННЫХ ПОДЗАПРОСОВ ДЛЯ НАХОЖДЕНИЯ ОШИБОК</p><p class="p">Иногда полезно выполнять запросы которые разработаны специально так чтобы находить ошибки. Это всегда возможно при дефектной информации которую можно ввести в вашу базу данных, и, если она введена, бывает трудно ее определить. Следующий запрос не должен производить никакого вывода. Он просматривает таблицу Порядков чтобы видеть совпадают ли поля snum и cnum в каждой строке таблицы Заказчиков и выводит каждую строку где этого совпадения нет. Другими словами, запрос выясняет, тот ли продавец кредитовал каждую продажу (он воспринимает поле cnum, как первичный ключ таблицы Заказчиков, который не будет иметь никаких двойных значений в этой таблице ).</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders main</p><p class="p">WHERE NOT snum=</p><p class="p">( SELECT snum</p><p class="p">FROM Customers</p><p class="p">WHERE cnum=main.cnum );</p><p class="empty-line"/><p class="p">При использовании механизма справочной целостности (обсужденного в Главе 19 ), вы можете быть гарантированы от некоторых ошибок такого вида. Этот механизм не всегда доступен, хотя его использование желательно во всех случаях, причем поиск ошибки запроса описанный выше, может быть еще полезнее.</p><p class="subtitle">СРАВНЕНИЕ ТАБЛИЦЫ С СОБОЙ</p><p class="p">Вы можете также использовать соотнесенный подзапрос основанный на той же самой таблице что и основной запрос. Это даст вам возможность извлечть определенные сложные формы произведенной информации. Например, мы можем найти все порядки со значениями сумм приобретений выше среднего для их заказчиков (вывод показан в Таблице 11.4 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders outer</p><p class="p">WHERE amt &gt;</p><p class="p">( SELECT AVG amt</p><p class="p">FROM Orders inter</p><p class="p">WHERE inner.cnum=outer.cnum );</p><p class="empty-line"/><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Orders outer WHERE amt &gt;</p><p class="p">(SELECT AVG (amt) FROM Orders inner</p><p class="p">WHERE inner.cnum=outer.cnum</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong> onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.19</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">1309.00</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 11.4: Соотнесение таблицы с собой</p><p class="p">Конечно, в нашей маленькой типовой таблице, где большиство заказчиков имеют только один порядок, большинство значений являются одновременно средними и следовательно не выбираются. Давайте введем команду другим способом (вывод показывается в Таблице 11.5):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders outer</p><p class="p">WHERE amt &gt;=</p><p class="p">( SELECT AVG (amt)</p><p class="p">FROM Orders inner</p><p class="p">WHERE inner.cnum=outer.cnum );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Orders outer WHERE amt &gt; =</p><p class="p">(SELECT AVG (amt) FROM Orders inner</p><p class="p">WHERE inner.cnum=outer.cnum);</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong> onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3003</p></td>
+<td class="td"><p class="p">767.19</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3005</p></td>
+<td class="td"><p class="p">5160.45</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.19</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">1713.23</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">1309.95</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 11.5: Выбераются порядки которые &gt;=средней сумме приобретений для их заказчиков.</p><p class="p">Различие, конечно, в том, что реляционный оператор основного предиката включает значения которые равняются среднему (что обычно означает что они - единственые порядки для данных заказчиков ).</p><p class="p">СООТНЕСЕННЫЕ ПОДЗАПРОСЫ В ПРЕДЛОЖЕНИИ HAVING</p><p class="p">Также как предложение HAVING может брать подзапросы, он может брать и соотнесенные подзапросы. Когда вы используете соотнесенный подзапрос в предложении HAVING, вы должны ограничивать внешние ссылки к позициям которые могли бы непосредственно использоваться в самом предложении HAVING. Вы можете вспомнить из Главы 6 что предложение HAVING может использовать только агрегатные функции которые указаны в их предложении SELECT или поля используемые в их предложении GROUP BY. Они являются только внешними ссылками, которые вы можете делать. Все это потому, что предикат предложения HAVING оценивается для каждой группы из внешнего запроса, а не для каждой строки. Следовательно, подзапрос будет выполняться один раз для каждой группы выведеной из внешнего запроса, а не для каждой строки.</p><p class="p">Предположим что вы хотите суммировать значения сумм приобретений покупок из таблицы Порядков, сгруппировав их по датам, удалив все даты где бы SUM не был по крайней мере на 2000.00 выше максимальной (MAX ) суммы:</p><p class="p">SELECT odate, SUM (amt)</p><p class="p">FROM Orders a</p><p class="p">GROUP BY odate</p><p class="p">HAVING SUM (amt) &gt;</p><p class="p">( SELECT 2000.00 + MAX (amt)</p><p class="p">FROM Orders b</p><p class="p">WHERE a.odate=b.odate );</p><p class="p">Подзапрос вычисляет значение MAX для всех строк с той же самой датой что и у текущей агрегатной группы основного запроса. Это должно быть выполнено, как и ранее, с испошльзованием предложения WHERE. Сам подзапрос не должен использовать предложения GROUP BY или HAVING.</p><p class="subtitle">СООТНЕСЕННЫЕ ПОДЗАПРОСЫ И ОБЬЕДИНЕНИЯ</p><p class="p">Как вы и могли предположить, соотнесенные подзапросы по природе близки к обьединениям - они оба включают проверку каждой строки одной таблицы с каждой строкой другой (или псевдонимом из той же ) таблицы.</p><p class="p">Вы найдете что большинство операций которые могут выполняться с одним из них будут также работать и с другим.</p><p class="p">Однако имеется различие в прикладной программе между ними, такое как вышеупомянутая потребность в использовании DISTINCT с обьединением и его необязательность с подзапросом. Имеются также некоторые вещи которые каждый может делать так, как этого не может другой. Подзапросы, например, могут использовать агрегатную функцию в предикате, делая возможным выполнение операций типа нашего предыдущего примера в котором мы извлекли порядки усредненные для их заказчиков. Обьединения, с другой стороны, могут выводить строки из обеих сравниваемых таблиц, в то время как вывод подзапросов используется только в предикатах внешних запросов. Как правило, форма запроса которая кажется наиболее интуитивной будет вероятно лучшей в использовании, но при этом хорошо бы знать обе техники для тех ситуаций когда та или иная могут не работать.</p><p class="subtitle">РЕЗЮМЕ</p><p class="p">Вы можете поздравлять себя с овладением большого куска из рассмотреных понятий в SQL - соотнесенного подзапроса. Вы видели как соотнесенный подзапрос связан с обьединение, а также, как как его можно использовать с агрегатными функциями и в предложении HAVING. В общем, вы теперь узнали все типы подзапросов полностью.</p><p class="p">Следующий шаг - описание некоторых SQL специальных операторов. Они берут подзапросы как аргументы, как это делает IN, но в отличие от IN, они могут использоваться только в подзапросах. Первый из их, представленный в Главе 12, - называется EXISTS.</p><p class="subtitle">РАБОТА С SQL</p><p class="p">* Напишите команду SELECT использующую соотнесенный подзапрос, которая выберет имена и номера всех заказчиков с максимальными для их городов оценками.</p><p class="p">* Напишите два запроса которые выберут всех продавцов (по их имени и номеру ) которые в своих городах имеют заказчиков которых они не обслуживают. Один запрос - с использованием обьединения и один - с соотнесенным подзапросом. Которое из решений будет более изящным? (Подсказка: один из способом это сделать, состоит в том, чтобы находить всех заказчиков не обслуживаемых данным продавцом и определить, находится ли каждый из них в городе продавца.)</p></span></span>
+</body>
+</html>

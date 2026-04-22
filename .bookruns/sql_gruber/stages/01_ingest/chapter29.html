@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id37"><div class="title2">
+<p class="p1">Приложение D. СИНТАКСИС И КОМАНДА ССЫЛКИ</p>
+</div><p class="empty-line"/><p class="p"><strong>ЭТО ПРИЛОЖЕНИЕ СОДЕРЖИТ БОЛЕЕ КРАТКОЕ описание различных команд SQL.</strong></p><p class="p">Цель состоит в том, чтобы дать вам быструю и точную ссылку и определение SQL. Первый раздел этого приложения определяет элементы, используемые для создания команд SQL; второй, подробности синтаксиса и предложения с кратким описанием самих команд. Далее показаны стандартные условные обозначения (они называются BNF условиями):</p><p class="p">* Ключевые cлова набираются в верхнем регистре.</p><p class="p">* SQL и другие специальные условия заключаются в угловые скобки и набираются курсивом (&lt;and&gt; ).</p><p class="p">* Необязательные части команд находятся в квадратных скобках ([and]).</p><p class="p">* Многоточие (.... ) указывает на то что предшествующая часть команды может повторяться любое число раз.</p><p class="p">* Вертикальная полоса (| ) означает - то, что ей предшествует может быть заменено на то что следует за ней.</p><p class="p">* Фигурные Скобки ({and} ) указывают - все что внутри них, должно быть расценено как целое, для оценки других символов (например, вертикальных полос или эллипсов ).</p><p class="p">* Двойное двоеточие и равняется (::=) означают - то что следует за ними является определением того что им предшествует.</p><p class="empty-line"/><p class="p">Кроме того, мы будем использовать следующую последовательность (.,..) чтобы указывать, что предшествующее этому может повторяться любое число раз с индивидуальными событиями отделяемыми запятыми. Атрибуты которые не являются частью официального стандарта будут отмечены как (*нестандартные*) в описании.</p><p class="p">ОБРАТИТЕ ВНИМАНИЕ: Терминология которую мы используем здесь, не официальная терминология ANSI. Официальная терминология может вас сильно запутать, поэтому мы несколько ее упростили.</p><p class="p">По этой причине, мы иногда используем условия отличающиеся от ANSI, или используем те же самые условия но несколько по-другому. Например, наше определение - &lt;predicate &gt; отличается от используемой в ANSI комбинации стандартного определения &lt;predicate&gt; с &lt;search condition&gt;.</p><p class="subtitle">SQL ЭЛЕМЕНТЫ</p><p class="p">Этот раздел определяет элементы команд SQL. Они разделены на две категории: Основные элементы языка, и Функциональные элементы языка. Основные элементы - это создаваемые блоки языка; когда SQL исследует команду, то он сначала оценивает каждый символ в тексте команды в терминах этих элементов. Разделители&lt;separator&gt; отделяют одну часть команды от другой; все что находится между разделителями&lt;separator&gt; обрабатывается как модуль. Основываясь на этом разделении, SQL и интерпретирует команду. Функциональные элементы - это разнообразные вещи отличающиеся от ключевых слов, которые могут интерпретироваться как модули.</p><p class="p">Это - части команды, отделяемые с помощью разделителей&lt;separator&gt;, имеющих специальное значение в SQL. Некоторые из них являются специальными для определенных команд и будут описаны вместе с этими командами позже, в этом приложении. Перечисленное здесь, является общими элементы для всех описываемых команд. Функциональные элементы могут определяться в терминах друг друга или даже в собственных терминах.</p><p class="p">Например, предикат&lt;predicate&gt;, наш последний и наиболее сложный случай, содержит предикат&lt;predicate&gt; внутри собственного определения. Это потому, что предикат&lt;predicate &gt; использующий AND или OR может содержать любое число предикатов&lt;predicate&gt; которые могут работать автономно.</p><p class="p">Мы представляли вам предикат&lt;predicate&gt; в отдельной секции в этом приложении, из-за разнообразия и сложности этого функционального элемента языка. Он будет постоянно присутствовать при обсуждении других функциональных частей команд.</p><p class="empty-line"/><p class="subtitle">БАЗОВЫЕ ЭЛЕМЕНТЫ ЯЗЫКА </p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>ЭЛЕМЕНТ</strong></p></td>
+<td class="td"><p class="p"><strong>ОПРЕДЕЛЕНИЕ</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;separator&gt; </p></td>
+<td class="td"><p class="p">&lt;comment &gt; | &lt;space &gt; | &lt;newline &gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;comment &gt; </p></td>
+<td class="td"><p class="p">--&lt; string&gt; &lt;newline &gt;</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;space&gt; </p></td>
+<td class="td"><p class="p">пробел </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;newline&gt; </p></td>
+<td class="td"><p class="p">реализационно-определяемый конец символьной строки </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;identifier &gt; </p></td>
+<td class="td"><p class="p">&lt;letter&gt;[{&lt;letter or digit&gt; | &lt;underscore}... ] </p></td>
+</tr>
+</table><p class="p">ИМЕЙТЕ ВВИДУ: Следуя строгому стандарту ANSI, символы должны быть набраны в верхнем регистра, а индификатор&gt;identifier&gt; не должен быть длиннее 18-ти символов.  </p><table class="table">
+<tr>
+<td class="td"><p class="p">&lt;underscore &gt; </p></td>
+<td class="td"><p class="p">- </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;percent sign&gt; </p></td>
+<td class="td"><p class="p">% </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;delimiter &gt; </p></td>
+<td class="td"><p class="p">любое из следующих:, () &lt; &gt; . :=+ " - | &lt;&gt; &gt;=&lt;=или &lt;string&gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;string &gt; </p></td>
+<td class="td"><p class="p">[любой печатаемый текст в одиночных кавычках] </p></td>
+</tr>
+</table><p class="p">Примечание: В &lt;string&gt;, две последовательных одиночных кавычки (' ' ) интерпретируются как одна ('). &lt;SQL term &gt; окончание, зависящее от главного языка. (*только вложеный*)</p><p class="empty-line"/><p class="subtitle">ФУНКЦИОНАЛЬНЫЕ ЭЛЕМЕНТЫ</p><p class="p">Следующая таблица показывает функциональные элементы команд SQL и их определения:</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>ЭЛЕМЕНТ</strong></p></td>
+<td class="td"><p class="p"><strong>ОПРЕДЕЛЕНИЕ</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;query &gt; </p></td>
+<td class="td"><p class="p">Предложение SELECT </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;subquery &gt; </p></td>
+<td class="td"><p class="p">Заключеное в круглых скобках предложение SELECT внутри другого условия, которое, фактически, оценивается отдельно для каждой строки-кандидата другого предложения. </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;value expression&gt;   </p></td>
+<td class="td"><p class="p">&lt;primary &gt;| &lt;primary&gt; &lt;operator&gt; &lt;primary &gt; | &lt;primary &gt; &lt;operator&gt; &lt;value expression&gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;operator &gt; </p></td>
+<td class="td"><p class="p">любое из следующих: + - / * </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;primary&gt; </p></td>
+<td class="td"><p class="p">&lt; column name &gt; |&lt;literal &gt; | &lt;aggregate function &gt; | &lt;built-in constant &gt; | &lt;nonstandard function &gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;literal &gt; </p></td>
+<td class="td"><p class="p">&lt;string &gt; | &lt;mathematical expressio &gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;built-in constant&gt; </p></td>
+<td class="td"><p class="p">USER | &lt;implementation-dehned constant &gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;table name&gt; </p></td>
+<td class="td"><p class="p">&lt;identifier&gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;column spec&gt; </p></td>
+<td class="td"><p class="p"> [&lt;table name&gt; | &lt;alias&gt;.]&lt;column name&gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;grouping column &gt; </p></td>
+<td class="td"><p class="p">&lt; column spec &gt; | &lt; integer&gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;ordering column&gt; </p></td>
+<td class="td"><p class="p">&lt;column spec&gt; | &lt;integer&gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;colconstraint &gt; </p></td>
+<td class="td"><p class="p">NOT NULL | UNIQUE | CHECK (&lt;predicate&gt;)| PRIMARY KEY | REFERENCES &lt;table name&gt;[(&lt;column name&gt;)] </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;tabconstraint&gt; </p></td>
+<td class="td"><p class="p">UNIQUE (&lt;column list&gt;) | CHECK (&lt;predicate&gt;) | PRIMARY KEY (&lt;column list&gt;) | FOREIGN KEY (&lt;column list&gt;) REFERENCES &lt;table name&gt;[(&lt;column list&gt;)] </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;defvalue&gt; </p></td>
+<td class="td"><p class="p">ЗНАЧЕНИЕ ПО УМОЛЧАНИЮ=&lt;value expression &gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;data type&gt; </p></td>
+<td class="td"><p class="p">Допустимый тип данных (См. Приложение B для описания типов обеспечиваемых ANSI или Приложение C для других общих типов.) </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;size&gt; </p></td>
+<td class="td"><p class="p">Значение зависит от &lt;data type&gt;( См. Приложение B. )     </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;cursor name&gt; </p></td>
+<td class="td"><p class="p">&lt;identifier&gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;index name&gt; </p></td>
+<td class="td"><p class="p">&lt;identifier&gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;synonym&gt; </p></td>
+<td class="td"><p class="p">&lt;identifier&gt;(*nonstandard*) </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p"> &lt;owner&gt; </p></td>
+<td class="td"><p class="p">&lt;Authorization ID&gt; </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;column list&gt; </p></td>
+<td class="td"><p class="p">&lt;column spec&gt; .,.. </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;value list&gt; </p></td>
+<td class="td"><p class="p">&lt;value expression&gt; .,.. </p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;table reference&gt; </p></td>
+<td class="td"><p class="p">{ &lt;table name&gt; [&lt;alias&gt;] } .,.. </p></td>
+</tr>
+</table><p class="empty-line"/><p class="subtitle">ПРЕДИКАТЫ</p><p class="p">Следующее определяет список различных типов предиката&lt;predicate &gt;</p><p class="p">описаных на следующих страницах:</p><p class="empty-line"/><p class="p">&lt;predicate&gt; ::=[NOT]</p><p class="empty-line"/><p class="p">{ &lt; comparison predicate &gt; | &lt;in predicate &gt; | &lt;null predicate &gt; | &lt;between predicate&gt; | &lt;like predicate &gt; | &lt;quantified predicate&gt; | &lt;exists predicate &gt; }</p><p class="p">[ANDI OR &lt;predicate&gt;]</p><p class="empty-line"/><p class="p">&lt;predicate &gt; - это выражение, которое может быть верным, неверным, или неизвестным, за исключением &lt;exists predicate&gt; и &lt;null predicate&gt;, которые могут быть только верными или неверными.</p><p class="p">Будет получено неизвестно если NULL значения предотвращают вывод полученного ответа. Это будет случаться всякий раз, когда NULL значение сравнивается с любым значением. Стандартные операторы Буля - AND, OR, и NOT - могут использоваться с предикатом&lt;predicate&gt;. NOT верно=неверно, NOT неверно=верно, а NOT неизвестно=неизвестно. Резултаты AND и OR в комбинации с предикатами, показаны в следующих таблицах:</p><p class="empty-line"/><p class="p"><strong>AND</strong></p><table class="table">
+<tr>
+<td class="td"><p class="p">AND</p></td>
+<td class="td"><p class="p">верно</p></td>
+<td class="td"><p class="p">неверно</p></td>
+<td class="td"><p class="p">неизвестно</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">верно</p></td>
+<td class="td"><p class="p">верно</p></td>
+<td class="td"><p class="p">неверно</p></td>
+<td class="td"><p class="p">неизвестно</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">неверно</p></td>
+<td class="td"><p class="p">неверно</p></td>
+<td class="td"><p class="p">неверно</p></td>
+<td class="td"><p class="p">неверно</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">неизвестно</p></td>
+<td class="td"><p class="p">неизвестно</p></td>
+<td class="td"><p class="p">неверно</p></td>
+<td class="td"><p class="p">неизвестно</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p"><strong>OR</strong></p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p">OR</p></td>
+<td class="td"><p class="p">верно</p></td>
+<td class="td"><p class="p">неверно</p></td>
+<td class="td"><p class="p">неизвестно</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">верно</p></td>
+<td class="td"><p class="p">верно</p></td>
+<td class="td"><p class="p">верно</p></td>
+<td class="td"><p class="p">верно</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">неверно</p></td>
+<td class="td"><p class="p">верно</p></td>
+<td class="td"><p class="p">неверно</p></td>
+<td class="td"><p class="p">неизвестно</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">неизвестно</p></td>
+<td class="td"><p class="p">верно</p></td>
+<td class="td"><p class="p">неизвестно</p></td>
+<td class="td"><p class="p">неизвестно</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Эти таблицы читаются способом на подобии таблицы умножения: вы объединяете верные, неверные, или неизвестные значения из строк с их столбцами чтобы на перекрестье получить результат. В таблице AND, например, третий столбец (Неизвестно) и первая строка (Верно) на пересечении в верхнем правом углу дают результат - неизвестно, другими словами: Верно AND Неизвестно=неизвестно.</p><p class="p">Порядок вычислений определяется круглыми скобками. Они не представляются каждый раз. NOT оценивается первым, далее AND и OR. Различные типы предикатов&lt;predicate&gt; рассматриваются отдельно в следующем разделе.</p><p class="empty-line"/><p class="p">&lt;comparison predicate&gt; (предикат сравнения)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">&lt;value expresslon&gt; &lt;relational op&gt; &lt;value expresslon&gt; |</p><p class="p">&lt;subquery&gt; &lt;relatlonal op&gt; ::= = | &lt; | &gt; | &lt; | &gt;= | &lt;&gt;</p><p class="empty-line"/><p class="p">Если либо &lt;value expression&gt;=NULL, либо &lt;comparison predicate &gt;=неизвестно; другими словами, это верно если сравнение верно или невер-но если сравнение неверно.</p><p class="p">&lt;relational op&gt; имеет стандартные математические значения для числовых значений; для других типов значений, эти значения определяются конкретной реализацией. Оба &lt;value expression&gt; должны иметь сравнимые типы данных. Если подзапрос&lt;subquery&gt; используется, он должен содержать одно выражение &lt;value expression&gt; в предложении SELECT, чье значение будет заменять второе выражение &lt;value expression&gt; в предикате сравнения&lt;comparision predicate&gt;, каждый раз когда &lt;subquery &gt; действительно выполняется.</p><p class="empty-line"/><p class="p">&lt;between predicate&gt;</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">&lt; value expression &gt; [NOT] BETWEEN &lt; value expression &gt;</p><p class="p">AND &lt; value expression &gt;</p><p class="empty-line"/><p class="p">&lt; between predicate &gt; - A BETWEEN B AND C, имеет такое же значение что и &lt;predicate &gt; - (A &gt;=B AND &lt;=C). &lt;between predicate&gt; для которого A NOT BETWEEN B AND C, имеет такое же значение что и NOT (BETWEEN B AND C). &lt;value expression&gt; может быть выведено с помощью нестандартного запроса &lt;subquery&gt; (*nonstandard* ).</p><p class="empty-line"/><p class="p">&lt; in prediicate &gt;</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">&lt;value expression&gt; [NOT] IN &lt;value list&gt; | &lt;subquery&gt;</p><p class="empty-line"/><p class="p">Список значений&lt;value list&gt; будет состоять из одного или более перечисленых значений в круглых скобках и отделяемых запятыми, которые имеют сравнимый с &lt;value expression&gt; тип данных. Если используется подзапрос&lt;subquery&gt;, он должен содержать только одно выражение &lt;value expression&gt; в предложении SELECT (возможно и больше, но это уже будет вне стандарта ANSI). Подзапрос&lt;subquery &gt; фактически, выполняется отдельно для каждой строки-кандидата основного запроса, и значения которые он выведет, будут составлять список значений&lt;value list&gt; для этой строки. В любом случае, предикат&lt;in predicate&gt; будет верен если выражение&lt;value expression&gt; представленное в списке значений&lt;value list&gt;, если не указан NOT. Фраза A NOT IN (B, C) является эквивалентом фразы NOT (A IN (B, C)).</p><p class="empty-line"/><p class="p">&lt; like predicate &gt;</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">&lt;charvalue&gt; [NOT] LIKE &lt;pattern&gt; [ESCAPE</p><p class="p">&lt;escapechar&gt;]</p><p class="empty-line"/><p class="p">&lt;charvalue &gt; - это любое *нестандартное* выражение &lt;value expression&gt; алфавитно-цифрового типа. &lt;charvalue &gt; может быть, в сооветствии со стандартом, только определенным столбцом&lt;column spec&gt;. Образец&lt;pattern&gt; состоит из строки&lt;string&gt; которая будет проверена на совпадение с &lt;charvalue&gt;. Символ окончания&lt;escapechar &gt; - это одиночный алфавитно-цифровой символ. Совпадение произойдет, если верны следующие условия :</p><p class="empty-line"/><p class="p">* Для каждого символа подчеркивания&lt;underscore &gt; в бразце&lt;pattern &gt; которая не предшесивует символу окончания&lt;escapechar&gt;, имеется один соответствующий ему символ &lt;charvalue&gt;.</p><p class="p">* Для каждого &lt; percent sign&gt; в образце&lt;pattern&gt; который не предшествует &lt;escapechar&gt;, имеются нули или более соответствующие символы в &lt;charvalue&gt;.</p><p class="p">* Для каждого &lt;escapechar &gt; в &lt;pattern &gt; который не предшествует другому &lt;escapechar&gt;, нет никакого соответствующего символа в &lt;charvalue&gt;.</p><p class="p">* Для каждого иного символа в &lt;pattern&gt;, один и тот же символ устанавливается у соответствующей отметке в &lt;charvalue&gt;.</p><p class="empty-line"/><p class="p">Если совпадение произошло, &lt;like predicate &gt; - верен, если не был указан NOT. Фраза NOT LIKE 'текст' - эквивалентна NOT (A LIKE 'текст').</p><p class="empty-line"/><p class="p">&lt; null predicate &gt;</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">&lt;column spec&gt; IS [NOT] NULL</p><p class="empty-line"/><p class="p">&lt;column spec&gt;=IS NULL, если NULL значение представлено в этом столбце. Это сделает &lt;null predicate &gt; верным если не указан NULL. Фраза &lt;column spec&gt; IS NOT NULL, имеет тот же результат что и NOT (&lt;column spec &gt; IS NULL ).</p><p class="empty-line"/><p class="p">&lt; quantified predicate &gt;</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">&lt;value expression&gt; &lt;relational op&gt;</p><p class="p">&lt;quantifier&gt; &lt;subquery&gt;</p><p class="p">&lt;quantifier&gt; ::=ANY | ALL | SOME</p><p class="empty-line"/><p class="p">Предложение SELECT подзапроса&lt;subquery &gt; должно содержать одно и только одно выражение значения&lt;value expression&gt;. Все значения выведенные подзапросом&lt;subquery &gt; составляют набор результатов&lt;result set&gt;. &lt;value expression&gt; сравнивается, используя оператор связи&lt;relational operator&gt;, с каждым членом набора результатов&lt;result set&gt;.</p><p class="p">Это сравнение оценивается следующим образом:</p><p class="empty-line"/><p class="p">* Если &lt;quantifier&gt;=ALL, и каждый член набора результатов&lt;result set&gt; делает это сравнение верным, &lt;quantified predicate &gt; - верен.</p><p class="p">* Если &lt;quantifier&gt;=ANY, и имеется по крайней мере один член из набора результатов&lt;result set&gt;, который делает верным это сравнение, то &lt;quantified predicate &gt; является верным.</p><p class="p">* Если набор результатов&lt;result set&gt; пуст, то &lt;quantified predicate&gt; верен, если &lt;quantifier&gt;=ALL, и неверен если иначе.</p><p class="p">* Если &lt;quantifier&gt;=SOME, эффект - тот же что и для ANY.</p><p class="p">* Если &lt;quantified predicate&gt; не верен и не неверен, он - неизвестен.</p><p class="empty-line"/><p class="p">&lt;exists predicate&gt;</p><p class="empty-line"/><p class="p">Синтаксис:</p><p class="empty-line"/><p class="p">EXISTS (&lt;subquery&gt;)</p><p class="empty-line"/><p class="p">Если подзапрос&lt;subquery&gt; выводит одну или более строк вывода, &lt;exists predicate&gt; - верен; и неверен если иначе.</p><p class="subtitle">SQL КОМАНДЫ</p><p class="p">Этот раздел подробно описывает синтаксис различных команд SQL. Это даст вам возможность быстро отыскивать команду, находить ее синтаксис и краткое описание ее работы.</p><p class="empty-line"/><p class="p">ИМЕЙТЕ ВВИДУ Команды которые начинаются словами - EXEC SQL, а также команды или предложения заканчивающиеся словом - &lt;SQL term&gt; могут использоваться только во вложенном SQL.</p><p class="empty-line"/><p class="p"><strong>BEGIN DECLARE SECTION</strong> (НАЧАЛО РАЗДЕЛА ОБЪЯВЛЕНИЙ)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">EXEC SQL BEGIN DECLARE SECTION&lt;SQL term&gt;</p><p class="p">&lt;host-language variable declarations&gt;</p><p class="p">EXEC SQL END DECLARE SECTION&lt;SQL term&gt;</p><p class="empty-line"/><p class="p">Эта команда создает раздел программы главного языка для обьявления в ней главных переменных, которые будут использоваться во вкладываемых операторах SQL. Переменная SQLCODE должна быть включена как одна из обьявляемых переменных главного языка.</p><p class="empty-line"/><p class="p"><strong>CLOSE CURSOR</strong> (ЗАКРЫТЬ КУРСОР)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">EXEC SQL CLOSE CURSOR &lt;cursor name&gt; &lt;SQL term&gt;;</p><p class="empty-line"/><p class="p">Эта команда указывает курсору закрыться, после чего ни одно значение не сможет быть выбрано из него до тех пор пока он не будет снова открыт.</p><p class="empty-line"/><p class="p"><strong>COMMIT (WORK)</strong> (ФИКСАЦИЯ (ТРАНЗАКЦИИ))</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">COMMIT WORK;</p><p class="empty-line"/><p class="p">Эта команда оставляет неизменными все изменения сделанных в базе данных, до тех пор пока начавшаяся транзакция не закончится, и не начнется новая транзакция.</p><p class="empty-line"/><p class="p"><strong>CREATE INDEX (*NONSTANDARD*)</strong> (СОЗДАТЬ ИНДЕКС) (НЕСТАНДАРТНО)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">CREATE [UNIQUE] INDEX &lt;Index name&gt;</p><p class="p">ON &lt;table name&gt; (&lt;column list&gt;);</p><p class="empty-line"/><p class="p">Эта команда создает эффективный маршрут с быстрым доступом для поиска строк содержащих обозначенные столбцы. Если UNIQUE - указана, таблица не сможет содержать дубликатов(двойников) значений в этих столбцах.</p><p class="empty-line"/><p class="p"><strong>CREATE SYNONYM (*NONSTANDARD*)</strong> (СОЗДАТЬ СИНОНИМ) (*НЕСТАНДАРТНО*)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">CREATE IPUBLICl SYNONYM &lt;synonym&gt; FOR</p><p class="p">&lt;owner&gt;.&lt;table name&gt;;</p><p class="empty-line"/><p class="p">Эта команда создает альтернативное(синоним) имя для таблицы. Синоним принадлежит его создателю, а сама таблица, обычно другому пользователю. Используя синоним, его владелец может не ссылаться к таблице ее полным (включая имя владельца ) именем. Если PUBLIC - указан, синоним принадлежит каталогу SYSTEM и следовательно доступен всем пользователям.</p><p class="empty-line"/><p class="p"><strong>CREATE TABLE</strong> (СОЗДАТЬ ТАБЛИЦУ)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">CREATE TABLE &lt;table name&gt;</p><p class="p">({&lt;column name&gt; &lt;data type&gt;[&lt;size&gt;]</p><p class="p">[&lt; colconstralnt &gt; . . .]</p><p class="p">[&lt;defvalue&gt;]} .,.. &lt;tabconstraint&gt; .,..);</p><p class="empty-line"/><p class="p">Команда создает таблицу в базе данных. Эта таблица будет принадлежать ее создателю. Столбцы будут рассматриваться в поименном порядке. &lt;data type&gt; - определяет тип данных который будет содержать столбец. Стандарт &lt;data type&gt; описывается в Приложении B; все прочие используемые типы данных&lt;data type&gt;, обсуждались в Приложении C. Значение размера&lt;size &gt; зависит от типа данных&lt;data type&gt;. &lt;colconstraint&gt; и &lt;tabconstraint&gt; налагают ограничения на значения которые могут быть введены в столбцу. &lt;defvalue &gt; определяет значение(по умолчанию) которое будет вставлено автоматически, если никакого другого значения не указано для этой строки. (См. Главу 17 для подробностей о самой команде CREATE TABLE и Главы 18 И 19 для подробностей об ограничениях и о &lt;defvalue&gt; ).</p><p class="empty-line"/><p class="p"><strong>CREATE VIEW</strong> (СОЗДАТЬ ПРОСМОТР)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">CREATE VIEW &lt;table name&gt;</p><p class="p">AS &lt;query&gt;</p><p class="p">[WITH CHECK OPTION];</p><p class="empty-line"/><p class="p">Просмотр обрабатывается как любая таблица в командах SQL. Когда команда ссылается на имя таблицы&lt;table name&gt;, запрос&lt;query &gt; выполняется, и его вывод соответствует содержанию таблицы указнной в этой команде.</p><p class="p">Некоторые просмотры могут модифицироваться, что означает, что команды модификации могут выполняться в этих просмотрах и передаваться в таблицу, на которую была ссылка в запросе&lt;query&gt;. Если указано предложение WITH CHECK OPTION, эта модификация должны также удовлетворять условию предиката&lt;predicate&gt; в запросе&lt;query&gt;.</p><p class="empty-line"/><p class="p"><strong>DECLARE CURSOR</strong> (ОБЬЯВИТЬ КУРСОР)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">EXEC SQL DECLARE &lt;cursor name&gt; CURSOR FOR</p><p class="p">&lt;query&gt;&lt;SQL term&gt;</p><p class="empty-line"/><p class="p">Эта команда связывает имя курсора&lt;cursor name &gt;, с запросом&lt;query&gt;. Когда курсор открыт (см. OPEN CURSOR ), запрос&lt;query &gt; выполняется, и его результат может быть выбран(командой FETCH) для вывода. Если курсор модифицируемый, таблица на которую ссылается запрос&lt;query&gt;, может получить изменение содержания с помощью операции модификации в курсоре (См. Главу 25 о модифицируемых курсорах ).</p><p class="empty-line"/><p class="p"><strong>DELETE</strong> (УДАЛИТЬ)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">DELETE FROM &lt;table name&gt;</p><p class="p">{ [WHERE &lt;predicate&gt;]; }</p><p class="p">| WHERE CURRENT OF &lt;cursorname&gt;&lt;SQL term</p><p class="empty-line"/><p class="p">Если предложение WHERE отсутствует, ВСЕ строки таблицы удаляются. использует предикат&gt;&lt;predicate&gt;, строки, которые удовлетворяют условию этого предиката&lt;predicate &gt; удаляются. Если предложение WHERE имеет аргумент CURRENT OF(ТЕКУЩИЙ) в имени курсора&lt;cursor name &gt;, строка из таблицы&lt;table name&gt; на которую в данный момент имеется ссылка с помощью имени курсора &lt;cursor name&gt; будет удалена. Форма WHERE CURRENT может использоваться только во вложенном SQL, и только с модифицируемыми курсорами.</p><p class="empty-line"/><p class="p"><strong>EXEC SQL</strong> (ВЫПОЛНИТЬ SQL)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">EXEC SQL &lt;embedded SQL command&gt; &lt;SQL term&gt;</p><p class="empty-line"/><p class="p">EXEC SQL используется чтобы указывать начало всех команд SQL, вложенных в другой язык.</p><p class="empty-line"/><p class="p"><strong>FETCH</strong> (ВЫБОРКА)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">EXEC SQL FETCH &lt;cursorname&gt;</p><p class="p">INTO &lt;host-varlable llst&gt;&lt;SQL term&gt;</p><p class="empty-line"/><p class="p">FETCH принимает вывод из текущей строки запроса&lt;query&gt;, вставляет ее в список главных переменных&lt;host-variable list&gt;, и перемещает курсор на следующую строку. Список&lt;host-variable list&gt; может включать переменную indicator в качестве целевой переменной (См. Главу 25. )</p><p class="empty-line"/><p class="p"><strong>GRANT</strong> (ПЕРЕДАТЬ ПРАВА)</p><p class="empty-line"/><p class="p">Синтаксис (стандартный)</p><p class="empty-line"/><p class="p">GRANT ALL [PRIVILEGES] | {SELECT | INSERT | DELETE | UPDATE [(&lt;column llst&gt;)]</p><p class="p">| REFERENCES [(&lt;column llst&gt;)l } .,..</p><p class="p">ON &lt;table name&gt; .,..</p><p class="p">TO PUBLIC | &lt;Authorization ID&gt; .,..</p><p class="p">[WITH GRANT OPTION];</p><p class="empty-line"/><p class="p">Аргумент ALL(ВСЕ), с или без PRIVILEGES(ПРИВИЛЕГИИ), включает каждую ривилегию в список привилегий. PUBLIC(ОБЩИЙ) включает всех существующих пользователей и всех созданых в будущем. Эта команда дает возможность передать права для выполнения действий в таблице с указаным именем. REFERENCES позволяет дать права чтобы использовать столбцы в списке столбцов&lt;column list&gt; как родительский ключ для внешнего ключа. Другие привилегии состоят из права выполнять команды для которых привилегии указаны их имнами в таблице. UPDATE, подобен REFERENCES, и может накладывать ограничения на определенные столбцы. GRANT OPTION дает возможность передавать эти привилегии другим пользователям.</p><p class="empty-line"/><p class="p">Синтаксис (нестандартный )</p><p class="empty-line"/><p class="p">GRANT DBA | RESOURCE | CONNECT ... .</p><p class="p">TO &lt;Authorization ID&gt; .,..</p><p class="p">[IDENTIFIED BY&gt; password&gt;</p><p class="empty-line"/><p class="p">CONNECT дает возможность передавать право на регистрации и некоторые другие ограниченные права. RESOURCE дает пользователю право создавать таблицы. DBA дает возможность передавать почти все права. IDENTIFIED BY используется вместе с CONNECT, для создания или изменения пароля пользователя.</p><p class="empty-line"/><p class="p"><strong>INSERT</strong> (ВСТАВКА)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">INSERT INTO &lt;table name&gt; (&lt;column llst&gt;)</p><p class="p">VALUES (&lt;value llst&gt;) I &lt;query&gt;;</p><p class="empty-line"/><p class="p">INSERT создает одну или больше новых строк в таблице с именем &lt;table name&gt;. Если используется предложение VALUES, их значения вставляются в таблицу с именем&lt; table name&gt;. Если запрос&lt;query &gt; указан, каждая строка вывода будет вставлена в таблицу с именем &lt;table name&gt;. Если список столбцов&lt;column list&gt; отсутствует, все столбцы таблицы&lt;table name&gt;, принимаются в упорядоченном виде.</p><p class="empty-line"/><p class="p"><strong>OPEN CURSOR</strong> (ОТКРЫТЬ КУРСОР)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">EXEC SQL OPEN CURSOR &lt;cursorname&gt;&lt;SQL term&gt;</p><p class="empty-line"/><p class="p">OPEN CURSOR выполняет запрос связанный с курсором&lt;cursor name&gt;. Вывод может теперь извлекать по одной строке для каждой команды FETCH.</p><p class="empty-line"/><p class="p"><strong>REVOKE (*NONSTANDARD*)</strong> (ОТМЕНИТЬ ПОЛНОМОЧИЯ) (НЕСТАНДАРТНО)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">REVOKE { ALL [PRIVILEGES]</p><p class="p">| &lt;privilege&gt; .,.. } [ON &lt;table name&gt;]</p><p class="p">FROM { PUBLIC</p><p class="p">| &lt;Authorization ID&gt; .,.. };</p><p class="empty-line"/><p class="p">Привелегия&lt;privelege&gt; может быть любой из указаных в команде GRANT. Пользователь дающий REVOKE должен иметь те же привелегии, что и пользователь который давал GRANT. Предложение ON может быть использовано, если используется привилегия специального типа для особого объекта.</p><p class="empty-line"/><p class="p"><strong>ROLLBACK (WORK)</strong> (ОТКАТ) (ТРАНЗАКЦИИ)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">ROLLBACK WORK;</p><p class="empty-line"/><p class="p">Команда отменяет все изменения в базе данных, сделанные в течение текущей транзакции. Она кроме того заканчивается текущую, и начинает новую транзакцию.</p><p class="empty-line"/><p class="p"><strong>SELECT</strong> (ВЫБОР)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">SELECT { IDISTINCT | ALL] &lt; value expression &gt; .,.. } / *</p><p class="p">[INTO &lt;host variable list&gt; (*embedded only*)]</p><p class="p">FROM &lt; table reference &gt; .,..</p><p class="p">[WHERE &lt;predicate&gt;]</p><p class="p">[GROUP BY &lt;grouping column&gt; .,..]</p><p class="p">[HAVING &lt;predicate&gt;]</p><p class="p">[ORDER BY &lt;ordering column&gt; [ASC | DESC] .,.. ];</p><p class="empty-line"/><p class="p">Это предложение огранизует запрос и выводит значения из базы данных( см. Глава 3 - Глава 14). Применяются следующие правила:</p><p class="p">* Если ни ALL, ни DISTINCT - не указаны, принимается - ALL.</p><p class="p">* Выражение&lt;value expression&gt; состоит из &lt;column spec&gt;, агрегатной функции &lt;aggregate funct&gt;, нестандартной функции&lt;nonstandard function&gt;, постоянной&lt;constant&gt;, или любой их комбинации с операторами в допустимых выражениях.</p><p class="p">* Ссылаемая таблица&lt;table reference&gt;, состоит из имени таблицы, включая префикс владельца если текущий пользователь не владелец, или синоним(нестандартно) для таблицы. Таблица может быть или базовой таблицей или просмотром. В принципе, псевдоним может указать, какой синонимом используется для таблицы только на время текущей команды. Имя таблицы или синоним должны отделяться от псевдонима одним или более разделительными знаками&lt;separator&gt;.</p><p class="p">* Если используется GROUP BY, все столбцы&lt;column spec&gt; используемые в предложении SELECT, должны будут использоваться как группа столбцов&lt;grouping column&gt;, если они не содержатся в агрегатной функции&lt;aggregate funct&gt;. Вся группа столбцов&lt;grouping column&gt; должна быть представлена среди выражений&lt; value expressions&gt; указанных в предложении SELECT. Для каждой отдельной комбинации значений группы столбцов&lt;grouping column&gt;, будет иметься одна и только одна строка вывода.</p><p class="p">* Если HAVING используется, предикат&lt;predicate &gt; применяется к каждой строке произведенной предложением GROUP BY, и те строки которые сделают этот предикат верным, будут выведены.</p><p class="p">* Если ORDER BY используется, вывод имеет определенную последовательность. Каждый идентификатор столбца&lt;column identifer&gt; ссылается к указанному &lt;value expression&gt; в предложении SELECT. Если это &lt;value expression&gt; является указанным столбцом&lt;column spec&gt;, &lt;column identifier&gt; может быть таким же как &lt;column spec&gt;. Иначе &lt;column identifier&gt; может быть положительным целым числом, указывающим место где находится &lt;value expression&gt; в последовательности предложения SELECT. Вывод будет сформирован так чтобы помещать значения содержащиеся в &lt;column identifier &gt; в порядке возрастания, если DESC не указан. Имя идентификатора столбца&lt;column identifier&gt; стоящее первым в предложении ORDER BY будет предшествовать позже стоящим именам в определении последовательности вывода.</p><p class="empty-line"/><p class="p">Предложение SELECT оценивает каждую строку-кандидат таблицы в которой строки показаны независимо. Строка-кандидат определяется следующим образом:</p><p class="p">* Если только одна ссылаемая таблица&lt;table reference&gt; включена, каждая строка этой таблица в свою очередь является строкой-кандидатом.</p><p class="p">* Если более одной ссылаемой таблицы&lt;table reference&gt; включено, каждая строка каждой таблицы должна быть скомбинирована в свою очередь с каждой комбинацией строк из всех других таблиц. Каждая такая комбинация будет в свою очередь строкой-кандидатом.</p><p class="empty-line"/><p class="p">Каждая строка-кандидат производит значения, которые делают предикат &lt;predicate &gt; в предложении WHERE верным, неверным, или неизвестным.</p><p class="p">Если GROUP BY не используется, каждое&lt;value expression&gt; применяется в свою очередь для каждой строки-кандидата чье значение делает предикат верным, и результатом этой операции является вывод. Если GROUP BY используется, строки-кандидаты комбинируются, используя агрегатные функции. Если никакого предиката&lt;predicate &gt; не установлено, каждое выражение&lt;value expression&gt; применяется к каждой строке-кандидату или к каждой группе. Если указан DISTINCT, дубликаты( двойники) строк будут удалены из вывода.</p><p class="empty-line"/><p class="p"><strong>UNION</strong> (ОБЪЕДИНЕНИЕ)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">&lt;query&gt; {UNION [ALL] &lt;query&gt; } . . . ;</p><p class="empty-line"/><p class="p">Вывод двух или более запросов&lt;query&gt; будет объединен. Каждый запрос &lt;query &gt; должен содержать один и тот же номер &lt;value expression&gt; в предложение SELECT и в таком порядке что 1.. n каждого, совместим по типу данных&lt;data type&gt; и размеру&lt;size&gt; с 1.. n всех других.</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">UPDATE &lt;table name&gt;</p><p class="p">SET { &lt;column name&gt;=&lt;value expression&gt; } .,..</p><p class="p">{[ WHERE &lt;predlcate&gt;]; }</p><p class="p">| {[WHERE CURRENT OF &lt;cursorname&gt;]</p><p class="p">&lt;SQL term&gt;]}</p><p class="empty-line"/><p class="p">UPDATE изменяет значения в каждом столбце с именем&lt;column name&gt; на соответствующее значение&lt;value expression&gt;. Если предложение WHERE использует предикат&lt;predicate&gt;, то только строки таблиц чьи текущие значения делают тот предикат&lt;predicate&gt; верным, могут быть изменены. Если WHERE использует предложение CURRENT OF, то значения в строке таблицы с именем&lt;table name&gt; находящиеся в курсоре с именем&lt;cursor name&gt; меняются. WHERE CURRENT OF пригодно для использования только во вложенном SQL, и только с модифицируемыми курсорами. При отсутствия предложения WHERE - все строки меняются.</p><p class="empty-line"/><p class="p"><strong>WHENEVER</strong> (ВСЯКИЙ РАЗ КАК)</p><p class="empty-line"/><p class="p">Синтаксис</p><p class="empty-line"/><p class="p">EXEC SQL WHENEVER &lt;SQLcond&gt; &lt;actlon&gt; &lt;SQL term&gt;</p><p class="p">&lt;SQLcond&gt; ::=SQLERROR | NOT FOUND | SQLWARNING</p><p class="p">(последнее - нестандартное)</p><p class="p">&lt;action&gt; ::=CONTINUE | GOTO &lt;target&gt; | GOTO &lt;target&gt;</p><p class="p">&lt;target&gt; ::=зависит от главного языка</p></span><span id="id38"><div class="title2">
+<p class="p1">Приложение E. ТАБЛИЦЫ ИСПОЛЬЗУЕМЫЕ В КНИГЕ</p>
+</div><p class="empty-line"/><p class="p"><strong>ТАБЛИЦА 1: ПРОДАВЦЫ</strong></p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city </strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">.12</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">.13</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">.11</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+<td class="td"><p class="p">.15</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">.10</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p"><strong>ТАБЛИЦА 2: ЗАКАЗЧИКИ</strong></p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">200</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">SanJose</p></td>
+<td class="td"><p class="p">200</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">SanJose</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p"><strong>ТАБЛИЦА 3: ПОРЯДКИ</strong></p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3001</p></td>
+<td class="td"><p class="p">18.69</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3003</p></td>
+<td class="td"><p class="p">767.19</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3005</p></td>
+<td class="td"><p class="p">5160.45</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.16</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">1713.23</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3007</p></td>
+<td class="td"><p class="p">75.75</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">1309.95</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/></span></span>
+</body>
+</html>

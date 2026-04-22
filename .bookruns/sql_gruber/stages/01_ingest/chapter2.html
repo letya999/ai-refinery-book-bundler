@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span id="id1"><div class="title">
+<p class="p1">МАРТИН ГРУБЕР</p>
+<p class="p1">Понимание SQL</p>
+</div><p class="p">Перевод Лебедева В.Н.</p><p class="p">Под редакцией Булычева В.Н.</p><p class="p">МОСКВА, 1993</p><p class="p">MARTIN GRUBER</p><p class="p">Understanding SQL</p><span id="id2"><div class="title1">
+<p class="p1">Команда SELECT</p>
+</div><p class="empty-line"/><p class="p"><code class="code">SELECT * | { [ DISTINCT | ALL] &lt;value expression&gt;.,..}</code></p><p class="p"><code class="code">    FROM { &lt;table name&gt; [ &lt;alias&gt; ] }.,..</code></p><p class="p"><code class="code">    [ WHERE &lt;predicate&gt;]</code></p><p class="p"><code class="code">    [ GROUP BY { &lt;column name&gt; | &lt;integer&gt; }.,..]</code></p><p class="p"><code class="code">    [ HAVING &lt;predicate&gt;]</code></p><p class="p"><code class="code">    [ ORDERBY { &lt;column name&gt; | &lt;integer&gt; }.,..]</code></p><p class="p"><code class="code">    [ { UNION [ALL]</code></p><p class="empty-line"/><p class="empty-line"/><p class="p"><code class="code">SELECT * | { [DISTINCT | ALL] &lt; value expression &gt;.,..}</code></p><p class="p"><code class="code">    FROM { &lt;table name&gt; [&lt;alias&gt;]} .,..</code></p><p class="p"><code class="code">    [ WHERE &lt;predicate&gt;</code></p><p class="p"><code class="code">    [ GROUP BY { &lt;columnname&gt; | &lt;integer&gt; }.,..]</code></p><p class="p"><code class="code">    [ HAVING &lt;predicate&gt;]</code></p><p class="p"><code class="code">    [ ORDER BY { &lt;columnname&gt; | &lt;integer&gt; }.,..] } ] ...;</code></p><p class="p">Элементы, используемые в команде SELECT</p><table class="table">
+<tr>
+<td class="td"><p class="p">ЭЛЕМЕНТ</p></td>
+<td class="td"><p class="p">ОПРЕДЕЛЕНИЕ</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;value expression&gt;</p></td>
+<td class="td"><p class="p">Выражение, которое производит значение. Оно может включать в себя или содержать &lt;column name&gt;.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;table name&gt;</p></td>
+<td class="td"><p class="p">Имя или синоним таблицы или представления</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;alias&gt;</p></td>
+<td class="td"><p class="p">Временный синоним для &lt;table name&gt;, определеный в этой таблице и используемый только в этой команде</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;predicate&gt;</p></td>
+<td class="td"><p class="p">Условие , которое может быть верным или неверным для каждой строки или комбинации строк таблицы в предложении FROM.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;column name&gt;</p></td>
+<td class="td"><p class="p">Имя столбца в таблице.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;integer&gt;</p></td>
+<td class="td"><p class="p">Число с десятичной точкой. В этом случае, оно показывает &lt;value expression&gt; в предложении SELECT с помощью идентификации его местоположения в этом предложении.</p></td>
+</tr>
+</table><p class="p"> </p><p class="p"> </p></span><span id="id3"><div class="title1">
+<p class="p1">Команды UPDATE, INSERT, DELETE</p>
+</div><span id="id4"><div class="title2">
+<p class="p1">UPDATE</p>
+</div><p class="empty-line"/><p class="p"><code class="code">UPDATE &lt;tablename&gt;</code></p><p class="p"><code class="code">    SET { | }.,. .&lt; column name&gt; = &lt;value expresslon&gt; [ WHERE &lt;predlcate&gt;</code></p><p class="p"><code class="code">    | WHERE CURRENT OF &lt;cursor name&gt; (*только для вложения*) ];</code></p></span><span id="id5"><div class="title2">
+<p class="p1">INSERT</p>
+</div><p class="empty-line"/><p class="p"><code class="code">INSERT INTO &lt; table name&gt; [(&lt;column name&gt; .,. ]</code></p><p class="p"><code class="code">    { VALUES ( &lt;value expression&gt; .,.. ) } | &lt;query&gt;;</code></p></span><span id="id6"><div class="title2">
+<p class="p1">DELETE</p>
+</div><p class="empty-line"/><p class="p"><code class="code">DELETE FROM &lt;table name&gt;</code></p><p class="p"><code class="code">    [ WHERE &lt;predicate&gt;</code></p><p class="p"><code class="code">    | WHERE CURRENT OF &lt;cursor name&gt; (*только для вложения*) ];</code></p><p class="subtitle">Элементы, используемые в командах МОДИФИКАЦИИ</p><table class="table">
+<tr>
+<td class="td"><p class="p">ЭЛЕМЕНТ</p></td>
+<td class="td"><p class="p">ОПРЕДЕЛЕНИЕ</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;cursor name&gt;</p></td>
+<td class="td"><p class="p">Имя курсора используемого в этой программе.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;query&gt;</p></td>
+<td class="td"><p class="p">Допустимая команда SELECT.</p></td>
+</tr>
+</table><p class="p">Для других элементов смотри команду SELECT.</p><p class="p">Символы Используемые в Синтаксисе Предлжения</p><table class="table">
+<tr>
+<td class="td"><p class="p">СИМВОЛ</p></td>
+<td class="td"><p class="p">ОБЪЯСНЕНИЕ</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">|</p></td>
+<td class="td"><p class="p">Любой предшествующий знаку (|) символ может быть произвольно</p><p class="p">заменен на любой следующий за (|). Это — символический способ высказывания "или" ("or").</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">{ }</p></td>
+<td class="td"><p class="p">Все, что включено в фигурные скобки обрабатывается как модуль с целью оценки |, .,.. или других символов.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">[ ]</p></td>
+<td class="td"><p class="p">Все,включенное в квадратные скобки является необязательным</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">...</p></td>
+<td class="td"><p class="p">Любое, предшествующее этому, может повторяться любое число раз.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">.,..</p></td>
+<td class="td"><p class="p">Любое, предшествующее этому, и в каждом случае отделенное</p></td>
+</tr>
+</table><p class="p">запятыми, может повторяться любое число раз.</p><p class="p"> </p><p class="p"> </p></span></span><span id="id7"><div class="title2">
+<p class="p1">Команда CREATE TABLE</p>
+</div><p class="empty-line"/><p class="p"><code class="code">CREATE TABLE &lt;table name&gt;</code></p><p class="p"><code class="code">    ( { &lt;column name&gt; &lt;data type&gt; | &lt;size&gt;]</code></p><p class="p"><code class="code">    [&lt;colcnstrnt&gt; ...]} .,.. );</code></p><p class="p"><code class="code">    [&lt;tabconstrnt&gt;] .,.. );</code></p><p class="p">Элементы, используемые в команде CREATE TABLE</p><table class="table">
+<tr>
+<td class="td"><p class="p">ЭЛЕМЕНТ</p></td>
+<td class="td"><p class="p">ОПРЕДЕЛЕНИЕ</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;table name&gt;</p></td>
+<td class="td"><p class="p">Имя таблицы создаваемой этой командой.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;column name&gt;</p></td>
+<td class="td"><p class="p">Имя столбца таблицы.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">&lt;data type&gt;</p></td>
+<td class="td"><p class="p">Тип данных</p></td>
+</tr>
+</table><p class="p">Тип данных, который может содержаться в столбце.</p><p class="subtitle">Может быть любым из следующих:</p><p class="empty-line"/><p class="p">INTEGER (ЦЕЛОЕ ЧИСЛО),</p><p class="p">CHARACTER (СИМВОЛЬНОЕ),</p><p class="p">DECIMAL (ДЕСЯТИЧНОЕ),</p><p class="p">NUMERIC (ЧИСЛОВОЕ),</p><p class="p">SMALLINT (НАИМЕНЬШЕЕ)</p><p class="empty-line"/><p class="p">FLOAT (С ПЛАВАЮЩЕЙ ТОЧКОЙ)</p><p class="empty-line"/><p class="p">REAL (РЕАЛЬНОЕ),</p><p class="p">DOUBLE PRECISION (УДВОЕННАЯ ТОЧНОСТЬ С ПЛАВАЮЩЕЙ ТОЧКОЙ),</p><p class="p">LONG * (ДЛИННОЕ *),</p><p class="p">VARCHAR * (ПЕРЕМЕННОЕ СИМВОЛЬНОЕ *),</p><p class="p">DATE * (ДАТА *),</p><p class="p">TIME * (ВРЕМЯ *)</p><p class="empty-line"/><p class="p">(* — указывает на нестандартный для SQL тип данных)</p><p class="empty-line"/><p class="p">&lt;size&gt; Размер. Его значение зависит от &lt;data type&gt;.</p><p class="p">&lt;colconstrnt&gt; <strong>Может быть любым из следующих</strong>:</p><p class="p">NOT NULL (НЕ НУЛЕВОЙ),</p><p class="p">UNIQUE (УНИКАЛЬНЫЙ),</p><p class="p">PRIMARY KEY (ПЕРВИЧНЫЙ КЛЮЧ),</p><p class="p">CHECK(&lt;predicate&gt;) (ПРОВЕРКА предиката),</p><p class="p">DEFAULT = &lt;value expression&gt; (ПО УМОЛЧАНИЮ = значимому выражению)</p><p class="p">REFERENCES &lt;table name&gt; [(&lt;column name&gt; .,.. )] (ССЫЛКА НА имя таблицы [(имя столбца) ] )</p><p class="p">&lt;tabconstrnt&gt; <strong>Может быть любым из следующих:</strong></p><p class="p"><strong>UNIQUE</strong> (УНИКАЛЬНЫЙ),</p><p class="p">PRIMARY KEY (ПЕРВИЧНЫЙ КЛЮЧ),</p><p class="p">CHECK (ПРОВЕРКА предиката )</p><p class="p">FOREIGN KEY(&lt;column name&gt;) (ВНЕШНИЙ КЛЮЧ)</p><p class="p">REFERENCES &lt;table name&gt; [(&lt;column name&gt; .,.. )] (ССЫЛКА НА имя таблицы [( имя столбца) ].</p></span><span id="id8"><div class="title2">
+<p class="p1">ПРЕДИСЛОВИЕ</p>
+</div><p class="p">"ПОНИМАНИЕ SQL" - это полный учебник по программированию на Структурированном Языке Запросов, написанный специально для тех, кто будет использовать SQL в процессе работы. Даже если это ваш первый опыт с компьютерами или управлением базами данных, книга "ПОНИМАНИЕ SQL" очень быстро научит вас свободно работать с реальной SQL, использованию простых запросов, а также снабдит вас ясными понятиями об автоматизированном управлении базой данных. Книга даст вам краткое, удобное в чтении введение в реляционные базы данных. Предоставит вам обучающие программы, чтобы, овладевая командами SQL шаг за шагом, помочь вам узнать, как извлекать и обрабатывать информацию, содержащуюся в таблицах данных, т.е.:</p><p class="p">* выбирать информацию, с которой вы хотите работать</p><p class="p">* добавлять, удалять, и модифицировать информацию в таблице данных</p><p class="p">* использовать и-или, верно/неверно и другие условия для обнуления определенной информации</p><p class="p">* использовать специальные функции SQL для суммирования ваших данных.</p><p class="p">Книга покажет Вам, как эффективно работать с многочислеными таблицами данных, используя улучшеную технику для запроса более чем одной таблицы одновременно, строить комплекс запросов и подзапросов, и использовать представления, чтобы создавать базы данных и работать с базами данных раздельно с многими таблицами.</p><p class="p">Научит создавать новые таблицы данных для пользовательских деловых прикладных программ. Вы исследуете принципы эффективного проектирования базы данных, а также техники для обеспечения целостности данных и их защиты.</p><p class="p">Вы узнаете, как использовать SQL с другими языками в специальной главе SQL для программистов.</p><p class="p">"ПОНИМАНИЕ SQL" - необходима и пригодна для любой реализации Структурированного Языка Запроса. Книга включает и краткий справочный стандарт SQL и руководство к общим нестандартным особенностям SQL.</p><p class="subtitle">Об Авторе</p><p class="p">Мартин Грубер - свободный писатель, учитель и консультант из Сан-Франциско.</p><p class="p">В дополнении к написанию и редактированию книг, руководств пользователей и документации, он работает в широком спектре интересов, связанных с компьютерами и компьютерными базами данных.</p></span></span>
+</body>
+</html>

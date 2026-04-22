@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>SQL: Агрегация данных</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-deep: #1e293b;
+      --card-bg: var(--bg-deep);
+      --text: #f8fafc;
+      --acc: #38bdf8;
+      --accent: var(--acc);
+      --border: var(--acc);
+      --muted: #94a3b8;
+      --acc2: #10b981;
+      --acc3: #ef4444;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      padding: 2rem;
+      margin: 0;
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 100vh !important;
+      padding-bottom: 5rem !important;
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .module-title { color: var(--accent); border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+    
+    .formula-card, pre, code {
+      background: #020617 !important;
+      color: var(--accent) !important;
+      border: 1px solid var(--border) !important;
+    }
+
+    .formula-card {
+      border-left: 4px solid var(--accent) !important;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      border-radius: 4px;
+    }
+    
+    code { padding: 0.2rem 0.4rem; border-radius: 4px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .grid-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    .grid-item h3 { margin-top: 0; color: var(--accent); }
+    
+    .vis-diag {
+      background: var(--bg-deep) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+    
+    .step-box {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: var(--accent);
+      color: var(--bg);
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .arrow { margin: 0 1rem; font-size: 1.5rem; color: var(--text); }
+    h2 { margin-top: 3rem; }
+    .lead { color: var(--muted) !important; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 class="module-title">Модуль 3: Агрегация и Группировка</h1>
+    
+    <p class="lead">Агрегатные функции позволяют вычислять итоговые значения для групп строк, превращая массивы данных в конкретные бизнес-показатели.</p>
+
+    <div class="grid">
+      <div class="grid-item">
+        <h3>COUNT()</h3>
+        <p>Считает количество строк. <code>COUNT(*)</code> — все строки, <code>COUNT(col)</code> — не NULL.</p>
+      </div>
+      <div class="grid-item">
+        <h3>SUM()</h3>
+        <p>Арифметическая сумма числовых значений в столбце.</p>
+      </div>
+      <div class="grid-item">
+        <h3>AVG()</h3>
+        <p>Среднее арифметическое (только для чисел).</p>
+      </div>
+      <div class="grid-item">
+        <h3>MIN / MAX</h3>
+        <p>Минимальное и максимальное значение (числа, даты, текст).</p>
+      </div>
+    </div>
+
+    <div class="formula-card">
+      SELECT snum, COUNT(cnum), SUM(amt)<br>
+      FROM Orders<br>
+      GROUP BY snum;
+    </div>
+
+    <h2>Механика GROUP BY</h2>
+    <div class="vis-diag">
+      <div class="step-box">RAW DATA</div>
+      <span class="arrow">➔</span>
+      <div class="step-box" style="background: var(--acc2);">GROUPING (by Key)</div>
+      <span class="arrow">➔</span>
+      <div class="step-box" style="background: var(--acc3);">AGGREGATION (Math)</div>
+      <p style="margin-top:1rem; font-size: 0.9rem; color: var(--muted);">
+        GROUP BY разделяет таблицу на виртуальные группы по указанному столбцу.
+      </p>
+    </div>
+
+    <h2>Фильтрация групп: HAVING</h2>
+    <p>В отличие от WHERE, который фильтрует строки <strong>до</strong> группировки, HAVING фильтрует уже готовые группы.</p>
+    
+    <div class="formula-card">
+      SELECT city, AVG(rating)<br>
+      FROM Customers<br>
+      GROUP BY city<br>
+      HAVING AVG(rating) > 200;
+    </div>
+
+    <h2>Ограничения</h2>
+    <ul>
+      <li>В SELECT нельзя мешать обычные столбцы и агрегаты (без GROUP BY).</li>
+      <li>Агрегатные функции (кроме COUNT) игнорируют NULL.</li>
+      <li>HAVING работает медленнее WHERE, используйте его только для условий по агрегатам.</li>
+    </ul>
+  </div>
+</body>
+</html>

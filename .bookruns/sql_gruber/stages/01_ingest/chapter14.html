@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id21"><div class="title2">
+<p class="p1">Глава 13. ИСПОЛЬЗОВАНИЕ ОПЕРАТОРОВ ANY, ALL, И SOME</p>
+</div><p class="empty-line"/><p class="p">ТЕПЕРЬ, КОГДА ВЫ ОВЛАДЕЛИ ОПЕРАТОРОМ EXISTS, Вы узнаете приблизительно три специальных оператора ориентируемых на подзапросы. (Фактически, имеются только два, так как ANY и SOME - одно и то же.) Если вы поймете работу этих операторов, вы будете понимать все типы подзапросов предиката используемых в SQL . Кроме того, вы будете представлены различным способам где данный запрос может быть сформирован используя различные типы подзапросов предиката, и вы поймете преимущества и недостатки каждого из этих подходов.</p><p class="p">ANY, ALL, и SOME напоминают EXISTS который воспринимает подзапросы как аргументы; однако они отличаются от EXISTS тем, что используются совместно с реляционными операторами. В этом отношении, они напоминают оператор IN когда тот используется с подзапросами; они берут все значения выведенные подзапросом и обрабатывают их как модуль. Однако, в отличие от IN, они могут использоваться только с подзапросами.</p><p class="p"><strong>СПЕЦИАЛЬНЫЕ ОПЕРАТОРЫ </strong></p><p class="p">ANY или SOME</p><p class="p">Операторы SOME и ANY - взаимозаменяемы везде и там где мы используем ANY, SOME будет работать точно так же. Различие в терминологии состоит в том чтобы позволить людям использовать тот термин который наиболее однозначен. Это может создать проблему; потому что, как мы это увидим, наша интуиция может иногда вводить в заблуждение.</p><p class="p">Имеется новый способ нахождения продавца с заказчиками размещенными в их городах (вывод для этого запроса показывается в Таблице 13.1 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE city=ANY</p><p class="p">(SELECT city</p><p class="p">FROM Customers );</p><p class="empty-line"/><p class="p">Оператор ANY берет все значения выведенные подзапросом, (для этого случая - это все значения city в таблице Заказчиков ), и оценивает их как верные если любой(ANY) из их равняется значению города текущей строки внешнего запроса.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Salespeople WHERE city=ANY</p><p class="p">(SELECT city FROM Customers);</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">0.13</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.11</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13. 1: Использование оператора ANY</p><p class="p">Это означает, что подзапрос должен выбирать значения такого же типа как и те, которые сравниваются в основном предикате. В этом его отличие от EXISTS, который просто определяет, производит ли подзапрос результаты или нет, и фактически не использует эти результаты.</p><p class="p">ИСПОЛЬЗОВАНИЕ ОПЕРАТОРОВ IN ИЛИ EXISTS ВМЕСТО ОПЕРАТОРА ANY</p><p class="p">Мы можем также использовать оператор IN чтобы создать запрос аналогичный предыдущему :</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE city IN</p><p class="p">( SELECT city</p><p class="p">FROM Customers );</p><p class="p">Этот запрос будет производить вывод показанный в Таблице 13.2.</p><p class="p">Однако, оператор ANY может использовать другие реляционные операторы кроме равняется (=), и таким образом делать сравнения которые являются выше возможностей IN. Например, мы могли бы найти всех продавцов с их заказчиками которые следуют им в алфавитном порядке (вывод показан в Таблице 13.3)</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE sname &lt; ANY</p><p class="p">( SELECT cname</p><p class="p">FROM Customers);</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Salespeople</p><p class="p">WHERE city IN (SELECT city FROM Customers);</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">0.13</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.11</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13. 2: Использование IN в качестве альтернативы к ANY</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Salespeople</p><p class="p">WHERE sname &lt; ANY (SELECT cname FROM Customers);</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.11</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">0.10</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13. 3: Использование оператора ANY с оператором "неравно" (&lt;)</p><p class="empty-line"/><p class="p">продавцов для их заказчиков которые упорядоченны в алфавитном порядке</p><p class="p">( вывод показан в Таблице 13.3)</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE sname &lt; ANY</p><p class="p">( SELECT cname</p><p class="p">FROM Customers);</p><p class="empty-line"/><p class="p">Все строки были выбраны для Serres и Rifkin, потому что нет других заказчиков чьи имена следовали бы за ими в алфавитном порядке.</p><p class="p">Обратите внимание что это является d основнjм эквивалентом следующему запросу с EXISTS, чей вывод показывается в Таблице 13.4:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople outer</p><p class="p">WHERE EXISTS</p><p class="p">( SELECT *</p><p class="p">FROM Customers inner</p><p class="p">WHERE outer.sname &lt; inner.cname );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Salespeople outer</p><p class="p">WHERE EXISTS (SELECT *</p><p class="p">FROM Customers inner WHERE outer.sname &lt; inner.cname);</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.11</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">0.10</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13.4 Использование EXISTS как альтернатива оператору ANY</p><p class="p">Любой запрос который может быть сформулирован с ANY (или, как мы увидим, с ALL ), мог быть также сформулирован с EXISTS, хотя наоборот будет неверно. Строго говоря, вариант с EXISTS не абсолютно идентичен вариантам с ANY или с ALL из-за различия в том как обрабатываются пустые( NULL ) значения (что будет обсуждаться позже в этой главе). Тем ни менее, с технической точки зрения, вы могли бы делать это без ANY и ALL если бы вы стали очень находчивы в использовании EXISTS (и IS NULL ).</p><p class="p">Большинство пользователей, однако, находят ANY и ALL более удобными в использовании чем EXISTS, который требует соотнесенных подзапросов.</p><p class="p">Кроме того, в зависимости от реализации, ANY и ALL могут, по крайней мере в теории, быть более эффективными чем EXISTS. Подзапросы ANY или ALL могут выполняться один раз и иметь вывод используемый чтобы определять предикат для каждой строки основного запроса. EXISTS, с другой стороны, берет соотнесенный подзапрос, который требует чтобы весь подзапрос повторно выполнялся для каждой строки основного запроса. SQL пытается найти наиболее эффективный способ выполнения любой команды, и может попробовать преобразовать менее эффективную формулу запроса в более эффективную (но вы не можете всегда рассчитывать на получение самой эффективной формулировки ).</p><p class="p">Основная причина для формулировки EXISTS как альтернативы ANY и ALL в том что ANY и ALL могут быть несколько неоднозначен, из-за способа использования этого термина в Английском языке, как вы это скоро увидите. С приходом понимания различия способов формулирования данного запроса, вы сможете поработать над процедурами которые сейчас кажутся Вам трудными или неудобными.</p><p class="p">КАК ANY МОЖЕТ СТАТЬ НЕОДНОЗНАЧНЫМ</p><p class="p">Как подразумевалось выше, ANY не полностью однозначен. Если мы создаем запрос чтобы выбрать заказчиков которые имеют больший рейтинг чем любой заказчик в Риме, мы можем получить вывод который несколько отличался бы от того что мы ожидали (как показано в Таблице 13.5 ):</p><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE rating &gt; ANY</p><p class="p">( SELECT rating</p><p class="p">FROM Customers</p><p class="p">WHERE city=Rome );</p><p class="p">В английском языке, способ которым мы обычно склонны интерпретировать оценку " больше чем любой (где city=Rome ) ", должен вам сообщить что это значение оценки должно быть выше чем значение оценки в каждом случае где значение city=Rome. Однако это не так, в случае ANY - используемом в SQL . ANY оценивает как верно, если подзапрос находит любое значение которое делает условие верным.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Customers WHERE rating &gt; ANY</p><p class="p">(SELECT rating FROM Customers WHERE city='Rome');</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">200</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">200</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13.5 Как оператор "больше чем" (&gt;) интерпретируется ANY</p><p class="p">Если мы оценим ANY способом использующим грамматику Английского Языка, то только заказчики с оценкой 300 будут превышать Giovanni, который находится в Риме и имеет оценку 200. Однако, подзапрос ANY также находит Periera в Риме с оценкой 100. Так как все заказчики с оценкой 200 были выше этой, они будут выбраны, даже если имелся другой заказчик из Рима(Giovanni) чья оценка не была выше (фактически, то что один из выбранных заказчиков также находится в Риме несущественно).</p><p class="p">Так как подзапрос произвел по крайней мере одно значение которое сделает предикат верным в отношении этих строк, строки были выбраны. Чтобы дать другой пример, предположим что мы должны были выбирать все порядки сумм приоретений которые были больше чем по крайней мере один из порядков на 6-е Октября:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">WHERE amt &gt; ANY</p><p class="p">( SELECT amt</p><p class="p">FROM Orders</p><p class="p">WHERE odate=10/06/1990 );</p><p class="empty-line"/><p class="p">Вывод для этого запроса показывается в Таблице 13.6.</p><p class="p">Даже если самая высокая сумма приобретений в таблице (9891.88) - имелась на 6-е Октября, предыдущая строка имеет более высокое значение суммы чем другая строка на 6-е Октября, которая имела значение суммы=1309.95. Имея реляционный оператор "&gt;=" вместо просто " &gt; ", эта строка будет также выбирана, потому что она равна самой себе.</p><p class="p">Конечно, вы можете использовать ANY с другой SQL техникой, например с техникой обьединения. Этот запрос будет находить все порядки со значением суммы меньшей чем значение любой суммы для заказчика в San Jose (вывод показывается в Таблице 13.7):</p><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">WHERE amt &lt; ANY</p><p class="p">( SELECT amt</p><p class="p">FROM Orders A, Customers b</p><p class="p">WHERE a.cnum=b.cnum</p><p class="p">AND b.city=" San Jose' );</p><p class="empty-line"/><p class="p">Даже если нименьший порядок в таблице был для заказчика из San Jose, то был второй наибольший; следовательно почти все строки будут выбраны. Простой способ запомнить, что &lt; ANY значение меньшее чем наибольшее выбранное значение, а &gt; ANY значение большее чем наименьшее выбранное значение.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Orders WHERE amt &gt; ANY</p><p class="p">(SELECT amt FROM Orders WHERE odate=10/06/1990);</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3005</p></td>
+<td class="td"><p class="p">5160.45</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">1713.23</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13. 6: Выбранное значение больше чем любое(ANY) на 6-е Октября</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">WHERE amt &gt; ANY (SELECT amt FROM Orders a, Customers b</p><p class="p">WHERE a.cnum=b.cnum AND b.city='San Jose');</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3001</p></td>
+<td class="td"><p class="p">18.69</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3003</p></td>
+<td class="td"><p class="p">767.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">1713.23</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3007</p></td>
+<td class="td"><p class="p">75.10</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">1309.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13. 7: Использование ANY с объединением</p><p class="p">Фактически, вышеуказанные команды весьма похожи на следующее - (вывод показан в Таблице 13.8) :</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Orders</p><p class="p">WHERE amt &lt;</p><p class="p">( SELECT MAX amt</p><p class="p">FROM Orders A, Customers b</p><p class="p">WHERE a.cnum=b.cnum</p><p class="p">AND b.city=" San Jose' );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">WHERE amt &lt; (SELECT MAX (amt) FROM Orders a, Customers b</p><p class="p">WHERE a.cnum=b.cnum AND b.city='San Jose');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3005</p></td>
+<td class="td"><p class="p">5160.45</p></td>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">1713.23</p></td>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13.8: Использование агрегатной функции вместо ANY</p><p class="subtitle">СПЕЦИАЛЬНЫЙ ОПЕРАТОР ALL</p><p class="p">С помощью ALL, предикат является верным, если каждое значение выбранное подзапросом удовлетворяет условию в предикате внешнего запроса.</p><p class="p">Если мы хотим пересмотреть наш предыдущий пример чтобы вывести только тех заказчиков чьи оценки, фактически, выше чем у каждого заказчика в Париже, мы можем ввести следующее чтобы произвести вывод показанный в Таблтце 13.9:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE rating &gt; ALL</p><p class="p">(SELECT rating</p><p class="p">FROM Customers</p><p class="p">WHERE city=Rome ):</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Customers WHERE rating &gt; ALL</p><p class="p">(SELECT rating FROM Customers WHERE city='Rome');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13.9: Использование оператора ALL</p><p class="p">Этот оператор проверяет значения оценки всех заказчиков в Риме. Затем он находит заказчиков с оценкой большей чем у любого из заказчиков в Риме. Самая высокая оценка в Риме - у Giovanni( 200). Следовательно, выбираются только значения выше этих 200.</p><p class="p">Как и в случае с ANY, мы можем использовать EXISTS для производства альтернативной формулировки такого же запроса - (вывод показан в Таблице 13.10 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers outer</p><p class="p">WHERE NOT EXISTS</p><p class="p">( SELECT *</p><p class="p">FROM Customers inner</p><p class="p">WHERE outer.rating &lt;=inner.rating</p><p class="p">AND inner.city=|Rome| );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Customers outer WHERE NOT EXISTS</p><p class="p">(SELECT * FROM Customers inner WHERE outer</p><p class="p">rating=inner.rating AND inner.city='Rome');</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13.10: Использование EXISTS в качестве альтернативы к ALL</p><p class="empty-line"/><p class="subtitle">РАВЕНСТВА И НЕРАВЕНСТВА</p><p class="p">ALL используется в основном с неравенствами чем с равенствами, так как значение может быть "равным для всех" результатом подзапроса только если все результаты, фактически, идентичны. Посмотрите следующий запрос:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE rating=ALL</p><p class="p">( SELECT rating</p><p class="p">FROM Customers</p><p class="p">WHERE city=" San Jose' );</p><p class="empty-line"/><p class="p">Эта команда допустима, но, c этими данными, мы не получим никакого вывода. Только в единственом случае вывод будет выдан этим запросом - если все значения оценки в San Jose окажутся идентичными. В этом случае, можно сказать следующее :</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE rating=</p><p class="p">( SELECT DISTINCT rating</p><p class="p">FROM Customers</p><p class="p">WHERE city=" San Jose' );</p><p class="empty-line"/><p class="p">Основное различие в том, что эта последняя команда должна потерпеть неудачу если подзапрос выведет много значений, в то время как вариант с ALL просто не даст никакого вывода. В общем, не самая удачная идея использовать запросы которые работают только в определенных ситуациях подобно этой. Так как ваша база данных будет постоянно меняться, это еудачный способ, чтобы узнать о ее содержании. Однако, ALL может более эффективно использоваться с неравенствами, то есть с оператором "&lt; &gt;". Но учтите что сказанное в SQL что - значение которое не равняется всем результатам подзапроса, - будет отличаться от того же но сказанного с учетом граматики Английского языка. Очевидно, если подзапрос возвращает много различных значений, как это обычно бывает, ни одно</p><p class="p">отдельное значение не может быть равно им всем в обычном смысле. В SQL, выражение - &lt; &gt; ALL - в действительности соответствует " не равен любому " результату подзапроса. Другими словами, предикат верен, если данное значение не найдено среди результатов подзапроса. Следовательно, наш предыдущий пример противоположен по смыслу этому примеру (с выводом показанным в Таблице 13.11):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE rating &lt; &gt; ALL</p><p class="p">( SELECT rating</p><p class="p">FROM Customers</p><p class="p">WHERE city=" San Jose' );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Customers WHERE rating &lt; &gt; ALL</p><p class="p">(SELECT rating FROM Customers WHERE city='San Jose');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13.11: Использование ALL с &lt; &gt;</p><p class="p">Вышеупомянутый подзапрос выберает все оценки для города San Jose. Он выводит набор из двух значений: 200 (для Liu ) и 300 (для Cisneros).</p><p class="p">атем, основной запрос, выбирает все строки, с оценкой не совпадающей ни с одной из них - другими словами все строки с оценкой 100. Вы можете сформулировать тот же самый запрос используя оператор NOT IN:</p><p class="empty-line"/><p class="p">SELECT*</p><p class="p">FROM Customers</p><p class="p">WHERE rating NOT IN</p><p class="p">( SELECT rating</p><p class="p">FROM Customers</p><p class="p">WHERE city=" San Jose' );</p><p class="empty-line"/><p class="p">Вы могли бы также использовать оператор ANY:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE NOT rating=ANY</p><p class="p">( SELECT rating</p><p class="p">FROM Customers</p><p class="p">WHERE city=" San Jose' );</p><p class="empty-line"/><p class="p">Вывод будет одинаков для всех трех условий.</p><p class="empty-line"/><p class="p">ПРАВИЛЬНОЕ ПОНИМАНИЕ ANY И ALL</p><p class="p">В SQL, сказать что - значение больше( или меньше ) чем любое(ANY) из набора значений - тоже самое что сказать, что оно больше( или меньше ) чем любое одно отдельное из этих значений. И наоборот, сказать что значение не равно всему(ALL) набору значений, тоже что сказать, что нет такого значения в наборе которому оно равно.</p><p class="p">КАК ANY, ALL, И EXIST ПОСТУПАЮТM С ОТСУТСТВУЮЩИМИ И НЕИЗВЕСТНЫМИ ДАННЫМИ</p><p class="p">Как было сказано, имеются некоторые различия между EXISTS и операторами представленными в этой главе относительно того как они обрабатывают оператор NULL. ANY и ALL также отличаются друг от друга тем как они реагируют если подзапрос не произвел никаких значений чтобы использовать их в сравнении. Эти различия могут привести к непредвиденным результатам на Ваши запросы если вы не будете их учитывать.</p><p class="subtitle">КОГДА ПОДЗАПРОС ВОЗВРАЩАЕТСЯ ПУСТЫМ</p><p class="p">Одно значительное различие между ALL и ANY - способ действия в cитуации когда подзапрос не возвращает никаких значений. В принципе, всякий раз, когда допустимый подзапрос не в состоянии сделать вывод, ALL - автоматически верен, а ANY автоматически неправилен. Это означает, что следующий запрос</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE rating &gt; ANY</p><p class="p">( SELECT rating</p><p class="p">FROM Customers</p><p class="p">WHERE city=Boston );</p><p class="empty-line"/><p class="p">не произведет никакого вывода, в то время как запрос -</p><p class="empty-line"/><p class="p">SELECT</p><p class="p">FROM Customers</p><p class="p">WHERE rating &gt; ALL</p><p class="p">( SELECT rating</p><p class="p">FROM Customers</p><p class="p">WHERE city='Boston' );</p><p class="empty-line"/><p class="p">выведет всю таблицу Заказчиков. Когда нет никаких заказчиков в Boston,</p><p class="p">естественно, ни одно из этих сравнений не имеет значення.</p><p class="p">ANY И ALL ВМЕСТО EXISTS С ПУСТЫМ УКАЗАТЕЛЕМ( NULL )</p><p class="p">Значения NULL также имеют некоторые проблемы с операторами наподобие этих. Когда SQL сравнивает два значения в предикате, одно из которых пустое (NULL), то результат неизвестен (смотрите Главу 5). Неизвестный предикат, подобен неверному и является причиной того что строка не выбирается, но работать он будет иначе в некоторых похожих запросах, в зависимости от того, используют они ALL или ANY вместо EXISTS. Рассмотрим наш предыдущий пример:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE rating &gt; ANY</p><p class="p">( SELECT rating</p><p class="p">FROM Customers</p><p class="p">WHERE city='Rome' );</p><p class="empty-line"/><p class="p">и еще один пример:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers outer</p><p class="p">WHERE EXISTS</p><p class="p">( SELECT *</p><p class="p">FROM Customers inner</p><p class="p">WHERE outer.rating &gt; inner.rating</p><p class="p">AND inner.city='Rome' );</p><p class="empty-line"/><p class="p">В общем, эти два запроса будут вести себя одинаково. Но предположим, что появилось пустое(NULL) значение в столбце rating таблицы Заказчиков:</p><p class="empty-line"/><p class="p">CNUM CNAME CITY RATING SNUM 2003 Liu SanJose NULL 1002</p><p class="p">В варианте с ANY, где оценка Liu выбрана основным запросом, значение NULL делает предикат неизвестным а строка Liu не выбирается для вывода. Однако, в варианте с NOT EXISTS когда эта строка выбрана основным запросом, значение NULL используется в предикате подзапроса, делая его неизвестным в каждом случае. Это означает что подзапрос не будет производить никаких значений, и EXISTS будет неправилен. Это, естественно, делает оператор NOT EXISTS верным. Следовательно, строка Liu будет выбрана для вывода. Это основное расхождение, в отличие от других типов предикатов, где значение EXISTS независимо от того верно оно или нет - всегда неизвестно. Все это является аргументом в пользу использования варианта формулировки с ANY. Мы не считаем что значение NULL является выше чем допустимое значение. Более того, результат будет тот же, если мы будем проверять для более низкого значения.</p><p class="p">ИСПОЛЬЗОВАНИЕ COUNT ВМЕСТО EXISTS</p><p class="p">Подчеркнем, что все формулировки с ANY и ALL могут быть в точности выполнены с EXISTS, в то время как наоборот будет неверно. Хотя в этом случае, также верно и то что EXISTS и NOT EXISTS подзапросы могут обманывать при выполнении тех же самых подзапросов с COUNT(*) в предложения SELECT подзапроса. Если больше чем ноль строк выводе будет подсчитано, это эквивалентно EXISTS; в противном случае это работает также как NOT EXISTS. Следующее является этому примером (вывод показывается в Таблице 13.12 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers outer</p><p class="p">WHERE NOT EXISTS</p><p class="p">( SELECT *</p><p class="p">FROM Customers inner</p><p class="p">WHERE outer.rating &lt;=inner.rating</p><p class="p">AND inner.city='Rome' );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Customers outer</p><p class="p">WHERE NOT EXISTS (SELECT * FROM Customers inner</p><p class="p">WHERE outer.rating &lt;=inner.rating AND inner.city='Rome');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13.12: Использование EXISTS с соотнесенным подзапросом</p><p class="p">Это должно также быть выполнено как</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers outer</p><p class="p">WHERE 1 &gt;</p><p class="p">( SELECT COUNT (*)</p><p class="p">FROM Customers inner</p><p class="p">WHERE outer.rating &lt;=inner.rating</p><p class="p">AND inner.city='Rome' );</p><p class="empty-line"/><p class="p">Вывод к этому запросу показывается в Таблице 13.13.</p><p class="p">Теперь Вы начинаете понимать сколько способов имеется в SQL. Если это все кажется несколько путанным на этой стадии, нет причины волноваться. Вы обучаетесь чтобы использовать ту технику которая лучше всего отвечает вашим требованиям и наиболее понятна для вас. Начиная с этого места, мы хотим показать Вам большое количество возможностей, что бы вы могли найти ваш собственный стиль.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT * FROM Customers outer</p><p class="p">WHERE 1 &gt; (SELECT COUNT (*) FROM Customers inner</p><p class="p">WHERE outer.rating &lt;=inner.rating</p><p class="p">AND inner.city='Rome');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 13.13: Использование COUNT вместо EXISTS</p><p class="subtitle">=РЕЗЮМЕ</p><p class="p">Итак, вы прошли много чего в этой главе. Подзапросы не простая тема, и мы потратили много время чтобы показать их разновидности и неоднозначности. То чему Вы теперь научились, вещи достаточно глубокие. Вы знаете несколько технических решений одной проблемы, и поэтому вы можете выбрать то которое более подходит вашим целям. Кроме того, вы поняли, как различные формулировки будет обрабатывать пустые значения (NULL) и ошибки.</p><p class="p">Теперь, когда вы полностью изучили запросы, наиболее важный, и вероятно наиболее сложный, аспект SQL, объем другого материала будет относительно прост для понимания.</p><p class="p">Мы имеем еще одну главу о запросах, которая покажет вам как объединить выводы любого числа запросов в единое тело, с помощью формирования объединения многочисленых запросов используя оператор UNION.</p><p class="subtitle">РАБОТА С SQL</p><p class="p">* Напишите запрос который бы выбирал всех заказчиков чьи оценки равны или больше чем любая( ANY ) оценка заказчика Serres.</p><p class="p">* Что будет выведено вышеупомянутой командой?</p><p class="p">* Напишите запрос использующий ANY или ALL, который бы находил всех продавцов которые не имеют никаких заказчиков размещенных в их городе.</p><p class="p">* Напишите запрос который бы выбирал все порядки с суммой больше чем любая (в обычном смысле ) для заказчиков в Лондоне.</p><p class="p">* Напишите предыдущий запрос с использованием - MAX.</p></span></span>
+</body>
+</html>

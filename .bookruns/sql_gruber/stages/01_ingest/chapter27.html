@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id34"><div class="title2">
+<p class="p1">Приложение A. ОТВЕТЫ ДЛЯ УПРАЖНЕНИЙ</p>
+</div><p class="empty-line"/><p class="p">Глава 1.</p><p class="p">* cnum</p><p class="p">* rating</p><p class="p">* Другим словом для строки является - запись. Другим словом для столбца является - поле.</p><p class="p">* Потому что строки, по определению, находятся без какого либо определенного упорядочения.</p><p class="empty-line"/><p class="p">Глава 2.</p><p class="p">* Символ (или текст ) и номер</p><p class="p">* Нет</p><p class="p">* Язык Манипулирования Данными (ЯЗЫК DML)</p><p class="p">* Это слово в SQL имеет специальное учебное значение.</p><p class="empty-line"/><p class="p">Глава 3.</p><p class="p">* 1. SELECT onum, amt, odate FROM Orders;</p><p class="p">* 2. SELECT * FROM Customers WHERE snum=1001;</p><p class="p">* SELECT city, sname, snum, comm FROM Salespeople;</p><p class="p">* SELECT rating, cname FROM Customers WHERE city='SanJose';</p><p class="p">* SELECT DISTINCT snum FROM Orders;</p><p class="empty-line"/><p class="p">Глава 4.</p><p class="p">* 1. SELECT * FROM Orders WHERE amt &gt; 1000;</p><p class="p">* SELECT sname, city FROM Salespeople WHERE city='London' AND comm &gt; .10;</p><p class="p">SELECT * FROM Customers WHERE rating &gt; 100 OR city='Rome';</p><p class="p">или</p><p class="p">SELECT * FROM Customers WHERE NOT rating &lt;=100 OR city ='Rome';</p><p class="p">или</p><p class="p">SELECT * FROM Customers WHERE NOT (rating &lt;=100 AND city &lt; &gt; 'Rome');</p><p class="p">* Могут быть еще другие решения.</p><p class="p">onum amt odate cnum snum</p><p class="p">3001 18.69 10/03/1990 2008 1007</p><p class="p">3003 767.19 10/03/1990 2001 1001</p><p class="p">3005 5160.45 10/03/1990 2003 1002</p><p class="p">3009 1713.23 10/04/1990 2002 1003</p><p class="p">3007 75.75 10/04/1990 2004 1002</p><p class="p">3008 4723.00 10/05/1990 2006 1001</p><p class="p">3010 1309.95 10/06/1990 2004 1002</p><p class="p">* 3011 9891.88 10/06/1990 2006 1001</p><p class="p">onum amt odate cnum snum</p><p class="p">3001 18.69 10/03/1990 2008 1007</p><p class="p">3003 767.19 10/03/1990 2001 1001</p><p class="p">3006 1098.16 10/03/1990 2008 1007</p><p class="p">3009 1713.23 10/04/1990 2002 1003</p><p class="p">3007 75.75 10/04/1990 2004 1002</p><p class="p">3008 4723.00 10/05/1990 2006 1001</p><p class="p">3010 1309.95 10/06/1990 2004 1002</p><p class="p">* 3011 9891.88 10/06/1990 2006 1001</p><p class="p">* . SELECT * FROM Salespeople;</p><p class="empty-line"/><p class="p">Глава 5.</p><p class="p">SELECT * FROM Orders WHERE odate IN (10/03/1990,10/04/1990);</p><p class="p">и</p><p class="p">* SELECT * FROM Orders WHERE odate BETWEEN 10/03/1990 AND 10/04,1990;</p><p class="p">* SELECT * FROM Customers WHERE snum IN (1001,1004);</p><p class="p">SELECT * FROM Customers WHERE cname BETWEEN 'A' AND 'H';</p><p class="p">* ПРИМЕЧАНИЕ: В ASCII базовой системе Hoffman не буде выведен из-за конечных пробелов после H. По той же самой причине воторая граница не может быть G, поскольку она не выведет имена Giovanni и Grass. G может использоваться в сопровождении с Z, так чтобы следовать за другими символами в алфавитном порядке, а не предшествовать им, как это делают пробелы.</p><p class="p">* SELECT * FROM Customers WHERE cname LIKE 'C%';</p><p class="p">SELECT * FROM Orders WHERE amt &lt; &gt; O AND (amt IS NOT NULL);</p><p class="p">или</p><p class="p">* SELECT * FROM Orders WHERE NOT (amt=O OR amt IS NULL);</p><p class="empty-line"/><p class="p">Глава 6.</p><p class="p">* SELECT COUNT(*) FROM Orders WHERE odate=10/03/1990;</p><p class="p">* SELECT COUNT (DISTINCT city) FROM Customers;</p><p class="p">* SELECT cnum, MIN (amt) FROM Orders GROUP BY cnum;</p><p class="p">* SELECT MIN (cname) FROM Customers WHERE cname LIKE 'G%';</p><p class="p">* SELECT city, MAX (rating) FROM Customers GROUP BY city;</p><p class="p">* SELECT odate, count (DISTINCT snum FROM Orders GROUP BY odate;</p><p class="empty-line"/><p class="p">Глава 7.</p><p class="p">* SELECT onum, snum, amt * .12 FROM Orders;</p><p class="p">SELECT 'For the city ', city, ', the highest rating is ', ", MAX (rating)</p><p class="p">* FROM Customers GROUP BY city;</p><p class="p">* SELECT rating, cname, cnum FROM Customers ORDER BY rating DESC;</p><p class="p">* SELECT odate, SUM (amt) FROM Orders GROUP BY odate ORDER BY 2 DESC;</p><p class="empty-line"/><p class="p">Глава 8.</p><p class="p">SELECT onum, cname FROM Orders, Customers</p><p class="p">* WHERE Customers.cnum=Orders.cnum;</p><p class="p">SELECT onum, cname, sname FROM Orders, Customers, Salespeople</p><p class="p">* WHERE Customers.cnum=Orders.cnum AND Salespeople.snum=Orders.snum;</p><p class="p">SELECT cname, sname, comm FROM Salespeople, Customers</p><p class="p">* WHERE Salespeople.snum=Customers.snum AND comm * .12;</p><p class="p">SELECT onum, comm * amt FROM Salespeople, Orders, Customers</p><p class="p">WHERE rating &gt; 100 AND Orders.cnum=Customers.cnum</p><p class="p">* AND Orders.snum=Salespeople.snum;</p><p class="empty-line"/><p class="p">Глава 9.</p><p class="p">SELECT first.sname, second.sname FROM Salespeople first, Salespeople second</p><p class="p">WHERE first.city=second.city AND first.sname &lt; second.sname;</p><p class="p">* Псевдонимам нет необходимости иметь именно такие имена.</p><p class="p">SELECT cname, first.onum, second.onum FROM Orders first, Orders second, Customers WHERE first.cnum=second.cnum</p><p class="p">AND first.cnum=Customers.cnum</p><p class="p">AND first.onum &lt; second.onum;</p><p class="p">* Ваш вывод может иметь некоторые отличия, но в вашем ответе все логические компоненты должны быть такими же.</p><p class="p">SELECT a.cname, a.city FROM Customers a, Customers b</p><p class="p">* WHERE a.rating=b.rating AND b.cnum=2001;</p><p class="empty-line"/><p class="p">Глава 10.</p><p class="p">SELECT * FROM Orders WHERE cnum=(SELECT cnum</p><p class="p">FROM Customers WHERE cname='Cisneros');</p><p class="p">или</p><p class="p">SELECT * FROM Orders WHERE cnum IN</p><p class="p">* (SELECT cnum FROM Customers WHERE cname='Cisneros');</p><p class="p">SELECT DISTINCT cname, rating FROM Customers, Orders</p><p class="p">WHERE amt &gt; (SELECT AVG (amt) FROM Orders)</p><p class="p">* AND Orders.cnum=Customers.cnum;</p><p class="p">SELECT snum, SUM (amt) FROM Orders</p><p class="p">GROUP BY snum HAVING SUM (amt) &gt;</p><p class="p">* (SELECT MAX (amt) FROM Orders);</p><p class="empty-line"/><p class="p">Глава 11.</p><p class="p">1. SELECT cnum, cname FROM Customers outer</p><p class="p">* WHERE rating=(SELECT MAX (rating) FROM Customers inner WHERE inner.city=outer.city);</p><p class="p">. Решение с помощью соотнесенного подзапроса:</p><p class="p">SELECT snum, sname FROM Salespeople main</p><p class="p">WHERE city IN (SELECT city FROM Customers inner</p><p class="p">WHERE inner.snum &lt; &gt; main.snum);</p><p class="p">Решение с помощью объединения:</p><p class="p">SELECT DISTINCT first.snum, sname</p><p class="p">FROM Salespeople first, Customers second</p><p class="p">WHERE first.city=second.city AND first.snum &lt; &gt; second.snum;</p><p class="p">* Соотнесенный подзапрос находит всех заказчиков не обслуживаемых данным продавцом и выясняет: живет ли кто-нибудь из их в его городе. Решение с помощью обьединения является более простым и более интуитивным. Оно находит случаи где поля city совпадают, а поля snums нет. Следовательно обьединение является более изящным решением для этой проблемы, чем то которое мы исследовали до этого. Имеется еще более изящное решение с помощью подзапроса, с которым Вы столкнетесь позже.</p><p class="empty-line"/><p class="p">Глава 12.</p><p class="p">1. SELECT * FROM Salespeople first WHERE EXISTS</p><p class="p">(SELECT * FROM Customers second WHERE first.snum=second.snum</p><p class="p">* AND rating=300);</p><p class="p">SELECT a.snum, sname, a.city, comm FROM Salespeople a, Customers b</p><p class="p">* WHERE a.snum=b.snum AND b.rating=300;</p><p class="p">SELECT * FROM Salespeople a WHERE EXISTS</p><p class="p">* (SELECT * FROM Customers b WHERE b.city=a.city AND a.snum &lt; &gt; b.snum);</p><p class="p">SELECT * FROM Customers a WHERE EXISTS</p><p class="p">* (SELECT * FROM Orders b WHERE a.snum=b.snum AND a.cnum &lt; &gt; b.cnum)</p><p class="empty-line"/><p class="p">Глава 13.</p><p class="p">1. SELECT * FROM Customers WHERE rating &gt;=ANY</p><p class="p">* (SELECT rating FROM Customers WHERE snum=1002);</p><p class="p">cnum cname city rating snum</p><p class="p">2002 Giovanni Rome 200 1003</p><p class="p">2003 Liu San Jose 200 1002</p><p class="p">2004 Grass Berlin 300 1002</p><p class="p">* 2008 Cisneros SanJose 300 1007</p><p class="p">SELECT * FROM Salespeople WHERE city &lt; &gt; ALL</p><p class="p">(SELECT city FROM Customers);</p><p class="p">или</p><p class="p">SELECT * FROM Salespeople WHERE NOT city=ANY</p><p class="p">* (SELECT city FROM Customers);</p><p class="p">SELECT * FROM Orders WHERE amt &gt; ALL (SELECT amt</p><p class="p">FROM Orders a, Customers b WHERE a.cnum=b.cnum</p><p class="p">* AND b.city='London');</p><p class="p">SELECT * FROM Orders WHERE amt &gt; (SELECT MAX (amt)</p><p class="p">FROM Orders a, Customers b WHERE a.cnum=b.cnum</p><p class="p">* AND b.city='London');</p><p class="empty-line"/><p class="p">Глава 14.</p><p class="p">SELECT cname, city, rating, 'High Rating' FROM Customers</p><p class="p">WHERE rating &gt;=200</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">SELECT cname, city, rating, ' Low Ratlng'</p><p class="p">FROM Customers WHERE rating &lt; 200;</p><p class="empty-line"/><p class="p">или</p><p class="empty-line"/><p class="p">SELECT cname, city, rating, 'High Rating'</p><p class="p">FROM Customers WHERE rating &gt;=200</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">SELECT cname, city, rating, ' Low Rating'</p><p class="p">FROM Customers WHERE NOT rating &gt;=200;</p><p class="p">Различие между этими двумя предложениями, в форме второго предиката.</p><p class="p">* Обратите внимание что, в обоих случаях, строка "Low Rating" имеет в начале дополнительный пробел для того чтобы совпадать со строкой "High Rating" по длине.</p><p class="p">SELECT cnum, cname FROM Customers a</p><p class="p">WHERE 1 &lt; (SELECT COUNT (-)</p><p class="p">FROM Orders b WHERE a.cnum=b.cnum)</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">SELECT snum, sname</p><p class="p">FROM Salespeople a WHERE 1 &lt;(SELECT COUNT (*) FROM Orders b</p><p class="p">WHERE a.snum=b.snum)</p><p class="empty-line"/><p class="p">* ORDER BY 2;</p><p class="p">SELECT snum FROM Salespeople WHERE city='San Jose'</p><p class="empty-line"/><p class="p">UNION</p><p class="empty-line"/><p class="p">(SELECT cnum FROM Customers WHERE city='San Jose'</p><p class="empty-line"/><p class="p">UNION ALL</p><p class="empty-line"/><p class="p">* SELECT onum FROM Orders WHERE odate=10/03/1990);</p><p class="empty-line"/><p class="p">Глава 15.</p><p class="p">INSERT INTO Salespeople (city, cname, comm, cnum)</p><p class="p">* VALUES ('San Jose', 'Blanco', NULL, 1100);</p><p class="p">* DELETE FROM Orders WHERE cnum=2006;</p><p class="p">* UPDATE Customers SET rating=rating + 100 WHERE city='Rome';</p><p class="p">* UPDATE Customers SET snum=1004 WHERE snum=1002;</p><p class="empty-line"/><p class="p">Глава 16.</p><p class="p">INSERT INTO Multicust</p><p class="p">SELECT * FROM Salespeople WHERE 1 &lt; (SELECT COUNT (*)</p><p class="p">* FROM Customers WHERE Customers.snum=Salespeople.snum);</p><p class="p">DELETE FROM Customers WHERE NOT EXISTS</p><p class="p">* (SELECT * FROM Orders WHERE cnum=Customers.cnum);</p><p class="p">UPDATE Salespeople SET comm=comm + (comm * .2)</p><p class="p">WHERE 3000 &lt; (SELECT SUM (amt) FROM Orders</p><p class="p">WHERE snum=Salespeople.snum);</p><p class="p">В более сложный вариант этой команды можно было бы вставить проверку чтобы убедиться, что значения комиссионных не превышают 1.0 (100 % ):</p><p class="p">UPDATE Salespeople SET comm=comm + (comm * .2)</p><p class="p">WHERE 3000 &lt; (SELECT SUM (amt)</p><p class="p">FROM Orders WHERE snum=Salespeople.snum)</p><p class="p">AND comm + (comm * .2) &lt; 1.0;</p><p class="p">* Эти проблемы могут иметь другие, такие же хорошие решения.</p><p class="empty-line"/><p class="p">Глава 17.</p><p class="p">CREATE TABLE Customers (cnum integer,</p><p class="p">cname char(10), city char(10),</p><p class="p">* rating integer, snum integer);</p><p class="p">CREATE INDEX Datesearch ON Orders(odate);</p><p class="p">* (Все индексные имена используемые в этих ответах - произвольные. )</p><p class="p">* CREATE UNIQUE INDEX Onumkey ON Orders(onum);</p><p class="p">* CREATE INDEX Mydate ON Orders(snum, odate);</p><p class="p">* CREATE UNIQUE INDEX Combination ON Customers(snum, rating);</p><p class="empty-line"/><p class="p">Глава 18.</p><p class="p">CREATE TABLE Orders (onum integer NOT NULL PRIMARY KEY,</p><p class="p">amt decimal, odate date NOT NULL,</p><p class="p">cnum integer NOT NULL, snum integer NOT NULL,</p><p class="p">UNIOUE (snum, cnum));</p><p class="p">или</p><p class="p">CREATE TABLE Orders (onum integer NOT NULL UNIQUE,</p><p class="p">amt decimal, odate date NOT NULL,</p><p class="p">cnum integer NOT NULL, snum integer NOT NULL,</p><p class="p">UNIQUE (snum, cnum));</p><p class="p">* Первое решение предпочтительнее.</p><p class="p">CREATE TABLE Salespeople (snum integer NOT NULL PRIMARY KEY,</p><p class="p">sname char(15) CHECK (sname BETWEEN 'AA' AND 'MZ'),</p><p class="p">* city char(15), comm decimal NOT NULL DEFAULT=.10);</p><p class="p">CREATE TABLE Orders (onum integer NOT NULL, amt decimal,</p><p class="p">odate date, cnum integer NOT NULL,</p><p class="p">* snum integer NOT NULL, CHECK ((cnum &gt; snum) AND (onum &gt; cnum)));</p><p class="empty-line"/><p class="p">Глава 19.</p><p class="p">CREATE TABLE Cityorders (onum integer NOT NULL PRIMARY KEY,</p><p class="p">amt decimal, cnum integer, snum integer,</p><p class="p">city char (15), FOREIGN KEY (onum, amt, snum)</p><p class="p">REFERENCES Orders (onum, amt, snum),</p><p class="p">FOREIGN KEY (cnum, city)</p><p class="p">* REFERENCES Customers (cnum, city) );</p><p class="p">CREATE TABLE Orders (onum integer NOT NULL,</p><p class="p">amt decimal, odate date, cnum integer NOT NULL,</p><p class="p">snum integer, prev integer, UNIQUE (cnum, onum),</p><p class="p">* FOREIGN KEY (cnum, prev) REFERENCES Orders (cnum,onum) );9</p><p class="empty-line"/><p class="p">Глава 20.</p><p class="p">CREATE VIEW HighratingsAS SELECT * FROM Customers</p><p class="p">* WHERE rating=(SELECT MAX (rating) FROM Customers);</p><p class="p">CREATE VIEW Citynumber AS SELECT city, COUNT (DISTINCT snum)</p><p class="p">* FROM Salespeople GROUP BY city;</p><p class="p">CREATE VIEW Nameorders AS SELECT sname, AVG (amt), SUM (amt)</p><p class="p">FROM Salespeople, Orders WHERE Salespeople.snum=Orders.snum</p><p class="p">* GROUP BY sname;</p><p class="p">. CREATE VIEW Multcustomers AS SELECT *</p><p class="p">FROM Salespeople a WHERE 1 &lt; (SELECT COUNT (*)</p><p class="p">* FROM Customers b WHERE a.snum=b.snum);</p><p class="empty-line"/><p class="p">Глава 21.</p><p class="p">#1 - не модифицируемый, потому что он использует DISTINCT.</p><p class="p">#2 - не модифицируемый, потому что он использует обьединение, агрегатную функцию, и GROUP BY.</p><p class="p">* #3 - не модифицируемый, потому что он основывается на #1, который сам по себе не модифицируемый.</p><p class="p">CREATE VIEW Commissions AS SELECT snum, comm</p><p class="p">FROM Salespeople WHERE comm BETWEEN .10 AND .20</p><p class="p">* WITH CHECK OPTION;</p><p class="p">CREATE TABLE Orders</p><p class="p">(onum integer NOT NULL PRIMARY KEY, amt decimal,</p><p class="p">odate date DEFAULT VALUE=CURDATE, snum integer,</p><p class="p">cnum integer);</p><p class="p">CREATE VIEW Entryorders AS SELECT onum, amt, snum, cnum</p><p class="p">* FROM Orders;</p><p class="empty-line"/><p class="p">Глава 22.</p><p class="p">* GRANT UPDATE (rating) ON Customers TO Janet;</p><p class="p">* GRANT SELECT ON Orders TO Stephen WITH GRANT OPTION;</p><p class="p">* REVOKE INSERT ON Salespeople FROM Claire;</p><p class="p">Шаг 1:</p><p class="p">CREATE VIEW Jerrysview AS SELECT * FROM Customers</p><p class="p">WHERE rating BETWEEN 100 AND 500 WITH CHECK OPTION;</p><p class="p">Шаг 2:</p><p class="p">* GRANT INSERT, UPDATE ON Jerrysview TO Jerry;</p><p class="p">Шаг 1:</p><p class="p">CREATE VIEW Janetsview</p><p class="p">AS SELECT * FROM Customers</p><p class="p">WHERE rating=(SELECT MIN (rating) FROM Customers);</p><p class="p">Шаг 2:</p><p class="p">* GRANT SELECT ON Janetsview TO Janet;</p><p class="empty-line"/><p class="p">Глава 23.</p><p class="p">* CREATE DBSPACE Myspace (pctindex 15, pctfree 40);</p><p class="p">* CREATE SYNONYM Orders FOR Diane.Orders;</p><p class="p">* Они должны быть откатаны обратно назад.</p><p class="p">* Блокировка взаимоисключающего доступа.</p><p class="p">* Толко чтение</p><p class="empty-line"/><p class="p">Глава 24.</p><p class="p">SELECT a.tname, a.owner, b.cname, b.datatype</p><p class="p">FROM SYSTEMCATOLOG a, SYSTEMCOLUMNS b</p><p class="p">WHERE a.tname=b.tname AND a.owner=b.owner</p><p class="p">AND a.numcolumns &gt; 4;</p><p class="p">* Обратите Внимание: из-за того что большинство имен столбца объединяемых таблиц - различны, не все из используемых псевдонимов a и b в вышеупомянутой команде - строго обязательны. Они представлены просто для понимания.</p><p class="p">SELECT tname, synowner, COUNT (ALL synonym)</p><p class="p">* FROM SYTEMSYNONS GROUP BY tname, synowner;</p><p class="p">. SELECT COUNT (*) FROM SYSTEMCATALOG a</p><p class="p">WHERE numcolumns/2 &lt; (SELECT COUNT (DISTINCT cnumber)</p><p class="p">FROM SYSTEMINDEXES b WHERE a.owner=b.tabowner</p><p class="p">* AND a.tname=b.tname);</p><p class="empty-line"/><p class="p">Глава 25.</p><p class="p">EXEC SQL BEGIN DECLARE SECTION;</p><p class="p">SQLCODE:integer;</p><p class="p">{требуемый всегда}</p><p class="p">cnum integer;</p><p class="p">snum integer;</p><p class="p">custnum: integer;</p><p class="p">salesnum: integer;</p><p class="p">EXEC SQL END DECLARE SECTION;</p><p class="p">EXEC SQL DECLARE Wrong_Orders AS CURSOR FOR</p><p class="p">SELECT cnum, snum</p><p class="p">FROM Orders a</p><p class="p">WHERE snum &lt; &gt;</p><p class="p">(SELECT snum</p><p class="p">FROM Customers b</p><p class="p">WHERE a.cnum=b.cnum);</p><p class="p">{ Мы пока еще используем здесь SQL для выполнения основной работы.</p><p class="p">Запрос выше размещает строки таблицы Порядков которые не согласуются с таблицей Заказчиков. }</p><p class="p">EXEC SQL DECLARE Cust_assigns AS CURSOR FOR</p><p class="p">SELECT cnum, snum</p><p class="p">FROM Customers;</p><p class="p">{Этот курсор используется для получения правильных значений snum}</p><p class="p">begin { основная программа }</p><p class="p">EXEC SQL OPEN CURSOR Wrong_Orders;</p><p class="p">while SQLCODE=O do</p><p class="p">{Цикл до тех пор пока Wrong_Orders не опустеет}</p><p class="p">begin</p><p class="p">EXEC SQL FETCH Wrong_Orders INTO</p><p class="p">(:cnum, :snum);</p><p class="p">if SQLCODE=O then</p><p class="p">begin</p><p class="p">{Когда Wrong_Orders опустеет, мы не хотели бы продолжать выполнение</p><p class="p">этого цикла до бесконечности}</p><p class="p">EXEC SQL OPEN CURSOR Cust_Assigns;</p><p class="p">repeat</p><p class="p">EXEC SQL FETCH Cust_Assigns</p><p class="p">INTO (:custnum, :salesnum);</p><p class="p">until :custnum=:cnum;</p><p class="p">{Повторять FETCH до тех пор пока ... команда будет просматривать Cust_Assigns курсор до строки которая соответствует текущему значению cnum найденого в Wrong_Orders}</p><p class="empty-line"/><p class="p">EXEC SQL CLOSE CURSOR Cust_assigns;</p><p class="empty-line"/><p class="p">{Поэтому мы будем начинать новый вывод в следующий раз через цикл.</p><p class="p">Значение в котором мы получим из этого курсора сохраняется в переменной - salesnum.}</p><p class="p">EXEC SQL UPDATE Orders</p><p class="p">SET snum=:salesnum</p><p class="p">WHERE CURRENT OF Wrong_Orders;</p><p class="p">end; {Если SQLCODE=0}.</p><p class="p">end; { Пока SQLCODE . . . выполнить }</p><p class="p">EXEC SQL CLOSE CURSOR Wrong_Orders;</p><p class="p">* end; { основная программа }</p><p class="p">Для данной программы которую я использовал, решение будет состоять в том, чтобы просто включить поле onum, первичным ключом таблицы Порядков, в курсор Wrong_Orders. В команде UPDATE, вы будете затем использовать предикат WHERE onum=:ordernum (считая целую переменную - odernum, обьявленной), вместо WHERE CURRENT Of Wrong_Orders.</p><p class="p">Результатом будет программа наподобии этой (большинство комментариев из предыдущей программы здесь исключены ):</p><p class="empty-line"/><p class="p">EXEC SQL BEGIN DECLARE SECTION;</p><p class="p">SQLCODE: integer;</p><p class="p">odernum integer;</p><p class="p">cnum integer;</p><p class="p">snum integer;</p><p class="p">custnum: integer;</p><p class="p">salesnum: integer;</p><p class="p">EXEC SQL END DECLARE SECTION;</p><p class="p">EXEC SQL DECLARE Wrong_Orders AS CURSOR FOR</p><p class="p">SELECT onum, cnum, snum</p><p class="p">FROM Orders a</p><p class="p">WHERE snum &lt; &gt;</p><p class="p">(SELECT snum</p><p class="p">FROM Customers b</p><p class="p">WHERE a.cnum=b.cnum);</p><p class="p">EXEC SQL DECLARE Cust _ assigns AS CURSOR FOR</p><p class="p">SELECT cnum, snum</p><p class="p">FROM Customers;</p><p class="p">begin { основная программа }</p><p class="p">EXEC SQL OPEN CURSOR Wrong_Orders;</p><p class="p">while SQLCODE=O do {Цикл до тех пор пока Wrong_Orders не опустеет}</p><p class="p">begin</p><p class="p">EXEC SQL FETCH Wrong_Orders</p><p class="p">INTO (:odernum, :cnum, :snum);</p><p class="p">if SQLCODE=O then</p><p class="p">begin</p><p class="p">EXEC SQL OPEN CURSOR Cust_Assigns;</p><p class="p">repeat</p><p class="p">EXEC SQL FETCH Cust_Assigns</p><p class="p">INTO (:custnum, :salesnum);</p><p class="p">until :custnum=:cnum;</p><p class="p">EXEC SQL CLOSE CURSOR Cust_assigns;</p><p class="p">EXEC SQL UPDATE Orders</p><p class="p">SET snum=:salesnum</p><p class="p">WHERE CURRENT OF Wrong_Orders;</p><p class="p">end; {If SQLCODE=0}</p><p class="p">end; { While SQLCODE . . . do }</p><p class="p">EXEC SQL CLOSE CURSOR Wrong_Orders;</p><p class="p">* end; { main program }</p><p class="p">EXEC SQL BEGIN DECLARE SECTION;</p><p class="p">SQLCODE integer;</p><p class="p">newcity packed array[1. .12] of char;</p><p class="p">commnull boolean;</p><p class="p">citynull boolean;</p><p class="p">response char;</p><p class="empty-line"/><p class="p">EXEC SQL END DECLARE SECTION;</p><p class="p">EXEC SQL DECLARE CURSOR Salesperson AS</p><p class="p">SELECT * FROM SALESPEOPLE;</p><p class="p">begln { main program }</p><p class="p">EXEC SQL OPEN CURSOR Salesperson;</p><p class="p">EXEC SQL FETCH Salesperson</p><p class="p">INTO (:snum, :sname, :city:i_cit, :comm:i_com);</p><p class="empty-line"/><p class="p">{Выборка первой строки}</p><p class="p">while SQLCODE=O do</p><p class="p">{Пока эти строки в таблице Продавцов.}</p><p class="p">begin</p><p class="p">if i_com &lt; O then commnull:=true;</p><p class="p">if i_cit &lt; O then citynull:=true;</p><p class="p">{ Установить логические флаги которые могут показать NULLS.}</p><p class="empty-line"/><p class="p">if citynull then</p><p class="p">begin</p><p class="p">write ('Нет текущего значения city для продавца ',</p><p class="p">snum, ' Хотите предоставить хотя бы одно? (Y/N)');</p><p class="empty-line"/><p class="p">{Подсказка покажет значение city состоящее из NULL значений.}</p><p class="empty-line"/><p class="p">read (ответ);</p><p class="empty-line"/><p class="p">{Ответ может быть сделан позже.}</p><p class="empty-line"/><p class="p">end {если конечно - citynull}</p><p class="p">else { не citynull }</p><p class="p">begin</p><p class="p">if not commnull then</p><p class="empty-line"/><p class="p">{ Чтобы выполнять сравнение и операции только для не-NULL значений связи }</p><p class="p">begin</p><p class="p">if city='London' then comm:=comm * .02 * .02</p><p class="p">else comm:=comm + .02;</p><p class="p">end;</p><p class="p">{Даже если значение и не - commnull, begin и end здесь для ясности.}</p><p class="empty-line"/><p class="p">write ('Текущий city для продавца',</p><p class="p">snum, 'есть', city,</p><p class="p">* Хотите его изменить? (Y/N)');</p><p class="p">Обратите Внимание: Продавец не назначеный в данное время в определенный город, не будет иметь изменений комиссионых при определении находятся ли он в Лондоне.</p><p class="empty-line"/><p class="p">read (ответ);</p><p class="empty-line"/><p class="p">{Ответ теперь имеет значение независимо от того что citynull - верен или неверен.}</p><p class="empty-line"/><p class="p">end; {иначе не citynull}</p><p class="p">if response='Y' then</p><p class="p">begin</p><p class="p">write ('Введите новое значение city:');</p><p class="p">read (newcity);</p><p class="p">if not commnull then</p><p class="empty-line"/><p class="p">{Эта операция может быть выполнена только для не-NULL значений. }</p><p class="empty-line"/><p class="p">case newcity of:</p><p class="p">begin</p><p class="p">'Barcelona':comm:=comm + .01,</p><p class="p">'San Jose': comm:=comm *.01</p><p class="p">end; {случно и если не commnull}</p><p class="p">EXEC SQL UPDATE Salespeople</p><p class="p">SET city=:newcity, comm=:comm:i_com</p><p class="p">WHERE CURRENT OF Salesperson;</p><p class="empty-line"/><p class="p">{Переменная индикатора может поместить NULL значение в поле comm если так назначено.}</p><p class="p">end; { Если ответ='Y', или если ответ &lt; &gt; 'Y',</p><p class="p">изменений не будет. }</p><p class="p">EXEC SQL FETCH Salesperson</p><p class="p">INTO (:snum, :sname, :city:i_clt,</p><p class="p">:comm:l_com);</p><p class="empty-line"/><p class="p">{выборка следующей строки}</p><p class="p">end; {если SQLCODE=0}</p><p class="p">EXEC SQL CLOSE CURSOR Salesperson;</p><p class="p">* end; {основной программы}</p><p class="empty-line"/></span><span id="id35"><div class="title2">
+<p class="p1">Приложение B. ТИПЫ ДАННЫХ В SQL</p>
+</div><p class="empty-line"/><p class="p">ТИПЫ ДАННЫХ РАСПОЗНАВАЕМЫЕ С ПОМОЩЬЮ ANSI, состоят из символов и различных типов чисел, которые могут классифицироваться как точные числа и приблизительные числа. Точные числовые типы - это номера, с десятичной точкой или без десятичной точки. Приблизительные числовые типы - это номера в показательной (экспоненциальной по основанию - 10) записи.</p><p class="p">Для все прочих типов, отличия слишком малы чтобы их как-то классифицировать.</p><p class="p">Иногда типы данных используют аргумент, который я называю размером аргумента, чей точный формат и значение меняется в зависимости отконкретного типа. Значения по умолчанию обеспечены для всех типов, если размер аргумента отсутствует.</p><p class="subtitle">ТИПЫ ANSI</p><p class="p">Ниже представлены типы данных ANSI (имена в круглых скобках - это синонимы ):</p><p class="empty-line"/><p class="p"><strong>TEXT</strong></p><p class="p">ТЕКСТ</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>CHAR</strong> (или CHARACTER)</p></td>
+<td class="td"><p class="p">Строка текста в реализационно-определенном формате. Размер агрумента здесь это единственное неотрицательное целое число которое ссылается к максимальной длине строки. Значения этого типа, должны быть заключены в одиночные кавычки, например 'text'. Две рядом стоящие одиночные кавычки ('') внутри строки будет пониматься как одна одиночная кавычка (').</p></td>
+</tr>
+</table><p class="p">ПРИМЕЧАНИЕ:</p><p class="p">Здесь и далее, фраза Реализационно-Определенный или Реализационно Зависимый, указывает, что этот аргумент или формат зависит от конкретной программы в которой реализуются данные.</p><p class="empty-line"/><p class="p"><strong>EXACT NUMERIC</strong></p><p class="p">ТОЧНОЕ ЧИСЛО</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>DEC</strong> (или DECIMAL)</p></td>
+<td class="td"><p class="p">Десятичное число; то есть, число которое может иметь десятичную точку. Здесь аргумент размера имеет две части: точность и масштаб. Масштаб не может превышать точность. Сначала указывается точность, разделительная запятая и далее аргумент масштаба. Точность указывает сколько значащих цифр имеет число. Максимальное десятичное число составляющее номер - реализационно-определенное значение, равное или большее чем этот номер. Масштаб указывает максимальное число цифр справо от десятичной точки. Масштаб =нулю делает поле эквивалентом целого числа.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">NUMERIC</p></td>
+<td class="td"><p class="p">Такое же как DECIMAL за исключением того, что максимальное десятичное не может превышать аргумента точности.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">INT (или INTEGER)</p></td>
+<td class="td"><p class="p">Число без десятичной точки. Эквивалентно DECIMAL, но без цифр справа от десятичной точки, то-есть с масштабом равным 0. Аргумент размера не используется (он автоматически установливается в реализационно-зависимое значение).</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">SMALLINT</p></td>
+<td class="td"><p class="p">Такое же как INTEGER, за исключением того, что, в зависимости от реализации, размер по умолчанию может (или не может ) быть меньшее чем INTEGER.</p></td>
+</tr>
+</table><p class="empty-line"/><p class="empty-line"/><p class="empty-line"/><p class="p"><strong>APPROXIMATE NUMERIC</strong></p><p class="p">ПРИБЛИЗИТЕЛЬНОЕ ЧИСЛО</p><table class="table">
+<tr>
+<td class="td"><p class="p">FLOAT</p></td>
+<td class="td"><p class="p">Число с плавающей запятой на основе 10 показа тельной функции. Аргумент размера состоит из одного числа определяющего минимальную точность.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">REAL</p></td>
+<td class="td"><p class="p">Такое же как FLOAT, за исключением того, что никакого аргумента размера не используется. Точность становлена реализационно-зависимую по умолчанию.</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">DOUBLE</p></td>
+<td class="td"><p class="p">Такое же как REAL, за исключением того, что реаPRECISION лизационно-определяемая точность для DOUBLE PRE( или DOUBLE ) CISION должна превышать реализационно-определяемую точность REAL.</p></td>
+</tr>
+</table><p class="empty-line"/><p class="subtitle">ЭКВИВАЛЕНТНЫЕ ТИПЫ ДАННЫХ В ДРУГИХ ЯЗЫКАХ</p><p class="p">Когда используется вложение SQL в другие языки, значения используемые и произведенные командами SQL, обычно сохраняются в переменных главного языка( см. Главу 25). Эти переменные должны иметь тип данных совместимый со значениями SQL, которые они будут получать. В дополнениях, которые не являются частью официального SQL стандарта, ANSI обеспечивает поддержку при использовании вложения SQL в четыре языка: Паскаль, PL/I, КОБОЛ, и ФОРТРАН. Между прочим, он включает определение эквивалентов SQL, для данных типов переменных используемых в этих языках.</p><p class="empty-line"/><p class="p">Эквиваленты типов данных четырех языков определенных ANSI:</p><p class="empty-line"/><p class="p"><strong>ПЛ/I</strong></p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>SQL ТИП</strong></p></td>
+<td class="td"><p class="p"><strong>ЭКВИВАЛЕНТ ПЛ/I</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">CHAR</p></td>
+<td class="td"><p class="p">CHAR</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">DECIMAL</p></td>
+<td class="td"><p class="p">FIXED DECIMAL</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">INTEGER</p></td>
+<td class="td"><p class="p">FIXED BINARY</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">FLOAT</p></td>
+<td class="td"><p class="p">FLOAT BINARY</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p"><strong>КОБОЛ</strong></p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>SQL ТИП</strong></p></td>
+<td class="td"><p class="p"><strong>ЭКВИВАЛЕНТ КОБОЛА</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">CHAR (&lt;integer&gt;)</p></td>
+<td class="td"><p class="p">PIC X (&lt;integer&gt;)</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">INTEGER</p></td>
+<td class="td"><p class="p">PIC S (&lt;nines&gt;) USAGE COMPUTTATIONAL</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">NUMERIC</p></td>
+<td class="td"><p class="p">PIC S (&lt; nines with embedded V &gt; )DISPLAY SING LEADING SEPERATE</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p"><strong>ПАСКАЛЬ</strong></p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>SQL ТИП</strong></p></td>
+<td class="td"><p class="p"><strong>ЭКВИВАЛЕНТ ПАСКАЛЯ</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">INTEGER</p></td>
+<td class="td"><p class="p">INTEGER</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">REAL</p></td>
+<td class="td"><p class="p">REAL</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">CHAR (&lt;length&gt;)</p></td>
+<td class="td"><p class="p">PACKED ARRAY [1..&lt;length&gt;] OF CHAR</p></td>
+</tr>
+</table><p class="empty-line"/><p class="empty-line"/><p class="p"><strong>ФОРТРАН</strong></p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>SQL ТИП</strong></p></td>
+<td class="td"><p class="p"><strong>ЭКВИВАЛЕНТ ФОРТРАНА</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">CHAR</p></td>
+<td class="td"><p class="p">CHAR</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">INTEGER</p></td>
+<td class="td"><p class="p">INTEGER</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">REAL</p></td>
+<td class="td"><p class="p">REAL</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">DOUBLE PRECISION</p></td>
+<td class="td"><p class="p">DOUBLE PRECISION</p></td>
+</tr>
+</table></span></span>
+</body>
+</html>

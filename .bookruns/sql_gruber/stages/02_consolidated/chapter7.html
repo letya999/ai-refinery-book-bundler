@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Модуль 7: Проектирование и Архитектура</title>
+  <style>
+    :root { 
+      --bg: #0f172a; 
+      --bg-deep: #1e293b; 
+      --txt: #f8fafc; 
+      --acc: #38bdf8; 
+      --acc-soft: rgba(56, 189, 248, 0.1);
+      --muted: #94a3b8;
+      --border: var(--acc);
+      --acc2: #10b981;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--txt);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 2rem;
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 100vh !important;
+      padding-bottom: 5rem !important;
+    }
+    .wrap { max-width: 900px; margin: 0 auto; }
+    .hero { margin-bottom: 3rem; }
+    .kicker { color: var(--acc); font-weight: bold; font-size: 0.8rem; letter-spacing: 0.1em; }
+    h1 { font-size: 2.5rem; margin-top: 0.5rem; color: var(--acc); }
+    .lead { font-size: 1.2rem; color: var(--muted) !important; }
+    
+    .vis-diag {
+      background: var(--bg-deep) !important;
+      border: 1px solid var(--border) !important;
+      padding: 2rem;
+      border-radius: 12px;
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .caption { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
+    
+    .accordion { background: var(--bg-deep); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1rem; padding: 1rem; }
+    .accordion-summary { color: var(--acc); font-weight: bold; cursor: pointer; }
+    
+    .formula-card, pre, code {
+      background: #020617 !important;
+      color: var(--acc) !important;
+      border: 1px solid var(--border) !important;
+    }
+
+    .formula-card { 
+      border-left: 4px solid var(--acc) !important; 
+      padding: 1.5rem; 
+      border-radius: 4px; 
+      margin: 2rem 0; 
+    }
+    .card-title { color: var(--acc); font-weight: bold; display: block; margin-bottom: 1rem; }
+    pre { margin: 0; }
+    code { font-family: 'Fira Code', monospace; padding: 0.2rem 0.4rem; border-radius: 4px; }
+    
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .card { background: var(--bg-deep); border: 1px solid var(--border); padding: 1.5rem; border-radius: 8px; }
+    .card b { color: var(--acc); display: block; margin-bottom: 0.5rem; }
+    
+    .badge-list { display: flex; gap: 1rem; flex-wrap: wrap; margin: 2rem 0; }
+    .badge { background: var(--bg-deep); border: 1px solid var(--acc); color: var(--acc); padding: 0.4rem 1rem; border-radius: 99px; font-size: 0.9rem; }
+    
+    .summary h3 { color: var(--acc); margin-top: 2rem; }
+  </style>
+</head>
+<body class="chapter-content">
+  <div class="wrap">
+    <section class="hero">
+      <div class="kicker">SQL MASTERCLASS • МОДУЛЬ 7</div>
+      <h1>Проектирование и Администрирование</h1>
+      <p class="lead">Создание таблиц, управление индексами и обеспечение безопасности через систему привилегий. Основы архитектуры БД.</p>
+    </section>
+
+    <div class="vis-diag">
+      <svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="40" width="100" height="60" rx="5" fill="var(--bg-deep)" stroke="var(--acc)" stroke-width="2"/>
+        <text x="40" y="75" fill="var(--acc)" font-size="12">TABLE</text>
+        <path d="M120,70 L180,70" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4"/>
+        <circle cx="210" cy="70" r="30" fill="var(--acc-soft)" stroke="var(--acc)"/>
+        <text x="195" y="75" fill="var(--txt)" font-size="10">INDEX</text>
+        <path d="M240,70 L300,70" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4"/>
+        <rect x="300" y="40" width="80" height="60" rx="5" fill="var(--bg-deep)" stroke="var(--acc2)"/>
+        <text x="315" y="75" fill="var(--acc2)" font-size="12">VIEW</text>
+      </svg>
+      <div class="caption">Связь объектов БД: Таблицы, Индексы и Представления</div>
+    </div>
+
+    <details class="accordion">
+      <summary class="accordion-summary">CREATE TABLE: Определение структуры</summary>
+      <p>Команда DDL for создания физической структуры таблицы, определения типов данных и ограничений (Constraints).</p>
+    </details>
+
+    <details class="accordion">
+      <summary class="accordion-summary">INDEX: Ускорение поиска</summary>
+      <p>Специальная структура данных, позволяющая СУБД находить строки без полного сканирования таблицы. Плата за скорость — замедление вставок.</p>
+    </details>
+
+    <details class="accordion">
+      <summary class="accordion-summary">VIEW: Виртуальные таблицы</summary>
+      <p>Сохраненный запрос, который выглядит для пользователя как обычная таблица. Идеально для скрытия сложности или ограничения доступа.</p>
+    </details>
+
+    <div class="formula-card">
+      <span class="card-title">Создание таблицы с ключом</span>
+      <pre><code>CREATE TABLE Salespeople (
+  snum integer PRIMARY KEY,
+  sname varchar(20) NOT NULL,
+  city varchar(15),
+  comm decimal
+);</code></pre>
+    </div>
+
+    <h2>Безопасность (DCD)</h2>
+    <div class="grid">
+      <div class="card">
+        <b>GRANT</b>
+        <p>Предоставление разрешений пользователям на выполнение определенных действий (SELECT, UPDATE и т.д.).</p>
+      </div>
+      <div class="card">
+        <b>REVOKE</b>
+        <p>Отозвание ранее выданных привилегий.</p>
+      </div>
+    </div>
+
+    <div class="summary">
+      <h3>ФИНАЛЬНЫЕ ИТОГИ</h3>
+      <div class="badge-list">
+        <span class="badge">DDL: Скелет</span>
+        <span class="badge">DML: Мышцы</span>
+        <span class="badge">DCD: Иммунитет</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>SQL Masterclass: Основы и Синтаксис</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-deep: #1e293b;
+      --txt: #f8fafc;
+      --acc: #38bdf8;
+      --border: var(--acc);
+      --muted: #94a3b8;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--txt);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 2rem;
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 100vh !important;
+      padding-bottom: 5rem !important;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: var(--acc);
+      font-size: 2.5rem;
+      border-bottom: 2px solid var(--acc);
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .lead {
+      font-size: 1.25rem;
+      color: var(--muted) !important;
+      margin-bottom: 2rem;
+    }
+
+    .badge-list {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: var(--bg-deep);
+      border: 1px solid var(--acc);
+      color: var(--acc);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .card {
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .formula-card {
+      background: #020617 !important;
+      color: var(--acc) !important;
+      border: 1px solid var(--border) !important;
+      border-left: 4px solid var(--acc) !important;
+      font-family: 'Fira Code', monospace;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .vis-diag {
+      background: var(--bg-deep) !important;
+      border: 1px solid var(--border) !important;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .type-item {
+      background: var(--bg-deep);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .type-item strong {
+      color: var(--acc);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    pre, code {
+      background: #020617 !important;
+      color: var(--acc) !important;
+      border: 1px solid var(--border) !important;
+    }
+    
+    code {
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+    }
+
+    /* Scroll Guard Applied */
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>SQL: Архитектура и Синтаксис</h1>
+
+    <p class="lead">
+      SQL — это декларативный язык для работы с реляционными данными. В отличие от императивных языков, здесь вы описываете <strong>что</strong> хотите получить, а не <strong>как</strong> это сделать.
+    </p>
+
+    <div class="badge-list">
+      <span class="badge">DDL (Data Definition)</span>
+      <span class="badge">DML (Data Manipulation)</span>
+      <span class="badge">DCD (Data Control)</span>
+    </div>
+
+    <h2>Анатомия Данных</h2>
+    <div class="vis-diag">
+      <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Table -->
+        <rect x="10" y="10" width="380" height="180" rx="10" fill="var(--bg-deep)" stroke="var(--muted)" stroke-width="2"/>
+        <text x="20" y="30" font-weight="bold" fill="var(--txt)">Таблица (Table)</text>
+        
+        <!-- Column -->
+        <rect x="50" y="50" width="60" height="120" fill="var(--acc)" stroke="var(--acc)" stroke-width="2" fill-opacity="0.3"/>
+        <text x="50" y="185" font-size="12" fill="var(--acc)">Столбец</text>
+        
+        <!-- Row -->
+        <rect x="30" y="80" width="340" height="30" fill="var(--acc)" stroke="var(--acc)" stroke-width="2" fill-opacity="0.5"/>
+        <text x="310" y="100" font-size="12" fill="var(--txt)">Строка</text>
+      </svg>
+    </div>
+
+    <h2>Базовый синтаксис SELECT</h2>
+    <div class="card formula-card">
+SELECT [DISTINCT] { * | column_list }
+FROM table_name
+[WHERE condition]
+[GROUP BY columns]
+[HAVING condition]
+[ORDER BY columns [ASC|DESC]];</div>
+
+    <h2>Типы данных</h2>
+    <div class="grid">
+      <div class="type-item">
+        <strong>Числовые</strong>
+        INTEGER (целые), DECIMAL (фиксированная точка), FLOAT (плавающая точка).
+      </div>
+      <div class="type-item">
+        <strong>Символьные</strong>
+        CHARACTER (фиксированная длина), VARCHAR (переменная длина).
+      </div>
+      <div class="type-item">
+        <strong>Временные</strong>
+        DATE (дата), TIME (время), TIMESTAMP (дата и время).
+      </div>
+    </div>
+
+    <h2>Создание таблиц (DDL)</h2>
+    <div class="card formula-card">
+CREATE TABLE table_name (
+    column1 data_type PRIMARY KEY,
+    column2 data_type NOT NULL,
+    column3 data_type REFERENCES other_table(id)
+);</div>
+
+    <h2>Модификация данных (DML)</h2>
+    <div class="grid">
+      <div class="card">
+        <strong>INSERT</strong>
+        <code>INSERT INTO table VALUES (...);</code>
+      </div>
+      <div class="card">
+        <strong>UPDATE</strong>
+        <code>UPDATE table SET col = val WHERE ...;</code>
+      </div>
+      <div class="card">
+        <strong>DELETE</strong>
+        <code>DELETE FROM table WHERE ...;</code>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

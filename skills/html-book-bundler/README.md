@@ -1,112 +1,98 @@
-# HTML Book Bundler v8.3
+# HTML Book Bundler v9.0 "Director's Cut"
 
-Bundles book chapters into a single offline-first HTML reading app. No server, no internet, no dependencies — open the output file in any browser.
+A high-fidelity AI production pipeline designed to transform raw manuscripts (PDF, EPUB, FB2, DOCX) into interactive, offline-first "Masterpiece" reading applications. 
 
-**Output features:**
-- Left sidebar with chapter list and full-text search
-- Bookmarks with persistent localStorage storage
-- Scroll position saved and restored per chapter
-- Dark/light theme toggle (auto-detects system preference)
-- Keyboard navigation (ArrowLeft/ArrowRight)
-- Mobile-responsive with overlay sidebar
+This framework moves beyond simple file concatenation into a structured **refinery process** where content is cleaned, architected, enriched, and audited.
 
-## Quick start
+---
 
-```bash
-# 1. Put your chapters in a directory
-ls chapters/
-# chapter1.html  chapter2.html  chapter3.html
+## 🚀 The Vision: From Raw Data to High-Fidelity UI
 
-# 2. Bundle
-node scripts/bundle.cjs --input ./chapters --output book.html --title "My Book"
+The goal is to produce a single, portable HTML file that feels like a modern web app but remains 100% functional without a server or internet connection.
 
-# 3. Open in browser
-# book.html — single file, works offline
-```
+*   **Source Example:** `Грубер Мартин. Понимание SQL - royallib.com.epub` (Raw technical text).
+*   **Result Example:** [outputs/ne_uslozhnyay/ne-uslozhnyay-preview-book.html](outputs/ne_uslozhnyay/ne-uslozhnyay-preview-book.html) (Interactive high-fidelity output).
 
-## Ingest from FB2 / EPUB / DOCX
+---
 
-```bash
-python scripts/ingest.py --input book.fb2 --output ./chapters
-# then bundle as above
-```
+## 🏗 The Four Horsemen: Role-Based Pipeline
 
-## Extract from PDF
+The production is divided into four specialized AI-agent phases, each governed by its own logic:
 
-```bash
-python scripts/pdf_parser_general.py --input book.pdf --output ./chapters
-# uses PyMuPDF for style-aware extraction of text and tables
-```
+### 1. Ingester (The Purifier)
+*   **Mission:** Deep extraction and artifact removal.
+*   **Logic:** Strips PDF headers/footers, decodes FB2 entities, and maps the physical topology.
+*   **Skill:** `book-ingester`. Uses `ingest.py` and `pdf_parser_general.py`.
 
-## Supported input formats
+### 2. Architect (The Visionary)
+*   **Mission:** Semantic distillation and storyboarding.
+*   **Logic:** Analyzes the book's "vibe" to create a **Director's Note**. It plans which sections become interactive and which patterns from the `visual-bank.md` to apply.
+*   **Skill:** `book-architect`.
 
-| Format | Support | Tool |
-|--------|---------|------|
-| HTML chapters | Native | `bundle.cjs` |
-| FB2 / FB2.ZIP | Full | `ingest.py` |
-| EPUB | Full | `ingest.py` |
-| DOCX | Full | `ingest.py` (needs `python-docx`) |
-| PDF | Full | `pdf_parser_general.py` (needs `PyMuPDF`) |
+### 3. Designer (The Craftsman)
+*   **Mission:** AST-based enrichment and UI injection.
+*   **Logic:** Uses `chapter_processor.cjs` to wrap prose in rich components:
+    *   **Technical logic** → `.formula-card`
+    *   **Data comparisons** → `.grid` with `.card`
+    *   **Logic flows** → Theme-adaptive SVGs.
+*   **Skill:** `book-designer`.
 
-## File structure
+### 4. Assembler (The Auditor)
+*   **Mission:** Final bundling and high-stakes verification.
+*   **Logic:** Generates the `SIDX` search index, manages asset deduplication, and runs the **Interactive Audit Protocol** via Playwright.
+*   **Skill:** `book-assembler`.
 
-```
-html-book-bundler/
-  scripts/
-    bundle.cjs              # Main bundler CLI
-    chapter_processor.cjs   # Chapter enrichment pipeline
-    ingest.py               # FB2/EPUB/DOCX ingester
-    pdf_parser_general.py   # Style-aware PDF extractor
-    extract_pdf_visuals.py  # Extracts images/tables from PDF
-    lint_book.py            # Security and quality linter
-    dev_server.cjs          # Live-reload dev server
-    optimize_assets.py      # Image compression
-  templates/
-    default.html            # Shell HTML template
-  assets/
-    theme.css               # Shared CSS (dark/light, components)
-  lang/
-    ru.json                 # Russian UI strings
-    en.json                 # English UI strings
-  tests/
-    test_bundler.cjs        # 17 integration tests
-  examples/
-    scripts/                # Template scripts for complex books
-    chapter1.html           # Example chapters
-    chapter2.html
-    chapter3.html
-    example-book.html       # Pre-built example output
-  SKILL.md                  # Full documentation
-  INPUT_SPEC.md             # Chapter HTML specification
-  requirements.txt          # Optional Python dependencies (PyMuPDF, python-docx)
-  package.json
-```
+---
 
-## Tests
+## 📜 The Quality Manifesto (Mandates)
+
+To reach "Director's Cut" status, every book must pass these gates:
+
+1.  **Rule 70/30 (The Engagement Gate):** At least 70% of the reading flow must consist of structured/visual components (cards, tables, diagrams). Max 30% plain prose.
+2.  **Zero Hex Colors:** All components must use CSS variables (`--bg`, `--acc`, etc.). Hardcoded hex codes are a failure.
+3.  **Scoped CSS Rule:** Chapter styles must be scoped under `.chapter-content` to prevent breaking the reader's UI.
+4.  **Scroll Guard:** Iframe environments are tricky. Every chapter must explicitly handle `overflow-y: auto !important` to ensure responsiveness.
+5.  **2MB OOM Mitigation:** To prevent crashes on mobile Safari, chapters exceeding 2MB are automatically split into logical "Chunks" (e.g., Chapter 1.1, 1.2).
+
+---
+
+## 🛠 Technical Architecture & Deep Dive
+
+*   **Security (Sandbox):** Chapters run in `iframe.srcdoc` with a strict `sandbox="allow-scripts"` policy. The `allow-same-origin` flag is intentionally omitted for defense-in-depth.
+*   **Communication:** All shell↔chapter interaction (theme, scroll, search hits) is handled via a robust `postMessage` protocol.
+*   **Asset Management:** Images are optimized to 1000px, stored in a deduplicated `ASSETS` JSON dictionary, and lazy-loaded via `IntersectionObserver`.
+*   **Search Engine:** A build-time inverted index (`SIDX`) with prefix matching and AND-intersection logic. No external dependencies.
+
+---
+
+## 🏁 AI Agent Quick Start
+
+If you are an AI agent assigned to this task, follow this loop:
 
 ```bash
+# Phase 1: Ingest
+python scripts/ingest.py --input "book.epub" --output ./chapters
+
+# Phase 2: Design (Automated Enrichment)
+# The designer sub-agent will use chapter_processor.cjs for AST modifications
+
+# Phase 3: Bundle
+node scripts/bundle.cjs --input ./chapters --output book.html --title "Masterpiece Edition"
+
+# Phase 4: Audit (Mandatory)
+# Run tests to ensure CSP and Search integrity
 node tests/test_bundler.cjs
-# 17 tests: build, placeholders, srcdoc, CSP, i18n, titles, numeric sort, search, --help, error exit, a11y
 ```
 
-## Dev server
+---
 
-```bash
-node scripts/dev_server.cjs --input ./chapters --output preview.html
-# Open http://localhost:3000 — rebuilds and reloads on file change
-```
+## 📂 Project Structure
 
-## Linting
+*   `scripts/` — The engine (Bundler, Ingesters, Linters, Dev Server).
+*   `templates/default.html` — The battle-tested interactive shell.
+*   `assets/theme.css` — The shared visual contract (Dark/Light).
+*   `skills/` — Self-contained context for sub-agents (Architect, Designer, etc.).
+*   `lang/` — i18n support for UI strings and search stop-words.
 
-```bash
-python scripts/lint_book.py --file book.html
-# Checks: CSP, sandbox, chapter count, sandbox escape patterns, external URLs, viewBox, user-scalable, lang
-```
-
-## Architecture
-
-Chapters are stored as raw UTF-8 strings in the `CHAPTERS` JS array inside the output HTML. The shell loads chapters via `iframe.srcdoc` with `sandbox="allow-scripts"` (no `allow-same-origin`). All shell↔chapter communication is done via `postMessage` (theme, scroll position, anchor navigation, search highlighting, asset delivery). No base64 overhead on the chapter strings themselves; assets are stored separately in the `ASSETS` dict and lazy-loaded via `IntersectionObserver`.
-
-Search uses a bundle-time inverted index (`SIDX`) with prefix matching and AND intersection. No external library, ~50 lines.
-
-See [SKILL.md](SKILL.md) for full documentation and [INPUT_SPEC.md](INPUT_SPEC.md) for chapter format reference.
+---
+*Documentation updated April 22, 2026. Standardized for Skill Bundle v9.0.*

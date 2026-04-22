@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id20"><div class="title2">
+<p class="p1">Глава 12. ИСПОЛЬЗОВАНИЕ ОПЕРАТОРА EXISTS</p>
+</div><p class="empty-line"/><p class="p">ТЕПЕРЬ, КОГДА ВЫ ХОРОШО ОЗНАКОМЛЕНЫ С ПОДЗАПРОСАМИ, мы можем говорить о некоторых специальных операторах которые всегда берут подзапросы как аргументы. Вы узнаете о первом из их в этой главе. Остальные будут описан в следующей главе.</p><p class="p">Оператор EXISTS используется чтобы указать предикату, - производить ли подзапросу вывод или нет. В этой главе, вы узнаете как использовать этот оператор со стандартными и (обычно ) соотнесенными подзапросами.</p><p class="p">Мы будем также обсуждать специальные расмышления которые перейдут в игру когда вы будете использовать этот оператор как относительный агрегат, как пустой указатель NULL, и как оператор Буля. Кроме того, вы можете повысить ваш профессиональный уровень относительно подзапросов исследуя их в более сложных прикладных программах чем те которые мы видели до сих пор.</p><p class="subtitle">КАК РАБОТАЕТ EXISTS?</p><p class="p">EXISTS - это оператор, который производит верное или неверное значение, другими словами, выражение Буля (см. Главу 4 для обзора этого термина). Это означает что он может работать автономно в предикате или в комбинации с другими выражениями Буля использующими Булевы операторы AND, OR, и NOT. Он берет подзапрос как аргумент и оценивает его как верный если тот производит любой вывод или как неверный если тот не делает этого. Этим он отличается от других операторов предиката, в которых1 он не может быть неизвестным. Например, мы можем решить, извлекать ли нам некоторые данные из таблицы Заказчиков если, и только если, один или более заказчиков в этой таблице находятсяся в San Jose (вывод для этого запроса показывается в Таблице 12.1):</p><p class="empty-line"/><p class="p">SELECT cnum, cname, city</p><p class="p">FROM Customers</p><p class="p">WHERE EXISTS</p><p class="p">( SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE city=" San Jose' );</p><p class="empty-line"/><p class="p">Внутренний запрос выбирает все данные для всех заказчиков в San Jose. Оператор EXISTS во внешнем предикате отмечает, что некоторый вывод был произведен подзапросом, и поскольку выражение EXISTS было полным предикатом, делает предикат верным. Подзапрос( не соотнесенный ) был выполнен только один раз для всего внешнего запроса, и следовательно,</p><p class="empty-line"/><p class="p"><strong> SQL Execution Log</strong></p><p class="p">SELECT snum, sname, city FROM Customers WHERE EXISTS</p><p class="p">(SELECT * FROM Customers WHERE city='San Jose');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum </strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">Rome</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2003</p></td>
+<td class="td"><p class="p">Liu</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Rome</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 12.1 Использование оператора EXISTS</p><p class="empty-line"/><p class="p">имеет одно значение во всех случаях. Поэтому EXISTS, когда используется этим способом, делает предикат верным или неверным для всех строк сразу, что это не так уж полезно для извлечения определенной информации.</p><p class="p">ВЫБОР СТОЛБЦОВ С ПОМОЩЬЮ EXISTS</p><p class="p">В вышеупомянутом примере, EXISTS должен быть установлен так чтобы легко выбрать один столбец, вместо того, чтобы выбирать все столбцы используя в выборе звезду( SELECT *) В этом состоит его отличие от подзапроса который (как вы видели ранее в Главе 10 мог выбрать только один столбец ) . Однако, в принципе он мало отличается при выборе EXISTS столбцов, или когда выбираются все столбцы, потому что он просто замечает - выполняется или нет вывод из подзапроса - а не использует выведенные значения.</p><p class="p">ИСПОЛЬЗОВАНИЕ EXISTS С СООТНЕСЕННЫМИ ПОДЗАПРОСАМИ</p><p class="p">В соотнесенном подзапросе, предложение EXISTS оценивается отдельно для каждой строки таблицы имя которой указано во внешнем запросе, точно также как и другие операторы предиката, когда вы используете соотнесенный подзапрос. Это дает возможность использовать EXISTS как верный предикат, который генерирует различные ответы для каждой строки таблицы указанной в основном запросе. Следовательно информация из внутреннего запроса, будет сохранена, если выведена непосредственно, когда вы используете EXISTS таким способом. Например, мы можем вывести продавцов которые имеют многочисленых заказчиков (вывод для этого запроса показывается в Таблице 12.2 ):</p><p class="empty-line"/><p class="p">SELECT DISTINCT snum</p><p class="p">FROM Customers outer</p><p class="p">WHERE EXISTS</p><p class="p">( SELECT *</p><p class="p">FROM Customers inner</p><p class="p">WHERE inner.snum=outer.snum</p><p class="p">AND inner.cnum &lt; &gt; outer.cnum );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT DISTINCT cnum FROM Customers outer WHERE EXISTS</p><p class="p">(SELECT * FROM Customers inner WHERE inner.snum=outer.snum</p><p class="p">AND inner.cnum &lt; &gt; outer.cnum);</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong> cnum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 12. 2: Использование EXISTS с соотнесенным подзапросом</p><p class="p">Для каждой строки-кандидата внешнего запроса (представляющей заказчика проверяемого в настоящее время ), внутренний запрос находит строки которые совпадают со значением поля snum (которое имел продавец ), но не со значением поля cnum (сответствующего другим заказчикам ).</p><p class="p">Если любые такие строки найдены внутренним запросом, это означает, что имеются два разных заказчика обслуживаемых текущим продавцом (то-есть продавцом заказчика в текущей строке-кандидата из внешнего запроса ).</p><p class="p">Предикат EXISTS поэтому верен для текущей строки, и номер продавца поля (snum) таблицы указанной во внешнем запросе будет выведено. Если был DISTINCT не указан, каждый из этих продавцов будет выбран один раз для каждого заказчика к которому он назначен.</p><p class="p">КОМБИНАЦИЯ ИЗ EXISTS И ОБЬЕДИНЕНИЯ</p><p class="p">Однако для нас может быть полезнее вывести больше информации об этих продавцах а не только их номера. Мы можем сделать это объединив таблицу Заказчиков с таблицей Продавцов (вывод для запроса показывается в Таблице 12.3 ):</p><p class="empty-line"/><p class="p">SELECT DISTINCT first.snum, sname, first.city</p><p class="p">FROM Salespeople first, Customers second</p><p class="p">WHERE EXISTS</p><p class="p">( SELECT *</p><p class="p">FROM Customers third</p><p class="p">WHERE second.snum=third.snum</p><p class="p">AND second.cnum &lt; &gt; third.cnum )</p><p class="p">AND first.snum=second.snum;</p><p class="empty-line"/><p class="p"><strong> SQL Execution Log</strong></p><p class="p">SELECT DISTINCT first.snum, sname, first.city</p><p class="p">FROM Salespeople first, Customers second</p><p class="p">WHERE EXISTS (SELECT * FROM Customers third</p><p class="p">WHERE second.snum=third.snum</p><p class="p">AND second.cnum &lt; &gt; third.cnum)</p><p class="p">AND first.snum=second.snum;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum </strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 12.3: Комбинация EXISTS с обьединением</p><p class="p">Внутренний запрос здесь - как и в предыдущем варианте, фактически сообщает, что псевдоним был изменен. Внешний запрос - это обьединение таблицы Продавцов с таблицей Заказчиков, наподобии того что мы видели прежде. Новое предложение основного предиката (AND first.snum=second.snum ) естественно оценивается на том же самом уровне что и предложение EXISTS. Это - функциональный предикат самого обьединения, сравнивающий две таблицы из внешнего запроса в терминах поля snum, которое являются для них общим. Из-за Булева оператора AND, оба условия основного предиката должны быть верны в порядке для верного предиката.</p><p class="p">Следовательно, результаты подзапроса имеют смысл только в тех случаях когда вторая часть запроса верна, а обьединение - выполняемо. Таким образом комбинация объединения и подзапроса может стать очень мощным способом обработки данных.</p><p class="p">ИСПОЛЬЗОВАНИЕ NOT EXISTS</p><p class="p">Предыдущий пример дал понять что EXISTS может работать в комбинации с операторами Буля. Конечно, то что является самым простым способом для использования и вероятно наиболее часто используется с EXISTS - это оператор NOT. Один из способов которым мы могли бы найти всех продавцов только с одним заказчиком будет состоять в том, чтобы инвертировать наш предыдущий пример. (Вывод для этого запроса показывается в Таблице 12.4:)</p><p class="empty-line"/><p class="p">SELECT DISTINCT snum</p><p class="p">FROM Customers outer</p><p class="p">WHERE NOT EXISTS</p><p class="p">( SELECT *</p><p class="p">FROM Customers inner</p><p class="p">WHERE inner.snum=outer.snum</p><p class="p">AND inner.cnum &lt; &gt; outer.cnum );</p><p class="p">EXISTS И АГРЕГАТЫ</p><p class="p">Одна вещь которую EXISTS не может сделать - взять функцию агрегата в подзапросе. Это имеет значение. Если функция агрегата находит любые строки для операций с ними, EXISTS верен, не взирая на то, что это - значение функции ; если же агрегатная функция не находит никаких строк, EXISTS неправилен.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT DISTINCT snum FROM Salespeople outer</p><p class="p">WHERE NOT EXISTS (SELECT * FROM Customers inner</p><p class="p">WHERE inner.snum=outer.snum</p><p class="p">AND inner.cnum &lt; &gt; outer.cnum);</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong> cnum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 12.4: Использование EXISTS с NOT</p><p class="p">Попытка использовать агрегаты с EXISTS таким способом, вероятно покажет что проблема неверно решалась от начала до конца.</p><p class="p">Конечно, подзапрос в предикате EXISTS может также использовать один или более из его собственных подзапросов. Они могут иметь любой из различных типов которые мы видели (или который мы будем видеть). Такие подзапросы, и любые другие в них, позволяют использовать агрегаты, если нет другой причины по которой они не могут быть использованы.</p><p class="p">Следующий раздел приводит этому пример.</p><p class="p">В любом случае, вы можете получить тот же самый результат более легко, выбрав поле которое вы использовали в агрегатной функции, вместо использования самой этой функции. Другими словами, предикат - EXISTS (SELECT COUNT (DISTINCT sname) FROM Salespeople) - будет эквивалентен - EXISTS (SELECT sname FROM Salespeople) который был позволен выше.</p><p class="subtitle">БОЛЕЕ УДАЧНЫЙ ПРИМЕР ПОДЗАПРОСА</p><p class="p">Возможные прикладные программы подзапросов могут становиться многократно вкладываемыми. Вы можете вкладывать их два или более в одиночный запрос, и даже один внутрь другого. Так как можно рассмотреть небольшой кусок чтобы получить всю картину работаты этой команды, вы можете воспользоваться способом в SQL, который может принимать различные команды из большинства других языков.</p><p class="p">Имеется запрос который извлекает строки всех продавцов которые имеют заказчиков с больше чем одним текущим порядком. Это не обязательно самое простое решение этой проблемы, но оно предназначено скорее показать улучшеную логику SQL. Вывод этой информации связывает все три наши типовых таблицы:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople first</p><p class="p">WHERE EXISTS</p><p class="p">( SELECT *</p><p class="p">FROM Customers second</p><p class="p">WHERE first.snum=second.snum</p><p class="p">AND 1 &lt;</p><p class="p">( SELECT COUNT (*)</p><p class="p">FROM Orders</p><p class="p">WHERE Orders.cnum=</p><p class="p">second.cnum ));</p><p class="empty-line"/><p class="p">Вывод для этого запроса показывается в Таблице 12.5.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">FROM Salespeople first WHERE EXISTS</p><p class="p">(SELECT * FROM Customers second</p><p class="p">WHERE first.snum=second.snum</p><p class="p">AND 1 &lt; (SELECT CONT (*) FROM Orders</p><p class="p">WHERE Orders.cnum=second.cnum));</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.17</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">0.13</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Barselona</p></td>
+<td class="td"><p class="p">0.15</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 12.5: Использование EXISTS с комплексным подзапросом</p><p class="p">Мы могли бы разобрать вышеупомянутый запрос примерно так:</p><p class="p">Берем каждую строку таблицы Продавцов как строку-кандидат( внешний запрос ) и выполняем подзапросы. Для каждой строки-кандидата из внешнего запроса, берем в соответствие каждую строку из таблицы Заказчиков( средний запрос). Если текущая строка заказчиков не совпадает с текущей строкой продавца( т.е. если first.snum &lt; &gt; second.snum ), предикат среднего запроса неправилен. Всякий раз, когда мы находим заказчика в среднем запросе который совдает с продавцом во внешнем запросе, мы должны рассматривать сам внутренний запрос чтобы определить, будет ли наш средний предикат запроса верен. Внутренний запрос считает число порядков текущего заказчика (из среднего запроса). Если это число больший чем 1, предикат среднего запроса верен, и строки выбираются.</p><p class="p">Это делает EXISTS предикат внешнего запроса верным для текущей строки продавца, и означает, что по крайней мере один из текущих заказчиков продавца имеет более чем один порядок.</p><p class="p">Если это не кажется достаточно понятным для вас в этой точке разбора примера, не волнуйтесь. Сложность этого примера - хороша независимо от того, как часто будете Вы использовать ее в деловой ситуации. Основная цель примеров такого типа состоит в том, чтобы показать вам некоторые возможности которые могут оказаться в дальнейшем полезными. После работы со сложными ситуациями подобно этой, простые запросы которые являются наиболее часто используемыми в SQL, покажутся Вам элементарными.</p><p class="p">Кроме того, этот запрос, даже если он кажется удобным, довольно из-вилистый способ извлечения информации и делает много работы. Он связывает три разных таблицы чтобы дать вам эту информацию, а если таблиц больше чем здесь указано, будет трудно получить ее напрямую (хотя это не единственный способ, и не обязательно лучший способ в SQL). Возможно вам нужно увидеть эту информацию относительно регулярной основы - если, например, вы имеете премию в конце недели для продавца который получил многочисленые порядки от одного заказчика. В этом случае, он должен был бы вывести команду, и сохранять ее чтобы использовать снова и снова по мере того как данные будут меняться (лучше всего сделать это с помощью представления, которое мы будем проходить в Главе 20 ).</p><p class="subtitle">РЕЗЮМЕ</p><p class="p">EXISTS, хотя он и кажется простым, может быть одним из самых непонятных операторов SQL. Однако, он облажает гибкостью и мощностью. В этой главе, вы видели и овладели большинством возможностей которые EXISTS дает вам. В дальнейшем, ваше понимание улучшеной логики подзапроса расширится значительно.</p><p class="p">Следующим шагом будет овладение тремя другими специальными операторами которые берут подзапросы как аргументы, это - ANY, ALL, и SOME. Как вы увидете в Главе 13, это - альтернативные формулировки некоторых вещей которые вы уже использовали, но которые в некоторых случаях, могут оказаться более предпочтительными.</p><p class="subtitle">РАБОТА С SQL</p><p class="p">Напишите запрос который бы использовал оператор EXISTS для извлечения всех продавцов которые имеют заказчиков с оценкой 300.</p><p class="p">* Как бы вы решили предыдущую проблему используя обьединение?</p><p class="p">* Напишите запрос использующий оператор EXISTS который выберет всех продавцов с заказчиками размещенными в их городах которые ими не обслуживаются.</p><p class="p">* Напишите запрос который извлекал бы из таблицы Заказчиков каждого заказчика назначенного к продавцу который в данный момент имеет по крайней мере еще одного заказчика (кроме заказчика которого вы выберете ) с порядками в таблице Порядков (подсказка: это может быть похоже на структуру в примере с нашим трех-уровневым подзапросом ).</p></span></span>
+</body>
+</html>

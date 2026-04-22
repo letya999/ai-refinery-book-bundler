@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id11"><div class="title2">
+<p class="p1">Глава 3. ИСПОЛЬЗОВАНИЕ SQL ДЛЯ ИЗВЛЕЧЕНИЯ ИНФОРМАЦИИ ИЗ ТАБЛИЦ.</p>
+</div><p class="empty-line"/><p class="p">В ЭТОЙ ГЛАВЕ МЫ ПОКАЖЕМ ВАМ КАК ИЗВЛЕКАТЬ информацию из таблиц. Вы узнаете как опускать или переупорядочивать столбцы и как автоматически устранять избыточность данных из вашего вывода. В заключение, вы узнаете как устанавливать условие( проверку ) которую вы можете использовать чтобы определить какие строки таблицы используются в выводе. Эта последняя особенность, будет далее описана в более поздних главах и является одной из наиболее изящных и мощных в SQL.</p><p class="subtitle">СОЗДАНИЕ ЗАПРОСА</p><p class="p">Как мы подчеркивали ранее, SQL символизирует собой Структурированный Язык Запросов. Запросы - вероятно наиболее часто используемый аспект SQL. Фактически, для категории SQL пользователей, маловероятно чтобы кто-либо использовал этот язык для чего-то друго. По этой причине, мы будем начинать наше обсуждение SQL с обсуждения запроса и как он выполняется на этом языке.</p><p class="subtitle">ЧТО ТАКОЕ ЗАПРОС?</p><p class="p">Запрос - команда которую вы даете вашей программе базы данных, и которая сообщает ей чтобы она вывела определенную информацию из таблиц в память. Эта информация обычно посылается непосредственно на экран компьютера или терминала которым вы пользуетесь, хотя, в большинстве случаев, ее можно также послать принтеру, сохранить в файле (как объект в памяти компьютера ), или представить как вводную информацию для другой команды или процесса.</p><p class="subtitle">ГДЕ ПРИМЕНЯЮТСЯ ЗАПРОСЫ?</p><p class="p">Запросы обычно рассматриваются как часть языка DML. Однако, так как запрос не меняет информацию в таблицах, а просто показывает ее пользователю, мы будем рассматривать запросы как самостоятельную категорию среди команд DML которые производят действие, а не просто показывают содержание базы данных.</p><p class="p">Все запросы в SQL состоят из одиночной команды. Структура этой команды обманчиво проста, потому что вы должны расширять ее так чтобы выполнить высоко сложные оценки и обработки данных. Эта команда называется - SELECT(ВЫБОР).</p><p class="subtitle">КОМАНДА SELECT</p><p class="p">В самой простой форме, команда SELECT просто инструктирует базу данных чтобы извлечь информацию из таблицы. Например, вы могли бы вывести таблицу Продавцов напечатав следующее:</p><p class="empty-line"/><p class="p">SELECT snum, sname, sity, comm</p><p class="p">FROM Salespeople;</p><p class="p">Вывод для этого запроса показывается в таблице 3.1.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="empty-line"/><p class="p">SELECT snum, sname, sity, comm FROM Salespeople;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">0.13</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.11</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+<td class="td"><p class="p">0.15</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">0.10</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 3.1: команда SELECT</p><p class="p">Другими словами, эта команда просто выводит все данные из таблицы. Большинство программ будут также давать заголовки столбца как выше, а некоторые позволяют детальное форматирование вывода, но это уже вне стандартной спецификации.</p><p class="p">Имеется объяснение каждой части этой команды:</p><p class="p">SELECT Ключевое слово которое сообщает базе данных что эта команда - запрос. Все запросы начинаются этим словом, сопровождаемым пробелом.</p><p class="p">snum, sname Это - список столбцов из таблицы которые выбираются запросом. Любые столбцы не перечисленные здесь не будут включены в вывод команды. Это, конечно, не значит что они будут удалены или их информация будет стерта из таблиц, потому что запрос не воздействует на информацию в таблицах; он только показывает данные.</p><p class="p">FROM FROM - ключевое слово, подобно SELECT, которое должно Salespeople быть представлено в каждом запросе. Оно сопровождается пробелом и затем именем таблицы используемой в качестве источника информации. В данном случае - это таблица Продавцов(Salespeople).</p><p class="p">Точка с запятой используется во всех интерактивных командах SQL чтобы сообщать базе данных что команда заполнена и готова выполниться.</p><p class="p">В некоторых системах наклонная черта влево (\) в строке, является индикатором конца команды.</p><p class="p">Естественно, запрос такого характера не обязательно будет упорядочивать вывод любым указаным способом. Та же самая команда выполненная с теми же самыми данными но в разное время не сможет вывести тот же самый порядок. Обычно, строки обнаруживаются в том порядке в котором они найдены в таблице, поскольку как мы установили в предыдущей главе - этот порядок произволен. Это не обязательно будет тот порядок в котором данные вводились или сохранялись. Вы можете упорядочивать вывод командами SQL непосредственно: с помощью специального предложения.</p><p class="p">Позже, мы покажем как это делается. А сейчас, просто усвойте, что в отсутствии явного упорядочения, нет никакого определенного порядка в вашем выводе.</p><p class="p">Наше использование возврата (Клавиша ENTER ) является произвольным. Мы должны точно установить как удобнее составить запрос, в несколько строк или в одну строку, следующим образом:</p><p class="empty-line"/><p class="p">SELECT snum, sname, city, comm FROM Salespeople;</p><p class="p">С тех пор как SQL использует точку с запятой чтобы указывать конец команды, большинство программ SQL обрабатывают возврат (через нажим Возврат или клавишу ENTER ) как пробел. Это - хорошая идея чтобы использовать возвраты и выравнивание что мы делали это ранее, чтобы сделать ваши команды более легкими для чтения и более правильными.</p><p class="subtitle">ВЫБИРАЙТЕ ВСЕГДА САМЫЙ ПРОСТОЙ СПОСОБ</p><p class="p">Если вы хотите видеть каждый столбец таблицы, имеется необязательное сокращение которое вы можете использовать. Звездочка (*) может применяться для вывода полного списка столбцов следующим образом:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople;</p><p class="p">Это привыведет к тому же результату что и наша предыдущая команда.</p><p class="subtitle">ОПИСАНИЕ SELECT</p><p class="p">В общем случае, команда SELECT начинается с ключевого слова SELECT, сопровождаемого пробелом. После этого должен следовать список имен столбцов которые вы хотите видеть, отделяемые запятыми. Если вы хотите видеть все столбцы таблицы, вы можете заменить этот список звездочкой (*). Ключевое слово FROM следующее далее, сопровождается пробелом и именем таблицы запрос к которой делается. В заключение, точка с запятой (; ) должна использоваться чтобы закончить запрос и указать что команда готова к выполнению.</p><p class="subtitle">ПРОСМОТР ТОЛЬКО ОПРЕДЕЛЕННОГО СТОЛБЦА ТАБЛИЦЫ</p><p class="p">Команда SELECT способна извлечь строго определенную информацию из таблицы. Сначала, мы можем предоставить возможность увидеть только определенные столбцы таблицы. Это выполняется легко, простым исключением столбцов которые вы не хотите видеть, из части команды SELECT. Например, запрос</p><p class="empty-line"/><p class="p">SELECT sname, comm</p><p class="p">FROM Salespeople;</p><p class="empty-line"/><p class="p">будет производить вывод показанный в Таблице 3.2.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT snum, comm FROM Salespeople;</p><p class="empty-line"/><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Serres</p></td>
+<td class="td"><p class="p">0.13</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">0.11</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">0.15</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">0.10</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 3.2: Выбор определенных столбцов</p><p class="p">Могут иметься таблицы которые имеют большое количество столбцов содержащих данные, не все из которых являются относящимися к поставленой задаче. Следовательно, вы можете найти способ подбора и выбора только полезных для Вас столбцов.</p><p class="subtitle">ПЕРЕУПОРЯДОЧЕНИЕ СТОЛБЦА</p><p class="p">Даже если столбцы таблицы, по определению, упорядоченны, это не означает что вы будете восстанавливать их в том же порядке. Конечно, звездочка (*) покажет все столбцы в их естественном порядке, но если вы укажете столбцы отдельно, вы можете получить их в том порядке котором хотите. Давайте рассмотрим таблицу Порядков, содержащую дату приобретения(odate), номер продавца(snum), номер порядка(onum), и суммы приобретения(amt):</p><p class="empty-line"/><p class="p">SELECT odate, snum, onum, amt</p><p class="p">FROM Orders;</p><p class="empty-line"/><p class="p">Вывод этого запроса показан Таблице 3.3.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT odate, snum, onum, amt FROM Orders;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>odate</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>onum</strong></p></td>
+<td class="td"><p class="p"><strong>amt</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">3001</p></td>
+<td class="td"><p class="p">18.69</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">3003</p></td>
+<td class="td"><p class="p">767.19</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">3002</p></td>
+<td class="td"><p class="p">1900.10</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">3005</p></td>
+<td class="td"><p class="p">5160.45</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">10/03/1990</p></td>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">3006</p></td>
+<td class="td"><p class="p">1098.16</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">3009</p></td>
+<td class="td"><p class="p">1713.23</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">10/04/1990</p></td>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">3007</p></td>
+<td class="td"><p class="p">75.75</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">10/05/1990</p></td>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">3008</p></td>
+<td class="td"><p class="p">4723.00</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">1002</p></td>
+<td class="td"><p class="p">3010</p></td>
+<td class="td"><p class="p">1309.95</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">10/06/1990</p></td>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">3011</p></td>
+<td class="td"><p class="p">9891.88</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Рисунок 3.3: Реконструкция столбцов</p><p class="p">Как вы можете видеть, структура информации в таблицах - это просто основа для активной перестройки структуры в SQL.</p><p class="subtitle">УДАЛЕНИЕ ИЗБЫТОЧНЫХ ДАННЫХ</p><p class="p">DISTINCT (ОТЛИЧИЕ) - аргумент который обеспечивает Вас способом устранять двойные значения из вашего предложения SELECT. Предположим что вы хотите знать какие продавцы в настоящее время имеют свои порядки в таблице Порядков. Под порядком (здесь и далее) будет пониматься запись в таблицу Порядков, регистрирующую приобретения сделанные в определенный день определенным заказчиком у определенного продавца на определенную сумму). Вам не нужно знать, сколько порядков имеет каждый; вам нужен только список номеров продавцов (snum). Поэтому Вы можете ввести:</p><p class="empty-line"/><p class="p">SELECT snum</p><p class="p">FROM Orders;</p><p class="empty-line"/><p class="p">для получения вывода показанного в Таблице 3.4</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT snum FROM Orders;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 3.4: SELECT с дублированием номеров продавцов.</p><p class="empty-line"/><p class="p">Для получения списка без дубликатов, для удобочитаемости, вы можете ввести следующее:</p><p class="p">SELECT DISTINCT snum</p><p class="p">FROM Orders;</p><p class="empty-line"/><p class="p">Вывод для этого запроса показан в Таблице 3.5.</p><p class="p">Другими словами, DISTINCT следит за тем, какие значения были ранее, так что бы они не были продублированы в списке. Это - полезный способ избежать избыточности данных, но важно что бы при этом вы понимали что вы делаете. Если вы не хотите потерять некоторые данные, вы не должны безоглядно использовать DISTINCT, потому что это может скрыть какую-то проблему или какие-то важные данные. Например, вы могли бы предположить что имена всех ваших заказчиков различны. Если кто-то помещает второго Clemens в таблицу Заказчиков, а вы используете SELECT DISTINCT cname, вы не будете даже знать о существовании двойника. Вы можете получить не того Clemens и даже не знать об этом. Так как вы не ожидаете избыточности, в этом случае вы не должны использовать DISTINCT.</p><p class="subtitle">ПАРАМЕТРЫ DISTINCT</p><p class="p">DISTINCT может указываться только один раз в данном предложении SELECT. Если предложение выбирает многочисленные поля,</p><p class="empty-line"/><p class="p"><strong>SQL Execution Log </strong></p><p class="p">SELECT DISTINCT snum FROM Orders;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 3.5: SELECT без дублирования</p><p class="p">DISTINCT опускает строки где все выбранные поля идентичны. Строки в которых некоторые значения одинаковы а некоторые различны - будут сохранены. DISTINCT, фактически, приводит к показу всей строки вывода, не указывая полей (за исключением когда он используется внутри агрегатных функций, как описано в Главе 6 ), так что нет никакого смысла чтобы его повторять.</p><p class="subtitle">DISTINCT ВМЕСТО ALL</p><p class="p">Вместо DISTINCT, вы можете указать - ALL. Это будет иметь противоположный эффект, дублирование строк вывода сохранится. Так как это - тот же самый случай когда вы не указываете ни DISTINCT ни ALL, то ALL - по существу скорее пояснительный, а не действующий аргумент.</p><p class="empty-line"/><p class="subtitle">КВАЛИФИЦИРОВАННЫЙ ВЫБОР ПРИ ИСПОЛЬЗОВАНИИ ПРЕДЛОЖЕНИЙ</p><p class="p">Таблицы имеют тенденцию становиться очень большими, поскольку с течением времени, все большее и большее количество строк в нее добавляется. Поскольку обычно из них только определенные строки интересуют вас в данное время, SQL дает возможность вам устанавливать критерии чтобы определить какие строки будут выбраны для вывода.</p><p class="p">WHERE - предложение команды SELECT, которое позволяет вам устанавливать предикаты, условие которых может быть или верным или неверным для любой строки таблицы. Команда извлекает только те строки из таблицы для которой такое утверждение верно. Например, предположим вы хотите видеть имена и комиссионные всех продавцов в Лондоне. Вы можете ввести такую команду:</p><p class="empty-line"/><p class="p">SELECT sname, city</p><p class="p">FROM Salespeople;</p><p class="p">WHERE city="LONDON";</p><p class="p">Когда предложение WHERE представлено, программа базы данных просматривает всю таблицу по одной строке и исследует каждую строку чтобы определить верно ли утверждение. Следовательно, для записи Peel, программа рассмотрит текущее значение столбца city, определит что оно равно "London", и включит эту строку в вывод. Запись для Serres не будет включена, и так далее.</p><p class="p">Вывод для вышеупомянутого запроса показан в Таблице 3.6.</p><p class="subtitle">SQL Execution Log</p><p class="p">SELECT sname, city FROM Salespeople WHERE city='London'</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>sname city</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Peel London</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">Motika London</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Рисунок 3.6: SELECT c предложением WHERE</p><p class="p">Давайте попробуем пример с числовым полем в предложении WHERE. Поле rating таблицы Заказчиков предназначено чтобы разделять заказчиков на группы основанные на некоторых критериях которые могут быть получены в итоге через этот номер. Возможно это - форма оценки кредита или оценки основанной на томе предыдущих приобретений. Такие числовые коды могут быть полезны в реляционных базах данных как способ подведения итогов сложной информации. Мы можем выбрать всех заказчиков с рейтингом 100, следующим образом:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE rating=100;</p><p class="p">Одиночные кавычки не используются здесь потому, что оценка - это числовое поле. Результаты запроса показаны в Таблице 3.7.</p><p class="p">Предложение WHERE совместимо с предыдущим материалом в этой главе. Другими словами, вы можете использовать номера столбцов, устранять дубликаты, или переупорядочивать столбцы в команде SELECT которая использует WHERE. Однако, вы можете изменять порядок столбцов для имен только в предложении SELECT, но не в предложении WHERE.</p><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Customers WHERE rating=100;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>сnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname </strong></p></td>
+<td class="td"><p class="p"><strong>city </strong></p></td>
+<td class="td"><p class="p"><strong> rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Рисунок 3.7: SELECT с числовым полем в предикате</p><p class="subtitle">РЕЗЮМЕ</p><p class="p">Теперь вы знаете несколько способов заставить таблицу давать вам ту информацию какую вы хотите, а не просто выбрасывать наружу все ее содержание. Вы можете переупорядочивать столбцы таблицы или устранять любую из них. Вы можете решать, хотите вы видеть дублированные значения или нет.</p><p class="p">Наиболее важно то, что вы можете устанавливать условие называемое предикатом которое определяет или не определяет указанную строку таблицы из тысяч таких же строк, будет ли она выбрана для вывода.</p><p class="p">Предикаты могут становиться очень сложными, предоставляя вам высокую точность в решении, какие строки вам выбирать с помощью запроса. Именно эта способность решать точно, что вы хотите видеть, делает запросы SQL такими мощными. Следующие несколько глав будут посвещены, в большей мере, особенностям которые расширяют мощность предикатов. В Главе 4, вам будут представлены операторы иные чем те которые используются в условиях предиката, а также способы объединения многочисленых условий в единый предикат.</p><p class="subtitle">РАБОТА С SQL</p><p class="empty-line"/><p class="p">* Напишите команду SELECT которая бы вывела номер порядка, сумму, и дату для всех строк из таблицы Порядков.</p><p class="p">* Напишите запрос который вывел бы все строки из таблицы Заказчиков для которых номер продавца=1001.</p><p class="p">* Напишите запрос который вывел бы таблицу со столбцами в следующем порядке: city, sname, snum, comm.</p><p class="p">* Напишите команду SELECT которая вывела бы оценку(rating), сопровождаемую именем каждого заказчика в San Jose.</p><p class="p">* Напишите запрос который вывел бы значения snum всех продавцов в текущем порядке из таблицы Порядков без каких бы то ни было повторений.</p></span></span>
+</body>
+</html>

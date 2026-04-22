@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<title/>
+<style>.z {
+	font-family: 'Times New Roman', serif;
+	margin-right: 8pt;
+}
+
+.p {
+	margin: 0px;
+	text-align: justify;
+	text-indent: 1.5em;
+}
+
+.a {
+	font-size: 0.7em;
+	line-height: 0.1;
+	vertical-align: super;
+}
+
+.empty-line {
+	height: 1em;
+	margin: 0px;
+}
+
+.title {
+	font-size: 1.8em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 0px;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+}
+
+.p1 {
+	margin: 0px 0px 0.5em 0px;
+	text-align: inherit;
+	text-indent: 0px;
+}
+
+.title1 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.563em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.code {
+	font-family: 'Courier New', monospace;
+}
+
+.table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em;
+	margin: 0.5em;
+}
+
+.td {
+	border: 1px solid black;
+	padding: 0.3em;
+}
+
+.title2 {
+	font-size: 1.3em;
+	font-weight: bold;
+	margin: 1em 0px 0.5em 1.923em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: left;
+}
+
+.subtitle {
+	font-style: italic;
+	font-weight: bold;
+	margin: 0.5em 2em;
+	page-break-after: avoid;
+	page-break-inside: avoid;
+	text-align: center;
+	text-indent: 0px;
+}
+
+</style>
+</head>
+<body class="z">
+<span><span id="id13"><div class="title2">
+<p class="p1">Глава 5. ИСПОЛЬЗОВАНИЕ СПЕЦИАЛЬНЫХ ОПЕРАТОРОВ В УСЛОВИЯХ</p>
+</div><p class="empty-line"/><p class="p">В ДОПОЛНЕНИИ К РЕЛЯЦИОННЫМ И БУЛЕВСКИМ операторам обсуждаемым в Главе 4, SQL использует специальные операторы IN, BETWEEN, LIKE, и IS NULL. В этой главе, вы узнаете как их использовать и как реляционные операторы позволяют создавать более сложные и мощные предикаты. Обсуждение оператора IS NULL будет включать отсутствие данных и значение NULL, которое указывает на то: что данные отсутствуют. Вы также узнаете о разновидностях использования оператора NOT применяющегося с этими операторами.</p><p class="subtitle">ОПЕРАТОР IN</p><p class="p">Оператор IN определяет набор значений в которое данное значение может или не может быть включено. В соответствии с нашей учебной базой данных на которой вы обучаетесь по настоящее временя, если вы хотите найти всех продавцов, которые размещены в Barcelona или в London, вы должны использовать следующий запрос (вывод показывается в Таблице5.1 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE city='Barcelona'</p><p class="p">OR city='London';</p><p class="empty-line"/><p class="p">Имеется и более простой способ получить ту же информацию:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE city IN ('Barcelona', 'London' );</p><p class="empty-line"/><p class="p">Вывод для этого запроса показывается в Таблице 5.2.</p><p class="p">Как вы можете видеть, IN определяет набор значений с помощью имен членов набора заключеных в круглые скобки и отделенных запятыми. Он затем проверяет различные значения указанного поля пытаясь найти совпадение со значениями из набора. Если это случается, то предикат верен. Когда наборсодержит значения номеров а не символов, одиночные кавычки опускаются. Давайте найдем всех заказчиков относящихся к продавцам имеющих значения snum=1001, 1007, и 1004. Вывод для следующего запроса показан в Таблице 5.3:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE cnum IN (1001, 1007, 1004 );</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Salespeople WHERE city=</p><p class="p">'Barcelona' OR city='London';</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.11</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+<td class="td"><p class="p">0.15</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 5.1 Нахождение продавцов в Барселоне и Лондоне</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Salespeople WHERE city IN</p><p class="p">('Barcelona', 'London');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.11</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+<td class="td"><p class="p">0.15</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 5.2 SELECT использует IN</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Customers WHERE snum IN (1001, 1007, 1004 );</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2001</p></td>
+<td class="td"><p class="p">Hoffman</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2007</p></td>
+<td class="td"><p class="p">Pereira</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1004</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 5.3: SELECT использует IN с номерами</p><p class="subtitle">ОПЕРАТОР BETWEEN</p><p class="p">Оператор BETWEEN похож на оператор IN. В отличии от определения по номерам из набора, как это делает IN, BETWEEN определяет диапазон, значения которого должны уменьшаться что делает предикат верным. Вы должны ввести ключевое слово BETWEEN с начальным значением, ключевое AND и конечное значение. В отличие от IN, BETWEEN чувствителен к порядку, и первое значение в предложении должно быть первым по алфавитному или числовому порядку. (Обратите Внимание что, в отличие от Английского языка, SQL не говорит что "значение находится (между)BETWEEN значением и значением|, а просто "значение BETWEEN значение значение|.</p><p class="p">Это применимо и к оператору LIKE). Следующий пример будет извлекать из таблицы Продавцов всех продавцов с комиссионными между .10 и .12 (вывод показывается в Таблице 5.4):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE comm BETWEEN .10 AND .12;</p><p class="empty-line"/><p class="p">Для включенного оператора BETWEEN, значение совпадающее с любым из двух значений границы (в этом случае, .10 и .12 ) заставляет предикат быть верным.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Salespeople WHERE comm BETWEEN .10 AND .12;</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum </strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.11</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">0.10</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 5.4: SELECT использует BETWEEN</p><p class="p">SQL не делает непосредственной поддержки невключения BETWEEN. Вы должны или определить ваши граничные значения так, чтобы включающая интерпретация была приемлема, или сделать что-нибудь типа этого:</p><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE (comm BETWEEN .10, AND .12 )</p><p class="p">AND NOT comm IN (.10, .12 );</p><p class="p">Вывод для этого запроса показывается в Таблица 5.5. По общему признанию, это немного неуклюже, но зато показывает как эти новые операторы могут комбинироваться с операторами Буля чтобы производить более сложные предикаты. В основном, вы используете IN и BETWEEN также как вы использовали реляционные операторы чтобы сравнивать значения, которые берутся либо из набора (для IN ) либо из диапазона (для BETWEEN ).</p><p class="p">Также, подобно реляционным операторам, BETWEEN может работать с символьными полями в терминах эквивалентов ASCII. Это означает что вы можете использовать BETWEEN чтобы выбирать ряд значений из упорядоченных по алфавиту значений.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Salespeople WHERE</p><p class="p">( comm BETWEEN .10 AND .12 AND NOT comm IN (.10 .12);</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum </strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1004</p></td>
+<td class="td"><p class="p">Motika</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.11</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 5.5: Сделать BETWEEN - невключенным</p><p class="p">Этот запрос выбирает всех заказчиков чьи имена попали в определенный алфавитный диапазон:</p><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE cname BETWEEN 'A' AND 'G';</p><p class="p">Вывод для этого запроса показывается в Таблице 5.6.</p><p class="p">Обратите Внимание что Grass и Giovanni отсутствуют, даже при включенном BETWEEN. Это происходит из-за того что BETWEEN сравнивает строк неравной длины. Строка 'G' более короткая чем строка Giovanni, поэтому BETWEEN выводит 'G' с пробелами. Пробелы предшествуют символам в алфавитном порядке (в большинстве реализаций ), поэтому Giovanni не выбирается. То же самое происходит с Grass. Важно помнить это когда вы используете BETWEEN для извлечения значений из алфавитных диапазонов.</p><p class="p">Обычно вы указываете диапазон с помощью символа начала диапазона и символа конца( вместо которого можно просто поставить z ).</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Customers WHERE cname BETWEEN 'A' AND 'G';</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2006</p></td>
+<td class="td"><p class="p">Clemens</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">100</p></td>
+<td class="td"><p class="p">1001</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2008</p></td>
+<td class="td"><p class="p">Cisneros</p></td>
+<td class="td"><p class="p">San Jose</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1007</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 5. 6: Использование BETWEEN в алфавитных порядках</p><p class="subtitle">ОПЕРАТОР LIKE</p><p class="p">LIKE применим только к полям типа CHAR или VARCHAR, с которыми он используется чтобы находить подстроки. Т.е. он ищет поле символа чтобы видеть, совпадает ли с условием часть его строки. В качестве условия он использует групповые символы(wildkards) - специальные символы которые могут соответствовать чему-нибудь.</p><p class="empty-line"/><p class="p">* Имеются два типа групповых символов используемых с LIKE:</p><p class="p">символ подчеркивания (_ ) замещает любой одиночный символ. Например, 'b_t' будет соответствовать словам 'bat' или 'bit', но не будет</p><p class="p">* соответствовать 'brat'.</p><p class="p">знак процента (%) замещает последовательность любого числа символов</p><p class="p">(включая символы нуля). Например '%p%t' будет соответствовать словам</p><p class="p">'put', 'posit', или 'opt', но не 'spite'.</p><p class="empty-line"/><p class="p">Давайте найдем всех заказчиков чьи имена начинаются с G (вывод показывается в Таблице 5.7 ):</p><p class="empty-line"/><p class="p">SELECT</p><p class="p">FROM Customers</p><p class="p">WHERE cname LIKE 'G%';</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Customers WHERE cname LIKE 'G';</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>cnum</strong></p></td>
+<td class="td"><p class="p"><strong>cname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>rating</strong></p></td>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2002</p></td>
+<td class="td"><p class="p">Giovanni</p></td>
+<td class="td"><p class="p">Rome</p></td>
+<td class="td"><p class="p">200</p></td>
+<td class="td"><p class="p">1003</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">2004</p></td>
+<td class="td"><p class="p">Grass</p></td>
+<td class="td"><p class="p">Berlin</p></td>
+<td class="td"><p class="p">300</p></td>
+<td class="td"><p class="p">1002</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 5. 7: SELECT использует LIKE с %</p><p class="empty-line"/><p class="p">LIKE может быть удобен если вы ищете имя или другое значение, и если вы не помните как они точно пишутся. Предположим что вы неуверены как записано по буквам имя одного из ваших продавцов Peal или Peel. Вы можете просто использовать ту часть которую вы знаете и групповые символы чтобы находить все возможные пары (вывод этого запроса показывается в Таблице 5.8 ):</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE sname LIKE 'P _ _ l %';</p><p class="empty-line"/><p class="p">Групповые символы подчеркивания, каждый из которых представляет один символ, добавят только два символа к уже существующим 'P' и 'l', поэтому имя наподобии Prettel не может быть показано. Групповой символ ' % ' - в конце строки необходим в большинстве реализаций если длина поля sname больше чем число символов в имени Peel (потому что некоторые другие значения sname - длиннее чем четыре символа). В таком случае, значение поля sname, фактически сохраняемое как имя Peel, сопровождается рядом пробелов. Следовательно, символ 'l' не будет рассматриваться концом строки. Групповой символ ' % ' - просто соответствует этим пробелам. Это необязательно, если поля sname имеет тип - VARCHAR.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Salespeople WHERE sname LIKE ' P 1% ';</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1001</p></td>
+<td class="td"><p class="p">Peel</p></td>
+<td class="td"><p class="p">London</p></td>
+<td class="td"><p class="p">0.12</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 5.8: SELECT использует LIKE с подчеркиванием (_)</p><p class="p">А что же Вы будете делать если вам нужно искать знак процента или знак подчеркивания в строке? В LIKE предикате, вы можете определить любой одиночный символ как символ ESC. Символ ESC используется сразу перед процентом или подчеркиванием в предикате, и означает что процент или подчеркивание будет интерпретироваться как символ а не как групповой символ. Например, мы могли бы найти наш sname столбец где присутствует подчеркивание, следующим образом:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE sname LIKE '%/_%'ESCAPE'/';</p><p class="p">С этими данными не будет никакого вывода, потому что мы не включили никакого подчеркивания в имя нашего продавца. Предложение ESCAPE определяет '/ ' как символ ESC. Символ ESC используемый в LIKE строке, сопровождается знаком процента, знаком подчеркивания, или знаком ESCAPE, который будет искаться в столбце, а не обрабатываться как групповой символ. Символ ESC должен быть одиночным символом и применяться только к одиночному символу сразу после него.</p><p class="p">В примере выше, символ процента начала и символ процента окончания обрабатываются как групповые символы; только подчеркивание предоставлено само себе.</p><p class="p">Как упомянуто выше, символ ESC может также использоваться самостоятельно. Другими словами, если вы будете искать столбец с вашим символом ESC, вы просто вводите его дважды. Во-первых это будет означать что символ ESC "берет следующий символ буквально как символ", и во-вторых что символ ESC самостоятелен.</p><p class="p">Имеется предыдущий пример который пересмотрен чтобы искать местонахождение строки '_/' в sname столбце:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE sname LIKE ' % /_ / / %'ESCAPE'/';</p><p class="empty-line"/><p class="p">Снова не будет никакого вывода с такими данными. Строка сравнивается с содержанием любой последовательности символов (%), сопровождаемых символом подчеркивания (/_ ), символом ESC (// ), и любой последовательностью символов в конце строки (% ).</p><p class="p">РАБОТА С НУЛЕВЫМИ( NULL ) ЗНАЧЕНИЯМИ</p><p class="p">Часто, будут иметься записи в таблице которые не имеют никаких значений для каждого поля, например потому что информация не завершена, или потому что это поле просто не заполнялось. SQL учитывает такой вариант, позволяя вам вводить значение NULL(ПУСТОЙ) в поле, вместо значения. Когда значение поля равно NULL, это означает, что программа базы данных специально промаркировала это поле как не имеющее никакого значения для этой строки (или записи). Это отличается от просто назначения полю, значения нуля или пробела, которые база данных будет обрабатывать также как и любое другое значение. Точно также, как NULL не является техническим значением, оно не имеет и типа данных. Оно может помещаться в любой тип поля. Тем ни менее, NULL в SQL часто упоминается как нуль.</p><p class="p">Предположим, что вы получили нового заказчика который еще не был назначен продавцу. Чем ждать продавца к которому его нужно назначить, вы можете ввести заказчика в базу данных теперь же, так что он не потеряется при перестановке.</p><p class="p">Вы можете ввести строку для заказчика со значением NULL в поле snum и заполнить это поле значением позже, когда продавец будет назначен.</p><p class="empty-line"/><p class="subtitle">NULL ОПЕРАТОР</p><p class="p">Так как NULL указывает на отсутствие значения, вы не можете знать каков будет результат любого сравнения с использованием NULL. Когда NULL сравнивается с любым значением, даже с другим таким же NULL, результат будет ни верным ни неверным, он - неизвестен. Неизвестный Булев, вообще ведет себя также как неверная строка, которая произведя неизвестное значение в предикате не будет выбрана запросом - имейте ввиду что в то время как NOT(неверное) - равнятся верно, NOT (неизвестное) - равняется неизвестно.</p><p class="p">Следовательно, выражение типа 'city=NULL' или 'city IN (NULL)' будет неизвестно, независимо от значения city.</p><p class="p">Часто вы должны делать различия между неверно и неизвестно - между строками содержащими значения столбцов которые не соответствуют условию предиката и которые содержат NULL в столбцах. По этой причине, SQL предоставляет специальный оператор IS, который используется с ключевым словом NULL, для размещения значения NULL.</p><p class="p">Найдем все записи в нашей таблице Заказчиков с NULL значениями в city столбце:</p><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE city IS NULL;</p><p class="p">Здесь не будет никакого вывода, потому что мы не имеем никаких значений NULL в наших типовых таблицах. Значения NULL - очень важны, и мы вернемся к ним позже.</p><p class="empty-line"/><p class="subtitle">ИСПОЛЬЗОВАНИЕ NOT СО СПЕЦИАЛЬНЫМИ ОПЕРАТОРАМИ</p><p class="p">Специальные операторы которые мы изучали в этой главе могут немедленно предшествовать Булеву NOT.</p><p class="p">Он противоположен реляционным операторам, которые должны иметь оператор NOT - вводимым выражением. Например, если мы хотим устранить NULL из нашего вывода, мы будем использовать NOT чтобы изменить на противоположное значение предиката:</p><p class="empty-line"/><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE city NOT NULL;</p><p class="p">При отсутствии значений NULL( как в нашем случае ), будет выведена вся таблица Заказчиков. Аналогично можно ввести следующее</p><p class="p">SELECT *</p><p class="p">FROM Customers</p><p class="p">WHERE NOT city IS NULL;</p><p class="empty-line"/><p class="p">- что также приемлемо.</p><p class="p">Мы можем также использовать NOT с IN:</p><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE city NOT IN ('London', 'San Jose' );</p><p class="p">А это - другой способ подобного же выражения</p><p class="p">SELECT *</p><p class="p">FROM Salespeople</p><p class="p">WHERE NOT city IN ('London', ' San Jose' );</p><p class="p">Вывод для этого запроса показывается в Таблице 5.9.</p><p class="p">Таким же способом Вы можете использовать NOT BETWEEN и NOT LIKE.</p><p class="empty-line"/><p class="subtitle">SQL Execution Log</p><p class="p">SELECT * FROM Salespeople WHERE sity NOT IN</p><p class="p">('London', 'San Jose');</p><table class="table">
+<tr>
+<td class="td"><p class="p"><strong>snum</strong></p></td>
+<td class="td"><p class="p"><strong>sname</strong></p></td>
+<td class="td"><p class="p"><strong>city</strong></p></td>
+<td class="td"><p class="p"><strong>comm</strong></p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1003</p></td>
+<td class="td"><p class="p">Rifkin</p></td>
+<td class="td"><p class="p">Barcelona</p></td>
+<td class="td"><p class="p">0.15</p></td>
+</tr>
+<tr>
+<td class="td"><p class="p">1007</p></td>
+<td class="td"><p class="p">Axelrod</p></td>
+<td class="td"><p class="p">New York</p></td>
+<td class="td"><p class="p">0.10</p></td>
+</tr>
+</table><p class="empty-line"/><p class="p">Таблица 5. 9: Использование NOT с IN</p><p class="empty-line"/><p class="subtitle">РЕЗЮМЕ</p><p class="p">Теперь вы можете создавать предикаты в терминах связей специально определенных SQL. Вы можете искать значения в определенном диапазоне (BETWEEN) или в числовом наборе (IN), или вы можете искать символьные значения которые соответствуют тексту внутри параметров (LIKE).</p><p class="p">Вы также изучили некоторые вещи относительно того как SQL поступает при отсутствии данных - что реальность мировой базы данных - используя NULL вместо конкретных значений. Вы можете извлекать или исключать значения NULL из вашего вывода используя оператор IS NULL. Теперь, когда вы имеете в вашем распоряжении весь набор стандартных математических и специальных операторов, вы можете переходить к специальным функциям SQL которые работают на всех группах значений, а не просто на одиночном значении, что важно.</p><p class="p">Это уже тема Главы 6.</p><p class="empty-line"/><p class="subtitle">РАБОТА С SQL</p><p class="p">Напишите два запроса которые могли бы вывести все порядки на 3 или 4 Октября 1990</p><p class="p">* Напишите запрос который выберет всех заказчиков обслуживаемых продавцами Peel или Motika. (Подсказка: из наших типовых таблиц, поле snum связывает вторую таблицу с первой )</p><p class="p">* Напишите запрос, который может вывести всех заказчиков чьи имена начинаются с буквы попадающей в диапазон от A до G.</p><p class="p">* Напишите запрос который выберет всех пользователей чьи имена начинаются с буквы C.</p><p class="p">* Напишите запрос который выберет все порядки имеющие нулевые значения или NULL в поле amt(сумма).</p></span></span>
+</body>
+</html>
