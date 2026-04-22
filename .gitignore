@@ -16,30 +16,18 @@ __pycache__/
 .venv/
 env/
 
-# HTML Book Bundler - INTERMEDIATE DATA (Context Efficiency)
+# HTML Book Bundler - INTERMEDIATE HEAVY DATA
+.bookruns/             # Temporary build stages
 tmp_assets/           # Temporary image downloads
-.bookruns/             # Build stages and chapter drafts
-assets/raw_scans/     # Extracted PDF images
-tmp_gen_*.py          # Dynamic scripts
+assets/raw_scans/     # Huge scan exports
+tmp_gen_*.py          # Temporary scripts
 
-# Deep nested intermediate assets in outputs
-outputs/**/raw_pages/
-outputs/**/assets/
-outputs/**/chapters/
+# Deep nested intermediate artifacts (Keeping chapters source, ignoring raw imagery)
+**/raw_pages/         # Intermediate PNGs from PDF extraction
+**/assets/images/     # Intermediate image files (already inlined in HTML)
+**/assets/pages/      # Intermediate page screenshots
 
 # Playwright MCP session artifacts
 .playwright-mcp/
 
-# Book Outputs - Keep only clean final versions
-# Ignore versioned iterations and fixed bundles
-outputs/**/V[0-9]*.html
-outputs/**/*_Fixed_*.html
-outputs/**/*_Interactive_*.html
-outputs/**/*_Offline.html
-outputs/**/*_Director_Cut.html
-outputs/**/*_Edition.html
-outputs/**/*_V9.html
-outputs/**/*_Masterpiece.html
-
-# Keep the directory structure but ignore specific large artifacts
-!outputs/.gitkeep
+# NOTE: We keep 'outputs/' mainly for final HTML files and 'chapters/' source text.
