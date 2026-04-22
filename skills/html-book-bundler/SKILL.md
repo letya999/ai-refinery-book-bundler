@@ -23,7 +23,7 @@ You are an AI Architect and Book Director. Your goal is to transform a boring PD
    - **Formula Cards:** Wrap ALL technical definitions in `.formula-card`.
    - **SVG Primitives:** Use SVG schemes for logic flows.
    - **Scroll Guard:** Ensure `body` has `overflow-y: auto !important`.
-* **STEP 4: MODULAR ASSEMBLY & AUDIT.** Use `v4_shell.html`. Bundle, then verify with Playwright.
+* **STEP 4: MODULAR ASSEMBLY & AUDIT.** Use `default.html`. Bundle, then verify with Playwright.
 
 ## CORE MANDATES:
 1. **Visual Literacy:** If a chapter has >500 words without a visual component (SVG, Card, Table), it is a FAILURE.
@@ -38,7 +38,7 @@ You are an AI Architect and Book Director. Your goal is to transform a boring PD
 - **Scroll Guard:** The `srcdoc` iframe environment requires explicit `overflow: auto` on the chapter `body`. Never use `overflow: hidden`.
 - **Unicode LaTeX:** In Python enrichment scripts, always use raw strings (`r""`) and double-escape backslashes (`\\\\`) to avoid `SyntaxError`.
 - **Sanitization Priority:** Raw parsing is never enough. Removing headers and footers is as important as extracting text.
-- **MathJax Integration:** The `v4_shell.html` now includes MathJax by default. Chapters just need to provide `\( ... \)` or `$$ ... $$`.
+- **MathJax Integration:** The `default.html` now includes MathJax by default. Chapters just need to provide `\( ... \)` or `$$ ... $$`.
 
 
 ## Components (Sub-skills):

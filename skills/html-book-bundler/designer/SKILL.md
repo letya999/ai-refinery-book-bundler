@@ -28,7 +28,7 @@ You are the Presentation Layer. Your goal is to eliminate "Wall of Text" using A
 1. **Layout Storyboarding:** You MUST follow the Architect's Storyboard.
 2. **Inherit the base, create the unique:** Start from `../assets/theme.css` variable contract and override the variable block at the top for the specific book genre/style.
 3. **Visual Verification:** After EACH chapter, run Playwright. Verify that formula cards are rendered and **SCROLL IS NOT BLOCKED**.
-4. **Interactive Logic:** If the book is large (>100 pages), use the **Modular SPA Shell** (`v4_shell.html`) to ensure performance.
+4. **Interactive Logic:** If the book is large (>100 pages), use the **Modular SPA Shell** (`default.html`) to ensure performance.
 5. **Image Anchoring:** Use `layout_map.json` to place original images exactly where they were in the PDF, unless marked for "REPLACE".
 6. **Pattern Source Constraint:** Reuse only `../references/visual-bank.md` and `../examples/` as visual pattern sources; do not introduce new visual-spec files.
 

@@ -13,7 +13,7 @@ You are the Deployment Layer. Your goal is a 100% functional, secure, single-fil
    - Action: `press('PageDown')` or `evaluate('window.scrollTo')`.
    - Goal: Ensure content is not locked by `overflow: hidden`.
 3. **QA LINT:** Run `lint_book.py`. Ensure NO hex colors and that MathJax scripts are present.
-4. **MODULAR SHELL:** For large books, you MUST use `v4_shell.html`. 
+4. **MODULAR SHELL:** For large books, you MUST use `default.html`. 
 
 
 ## Workflow:

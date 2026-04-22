@@ -1,0 +1,167 @@
+/* === THEME: THE EGYPTIAN CROSS MYSTERY === */
+:root {
+  --bg: #f9f4e8;
+  --bg-deep: #f1ebd7;
+  --txt: #2c3e50;
+  --acc: #8b0000; /* Blood Red */
+  --acc-soft: #fde8e8;
+  --acc2: #d4af37; /* Gold */
+  --border: #d2c5a7;
+  --shadow: 0 4px 10px rgba(0,0,0,0.1);
+  --muted: #7f8c8d;
+  --sidebar-w: 320px;
+}
+
+body { 
+  font-family: 'Lora', 'Georgia', serif; 
+  color: var(--txt); 
+  background: var(--bg); 
+  line-height: 1.7; 
+  margin: 0;
+  padding: 2rem;
+  overflow-y: auto !important;
+}
+
+h1, h2, h3 { 
+  font-family: 'Playfair Display', 'Georgia', serif; 
+  color: var(--acc);
+}
+
+h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; border-bottom: 3px double var(--acc2); padding-bottom: 1rem; }
+h2 { font-size: 2rem; border-left: 5px solid var(--acc); padding-left: 1rem; margin-top: 3rem; }
+
+/* Dramatis Personae Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.card {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: var(--acc2);
+}
+
+.card b {
+  display: block;
+  font-size: 1.1rem;
+  color: var(--acc);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.card p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Epigraph */
+.epigraph {
+  font-style: italic;
+  margin: 2rem auto;
+  max-width: 80%;
+  border-right: 4px solid var(--acc2);
+  padding: 1rem 2rem;
+  background: rgba(212, 175, 55, 0.05);
+  text-align: right;
+}
+
+.epigraph p { margin-bottom: 0.5rem; }
+
+/* Clue Box / Formula Card */
+.formula-card {
+  background: #fff;
+  border: 2px dashed var(--acc);
+  padding: 1.5rem;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.formula-card::before {
+  content: "УЛИКА";
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: var(--acc);
+  color: #fff;
+  padding: 2px 10px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+/* Evidence Photo Frame */
+.photo-frame {
+  background: #fff;
+  padding: 15px 15px 40px 15px;
+  border: 1px solid var(--border);
+  box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+  margin: 2rem auto;
+  max-width: 90%;
+  position: relative;
+  transform: rotate(-1deg);
+  transition: transform 0.3s;
+}
+
+.photo-frame:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.photo-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: grayscale(1) contrast(1.1) sepia(0.1);
+  border: 1px solid #ddd;
+}
+
+.photo-frame::after {
+  content: "EXHIBIT A";
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--acc);
+  opacity: 0.6;
+  border: 2px solid var(--acc);
+  padding: 2px 8px;
+  transform: rotate(-5deg);
+}
+
+.photo-label {
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #666;
+}
+
+/* SVG Diagram Box */
+.vis-diag {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.vis-diag svg {
+  max-height: 150px;
+  width: auto;
+  margin: 0 auto;
+  display: block;
+}

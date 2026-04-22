@@ -1,0 +1,85 @@
+/* === THEME: THE EGYPTIAN CROSS MYSTERY (v18.0) === */
+:root {
+  --bg: #f9f4e8;
+  --bg-deep: #f1ebd7;
+  --txt: #2c3e50;
+  --acc: #8b0000; /* Blood Red */
+  --acc-soft: #fde8e8;
+  --acc2: #d4af37; /* Gold */
+  --border: #d2c5a7;
+  --shadow: 0 4px 10px rgba(0,0,0,0.1);
+  --muted: #7f8c8d;
+  --sidebar-w: 300px;
+}
+
+/* Base Typography */
+body { 
+  font-family: 'Lora', 'Georgia', serif; 
+  color: var(--txt); 
+  background: var(--bg); 
+  line-height: 1.7; 
+  margin: 0;
+  padding: 3rem 4rem; /* Generous margins for reading */
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h1, h2, h3 { 
+  font-family: 'Playfair Display', 'Georgia', serif; 
+  color: var(--acc);
+  line-height: 1.2;
+}
+
+h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; border-bottom: 3px double var(--acc2); padding-bottom: 1rem; }
+h2 { font-size: 2rem; border-left: 5px solid var(--acc); padding-left: 1.5rem; margin-top: 3.5rem; margin-bottom: 1.5rem; }
+
+/* Noir Visual Elements */
+.photo-frame {
+  background: #fff;
+  padding: 15px 15px 45px 15px;
+  border: 1px solid var(--border);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  margin: 3rem auto;
+  max-width: 450px;
+  position: relative;
+  transform: rotate(-1deg);
+  transition: transform 0.3s;
+}
+
+.photo-frame:hover { transform: rotate(0deg) scale(1.02); }
+
+.photo-frame img {
+  width: 100%; height: auto; display: block;
+  filter: grayscale(1) contrast(1.1) sepia(0.05); 
+  max-height: 350px; object-fit: cover; border: 1px solid #eee;
+}
+
+.photo-frame::after {
+  content: "EXHIBIT A";
+  position: absolute; bottom: 15px; right: 25px;
+  font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold;
+  color: var(--acc); opacity: 0.5; border: 2px solid var(--acc); padding: 2px 10px; transform: rotate(-5deg);
+}
+
+.photo-label {
+  position: absolute; bottom: 15px; left: 25px;
+  font-family: 'Courier New', monospace; font-size: 12px; color: #777;
+}
+
+/* Components */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+.card { background: var(--bg-deep); border: 1px solid var(--border); padding: 1.5rem; border-radius: 8px; box-shadow: var(--shadow); }
+.card b { display: block; font-size: 1.1rem; color: var(--acc); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
+
+.formula-card { background: #fff; border: 2px dashed var(--acc); padding: 1.5rem; margin: 2rem 0; position: relative; }
+.formula-card::before {
+  content: "УЛИКА"; position: absolute; top: -13px; left: 20px;
+  background: var(--acc); color: #fff; padding: 2px 12px; font-size: 0.75rem; font-weight: bold;
+}
+
+.kicker { font-weight: 800; text-transform: uppercase; color: var(--acc); font-size: 0.75rem; margin-bottom: 0.5rem; letter-spacing: 2px; opacity: 0.7; }
+p { margin-bottom: 1.5rem; text-align: justify; }
+
+/* Interactive search highlights */
+mark.search-hit { background: var(--acc2); color: #000; border-radius: 2px; }
