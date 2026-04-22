@@ -40,12 +40,12 @@ if (!imgOk) throw new Error("CRITICAL: Images failed to load from Base64!");
 # In-place optimization (max 1000px width — prevents mobile OOM)
 python ../scripts/optimize_assets.py --dir ./chapters
 # Bundle
-node ../scripts/bundle.cjs --input ./chapters --output book_v8.html --title "Final Book Title" --lang ru
+node ../scripts/bundle.cjs --input ./chapters --output book_v9.html --title "Final Book Title" --lang ru
 # Optional: Dev mode with live reload
-node ../scripts/bundle.cjs --input ./chapters --output book_v8.html --dev
-node ../scripts/dev_server.cjs book_v8.html
+node ../scripts/bundle.cjs --input ./chapters --output book_v9.html --dev
+node ../scripts/dev_server.cjs book_v9.html
 # Audit
-python ../scripts/lint_book.py --file book_v8.html
+python ../scripts/lint_book.py --file book_v9.html
 ```
 
 ## Critical Lessons:

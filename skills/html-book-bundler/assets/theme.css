@@ -19,7 +19,7 @@ body {
   background: var(--bg); 
   line-height: 1.6; 
   margin: 0; 
-  overflow: hidden; /* App mode */
+  overflow-y: auto; /* App mode */
 }
 
 /* Typography inherited by chapters */
