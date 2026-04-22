@@ -17,8 +17,8 @@ __pycache__/
 env/
 
 # HTML Book Bundler - INTERMEDIATE DATA (Context Efficiency)
-.bookruns/             # Build stages and chapter drafts
 tmp_assets/           # Temporary image downloads
+.bookruns/             # Build stages and chapter drafts
 assets/raw_scans/     # Extracted PDF images
 tmp_gen_*.py          # Dynamic scripts
 
