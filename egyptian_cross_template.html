@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="{{LANG_CODE}}" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{BOOK_TITLE}}</title>
+<style>
+/* === THEME === */
+:root {
+  --bg: #f9f4e8; --bg2: #f1ebd7; --panel: #f1ebd7; --panel2: #e8dfc5; --line: #d2c5a7;
+  --txt: #2c3e50; --muted: #7f8c8d; --acc: #8b0000; --acc2: #d4af37; --shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--txt); font-family: "Lora", "Georgia", serif; overflow: hidden; line-height: 1.6; }
+
+.app { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
+.side { border-right: 1px solid var(--line); background: var(--panel); display: flex; flex-direction: column; overflow: hidden; box-shadow: 2px 0 10px rgba(0,0,0,0.05); }
+.brand { padding: 25px 15px; border-bottom: 2px double var(--line); text-align: center; }
+.brand h1 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--acc); text-transform: uppercase; letter-spacing: 1px; }
+
+.list { flex: 1; overflow-y: auto; padding: 12px; display: grid; gap: 10px; align-content: start; }
+.ch { all: unset; cursor: pointer; padding: 14px; border: 1px solid var(--line); background: rgba(255,255,255,0.3); border-radius: 4px; font-size: 13px; transition: .2s; }
+.ch:hover { background: #fff; border-color: var(--acc); }
+.ch.on { background: var(--acc); color: #fff; border-color: var(--acc); box-shadow: var(--shadow); }
+.ch b { display: block; font-size: 10px; text-transform: uppercase; color: var(--acc); margin-bottom: 4px; letter-spacing: 1px; }
+.ch.on b { color: var(--acc2); }
+
+.main { display: flex; flex-direction: column; min-width: 0; position: relative; }
+.top { height: 60px; border-bottom: 1px solid var(--line); background: var(--bg); display: flex; align-items: center; gap: 15px; padding: 0 20px; z-index: 10; }
+.tt { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--acc); font-weight: 700; flex: 1; }
+
+.frame { flex: 1; position: relative; background: #fff; }
+iframe { width: 100%; height: 100%; border: none; display: block; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><h1>{{BOOK_TITLE}}</h1><small style="color:var(--muted)">Архив Эллери Куина</small></div>
+    <div class="list" id="list"></div>
+  </aside>
+  <main class="main">
+    <div class="top"><div class="tt" id="tt"></div></div>
+    <div class="frame"><iframe id="fr" sandbox="allow-scripts"></iframe></div>
+  </main>
+</div>
+<script id="book-assets" type="application/json">{{ASSETS}}</script>
+<script id="book-chapters" type="application/json">{{LOCAL_CHAPTERS}}</script>
+<script>
+(function() {
+  const CHAPTERS = JSON.parse(document.getElementById('book-chapters').textContent);
+  const ASSETS = JSON.parse(document.getElementById('book-assets').textContent);
+  const fr = document.getElementById('fr');
+  const tt = document.getElementById('tt');
+  const T = {{GLOBAL_TITLES}};
+
+  function go(i) {
+    if (i < 0 || i >= T.length) return;
+    
+    // Create a temporary DOM to process images properly
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(CHAPTERS[i], 'text/html');
+    
+    // Fix all images: swap data-src (Base64) into src
+    doc.querySelectorAll('img').forEach(img => {
+      const key = img.getAttribute('data-src');
+      if (key && ASSETS[key]) {
+        img.src = ASSETS[key];
+        img.removeAttribute('data-src');
+      }
+    });
+
+    fr.srcdoc = doc.documentElement.outerHTML;
+    tt.textContent = T[i];
+    document.querySelectorAll('.ch').forEach((el, idx) => el.classList.toggle('on', idx === i));
+  }
+
+  const list = document.getElementById('list');
+  T.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'ch';
+    btn.innerHTML = `<b>Дѣло №${i+1}</b>${t}`;
+    btn.onclick = () => go(i);
+    list.appendChild(btn);
+  });
+  go(0);
+})();
+</script>
+</body>
+</html>

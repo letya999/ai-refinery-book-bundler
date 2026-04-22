@@ -8,3 +8,4 @@ __pycache__/
 # playwright MCP session artifacts
 .playwright-mcp/
 outputs/
+.bookruns/
