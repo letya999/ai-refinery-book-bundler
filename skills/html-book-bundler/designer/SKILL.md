@@ -29,14 +29,19 @@ You are the Presentation Layer. Your goal is to eliminate "Wall of Text" using A
 2. **Inherit the base, create the unique:** Start from `../assets/theme.css` variable contract and override the variable block at the top for the specific book genre/style.
 3. **Visual Verification:** After EACH chapter, run Playwright. Verify that formula cards are rendered and **SCROLL IS NOT BLOCKED**.
 4. **Interactive Logic:** If the book is large (>100 pages), use the **Modular SPA Shell** (`default.html`) to ensure performance.
-5. **Image Anchoring:** Use `layout_map.json` to place original images exactly where they were in the PDF, unless marked for "REPLACE".
-6. **Pattern Source Constraint:** Reuse only `../references/visual-bank.md` and `../examples/` as visual pattern sources; do not introduce new visual-spec files.
+5. **Asset-First Flow (Guaranteed Visuals):** If a chapter requires an image, follow this protocol:
+   - Use `google_web_search` to find high-quality image URLs (Unsplash/Wikimedia).
+   - Download them to the local `assets/` folder using Node.js or `curl` (use `User-Agent: Mozilla/5.0` to avoid 403).
+   - Reference them as `<img src="assets/filename.png">`.
+   - **Noir Standard:** For mystery/vintage vibe, apply `filter: grayscale(1) contrast(1.1) sepia(0.05);` and `max-height: 400px;` in `theme.css`.
+6. **Image Anchoring:** Use `layout_map.json` to place original images exactly where they were in the PDF, unless marked for "REPLACE".
+7. **Pattern Source Constraint:** Reuse only `../references/visual-bank.md` (now including Detective/Noir presets) and `../examples/` as visual pattern sources.
 
 
 ## Image Handling (CRITICAL):
-- **Never write `data-src` manually.** Image lazy-loading is handled automatically by `bundle.cjs` — it replaces `src` with a placeholder and stores the asset in the `ASSETS` dictionary. Write normal `<img src="relative/path.jpg">` tags.
-- **Never inline base64 in chapter HTML.** All large assets must be referenced as relative file paths. The bundler handles encoding.
-- **Run `optimize_assets.py` before bundling** to cap image width at 1000px and prevent mobile OOM crashes.
+- **Never write `data-src` manually.** Image lazy-loading is handled automatically by `bundle.cjs`.
+- **Prefer Local Downloads.** External URLs are unreliable. Always download to `assets/` before bundling.
+- **Run `optimize_assets.py` before bundling** to cap image width at 1000px.
 
 ## Output:
 - Enriched HTML chapters using the full visual type schema: `vis-diag`, `vis-stats`, `vis-grid`, `vis-timeline`, `matrix`, `badge-list`, `insight`, and `term-link` classes.

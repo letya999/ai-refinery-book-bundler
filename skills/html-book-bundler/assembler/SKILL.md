@@ -13,7 +13,27 @@ You are the Deployment Layer. Your goal is a 100% functional, secure, single-fil
    - Action: `press('PageDown')` or `evaluate('window.scrollTo')`.
    - Goal: Ensure content is not locked by `overflow: hidden`.
 3. **QA LINT:** Run `lint_book.py`. Ensure NO hex colors and that MathJax scripts are present.
-4. **MODULAR SHELL:** For large books, you MUST use `default.html`. 
+4. **MODULAR SHELL:** For all production books, you MUST use `default.html`.
+
+## Mandatory Interactive Audit (Playwright):
+A bundle is NOT finished until you empirically verify it using the following script:
+```javascript
+// 1. Scroll Verification (Ensures layout is not locked)
+const sBefore = await page.evaluate(() => document.getElementById('reader').scrollTop);
+await page.evaluate(() => document.getElementById('reader').scrollTop = 500);
+const sAfter = await page.evaluate(() => document.getElementById('reader').scrollTop);
+if (sBefore === sAfter) throw new Error("CRITICAL: Scroll is blocked by overflow:hidden!");
+
+// 2. Search Verification (Ensures index is working)
+await page.fill('#search', 'SomeKeyword'); // use a word known to be in the book
+await page.waitForTimeout(500);
+const hits = await page.locator('mark.search-hit').count();
+if (hits === 0) throw new Error("CRITICAL: Search index or highlighting is broken!");
+
+// 3. Asset Verification (Ensures Base64 worked)
+const imgOk = await page.evaluate(() => document.querySelector('img').naturalWidth > 0);
+if (!imgOk) throw new Error("CRITICAL: Images failed to load from Base64!");
+``` 
 
 
 ## Workflow:

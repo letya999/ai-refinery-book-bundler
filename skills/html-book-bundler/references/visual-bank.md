@@ -93,26 +93,27 @@ Used for describing stages, sequences, and historical paths.
 </div>
 ```
 
-## 7. SVG Diagrams (Structural Depth) - 🚨 NEW in v7.0 🚨
-For network diagrams, matrices, and flows, do not rely on text. Use inline SVG styled via CSS variables.
+## 8. Classic Detective / Noir (v9.0)
+Special preset for mystery, vintage, and archive-style books.
 
+### Typography
+- **Primary:** `EB Garamond` or `Lora` (Serif).
+- **Display:** `Playfair Display` (Bold/Black).
+
+### Photo Frame V2 (Evidence Style)
 ```html
-<div class="vis-diag">
-  <svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-        <polygon points="0 0, 10 3.5, 0 7" fill="var(--line)"/>
-      </marker>
-    </defs>
-    <!-- Links -->
-    <line x1="100" y1="75" x2="180" y2="75" class="diag-link"/>
-    <!-- Nodes -->
-    <rect x="20" y="50" width="80" height="50" rx="8" class="diag-node"/>
-    <text x="60" y="75" class="diag-text">ПЛАН</text>
-    
-    <rect x="180" y="50" width="80" height="50" rx="8" class="diag-node diag-highlight"/>
-    <text x="220" y="75" class="diag-text" style="fill: var(--bg)">ФАКТ</text>
-  </svg>
-  <div class="caption">Сравнение плана и факта (цикл контроля)</div>
+<div class="photo-frame">
+  <img src="assets/clue1.webp" alt="Улика">
+  <div class="photo-label">ВЕЩЕСТВЕННОЕ ДОКАЗАТЕЛЬСТВО: НОЖ</div>
 </div>
 ```
+- **Filter:** `filter: grayscale(1) contrast(1.1) sepia(0.05);`
+
+### Evidence Card
+```html
+<div class="evidence-card">
+  <b>ВЕЩЕСТВЕННОЕ ДОКАЗАТЕЛЬСТВО</b>
+  <p>Описание улики или показания свидетеля...</p>
+</div>
+```
+- **CSS:** `border-left: 5px solid var(--acc); background: var(--bg-deep); padding: 1.5rem;`
