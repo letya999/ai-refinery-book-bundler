@@ -16,20 +16,30 @@ __pycache__/
 .venv/
 env/
 
-# HTML Book Bundler - INTERMEDIATE DATA (Crucial for Context Efficiency)
-.bookruns/             # Temporary build stages and chapter drafts
-tmp_assets/           # Temporary image downloads before localizing
-assets/raw_scans/     # Extracted PDF page images (can be huge)
-tmp_gen_*.py          # Dynamically generated scripts
+# HTML Book Bundler - INTERMEDIATE DATA (Context Efficiency)
+.bookruns/             # Build stages and chapter drafts
+tmp_assets/           # Temporary image downloads
+assets/raw_scans/     # Extracted PDF images
+tmp_gen_*.py          # Dynamic scripts
+
+# Deep nested intermediate assets in outputs
+outputs/**/raw_pages/
+outputs/**/assets/
+outputs/**/chapters/
 
 # Playwright MCP session artifacts
 .playwright-mcp/
 
-# Book Outputs - Ignore versioned iterations to keep git clean
-# This keeps only the main files, but ignores "Egyptian_Cross_Absolute_V12.html" etc.
+# Book Outputs - Keep only clean final versions
+# Ignore versioned iterations and fixed bundles
 outputs/**/V[0-9]*.html
 outputs/**/*_Fixed_*.html
 outputs/**/*_Interactive_*.html
+outputs/**/*_Offline.html
+outputs/**/*_Director_Cut.html
+outputs/**/*_Edition.html
+outputs/**/*_V9.html
+outputs/**/*_Masterpiece.html
 
 # Keep the directory structure but ignore specific large artifacts
 !outputs/.gitkeep
