@@ -6,6 +6,7 @@ description: Master Skill Bundle (v9.0). A 4-role pipeline (Ingest, Architect, D
 # HTML Book Bundler (Skill Bundle v9.0)
 
 This is the umbrella skill for the book production toolchain. It manages 4 specialized sub-skills for each layer of production.
+This bundle enables the creation of **autonomous, interactive, offline-first HTML books** delivered as a **single, dependency-free bundle**. It transforms raw manuscripts into high-fidelity reading applications that function 100% without a server or internet connection.
 
 ## MANDATORY EXECUTION PROTOCOL: THE DIRECTOR'S CUT (V9.0)
 You are an AI Architect and Book Director. Your goal is to transform a boring PDF into a high-fidelity, interactive learning experience.
