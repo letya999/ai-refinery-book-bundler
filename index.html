@@ -1,36 +1,225 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>No Complex Book</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 760px;
-      margin: 40px auto;
-      padding: 0 16px;
-      line-height: 1.5;
-      color: #222;
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #5b6472;
+      --line: #d9e0ea;
+      --accent: #0b57d0;
     }
-    h1 { margin-bottom: 8px; }
-    p { margin-top: 0; }
-    ul { padding-left: 20px; }
-    li { margin: 8px 0; }
-    a { color: #0b57d0; text-decoration: none; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .wrap {
+      max-width: 860px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+    h1 { margin: 0 0 8px; }
+    p { margin: 0 0 14px; color: var(--muted); }
+
+    .about {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 20px;
+    }
+    a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
+
+    .carousel {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .track {
+      display: flex;
+      transition: transform 0.35s ease;
+      width: 100%;
+    }
+    .slide {
+      min-width: 100%;
+      padding: 12px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .preview {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+      background: #eef2f8;
+    }
+    .meta {
+      padding: 12px;
+    }
+    .meta h3 { margin: 0 0 6px; }
+    .meta p { margin: 0 0 10px; }
+
+    .nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .nav.prev { left: 10px; }
+    .nav.next { right: 10px; }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 10px 0 14px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 0;
+      background: #b5c1d1;
+      cursor: pointer;
+    }
+    .dot.active { background: var(--accent); }
+
+    @media (max-width: 640px) {
+      .preview { height: 200px; }
+    }
   </style>
 </head>
 <body>
-  <h1>No Complex Book</h1>
-  <p>Статическая страница для GitHub Pages.</p>
+  <main class="wrap">
+    <h1>No Complex Book</h1>
+    <p>Статическая витрина книг для GitHub Pages.</p>
 
-  <h2>Доступные книги</h2>
-  <ul>
-    <li><a href="./outputs/ne_uslozhnyay/ne-uslozhnyay-preview-book.html">Не усложняй (preview)</a></li>
-    <li><a href="./outputs/pm_book_ru/PM_Book_Interactive_V4_Fixed.html">PM Book RU</a></li>
-    <li><a href="./outputs/sql_gruber/SQL_Gruber_Interactive_V5_Absolute.html">Понимание SQL</a></li>
-    <li><a href="./outputs/egyptian_cross/Egyptian_Cross_Absolute_V18.html">Тайна египетского креста</a></li>
-  </ul>
+    <section class="about">
+      <strong>Как это сделано:</strong>
+      <span>эти HTML-книги собраны с помощью скилла</span>
+      <a href="./skills/html-book-bundler/SKILL.md">HTML Book Bundler Skill</a>.
+    </section>
+
+    <section class="carousel" id="books-carousel" aria-label="Карусель книг">
+      <div class="track" id="track">
+        <article class="slide">
+          <div class="card">
+            <img class="preview" src="./outputs/ne_uslozhnyay/assets/p170_b03.png" alt="Не усложняй превью" />
+            <div class="meta">
+              <h3>Не усложняй</h3>
+              <p>Короткая preview-версия в интерактивном HTML.</p>
+              <a href="./outputs/ne_uslozhnyay/ne-uslozhnyay-preview-book.html">Открыть книгу</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="card">
+            <img class="preview" src="./outputs/pm_book_ru/chapters/assets/pages/page_059.png" alt="PM Book RU превью" />
+            <div class="meta">
+              <h3>PM Book RU</h3>
+              <p>Собранная русская версия с интерактивной навигацией.</p>
+              <a href="./outputs/pm_book_ru/PM_Book_Interactive_V4_Fixed.html">Открыть книгу</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="card">
+            <img class="preview" src="./skills/html-book-bundler/docs/images/search.png" alt="Понимание SQL превью" />
+            <div class="meta">
+              <h3>Понимание SQL</h3>
+              <p>Интерактивная HTML-версия книги про SQL.</p>
+              <a href="./outputs/sql_gruber/SQL_Gruber_Interactive_V5_Absolute.html">Открыть книгу</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="card">
+            <img class="preview" src="./skills/html-book-bundler/docs/images/hero.png" alt="Тайна египетского креста превью" />
+            <div class="meta">
+              <h3>Тайна египетского креста</h3>
+              <p>Полностью статическая интерактивная публикация детектива.</p>
+              <a href="./outputs/egyptian_cross/Egyptian_Cross_Absolute_V18.html">Открыть книгу</a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <button class="nav prev" id="prev" aria-label="Назад">&#8249;</button>
+      <button class="nav next" id="next" aria-label="Вперёд">&#8250;</button>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var track = document.getElementById('track');
+      var slides = Array.prototype.slice.call(track.children);
+      var dotsWrap = document.getElementById('dots');
+      var prev = document.getElementById('prev');
+      var next = document.getElementById('next');
+      var root = document.getElementById('books-carousel');
+      var idx = 0;
+      var timer;
+
+      function renderDots() {
+        dotsWrap.innerHTML = '';
+        slides.forEach(function (_, i) {
+          var btn = document.createElement('button');
+          btn.className = 'dot' + (i === idx ? ' active' : '');
+          btn.setAttribute('aria-label', 'Слайд ' + (i + 1));
+          btn.addEventListener('click', function () { go(i); });
+          dotsWrap.appendChild(btn);
+        });
+      }
+
+      function go(i) {
+        idx = (i + slides.length) % slides.length;
+        track.style.transform = 'translateX(' + (-idx * 100) + '%)';
+        renderDots();
+      }
+
+      function start() {
+        stop();
+        timer = setInterval(function () { go(idx + 1); }, 4500);
+      }
+
+      function stop() {
+        if (timer) clearInterval(timer);
+      }
+
+      prev.addEventListener('click', function () { go(idx - 1); });
+      next.addEventListener('click', function () { go(idx + 1); });
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+
+      go(0);
+      start();
+    })();
+  </script>
 </body>
 </html>
