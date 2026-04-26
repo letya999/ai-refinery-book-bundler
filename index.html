@@ -3,18 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>No Complex Book</title>
+  <title>AI Refinery Book Bundler Showcase</title>
   <style>
     :root {
-      --bg: #eef1f7;
-      --surface: #ffffff;
-      --surface-alt: #f8f9fc;
-      --text: #1a1f2a;
-      --muted: #586074;
-      --line: #d8dfeb;
-      --primary: #0f4cc9;
-      --primary-strong: #08379a;
-      --shadow: 0 12px 35px rgba(22, 37, 66, 0.14);
+      --bg: #0f1320;
+      --bg2: #1a1f33;
+      --surface: rgba(20, 26, 43, 0.82);
+      --surface-2: rgba(34, 44, 71, 0.75);
+      --line: rgba(134, 156, 255, 0.25);
+      --text: #e8ecff;
+      --muted: #a5b1d6;
+      --accent: #6fa0ff;
+      --accent-2: #4fe3c1;
+      --btn: #2f6bff;
+      --btn-hover: #1f55d4;
+      --shadow: 0 18px 48px rgba(2, 6, 19, 0.5);
     }
 
     * {
@@ -24,32 +27,61 @@
     body {
       margin: 0;
       color: var(--text);
-      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      font-family: "JetBrains Mono", "Consolas", "Segoe UI", monospace;
       line-height: 1.45;
       background:
-        radial-gradient(1200px 400px at 10% -20%, #dbe6ff 0, transparent 70%),
-        radial-gradient(1000px 500px at 100% 0, #d6efe9 0, transparent 68%),
-        var(--bg);
+        radial-gradient(1100px 500px at 5% -15%, #1f2f5d 0%, transparent 67%),
+        radial-gradient(900px 480px at 100% 0%, #0f5c61 0%, transparent 63%),
+        linear-gradient(150deg, var(--bg) 0%, var(--bg2) 100%);
+      min-height: 100vh;
+    }
+
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: radial-gradient(circle at 50% 20%, #000 35%, transparent 100%);
+      opacity: 0.55;
     }
 
     .wrap {
-      max-width: 1080px;
-      margin: 28px auto 44px;
+      position: relative;
+      max-width: 1120px;
+      margin: 28px auto 48px;
       padding: 0 16px;
+      z-index: 1;
     }
 
     .hero {
       border: 1px solid var(--line);
-      background: linear-gradient(135deg, #ffffff 0%, #f6f8fe 62%, #edf6f4 100%);
-      border-radius: 22px;
+      border-radius: 20px;
+      background: linear-gradient(140deg, rgba(29, 37, 63, 0.95) 0%, rgba(19, 25, 43, 0.82) 100%);
       box-shadow: var(--shadow);
-      padding: 24px;
-      margin-bottom: 18px;
+      padding: 22px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -100px;
+      top: -120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(79, 227, 193, 0.35) 0%, transparent 70%);
+      pointer-events: none;
     }
 
     h1 {
       margin: 0 0 8px;
-      font-size: clamp(1.7rem, 3.7vw, 2.6rem);
+      font-size: clamp(1.5rem, 3.6vw, 2.3rem);
       line-height: 1.1;
       letter-spacing: 0.2px;
     }
@@ -57,49 +89,50 @@
     .lead {
       margin: 0;
       color: var(--muted);
-      max-width: 760px;
-      font-size: clamp(1rem, 2.3vw, 1.15rem);
+      max-width: 860px;
+      font-size: clamp(0.95rem, 2.3vw, 1.05rem);
     }
 
     .skill-note {
       margin-top: 14px;
-      color: #263149;
-      background: #edf3ff;
-      border: 1px solid #cedcff;
+      border: 1px solid rgba(111, 160, 255, 0.35);
+      background: rgba(58, 83, 150, 0.22);
       border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 0.96rem;
+      padding: 11px 12px;
+      color: #d5e0ff;
     }
 
     a {
-      color: var(--primary);
+      color: #98bbff;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     a:hover {
       text-decoration: underline;
     }
 
-    .grid {
+    .info-grid {
       display: grid;
-      gap: 14px;
       grid-template-columns: 1fr 1fr;
-      margin-bottom: 18px;
+      gap: 14px;
+      margin-bottom: 16px;
     }
 
     .box {
       border: 1px solid var(--line);
-      background: var(--surface);
       border-radius: 16px;
+      background: var(--surface);
+      backdrop-filter: blur(3px);
       padding: 14px 16px;
     }
 
     .box h2 {
-      margin: 0 0 8px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 1.25rem;
-      letter-spacing: 0.2px;
+      margin: 0 0 10px;
+      font-family: "JetBrains Mono", "Consolas", monospace;
+      font-size: 1.05rem;
+      color: #d8e3ff;
+      letter-spacing: 0.15px;
     }
 
     .box p {
@@ -107,14 +140,14 @@
       color: var(--muted);
     }
 
-    .benefits {
-      margin: 10px 0 0;
+    .list {
+      margin: 0;
       padding-left: 18px;
-      color: #25304a;
+      color: #d2dcff;
     }
 
-    .benefits li {
-      margin: 6px 0;
+    .list li {
+      margin: 7px 0;
     }
 
     .carousel-wrap {
@@ -131,17 +164,18 @@
       justify-content: space-between;
       gap: 10px;
       padding: 14px 16px;
+      background: var(--surface-2);
       border-bottom: 1px solid var(--line);
-      background: var(--surface-alt);
     }
 
     .carousel-head strong {
-      font-size: 1.05rem;
+      color: #f2f5ff;
+      font-size: 1.03rem;
     }
 
     .carousel-head span {
       color: var(--muted);
-      font-size: 0.93rem;
+      font-size: 0.92rem;
     }
 
     .carousel {
@@ -152,45 +186,79 @@
     .track {
       display: flex;
       width: 100%;
-      transition: transform 0.38s ease;
+      transition: transform 0.36s ease;
       will-change: transform;
     }
 
     .slide {
       min-width: 100%;
       padding: 14px;
+      display: flex;
+      justify-content: center;
     }
 
     .card {
-      display: grid;
-      grid-template-columns: 1.05fr 1fr;
+      width: min(920px, 100%);
       border: 1px solid var(--line);
       border-radius: 14px;
       overflow: hidden;
-      background: #fff;
-      min-height: 330px;
+      background: rgba(19, 25, 41, 0.94);
+      display: grid;
+      grid-template-columns: 560px 1fr;
+      min-height: 360px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .media {
+      padding: 14px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(13, 18, 31, 0.8);
+    }
+
+    .media-frame {
+      width: 100%;
+      max-width: 530px;
+      aspect-ratio: 16 / 10;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(144, 164, 255, 0.35);
+      background: #0f1322;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
 
     .preview {
       width: 100%;
       height: 100%;
-      min-height: 260px;
       object-fit: cover;
       display: block;
-      background: #e9eff8;
     }
 
     .meta {
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      padding: 16px;
       gap: 10px;
+    }
+
+    .tag {
+      display: inline-block;
+      width: fit-content;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(143, 170, 255, 0.45);
+      background: rgba(93, 121, 201, 0.28);
+      color: #d5e0ff;
+      font-size: 0.76rem;
     }
 
     .meta h3 {
       margin: 0;
-      font-size: 1.25rem;
+      font-size: 1.22rem;
       line-height: 1.2;
+      color: #f6f8ff;
     }
 
     .meta p {
@@ -199,31 +267,22 @@
       flex: 1;
     }
 
-    .meta .tag {
-      display: inline-block;
-      font-size: 0.78rem;
-      color: #17429f;
-      background: #e9f0ff;
-      border: 1px solid #cad9ff;
-      border-radius: 999px;
-      padding: 3px 9px;
-      width: fit-content;
-    }
-
-    .meta .open {
+    .open {
       display: inline-block;
       width: fit-content;
-      background: var(--primary);
-      color: #fff;
-      padding: 9px 13px;
+      padding: 9px 12px;
       border-radius: 10px;
-      border: 1px solid transparent;
-      transition: background 0.2s ease;
+      background: var(--btn);
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
     }
 
-    .meta .open:hover {
-      background: var(--primary-strong);
+    .open:hover {
       text-decoration: none;
+      background: var(--btn-hover);
+      transform: translateY(-1px);
     }
 
     .nav {
@@ -232,16 +291,15 @@
       transform: translateY(-50%);
       width: 42px;
       height: 42px;
-      border: 1px solid var(--line);
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.95);
-      color: #213156;
-      cursor: pointer;
+      border: 1px solid rgba(144, 164, 255, 0.4);
+      background: rgba(25, 34, 57, 0.92);
+      color: #dce5ff;
       font-size: 24px;
-      line-height: 1;
+      cursor: pointer;
       display: grid;
       place-items: center;
-      box-shadow: 0 6px 18px rgba(14, 33, 71, 0.14);
+      box-shadow: 0 6px 20px rgba(4, 9, 23, 0.45);
       z-index: 10;
     }
 
@@ -250,11 +308,11 @@
 
     .dots {
       display: flex;
-      gap: 8px;
       justify-content: center;
+      gap: 8px;
       padding: 11px 0 16px;
-      background: var(--surface-alt);
       border-top: 1px solid var(--line);
+      background: rgba(33, 44, 73, 0.55);
     }
 
     .dot {
@@ -262,28 +320,44 @@
       height: 10px;
       border-radius: 50%;
       border: 0;
-      background: #b3bfd5;
+      background: rgba(163, 182, 242, 0.55);
       cursor: pointer;
     }
 
     .dot.active {
-      background: var(--primary);
+      background: var(--accent-2);
       transform: scale(1.08);
     }
 
-    @media (max-width: 880px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
+    @keyframes fadeIn {
+      from { opacity: 0.85; }
+      to { opacity: 1; }
+    }
 
+    @media (max-width: 1000px) {
       .card {
         grid-template-columns: 1fr;
         min-height: auto;
       }
 
-      .preview {
-        height: 220px;
-        min-height: 220px;
+      .media {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .media-frame {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .carousel-head {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
 
@@ -294,13 +368,12 @@
       }
 
       .hero {
-        border-radius: 16px;
-        padding: 16px;
+        border-radius: 14px;
+        padding: 14px;
       }
 
       .box {
         border-radius: 12px;
-        padding: 12px;
       }
 
       .carousel-wrap {
@@ -315,17 +388,12 @@
         border-radius: 12px;
       }
 
-      .preview {
-        height: 190px;
-        min-height: 190px;
-      }
-
       .meta {
         padding: 12px;
       }
 
       .meta h3 {
-        font-size: 1.12rem;
+        font-size: 1.08rem;
       }
 
       .nav {
@@ -337,28 +405,35 @@
   </style>
 </head>
 <body>
+  <div class="grid-overlay"></div>
   <main class="wrap">
     <section class="hero">
       <h1>Каталог интерактивных HTML-книг</h1>
-      <p class="lead">Ниже в карусели показаны примеры готовых книг. Это статические HTML-файлы, которые можно открыть сразу в браузере без сервера и зависимостей.</p>
+      <p class="lead">В карусели ниже показаны примеры собранных книг. Это статические HTML-бандлы: открываются в браузере сразу, без сервера и сложной установки.</p>
       <div class="skill-note">
         Книги получены через скилл
-        <a href="https://github.com/letya999/ai-refinery-book-bundler">HTML Book Bundler</a>:
-        он превращает исходники (PDF/EPUB/FB2) в автономные интерактивные публикации с навигацией, поиском и адаптивным чтением.
+        <a href="https://github.com/letya999/ai-refinery-book-bundler">HTML Book Bundler</a>.
       </div>
     </section>
 
-    <section class="grid" aria-label="Описание и преимущества">
+    <section class="info-grid" aria-label="Информация о скилле">
       <article class="box">
-        <h2>Что в карусели</h2>
-        <p>Каждый слайд это живая демо-версия книги: превью страницы, короткий контекст и прямая ссылка на финальный HTML-файл.</p>
+        <h2>Какие возможности продемонстрированы в скилле</h2>
+        <ul class="list">
+          <li>Это искусственный пример, но он демонстрирует реальную мощь скиллов.</li>
+          <li>Внутри есть линтер, библиотека компонентов, собственные скрипты, обращения к внешним API и тесты.</li>
+          <li>Это не еще один markdown с советами, а полноценный skill-пакет для продакшн-задач.</li>
+          <li>Agentic pipeline с ролями: Ingester → Architect → Designer → Assembler.</li>
+          <li>Скрипты на Node.js и Python, аудит/линтинг, тесты и сборка HTML-бандла.</li>
+        </ul>
       </article>
       <article class="box">
-        <h2>Преимущества скилла</h2>
-        <ul class="benefits">
-          <li>Один переносимый файл без внешних CDN и сложной инфраструктуры.</li>
-          <li>Быстрый запуск на GitHub Pages и других статических хостингах.</li>
-          <li>Единый формат для чтения на десктопе и мобильных устройствах.</li>
+        <h2>Преимущества скилла простыми словами</h2>
+        <ul class="list">
+          <li>Из сырого источника получается читабельная веб-книга без ручной сборки каждой страницы.</li>
+          <li>Итоговый файл легко публиковать на GitHub Pages и любом статическом хостинге.</li>
+          <li>Одинаковый формат вывода для десктопа и мобильных устройств снижает затраты на поддержку.</li>
+          <li>Поиск, структура и оформление уже встроены в сборочный процесс, а не доделываются постфактум.</li>
         </ul>
       </article>
     </section>
@@ -366,17 +441,21 @@
     <section class="carousel-wrap" aria-label="Карусель книг">
       <div class="carousel-head">
         <strong>Карусель примеров</strong>
-        <span>Листай кнопками или свайпом на телефоне</span>
+        <span>Все превью в одном размере. Листай кнопками или свайпом на телефоне.</span>
       </div>
       <div class="carousel" id="books-carousel">
         <div class="track" id="track">
           <article class="slide">
             <div class="card">
-              <img class="preview" src="./outputs/ne_uslozhnyay/assets/p108_b00.png" alt="Превью книги Не усложняй" />
+              <div class="media">
+                <div class="media-frame">
+                  <img class="preview" src="./outputs/ne_uslozhnyay/assets/p108_b00.png" alt="Превью книги Не усложняй" />
+                </div>
+              </div>
               <div class="meta">
                 <span class="tag">Preview</span>
                 <h3>Не усложняй</h3>
-                <p>Компактная версия книги с акцентом на практический подход и наглядные схемы процессов.</p>
+                <p>Компактная версия книги с практическими схемами и фокусом на ясную структуру материала.</p>
                 <a class="open" href="./outputs/ne_uslozhnyay/ne-uslozhnyay-preview-book.html">Открыть книгу</a>
               </div>
             </div>
@@ -384,11 +463,15 @@
 
           <article class="slide">
             <div class="card">
-              <img class="preview" src="./outputs/pm_book_ru/chapters/assets/pages/page_059.png" alt="Превью книги PM Book RU" />
+              <div class="media">
+                <div class="media-frame">
+                  <img class="preview" src="./outputs/pm_book_ru/chapters/assets/pages/page_059.png" alt="Превью книги PM Book RU" />
+                </div>
+              </div>
               <div class="meta">
                 <span class="tag">Русская версия</span>
                 <h3>PM Book RU</h3>
-                <p>Интерактивная публикация по управлению проектами с адаптированной структурой для чтения в вебе.</p>
+                <p>Интерактивный формат по теме project management, собранный как автономный HTML-бандл.</p>
                 <a class="open" href="./outputs/pm_book_ru/PM_Book_Interactive_V4_Fixed.html">Открыть книгу</a>
               </div>
             </div>
@@ -396,11 +479,15 @@
 
           <article class="slide">
             <div class="card">
-              <img class="preview" src="./skills/html-book-bundler/docs/images/search.png" alt="Превью книги Понимание SQL" />
+              <div class="media">
+                <div class="media-frame">
+                  <img class="preview" src="./skills/html-book-bundler/docs/images/search.png" alt="Превью книги Понимание SQL" />
+                </div>
+              </div>
               <div class="meta">
                 <span class="tag">Техническая книга</span>
                 <h3>Понимание SQL</h3>
-                <p>HTML-формат с удобной навигацией по разделам и быстрым доступом к ключевым темам SQL.</p>
+                <p>Пример технической книги, где удобно ориентироваться по структуре и быстро переходить к нужным темам.</p>
                 <a class="open" href="./outputs/sql_gruber/SQL_Gruber_Interactive_V5_Absolute.html">Открыть книгу</a>
               </div>
             </div>
@@ -408,11 +495,15 @@
 
           <article class="slide">
             <div class="card">
-              <img class="preview" src="./skills/html-book-bundler/docs/images/hero.png" alt="Превью книги Тайна египетского креста" />
+              <div class="media">
+                <div class="media-frame">
+                  <img class="preview" src="./skills/html-book-bundler/docs/images/hero.png" alt="Превью книги Тайна египетского креста" />
+                </div>
+              </div>
               <div class="meta">
                 <span class="tag">Художественная проза</span>
                 <h3>Тайна египетского креста</h3>
-                <p>Демонстрация, как художественный текст превращается в современную читаемую статическую веб-книгу.</p>
+                <p>Демонстрация того, как художественный текст превращается в аккуратную и современную веб-книгу.</p>
                 <a class="open" href="./outputs/egyptian_cross/Egyptian_Cross_Absolute_V18.html">Открыть книгу</a>
               </div>
             </div>
@@ -458,7 +549,7 @@
 
       function startAuto() {
         stopAuto();
-        timer = setInterval(function () { go(idx + 1); }, 5000);
+        timer = setInterval(function () { go(idx + 1); }, 5200);
       }
 
       function stopAuto() {
